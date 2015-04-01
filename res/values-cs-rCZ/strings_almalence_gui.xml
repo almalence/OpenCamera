@@ -93,11 +93,5 @@
 	<string name="okText">OK</string>
 	
 	<string name="moreText">Více...</string>
-	
-	<string name="Preference_DefaultModeName">defaultModeName</string>
-	<string name="Preference_QuickControlButton1">quickControlButton1</string>
-	<string name="Preference_QuickControlButton2">quickControlButton2</string>
-	<string name="Preference_QuickControlButton3">quickControlButton3</string>
-	<string name="Preference_QuickControlButton4">quickControlButton4</string>
-	
+
 </resources>

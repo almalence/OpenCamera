@@ -479,7 +479,15 @@
 					android:layout_weight="1"
 			   		android:layout_gravity="center"
 			   		android:layout_margin="7dip"
-			   		android:onClick="onButtonClick"/>			
+			   		android:onClick="onButtonClick"/>
+			<com.almalence.ui.RotateImageView android:id="@+id/selfTimerButton"
+					android:background="@android:color/transparent"					
+					android:layout_height="match_parent"
+					android:layout_width="0dip"
+					android:layout_weight="1"
+			   		android:layout_gravity="center"
+			   		android:layout_margin="7dip"
+			   		android:onClick="onButtonClick"/>				
 			<com.almalence.ui.RotateImageView android:id="@+id/camerachangeButton"
 					android:background="@android:color/transparent"					
 					android:layout_height="fill_parent"

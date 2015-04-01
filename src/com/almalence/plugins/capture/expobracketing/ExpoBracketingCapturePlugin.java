@@ -127,6 +127,13 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		preferenceEVCompensationValue = prefs.getInt(MainScreen.sEvPref, 0);
 		preferenceSceneMode = prefs.getInt(MainScreen.sSceneModePref, CameraParameters.SCENE_MODE_AUTO);
 		preferenceFlashMode = prefs.getInt(MainScreen.sFlashModePref, MainScreen.sDefaultFlashValue);
+		
+		if (CameraController.isUseHALv3() && CameraController.isNexus())
+		{
+			SharedPreferences.Editor editor = prefs.edit();
+			editor.putInt(MainScreen.sFlashModePref, CameraParameters.FLASH_MODE_OFF);
+			editor.commit();
+		}
 
 		if (prefs.contains(sExpoPreviewModePref))
 		{
@@ -162,12 +169,12 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	@Override
 	public void onGUICreate()
 	{
-		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, true, false);
-		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, true);
+		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, true, false, true);
+		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, true, true);
 
 		if (CameraController.isUseHALv3() && CameraController.isNexus())
 		{
-			MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false);
+			MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false, true);
 		}
 	}
 

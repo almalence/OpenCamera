@@ -152,11 +152,10 @@ public class SimpleProcessingPlugin extends PluginProcessing
 				}
 
 				float[] gammaTable = new float[] { 0.5f, 0.6f, 0.7f };
-				String NoisePreference = prefs.getString("noisePrefHDR", "1");
 				int val = 1;
 				try
 				{
-					val = Integer.parseInt(NoisePreference);
+					val = Integer.parseInt(prefs.getString("noisePrefDro", "1"));
 				} catch (Exception e)
 				{
 					e.printStackTrace();

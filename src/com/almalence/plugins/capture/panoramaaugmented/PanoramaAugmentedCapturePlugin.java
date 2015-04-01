@@ -482,6 +482,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		if(Build.MODEL.equals("Nexus 6") && camera2Preference)
 		{
 			prefs.edit().putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), false).commit();
+			CameraController.useHALv3(false);
 			
 			CameraController.isOldCameraOneModeLaunched = true;
 			PluginManager.getInstance().setSwitchModeType(true);
@@ -570,7 +571,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		MainScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
 		
 		if(Build.MODEL.equals("Nexus 6") && camera2Preference)
+		{
 			CameraController.needCameraRelaunch(true);
+			CameraController.useHALv3(camera2Preference);
+		}
 	}
 
 	@Override
@@ -583,7 +587,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	@Override
 	public void onGUICreate()
 	{
-		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, false);
+		MainScreen.getInstance().disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, false, true);
 
 		this.clearViews();
 

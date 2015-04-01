@@ -114,6 +114,7 @@ import com.almalence.opencam.PluginType;
 import com.almalence.opencam.Preferences;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
+
 //-+- -->
 
 /* <!-- +++
@@ -152,820 +153,842 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	public enum SettingsType
 	{
-		SCENE, WB, FOCUS, FLASH, ISO, METERING, CAMERA, EV, MORE
+		SCENE, WB, FOCUS, FLASH, ISO, METERING, CAMERA, EV, SELF_TIMER, MORE
 	}
 
-	private OrientationEventListener			orientListener;
+	private OrientationEventListener						orientListener;
 
 	// certain quick control visible
-	private boolean								quickControlsVisible		= false;
+	private boolean											quickControlsVisible		= false;
 
 	// Quick control customization variables
-	private ElementAdapter						quickControlAdapter;
-	private List<View>							quickControlChangeres;
-	private View								currentQuickView			= null;
+	private ElementAdapter									quickControlAdapter;
+	private List<View>										quickControlChangeres;
+	private View											currentQuickView			= null;
 	// Current quick control to replace If qc customization layout is showing
 	// now
-	private boolean								quickControlsChangeVisible	= false;
+	private boolean											quickControlsChangeVisible	= false;
 
 	// Settings layout
-	private ElementAdapter						settingsAdapter;
-	private List<View>							settingsViews;
-	private boolean								settingsControlsVisible		= false;
+	private ElementAdapter									settingsAdapter;
+	private List<View>										settingsViews;
+	private boolean											settingsControlsVisible		= false;
 	// If quick settings layout is showing now
 
 	// Mode selector layout
-	private ElementAdapter						modeAdapter;
-	private List<View>							modeViews;
-	private ViewGroup							activeMode					= null;
-	private boolean								modeSelectorVisible			= false;
+	private ElementAdapter									modeAdapter;
+	private List<View>										modeViews;
+	private ViewGroup										activeMode					= null;
+	private boolean											modeSelectorVisible			= false;
 	// If quick settings layout is showing now
 
 	// <!-- -+-
-	private AlmalenceStore						store;
+	private AlmalenceStore									store;
 	// -+- -->
 
-	private SelfTimerAndPhotoTimeLapse			selfTimer;
+	private SelfTimerAndPhotoTimeLapse						selfTimer;
 
 	// Assoc list for storing association between mode button and mode ID
-	private Map<View, String>					buttonModeViewAssoc;
+	private Map<View, String>								buttonModeViewAssoc;
 
-	private Thumbnail							mThumbnail;
-	private RotateImageView						thumbnailView;
+	private Thumbnail										mThumbnail;
+	private RotateImageView									thumbnailView;
 
-	private RotateImageView						shutterButton;
+	private RotateImageView									shutterButton;
 
-	private static final Integer				ICON_EV						= R.drawable.gui_almalence_settings_exposure;
-	private static final Integer				ICON_CAM					= R.drawable.gui_almalence_settings_changecamera;
-	private static final Integer				ICON_SETTINGS				= R.drawable.gui_almalence_settings_more_settings;
+	private static final Integer							ICON_EV						= R.drawable.gui_almalence_settings_exposure;
+	private static final Integer							ICON_CAM					= R.drawable.gui_almalence_settings_changecamera;
+	private static final Integer							ICON_SETTINGS				= R.drawable.gui_almalence_settings_more_settings;
+	private static final Integer							ICON_SELF_TIMER_ACTIVE		= R.drawable.gui_almalence_mode_selftimer_controlcative;
+	private static final Integer							ICON_SELF_TIMER_INACTIVE	= R.drawable.gui_almalence_mode_selftimer_control;
 	
-	private static final Integer				ICON_AUTO_EXPOSURE_TIME		= R.drawable.gui_almalence_settings_shutter_speed_priority;
-	private static final Integer				ICON_MANUAL_EXPOSURE_TIME	= R.drawable.gui_almalence_settings_shutter_speed_priority;
-	private static final Integer				ICON_FOCUS_DISTANCE			= R.drawable.gui_almalence_settings_focus_manual;
+	private static final Integer							ICON_QC_SELF_TIMER_ACTIVE	= R.drawable.gui_almalence_mode_selftimer_control_ative;
+	private static final Integer							ICON_QC_SELF_TIMER_INACTIVE	= R.drawable.gui_almalence_mode_selftimer_control_off;
 
-	private static final int					FOCUS_AF_LOCK				= 10;
-	private static final int					FOCUS_MF					= 11;
+	private static final Integer							ICON_AUTO_EXPOSURE_TIME		= R.drawable.gui_almalence_settings_shutter_speed_priority;
+	private static final Integer							ICON_MANUAL_EXPOSURE_TIME	= R.drawable.gui_almalence_settings_shutter_speed_priority;
+	private static final Integer							ICON_FOCUS_DISTANCE			= R.drawable.gui_almalence_settings_focus_manual;
+
+	private static final int								FOCUS_AF_LOCK				= 10;
+	private static final int								FOCUS_MF					= 11;
 
 	// Lists of icons for camera parameters (scene mode, flash mode, focus mode,
 	// white balance, iso)
-	private static final Map<Integer, Integer>	ICONS_SCENE					= new HashMap<Integer, Integer>()
-																			{
-																				{
-																					put(CameraParameters.SCENE_MODE_AUTO,
-																							R.drawable.gui_almalence_settings_scene_auto);
-																					put(CameraParameters.SCENE_MODE_ACTION,
-																							R.drawable.gui_almalence_settings_scene_action);
-																					put(CameraParameters.SCENE_MODE_PORTRAIT,
-																							R.drawable.gui_almalence_settings_scene_portrait);
-																					put(CameraParameters.SCENE_MODE_LANDSCAPE,
-																							R.drawable.gui_almalence_settings_scene_landscape);
-																					put(CameraParameters.SCENE_MODE_NIGHT,
-																							R.drawable.gui_almalence_settings_scene_night);
-																					put(CameraParameters.SCENE_MODE_NIGHT_PORTRAIT,
-																							R.drawable.gui_almalence_settings_scene_nightportrait);
-																					put(CameraParameters.SCENE_MODE_THEATRE,
-																							R.drawable.gui_almalence_settings_scene_theater);
-																					put(CameraParameters.SCENE_MODE_BEACH,
-																							R.drawable.gui_almalence_settings_scene_beach);
-																					put(CameraParameters.SCENE_MODE_SNOW,
-																							R.drawable.gui_almalence_settings_scene_snow);
-																					put(CameraParameters.SCENE_MODE_SUNSET,
-																							R.drawable.gui_almalence_settings_scene_sunset);
-																					put(CameraParameters.SCENE_MODE_STEADYPHOTO,
-																							R.drawable.gui_almalence_settings_scene_steadyphoto);
-																					put(CameraParameters.SCENE_MODE_FIREWORKS,
-																							R.drawable.gui_almalence_settings_scene_fireworks);
-																					put(CameraParameters.SCENE_MODE_SPORTS,
-																							R.drawable.gui_almalence_settings_scene_sports);
-																					put(CameraParameters.SCENE_MODE_PARTY,
-																							R.drawable.gui_almalence_settings_scene_party);
-																					put(CameraParameters.SCENE_MODE_CANDLELIGHT,
-																							R.drawable.gui_almalence_settings_scene_candlelight);
-																					put(CameraParameters.SCENE_MODE_BARCODE,
-																							R.drawable.gui_almalence_settings_scene_barcode);
-																				}
-																			};
+	private static final Map<Integer, Integer>				ICONS_SCENE					= new HashMap<Integer, Integer>()
+																						{
+																							{
+																								put(CameraParameters.SCENE_MODE_AUTO,
+																										R.drawable.gui_almalence_settings_scene_auto);
+																								put(CameraParameters.SCENE_MODE_ACTION,
+																										R.drawable.gui_almalence_settings_scene_action);
+																								put(CameraParameters.SCENE_MODE_PORTRAIT,
+																										R.drawable.gui_almalence_settings_scene_portrait);
+																								put(CameraParameters.SCENE_MODE_LANDSCAPE,
+																										R.drawable.gui_almalence_settings_scene_landscape);
+																								put(CameraParameters.SCENE_MODE_NIGHT,
+																										R.drawable.gui_almalence_settings_scene_night);
+																								put(CameraParameters.SCENE_MODE_NIGHT_PORTRAIT,
+																										R.drawable.gui_almalence_settings_scene_nightportrait);
+																								put(CameraParameters.SCENE_MODE_THEATRE,
+																										R.drawable.gui_almalence_settings_scene_theater);
+																								put(CameraParameters.SCENE_MODE_BEACH,
+																										R.drawable.gui_almalence_settings_scene_beach);
+																								put(CameraParameters.SCENE_MODE_SNOW,
+																										R.drawable.gui_almalence_settings_scene_snow);
+																								put(CameraParameters.SCENE_MODE_SUNSET,
+																										R.drawable.gui_almalence_settings_scene_sunset);
+																								put(CameraParameters.SCENE_MODE_STEADYPHOTO,
+																										R.drawable.gui_almalence_settings_scene_steadyphoto);
+																								put(CameraParameters.SCENE_MODE_FIREWORKS,
+																										R.drawable.gui_almalence_settings_scene_fireworks);
+																								put(CameraParameters.SCENE_MODE_SPORTS,
+																										R.drawable.gui_almalence_settings_scene_sports);
+																								put(CameraParameters.SCENE_MODE_PARTY,
+																										R.drawable.gui_almalence_settings_scene_party);
+																								put(CameraParameters.SCENE_MODE_CANDLELIGHT,
+																										R.drawable.gui_almalence_settings_scene_candlelight);
+																								put(CameraParameters.SCENE_MODE_BARCODE,
+																										R.drawable.gui_almalence_settings_scene_barcode);
+																							}
+																						};
 
-	private static final Map<Integer, Integer>	ICONS_WB					= new HashMap<Integer, Integer>()
-																			{
-																				{
-																					put(CameraParameters.WB_MODE_AUTO,
-																							R.drawable.gui_almalence_settings_wb_auto);
-																					put(CameraParameters.WB_MODE_INCANDESCENT,
-																							R.drawable.gui_almalence_settings_wb_incandescent);
-																					put(CameraParameters.WB_MODE_FLUORESCENT,
-																							R.drawable.gui_almalence_settings_wb_fluorescent);
-																					put(CameraParameters.WB_MODE_WARM_FLUORESCENT,
-																							R.drawable.gui_almalence_settings_wb_warmfluorescent);
-																					put(CameraParameters.WB_MODE_DAYLIGHT,
-																							R.drawable.gui_almalence_settings_wb_daylight);
-																					put(CameraParameters.WB_MODE_CLOUDY_DAYLIGHT,
-																							R.drawable.gui_almalence_settings_wb_cloudydaylight);
-																					put(CameraParameters.WB_MODE_TWILIGHT,
-																							R.drawable.gui_almalence_settings_wb_twilight);
-																					put(CameraParameters.WB_MODE_SHADE,
-																							R.drawable.gui_almalence_settings_wb_shade);
-																				}
-																			};
+	private static final Map<Integer, Integer>				ICONS_WB					= new HashMap<Integer, Integer>()
+																						{
+																							{
+																								put(CameraParameters.WB_MODE_AUTO,
+																										R.drawable.gui_almalence_settings_wb_auto);
+																								put(CameraParameters.WB_MODE_INCANDESCENT,
+																										R.drawable.gui_almalence_settings_wb_incandescent);
+																								put(CameraParameters.WB_MODE_FLUORESCENT,
+																										R.drawable.gui_almalence_settings_wb_fluorescent);
+																								put(CameraParameters.WB_MODE_WARM_FLUORESCENT,
+																										R.drawable.gui_almalence_settings_wb_warmfluorescent);
+																								put(CameraParameters.WB_MODE_DAYLIGHT,
+																										R.drawable.gui_almalence_settings_wb_daylight);
+																								put(CameraParameters.WB_MODE_CLOUDY_DAYLIGHT,
+																										R.drawable.gui_almalence_settings_wb_cloudydaylight);
+																								put(CameraParameters.WB_MODE_TWILIGHT,
+																										R.drawable.gui_almalence_settings_wb_twilight);
+																								put(CameraParameters.WB_MODE_SHADE,
+																										R.drawable.gui_almalence_settings_wb_shade);
+																							}
+																						};
 
-	private static final Map<Integer, Integer>	ICONS_FOCUS					= new HashMap<Integer, Integer>()
-																			{
-																				{
-																					put(CameraParameters.AF_MODE_AUTO,
-																							R.drawable.gui_almalence_settings_focus_auto);
-																					put(CameraParameters.AF_MODE_INFINITY,
-																							R.drawable.gui_almalence_settings_focus_infinity);
-																					put(CameraParameters.AF_MODE_NORMAL,
-																							R.drawable.gui_almalence_settings_focus_normal);
-																					put(CameraParameters.AF_MODE_MACRO,
-																							R.drawable.gui_almalence_settings_focus_macro);
-																					put(CameraParameters.AF_MODE_FIXED,
-																							R.drawable.gui_almalence_settings_focus_fixed);
-																					put(CameraParameters.AF_MODE_EDOF,
-																							R.drawable.gui_almalence_settings_focus_edof);
-																					put(CameraParameters.AF_MODE_CONTINUOUS_VIDEO,
-																							R.drawable.gui_almalence_settings_focus_continiuousvideo);
-																					put(CameraParameters.AF_MODE_CONTINUOUS_PICTURE,
-																							R.drawable.gui_almalence_settings_focus_continiuouspicture);
-																					put(FOCUS_AF_LOCK,
-																							R.drawable.gui_almalence_settings_focus_aflock);
-																					put(FOCUS_MF,
-																							R.drawable.gui_almalence_settings_focus_manual);
-																				}
-																			};
+	private static final Map<Integer, Integer>				ICONS_FOCUS					= new HashMap<Integer, Integer>()
+																						{
+																							{
+																								put(CameraParameters.AF_MODE_AUTO,
+																										R.drawable.gui_almalence_settings_focus_auto);
+																								put(CameraParameters.AF_MODE_INFINITY,
+																										R.drawable.gui_almalence_settings_focus_infinity);
+																								put(CameraParameters.AF_MODE_NORMAL,
+																										R.drawable.gui_almalence_settings_focus_normal);
+																								put(CameraParameters.AF_MODE_MACRO,
+																										R.drawable.gui_almalence_settings_focus_macro);
+																								put(CameraParameters.AF_MODE_FIXED,
+																										R.drawable.gui_almalence_settings_focus_fixed);
+																								put(CameraParameters.AF_MODE_EDOF,
+																										R.drawable.gui_almalence_settings_focus_edof);
+																								put(CameraParameters.AF_MODE_CONTINUOUS_VIDEO,
+																										R.drawable.gui_almalence_settings_focus_continiuousvideo);
+																								put(CameraParameters.AF_MODE_CONTINUOUS_PICTURE,
+																										R.drawable.gui_almalence_settings_focus_continiuouspicture);
+																								put(FOCUS_AF_LOCK,
+																										R.drawable.gui_almalence_settings_focus_aflock);
+																								put(FOCUS_MF,
+																										R.drawable.gui_almalence_settings_focus_manual);
+																							}
+																						};
 
-	private static final Map<Integer, Integer>	ICONS_FLASH					= new HashMap<Integer, Integer>()
-																			{
-																				{
-																					put(CameraParameters.FLASH_MODE_OFF,
-																							R.drawable.gui_almalence_settings_flash_off);
-																					put(CameraParameters.FLASH_MODE_AUTO,
-																							R.drawable.gui_almalence_settings_flash_auto);
-																					put(CameraParameters.FLASH_MODE_SINGLE,
-																							R.drawable.gui_almalence_settings_flash_on);
-																					put(CameraParameters.FLASH_MODE_REDEYE,
-																							R.drawable.gui_almalence_settings_flash_redeye);
-																					put(CameraParameters.FLASH_MODE_TORCH,
-																							R.drawable.gui_almalence_settings_flash_torch);
-																				}
-																			};
+	private static final Map<Integer, Integer>				ICONS_FLASH					= new HashMap<Integer, Integer>()
+																						{
+																							{
+																								put(CameraParameters.FLASH_MODE_OFF,
+																										R.drawable.gui_almalence_settings_flash_off);
+																								put(CameraParameters.FLASH_MODE_AUTO,
+																										R.drawable.gui_almalence_settings_flash_auto);
+																								put(CameraParameters.FLASH_MODE_SINGLE,
+																										R.drawable.gui_almalence_settings_flash_on);
+																								put(CameraParameters.FLASH_MODE_REDEYE,
+																										R.drawable.gui_almalence_settings_flash_redeye);
+																								put(CameraParameters.FLASH_MODE_TORCH,
+																										R.drawable.gui_almalence_settings_flash_torch);
+																							}
+																						};
 
-	private static final Map<Integer, Integer>	ICONS_ISO					= new HashMap<Integer, Integer>()
-																			{
-																				{
-																					put(CameraParameters.ISO_AUTO,
-																							R.drawable.gui_almalence_settings_iso_auto);
-																					put(CameraParameters.ISO_50,
-																							R.drawable.gui_almalence_settings_iso_50);
-																					put(CameraParameters.ISO_100,
-																							R.drawable.gui_almalence_settings_iso_100);
-																					put(CameraParameters.ISO_200,
-																							R.drawable.gui_almalence_settings_iso_200);
-																					put(CameraParameters.ISO_400,
-																							R.drawable.gui_almalence_settings_iso_400);
-																					put(CameraParameters.ISO_800,
-																							R.drawable.gui_almalence_settings_iso_800);
-																					put(CameraParameters.ISO_1600,
-																							R.drawable.gui_almalence_settings_iso_1600);
-																					put(CameraParameters.ISO_3200,
-																							R.drawable.gui_almalence_settings_iso_3200);
-																					put(CameraParameters.ISO_6400,
-																							R.drawable.gui_almalence_settings_iso_6400);
-																					put(CameraParameters.ISO_10000,
-																							R.drawable.gui_almalence_settings_iso_10000);																					
-																				}
-																			};
+	private static final Map<Integer, Integer>				ICONS_ISO					= new HashMap<Integer, Integer>()
+																						{
+																							{
+																								put(CameraParameters.ISO_AUTO,
+																										R.drawable.gui_almalence_settings_iso_auto);
+																								put(CameraParameters.ISO_50,
+																										R.drawable.gui_almalence_settings_iso_50);
+																								put(CameraParameters.ISO_100,
+																										R.drawable.gui_almalence_settings_iso_100);
+																								put(CameraParameters.ISO_200,
+																										R.drawable.gui_almalence_settings_iso_200);
+																								put(CameraParameters.ISO_400,
+																										R.drawable.gui_almalence_settings_iso_400);
+																								put(CameraParameters.ISO_800,
+																										R.drawable.gui_almalence_settings_iso_800);
+																								put(CameraParameters.ISO_1600,
+																										R.drawable.gui_almalence_settings_iso_1600);
+																								put(CameraParameters.ISO_3200,
+																										R.drawable.gui_almalence_settings_iso_3200);
+																								put(CameraParameters.ISO_6400,
+																										R.drawable.gui_almalence_settings_iso_6400);
+																								put(CameraParameters.ISO_10000,
+																										R.drawable.gui_almalence_settings_iso_10000);
+																							}
+																						};
 
-	private static final Map<String, Integer>	ICONS_DEFAULT_ISO			= new HashMap<String, Integer>()
-																			{
-																				{
-																					put(MainScreen
-																							.getInstance()
-																							.getResources()
-																							.getString(
-																									R.string.isoAutoDefaultSystem),
-																							R.drawable.gui_almalence_settings_iso_auto);
-																					put(MainScreen
-																							.getInstance()
-																							.getResources()
-																							.getString(
-																									R.string.iso50DefaultSystem),
-																							R.drawable.gui_almalence_settings_iso_50);
-																					put(MainScreen
-																							.getInstance()
-																							.getResources()
-																							.getString(
-																									R.string.iso100DefaultSystem),
-																							R.drawable.gui_almalence_settings_iso_100);
-																					put(MainScreen
-																							.getInstance()
-																							.getResources()
-																							.getString(
-																									R.string.iso200DefaultSystem),
-																							R.drawable.gui_almalence_settings_iso_200);
-																					put(MainScreen
-																							.getInstance()
-																							.getResources()
-																							.getString(
-																									R.string.iso400DefaultSystem),
-																							R.drawable.gui_almalence_settings_iso_400);
-																					put(MainScreen
-																							.getInstance()
-																							.getResources()
-																							.getString(
-																									R.string.iso800DefaultSystem),
-																							R.drawable.gui_almalence_settings_iso_800);
-																					put(MainScreen
-																							.getInstance()
-																							.getResources()
-																							.getString(
-																									R.string.iso1600DefaultSystem),
-																							R.drawable.gui_almalence_settings_iso_1600);
-																					put(MainScreen
-																							.getInstance()
-																							.getResources()
-																							.getString(
-																									R.string.iso3200DefaultSystem),
-																							R.drawable.gui_almalence_settings_iso_3200);
-																					put(MainScreen
-																							.getInstance()
-																							.getResources()
-																							.getString(
-																									R.string.iso6400DefaultSystem),
-																							R.drawable.gui_almalence_settings_iso_6400);
-																					put(MainScreen
-																							.getInstance()
-																							.getResources()
-																							.getString(
-																									R.string.iso10000DefaultSystem),
-																							R.drawable.gui_almalence_settings_iso_10000);																					
-																				}
-																			};
+	private static final Map<String, Integer>				ICONS_DEFAULT_ISO			= new HashMap<String, Integer>()
+																						{
+																							{
+																								put(MainScreen
+																										.getInstance()
+																										.getResources()
+																										.getString(
+																												R.string.isoAutoDefaultSystem),
+																										R.drawable.gui_almalence_settings_iso_auto);
+																								put(MainScreen
+																										.getInstance()
+																										.getResources()
+																										.getString(
+																												R.string.iso50DefaultSystem),
+																										R.drawable.gui_almalence_settings_iso_50);
+																								put(MainScreen
+																										.getInstance()
+																										.getResources()
+																										.getString(
+																												R.string.iso100DefaultSystem),
+																										R.drawable.gui_almalence_settings_iso_100);
+																								put(MainScreen
+																										.getInstance()
+																										.getResources()
+																										.getString(
+																												R.string.iso200DefaultSystem),
+																										R.drawable.gui_almalence_settings_iso_200);
+																								put(MainScreen
+																										.getInstance()
+																										.getResources()
+																										.getString(
+																												R.string.iso400DefaultSystem),
+																										R.drawable.gui_almalence_settings_iso_400);
+																								put(MainScreen
+																										.getInstance()
+																										.getResources()
+																										.getString(
+																												R.string.iso800DefaultSystem),
+																										R.drawable.gui_almalence_settings_iso_800);
+																								put(MainScreen
+																										.getInstance()
+																										.getResources()
+																										.getString(
+																												R.string.iso1600DefaultSystem),
+																										R.drawable.gui_almalence_settings_iso_1600);
+																								put(MainScreen
+																										.getInstance()
+																										.getResources()
+																										.getString(
+																												R.string.iso3200DefaultSystem),
+																										R.drawable.gui_almalence_settings_iso_3200);
+																								put(MainScreen
+																										.getInstance()
+																										.getResources()
+																										.getString(
+																												R.string.iso6400DefaultSystem),
+																										R.drawable.gui_almalence_settings_iso_6400);
+																								put(MainScreen
+																										.getInstance()
+																										.getResources()
+																										.getString(
+																												R.string.iso10000DefaultSystem),
+																										R.drawable.gui_almalence_settings_iso_10000);
+																							}
+																						};
 
-	private static final Map<Integer, Integer>	ICONS_METERING				= new HashMap<Integer, Integer>()
-																			{
-																				{
-																					put(0,
-																							R.drawable.gui_almalence_settings_metering_auto);
-																					put(1,
-																							R.drawable.gui_almalence_settings_metering_matrix);
-																					put(2,
-																							R.drawable.gui_almalence_settings_metering_center);
-																					put(3,
-																							R.drawable.gui_almalence_settings_metering_spot);
-																					put(4,
-																							R.drawable.gui_almalence_settings_shutter_speed_priority);
-																				}
-																			};
-																			
+	private static final Map<Integer, Integer>				ICONS_METERING				= new HashMap<Integer, Integer>()
+																						{
+																							{
+																								put(0,
+																										R.drawable.gui_almalence_settings_metering_auto);
+																								put(1,
+																										R.drawable.gui_almalence_settings_metering_matrix);
+																								put(2,
+																										R.drawable.gui_almalence_settings_metering_center);
+																								put(3,
+																										R.drawable.gui_almalence_settings_metering_spot);
+																								put(4,
+																										R.drawable.gui_almalence_settings_shutter_speed_priority);
+																							}
+																						};
+
 	// List of localized names for camera parameters values
-	private static final Map<Integer, String>	NAMES_SCENE					= new HashMap<Integer, String>()
-																			{
-																				{
-																					put(CameraParameters.SCENE_MODE_AUTO,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.sceneAuto));
-																					put(CameraParameters.SCENE_MODE_ACTION,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.sceneAction));
-																					put(CameraParameters.SCENE_MODE_PORTRAIT,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.scenePortrait));
-																					put(CameraParameters.SCENE_MODE_LANDSCAPE,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.sceneLandscape));
-																					put(CameraParameters.SCENE_MODE_NIGHT,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.sceneNight));
-																					put(CameraParameters.SCENE_MODE_NIGHT_PORTRAIT,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.sceneNightPortrait));
-																					put(CameraParameters.SCENE_MODE_THEATRE,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.sceneTheatre));
-																					put(CameraParameters.SCENE_MODE_BEACH,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.sceneBeach));
-																					put(CameraParameters.SCENE_MODE_SNOW,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.sceneSnow));
-																					put(CameraParameters.SCENE_MODE_SUNSET,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.sceneSunset));
-																					put(CameraParameters.SCENE_MODE_STEADYPHOTO,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.sceneSteadyPhoto));
-																					put(CameraParameters.SCENE_MODE_FIREWORKS,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.sceneFireworks));
-																					put(CameraParameters.SCENE_MODE_SPORTS,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.sceneSports));
-																					put(CameraParameters.SCENE_MODE_PARTY,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.sceneParty));
-																					put(CameraParameters.SCENE_MODE_CANDLELIGHT,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.sceneCandlelight));
-																					put(CameraParameters.SCENE_MODE_BARCODE,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.sceneBarcode));
-																				}
-																			};
+	private static final Map<Integer, String>				NAMES_SCENE					= new HashMap<Integer, String>()
+																						{
+																							{
+																								put(CameraParameters.SCENE_MODE_AUTO,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.sceneAuto));
+																								put(CameraParameters.SCENE_MODE_ACTION,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.sceneAction));
+																								put(CameraParameters.SCENE_MODE_PORTRAIT,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.scenePortrait));
+																								put(CameraParameters.SCENE_MODE_LANDSCAPE,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.sceneLandscape));
+																								put(CameraParameters.SCENE_MODE_NIGHT,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.sceneNight));
+																								put(CameraParameters.SCENE_MODE_NIGHT_PORTRAIT,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.sceneNightPortrait));
+																								put(CameraParameters.SCENE_MODE_THEATRE,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.sceneTheatre));
+																								put(CameraParameters.SCENE_MODE_BEACH,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.sceneBeach));
+																								put(CameraParameters.SCENE_MODE_SNOW,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.sceneSnow));
+																								put(CameraParameters.SCENE_MODE_SUNSET,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.sceneSunset));
+																								put(CameraParameters.SCENE_MODE_STEADYPHOTO,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.sceneSteadyPhoto));
+																								put(CameraParameters.SCENE_MODE_FIREWORKS,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.sceneFireworks));
+																								put(CameraParameters.SCENE_MODE_SPORTS,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.sceneSports));
+																								put(CameraParameters.SCENE_MODE_PARTY,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.sceneParty));
+																								put(CameraParameters.SCENE_MODE_CANDLELIGHT,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.sceneCandlelight));
+																								put(CameraParameters.SCENE_MODE_BARCODE,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.sceneBarcode));
+																							}
+																						};
 
-	private static final Map<Integer, String>	NAMES_WB					= new HashMap<Integer, String>()
-																			{
-																				{
-																					put(CameraParameters.WB_MODE_AUTO,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.wbAuto));
-																					put(CameraParameters.WB_MODE_INCANDESCENT,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.wbIncandescent));
-																					put(CameraParameters.WB_MODE_FLUORESCENT,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.wbFluorescent));
-																					put(CameraParameters.WB_MODE_WARM_FLUORESCENT,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.wbWarmFluorescent));
-																					put(CameraParameters.WB_MODE_DAYLIGHT,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.wbDaylight));
-																					put(CameraParameters.WB_MODE_CLOUDY_DAYLIGHT,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.wbCloudyDaylight));
-																					put(CameraParameters.WB_MODE_TWILIGHT,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.wbTwilight));
-																					put(CameraParameters.WB_MODE_SHADE,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.wbShade));
-																				}
-																			};
+	private static final Map<Integer, String>				NAMES_WB					= new HashMap<Integer, String>()
+																						{
+																							{
+																								put(CameraParameters.WB_MODE_AUTO,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.wbAuto));
+																								put(CameraParameters.WB_MODE_INCANDESCENT,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.wbIncandescent));
+																								put(CameraParameters.WB_MODE_FLUORESCENT,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.wbFluorescent));
+																								put(CameraParameters.WB_MODE_WARM_FLUORESCENT,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.wbWarmFluorescent));
+																								put(CameraParameters.WB_MODE_DAYLIGHT,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.wbDaylight));
+																								put(CameraParameters.WB_MODE_CLOUDY_DAYLIGHT,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.wbCloudyDaylight));
+																								put(CameraParameters.WB_MODE_TWILIGHT,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.wbTwilight));
+																								put(CameraParameters.WB_MODE_SHADE,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.wbShade));
+																							}
+																						};
 
-	private static final Map<Integer, String>	NAMES_FOCUS					= new HashMap<Integer, String>()
-																			{
-																				{
-																					put(CameraParameters.AF_MODE_AUTO,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.focusAuto));
-																					put(CameraParameters.AF_MODE_INFINITY,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.focusInfinity));
-																					put(CameraParameters.AF_MODE_NORMAL,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.focusNormal));
-																					put(CameraParameters.AF_MODE_MACRO,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.focusMacro));
-																					put(CameraParameters.AF_MODE_FIXED,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.focusFixed));
-																					put(CameraParameters.AF_MODE_EDOF,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.focusEdof));
-																					put(CameraParameters.AF_MODE_CONTINUOUS_VIDEO,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.focusContinuousVideo));
-																					put(CameraParameters.AF_MODE_CONTINUOUS_PICTURE,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.focusContinuousPicture));
-																				}
-																			};
+	private static final Map<Integer, String>				NAMES_FOCUS					= new HashMap<Integer, String>()
+																						{
+																							{
+																								put(CameraParameters.AF_MODE_AUTO,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.focusAuto));
+																								put(CameraParameters.AF_MODE_INFINITY,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.focusInfinity));
+																								put(CameraParameters.AF_MODE_NORMAL,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.focusNormal));
+																								put(CameraParameters.AF_MODE_MACRO,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.focusMacro));
+																								put(CameraParameters.AF_MODE_FIXED,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.focusFixed));
+																								put(CameraParameters.AF_MODE_EDOF,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.focusEdof));
+																								put(CameraParameters.AF_MODE_CONTINUOUS_VIDEO,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.focusContinuousVideo));
+																								put(CameraParameters.AF_MODE_CONTINUOUS_PICTURE,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.focusContinuousPicture));
+																							}
+																						};
 
-	private static final Map<Integer, String>	NAMES_FLASH					= new HashMap<Integer, String>()
-																			{
-																				{
-																					put(CameraParameters.FLASH_MODE_OFF,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.flashOff));
-																					put(CameraParameters.FLASH_MODE_AUTO,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.flashAuto));
-																					put(CameraParameters.FLASH_MODE_SINGLE,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.flashOn));
-																					put(CameraParameters.FLASH_MODE_REDEYE,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.flashRedEye));
-																					put(CameraParameters.FLASH_MODE_TORCH,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.flashTorch));
-																				}
-																			};
+	private static final Map<Integer, String>				NAMES_FLASH					= new HashMap<Integer, String>()
+																						{
+																							{
+																								put(CameraParameters.FLASH_MODE_OFF,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.flashOff));
+																								put(CameraParameters.FLASH_MODE_AUTO,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.flashAuto));
+																								put(CameraParameters.FLASH_MODE_SINGLE,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.flashOn));
+																								put(CameraParameters.FLASH_MODE_REDEYE,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.flashRedEye));
+																								put(CameraParameters.FLASH_MODE_TORCH,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.flashTorch));
+																							}
+																						};
 
-	private static final Map<Integer, String>	NAMES_ISO					= new HashMap<Integer, String>()
-																			{
-																				{
-																					put(CameraParameters.ISO_AUTO,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.isoAuto));
-																					put(CameraParameters.ISO_50,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.iso50));
-																					put(CameraParameters.ISO_100,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.iso100));
-																					put(CameraParameters.ISO_200,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.iso200));
-																					put(CameraParameters.ISO_400,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.iso400));
-																					put(CameraParameters.ISO_800,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.iso800));
-																					put(CameraParameters.ISO_1600,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.iso1600));
-																					put(CameraParameters.ISO_3200,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.iso3200));
-																					put(CameraParameters.ISO_6400,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.iso6400));
-																					put(CameraParameters.ISO_10000,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.iso10000));
-																				}
-																			};
+	private static final Map<Integer, String>				NAMES_ISO					= new HashMap<Integer, String>()
+																						{
+																							{
+																								put(CameraParameters.ISO_AUTO,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.isoAuto));
+																								put(CameraParameters.ISO_50,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.iso50));
+																								put(CameraParameters.ISO_100,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.iso100));
+																								put(CameraParameters.ISO_200,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.iso200));
+																								put(CameraParameters.ISO_400,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.iso400));
+																								put(CameraParameters.ISO_800,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.iso800));
+																								put(CameraParameters.ISO_1600,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.iso1600));
+																								put(CameraParameters.ISO_3200,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.iso3200));
+																								put(CameraParameters.ISO_6400,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.iso6400));
+																								put(CameraParameters.ISO_10000,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.iso10000));
+																							}
+																						};
 
-	private static final Map<Integer, String>	NAMES_METERING				= new HashMap<Integer, String>()
-																			{
-																				{
-																					put(0,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.meteringAutoSystem));
-																					put(1,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.meteringMatrixSystem));
-																					put(2,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.meteringCenterSystem));
-																					put(3,
-																							MainScreen
-																									.getInstance()
-																									.getResources()
-																									.getString(
-																											R.string.meteringSpotSystem));
-																				}
-																			};
+	private static final Map<Integer, String>				NAMES_METERING				= new HashMap<Integer, String>()
+																						{
+																							{
+																								put(0,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.meteringAutoSystem));
+																								put(1,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.meteringMatrixSystem));
+																								put(2,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.meteringCenterSystem));
+																								put(3,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.meteringSpotSystem));
+																							}
+																						};
 
-	private static final Map<String, String>	UNLOCK_MODE_PREFERENCES		= new HashMap<String, String>()
-																			{
-																				{
-																					put("hdrmode",
-																							"plugin_almalence_hdr");
-																					put("movingobjects",
-																							"plugin_almalence_moving_burst");
-																					put("sequence",
-																							"plugin_almalence_hdr");
-																					put("groupshot",
-																							"plugin_almalence_groupshot");
-																					put("panorama_augmented",
-																							"plugin_almalence_panorama");
-																				}
-																			};
+	private static final Map<String, String>				UNLOCK_MODE_PREFERENCES		= new HashMap<String, String>()
+																						{
+																							{
+																								put("hdrmode",
+																										"plugin_almalence_hdr");
+																								put("movingobjects",
+																										"plugin_almalence_moving_burst");
+																								put("sequence",
+																										"plugin_almalence_hdr");
+																								put("groupshot",
+																										"plugin_almalence_groupshot");
+																								put("panorama_augmented",
+																										"plugin_almalence_panorama");
+																							}
+																						};
 
-	protected static final LinkedHashMap<Integer, Long>		EXPOSURE_TIME_VALUES 	= new LinkedHashMap<Integer, Long>()
-																			{
-																				{
-																					put(0, 250000l);
-																					put(1, 500000l);
-																					put(2, 666667l);
-																					put(3, 800000l);
-																					put(4, 1250000l);
-																					put(5, 2000000l);
-																					put(6, 2857143l);
-																					put(7, 4000000l);
-																					put(8, 5000000l);
-																					put(9, 6250000l);
-																					put(10, 8000000l);
-																					put(11, 12500000l);
-																					put(12, 16666667l);
-																					put(13, 22222222l);
-																					put(14, 33333333l);
-																					put(15, 50000000l);
-																					put(16, 66666666l);
-																					put(17, 100000000l);
-																					put(18, 142857142l);
-																					put(19, 200000000l);
-																					put(20, 333333333l);
-																					put(21, 500000000l);
-																					put(22, 800000000l);
-																				}
-																			};
-																					
-	protected static final LinkedHashMap<Long, Integer>		EXPOSURE_TIME_INDEXES 	= new LinkedHashMap<Long, Integer>()
-																			{
-																				{
-																					put(250000l, 0);
-																					put(500000l, 1);
-																					put(666667l, 2);
-																					put(800000l, 3);
-																					put(1250000l, 4);
-																					put(2000000l, 5);
-																					put(2857143l, 6);
-																					put(4000000l, 7);
-																					put(5000000l, 8);
-																					put(6250000l, 9);
-																					put(8000000l, 10);
-																					put(12500000l, 11);
-																					put(16666667l, 12);
-																					put(22222222l, 13);
-																					put(33333333l, 14);
-																					put(50000000l, 15);
-																					put(66666666l, 16);
-																					put(100000000l, 17);
-																					put(142857142l, 18);
-																					put(200000000l, 19);
-																					put(333333333l, 20);
-																					put(500000000l, 21);
-																					put(800000000l, 22);
-																				}
-																			};
-																			
-	protected static final LinkedHashMap<Integer, String>		EXPOSURE_TIME_NAMES 	= new LinkedHashMap<Integer, String>()
-																			{
-																				{
-																					put(0, "1/4000");
-																					put(1, "1/2000");
-																					put(2, "1/1500");
-																					put(3, "1/1250");
-																					put(4, "1/800");
-																					put(5, "1/500");
-																					put(6, "1/350");
-																					put(7, "1/250");
-																					put(8, "1/200");
-																					put(9, "1/160");
-																					put(10, "1/125");
-																					put(11, "1/80");
-																					put(12, "1/60");
-																					put(13, "1/45");
-																					put(14, "1/30");
-																					put(15, "1/20");
-																					put(16, "1/15");
-																					put(17, "1/10");
-																					put(18, "1/7");
-																					put(19, "1/5");
-																					put(20, "1/3");
-																					put(21, "0,5\"");
-																					put(22, "0,8\"");
-																				}
-																			};																			
+	protected static final LinkedHashMap<Integer, Long>		EXPOSURE_TIME_VALUES		= new LinkedHashMap<Integer, Long>()
+																						{
+																							{
+																								put(0, 250000l);
+																								put(1, 500000l);
+																								put(2, 666667l);
+																								put(3, 800000l);
+																								put(4, 1250000l);
+																								put(5, 2000000l);
+																								put(6, 2857143l);
+																								put(7, 4000000l);
+																								put(8, 5000000l);
+																								put(9, 6250000l);
+																								put(10, 8000000l);
+																								put(11, 12500000l);
+																								put(12, 16666667l);
+																								put(13, 22222222l);
+																								put(14, 33333333l);
+																								put(15, 50000000l);
+																								put(16, 66666666l);
+																								put(17, 100000000l);
+																								put(18, 142857142l);
+																								put(19, 200000000l);
+																								put(20, 333333333l);
+																								put(21, 500000000l);
+																								put(22, 800000000l);
+																							}
+																						};
+
+	protected static final LinkedHashMap<Long, Integer>		EXPOSURE_TIME_INDEXES		= new LinkedHashMap<Long, Integer>()
+																						{
+																							{
+																								put(250000l, 0);
+																								put(500000l, 1);
+																								put(666667l, 2);
+																								put(800000l, 3);
+																								put(1250000l, 4);
+																								put(2000000l, 5);
+																								put(2857143l, 6);
+																								put(4000000l, 7);
+																								put(5000000l, 8);
+																								put(6250000l, 9);
+																								put(8000000l, 10);
+																								put(12500000l, 11);
+																								put(16666667l, 12);
+																								put(22222222l, 13);
+																								put(33333333l, 14);
+																								put(50000000l, 15);
+																								put(66666666l, 16);
+																								put(100000000l, 17);
+																								put(142857142l, 18);
+																								put(200000000l, 19);
+																								put(333333333l, 20);
+																								put(500000000l, 21);
+																								put(800000000l, 22);
+																							}
+																						};
+
+	protected static final LinkedHashMap<Integer, String>	EXPOSURE_TIME_NAMES			= new LinkedHashMap<Integer, String>()
+																						{
+																							{
+																								put(0, "1/4000");
+																								put(1, "1/2000");
+																								put(2, "1/1500");
+																								put(3, "1/1250");
+																								put(4, "1/800");
+																								put(5, "1/500");
+																								put(6, "1/350");
+																								put(7, "1/250");
+																								put(8, "1/200");
+																								put(9, "1/160");
+																								put(10, "1/125");
+																								put(11, "1/80");
+																								put(12, "1/60");
+																								put(13, "1/45");
+																								put(14, "1/30");
+																								put(15, "1/20");
+																								put(16, "1/15");
+																								put(17, "1/10");
+																								put(18, "1/7");
+																								put(19, "1/5");
+																								put(20, "1/3");
+																								put(21, "0,5\"");
+																								put(22, "0,8\"");
+																							}
+																						};
 
 	// Defining for top menu buttons (camera parameters settings)
-	private static final int					MODE_EV						= R.id.evButton;
-	private static final int					MODE_SCENE					= R.id.sceneButton;
-	private static final int					MODE_WB						= R.id.wbButton;
-	private static final int					MODE_FOCUS					= R.id.focusButton;
-	private static final int					MODE_FLASH					= R.id.flashButton;
-	private static final int					MODE_ISO					= R.id.isoButton;
-	private static final int					MODE_CAM					= R.id.camerachangeButton;
-	private static final int					MODE_MET					= R.id.meteringButton;
-//	private static final int					MODE_EXPOSURE_TIME			= R.id.exposureTimeButton;
-//	private static final int					MODE_FOCUS_DISTANCE			= R.id.focusDistanceButton;
-	
-	private Map<Integer, View>					topMenuButtons;
+	private static final int								MODE_EV						= R.id.evButton;
+	private static final int								MODE_SCENE					= R.id.sceneButton;
+	private static final int								MODE_WB						= R.id.wbButton;
+	private static final int								MODE_FOCUS					= R.id.focusButton;
+	private static final int								MODE_FLASH					= R.id.flashButton;
+	private static final int								MODE_ISO					= R.id.isoButton;
+	private static final int								MODE_CAM					= R.id.camerachangeButton;
+	private static final int								MODE_MET					= R.id.meteringButton;
+	private static final int								MODE_SELF_TIMER				= R.id.selfTimerButton;
+	// private static final int MODE_EXPOSURE_TIME = R.id.exposureTimeButton;
+	// private static final int MODE_FOCUS_DISTANCE = R.id.focusDistanceButton;
+
+	private Map<Integer, View>								topMenuButtons;
 
 	// Each plugin may have one top menu (and appropriate quick control) button
-	private Map<String, View>					topMenuPluginButtons;
+	private Map<String, View>								topMenuPluginButtons;
 
 	// Current quick controls
-	private View								quickControl1				= null;
-	private View								quickControl2				= null;
-	private View								quickControl3				= null;
-	private View								quickControl4				= null;
+	private View											quickControl1				= null;
+	private View											quickControl2				= null;
+	private View											quickControl3				= null;
+	private View											quickControl4				= null;
 
-	private ElementAdapter						scenemodeAdapter;
-	private ElementAdapter						wbmodeAdapter;
-	private ElementAdapter						focusmodeAdapter;
-	private ElementAdapter						flashmodeAdapter;
-	private ElementAdapter						isoAdapter;
-	private ElementAdapter						meteringmodeAdapter;
+	private ElementAdapter									scenemodeAdapter;
+	private ElementAdapter									wbmodeAdapter;
+	private ElementAdapter									focusmodeAdapter;
+	private ElementAdapter									flashmodeAdapter;
+	private ElementAdapter									isoAdapter;
+	private ElementAdapter									meteringmodeAdapter;
 
-	private Map<Integer, View>					sceneModeButtons;
-	private Map<Integer, View>					wbModeButtons;
-	private Map<Integer, View>					focusModeButtons;
-	private Map<Integer, View>					flashModeButtons;
-	private Map<Integer, View>					isoButtons;
-	private Map<Integer, View>					meteringModeButtons;
+	private Map<Integer, View>								sceneModeButtons;
+	private Map<Integer, View>								wbModeButtons;
+	private Map<Integer, View>								focusModeButtons;
+	private Map<Integer, View>								flashModeButtons;
+	private Map<Integer, View>								isoButtons;
+	private Map<Integer, View>								meteringModeButtons;
 
 	// Camera settings values which is exist at current device
-	private List<View>							activeScene;
-	private List<View>							activeWB;
-	private List<View>							activeFocus;
-	private List<View>							activeFlash;
-	private List<View>							activeISO;
-	private List<View>							activeMetering;
+	private List<View>										activeScene;
+	private List<View>										activeWB;
+	private List<View>										activeFocus;
+	private List<View>										activeFlash;
+	private List<View>										activeISO;
+	private List<View>										activeMetering;
 
-	private List<Integer>						activeSceneNames;
-	private List<Integer>						activeWBNames;
-	private List<Integer>						activeFocusNames;
-	private List<Integer>						activeFlashNames;
-	private List<Integer>						activeISONames;
-	private List<Integer>						activeMeteringNames;
+	private List<Integer>									activeSceneNames;
+	private List<Integer>									activeWBNames;
+	private List<Integer>									activeFocusNames;
+	private List<Integer>									activeFlashNames;
+	private List<Integer>									activeISONames;
+	private List<Integer>									activeMeteringNames;
 
-	private boolean								isEVEnabled					= true;
-	private boolean								isSceneEnabled				= true;
-	private boolean								isWBEnabled					= true;
-	private boolean								isFocusEnabled				= true;
-	private boolean								isFlashEnabled				= true;
-	private boolean								isIsoEnabled				= true;
-	private boolean								isCameraChangeEnabled		= true;
-	private boolean								isMeteringEnabled			= true;
-	private boolean								isExposureTimeEnabled		= true;
-	private boolean								isFocusDistanceEnabled		= true;
+	private boolean											isEVEnabled					= true;
+	private boolean											isSceneEnabled				= true;
+	private boolean											isWBEnabled					= true;
+	private boolean											isFocusEnabled				= true;
+	private boolean											isFlashEnabled				= true;
+	private boolean											isIsoEnabled				= true;
+	private boolean											isCameraChangeEnabled		= true;
+	private boolean											isMeteringEnabled			= true;
+	
+	private boolean											isEVInitEnabled				= true;
+	private boolean											isSceneInitEnabled			= true;
+	private boolean											isWBInitEnabled				= true;
+	private boolean											isFocusInitEnabled			= true;
+	private boolean											isFlashInitEnabled			= true;
+	private boolean											isIsoInitEnabled			= true;
+	private boolean											isCameraChangeInitEnabled	= true;
+	private boolean											isMeteringInitEnabled		= true;
 
 	// GUI Layout
-	private View								guiView;
+	private View											guiView;
 
 	// Current camera parameters
-	private int									mEV							= 0;
-	private int									mSceneMode					= -1;
-	private int									mFlashMode					= -1;
-	private int									mFocusMode					= -1;
-	private int									mWB							= -1;
-	private int									mISO						= -1;
-	private int									mMeteringMode				= -1;
-	
-	private long								mExposureTime				= -1;	
-	private float								mFocusDistance				= -1;
-	private int									mOriginalFocusMode			= -1; //Remember auto focus mode while using manual focus.
-	
-	private int									iExposureTimeIndexRange		= 0;
-	private int									iExposureTimeMinIndex		= 0;
-	private int									iExposureTimeMaxIndex		= 0;
+	private int												mEV							= 0;
+	private int												mSceneMode					= -1;
+	private int												mFlashMode					= -1;
+	private int												mFocusMode					= -1;
+	private int												mWB							= -1;
+	private int												mISO						= -1;
+	private int												mMeteringMode				= -1;
 
-	private float								fScreenDensity;
+	private long											mExposureTime				= -1;
+	private float											mFocusDistance				= -1;
+	private int												mOriginalFocusMode			= -1;														// Remember
+																																					// auto
+																																					// focus
+																																					// mode
+																																					// while
+																																					// using
+																																					// manual
+																																					// focus.
 
-	private int									iInfoViewMaxHeight;
-	private int									iInfoViewMaxWidth;
-	private int									iInfoViewHeight;
+	private int												iExposureTimeIndexRange		= 0;
+	private int												iExposureTimeMinIndex		= 0;
+	private int												iExposureTimeMaxIndex		= 0;
 
-	private int									iCenterViewMaxHeight;
-	private int									iCenterViewMaxWidth;
+	private float											fScreenDensity;
+
+	private int												iInfoViewMaxHeight;
+	private int												iInfoViewMaxWidth;
+	private int												iInfoViewHeight;
+
+	private int												iCenterViewMaxHeight;
+	private int												iCenterViewMaxWidth;
 
 	// indicates if it's first launch - to show hint layer.
-	private boolean								isFirstLaunch				= true;
+	private boolean											isFirstLaunch				= true;
 
-	private static int							iScreenType					= MainScreen.getAppResources().getInteger(
-																					R.integer.screen_type);
-	
-	private Handler								manualControlsHandler;
-	private static final int					CLOSE_MANUAL_CONTROLS		= 0;
-	private static final int					CLOSE_MANUAL_CONTROLS_DELAY	= 3000;
-	
+	private static int										iScreenType					= MainScreen
+																								.getAppResources()
+																								.getInteger(
+																										R.integer.screen_type);
+
+	private Handler											manualControlsHandler;
+	private static final int								CLOSE_MANUAL_CONTROLS		= 0;
+	private static final int								CLOSE_MANUAL_CONTROLS_DELAY	= 3000;
+
 	private class MainHandler extends Handler
 	{
 		@Override
@@ -980,7 +1003,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	{
 
 		manualControlsHandler = new MainHandler();
-		
+
 		mThumbnail = null;
 		topMenuButtons = new HashMap<Integer, View>();
 		topMenuPluginButtons = new HashMap<String, View>();
@@ -1024,10 +1047,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		buttonModeViewAssoc = new HashMap<View, String>();
 
 	}
-	
+
 	protected void hideManualControls()
 	{
-		Log.e("GUI", "received CLOSE_MANUAL_CONTROLS");
+		// Log.e("GUI", "received CLOSE_MANUAL_CONTROLS");
 		guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
 		guiView.findViewById(R.id.expandManualControls).setVisibility(View.VISIBLE);
 	}
@@ -1119,7 +1142,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		// Create orientation listener
 		initOrientationListener();
-		
+
 		RotateImageView expandManualControls = ((RotateImageView) guiView.findViewById(R.id.expandManualControls));
 		expandManualControls.setOnClickListener(new OnClickListener()
 		{
@@ -1127,7 +1150,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			{
 				guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 				guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
-				
+
 				manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 				manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
 			}
@@ -1191,8 +1214,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				((RotateImageView) topMenuButtons.get(MODE_ISO)).setOrientation(AlmalenceGUI.mDeviceOrientation);
 				((RotateImageView) topMenuButtons.get(MODE_CAM)).setOrientation(AlmalenceGUI.mDeviceOrientation);
 				((RotateImageView) topMenuButtons.get(MODE_MET)).setOrientation(AlmalenceGUI.mDeviceOrientation);
-//				((RotateImageView) topMenuButtons.get(MODE_EXPOSURE_TIME)).setOrientation(AlmalenceGUI.mDeviceOrientation);
-//				((RotateImageView) topMenuButtons.get(MODE_FOCUS_DISTANCE)).setOrientation(AlmalenceGUI.mDeviceOrientation);
+				((RotateImageView) topMenuButtons.get(MODE_SELF_TIMER)).setOrientation(AlmalenceGUI.mDeviceOrientation);
+				// ((RotateImageView)
+				// topMenuButtons.get(MODE_EXPOSURE_TIME)).setOrientation(AlmalenceGUI.mDeviceOrientation);
+				// ((RotateImageView)
+				// topMenuButtons.get(MODE_FOCUS_DISTANCE)).setOrientation(AlmalenceGUI.mDeviceOrientation);
 
 				Set<String> keys = topMenuPluginButtons.keySet();
 				Iterator<String> it = keys.iterator();
@@ -1320,32 +1346,32 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				AlmalenceGUI.this.updateThumbnailButton();
 			}
 		});
-		
-		
+
 		setShutterIcon(ShutterButton.DEFAULT);
 
 		lockControls = false;
 
 		orientListener.enable();
 
-		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, false, false);
-		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, false, false);
-		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, false, false);
-		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, false, false);
-		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, false, false);
-		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, false, false);
-		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_METERING, false, false);
-		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EXPTIME, false, false);
-		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FDISTANCE, false, false);
-		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_CAMERACHANGE, false, true);
+		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, false, false, false);
+		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, false, false, false);
+		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, false, false, false);
+		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, false, false, false);
+		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, false, false, false);
+		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, false, false, false);
+		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_METERING, false, false, false);
+		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EXPTIME, false, false, false);
+		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FDISTANCE, false, false, false);
+		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_CAMERACHANGE, false, true, false);
 
 		// if first launch - show layout with hints
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		
-		if (prefs.getBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false)) {
+
+		if (prefs.getBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false))
+		{
 			setShutterIcon(ShutterButton.TIMELAPSE_ACTIVE);
 		}
-		
+
 		if (prefs.contains("isFirstLaunch"))
 		{
 			isFirstLaunch = prefs.getBoolean("isFirstLaunch", true);
@@ -1362,14 +1388,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			guiView.findViewById(R.id.hintLayout).setVisibility(View.GONE);
 		else
 			guiView.findViewById(R.id.hintLayout).setVisibility(View.VISIBLE);
-		
 
-		//Manual controls hide
-		manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
-		guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
-		guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.GONE);
-		guiView.findViewById(R.id.focusDistanceLayout).setVisibility(View.GONE);
-		guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
+		// Manual controls hide
+		// manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
+		// guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
+		// guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.GONE);
+		// guiView.findViewById(R.id.focusDistanceLayout).setVisibility(View.GONE);
+		// guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
 
 		// <!-- -+-
 		manageUnlockControl();
@@ -1407,8 +1432,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		guiView.findViewById(R.id.flashButton).setOnTouchListener(MainScreen.getInstance());
 		guiView.findViewById(R.id.isoButton).setOnTouchListener(MainScreen.getInstance());
 		guiView.findViewById(R.id.meteringButton).setOnTouchListener(MainScreen.getInstance());
-//		guiView.findViewById(R.id.exposureTimeButton).setOnTouchListener(MainScreen.getInstance());
-//		guiView.findViewById(R.id.focusDistanceButton).setOnTouchListener(MainScreen.getInstance());
+		guiView.findViewById(R.id.selfTimerButton).setOnTouchListener(MainScreen.getInstance());
+		// guiView.findViewById(R.id.exposureTimeButton).setOnTouchListener(MainScreen.getInstance());
+		// guiView.findViewById(R.id.focusDistanceButton).setOnTouchListener(MainScreen.getInstance());
 		guiView.findViewById(R.id.camerachangeButton).setOnTouchListener(MainScreen.getInstance());
 
 		// Long clicks are needed to open quick controls customization layout
@@ -1419,8 +1445,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		guiView.findViewById(R.id.flashButton).setOnLongClickListener(this);
 		guiView.findViewById(R.id.isoButton).setOnLongClickListener(this);
 		guiView.findViewById(R.id.meteringButton).setOnLongClickListener(this);
-//		guiView.findViewById(R.id.exposureTimeButton).setOnLongClickListener(this);
-//		guiView.findViewById(R.id.focusDistanceButton).setOnLongClickListener(this);
+		guiView.findViewById(R.id.selfTimerButton).setOnLongClickListener(this);
+		// guiView.findViewById(R.id.exposureTimeButton).setOnLongClickListener(this);
+		// guiView.findViewById(R.id.focusDistanceButton).setOnLongClickListener(this);
 		guiView.findViewById(R.id.camerachangeButton).setOnLongClickListener(this);
 
 		// Get all top menu buttons
@@ -1431,8 +1458,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		topMenuButtons.put(MODE_FLASH, guiView.findViewById(R.id.flashButton));
 		topMenuButtons.put(MODE_ISO, guiView.findViewById(R.id.isoButton));
 		topMenuButtons.put(MODE_MET, guiView.findViewById(R.id.meteringButton));
-//		topMenuButtons.put(MODE_EXPOSURE_TIME, guiView.findViewById(R.id.exposureTimeButton));
-//		topMenuButtons.put(MODE_FOCUS_DISTANCE, guiView.findViewById(R.id.focusDistanceButton));
+		topMenuButtons.put(MODE_SELF_TIMER, guiView.findViewById(R.id.selfTimerButton));
+		// topMenuButtons.put(MODE_EXPOSURE_TIME,
+		// guiView.findViewById(R.id.exposureTimeButton));
+		// topMenuButtons.put(MODE_FOCUS_DISTANCE,
+		// guiView.findViewById(R.id.focusDistanceButton));
 		topMenuButtons.put(MODE_CAM, guiView.findViewById(R.id.camerachangeButton));
 
 		sceneModeButtons = initCameraParameterModeButtons(ICONS_SCENE, NAMES_SCENE, sceneModeButtons, MODE_SCENE);
@@ -1572,7 +1602,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	@Override
 	public void onGUICreate()
 	{
-//		Log.e("GUI", "onGUICreate");
+		// Log.e("GUI", "onGUICreate");
 		if (MainScreen.getInstance().findViewById(R.id.infoLayout).getVisibility() == View.VISIBLE)
 			iInfoViewHeight = MainScreen.getInstance().findViewById(R.id.infoLayout).getHeight();
 		// Recreate plugin views
@@ -1669,9 +1699,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			lp.width = previewSize.getHeight();
 			lp.height = previewSize.getWidth();
-			lp.topMargin =  (screen_height - lp.height)/2;
-		}
-		else
+			lp.topMargin = (screen_height - lp.height) / 2;
+		} else
 		{
 			lp.width = previewSurfaceWidth;
 			lp.height = previewSurfaceHeight;
@@ -1679,24 +1708,26 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			{
 				if (surfaceAspect > cameraAspect && (Math.abs(1 - cameraAspect) > 0.05d))
 				{
-					int paramsLayoutHeight = (int) MainScreen.getAppResources().getDimension(R.dimen.paramsLayoutHeight);
+					int paramsLayoutHeight = (int) MainScreen.getAppResources()
+							.getDimension(R.dimen.paramsLayoutHeight);
 					// if wide-screen - decrease width of surface
 					lp.width = previewSurfaceWidth;
-	
+
 					lp.height = (int) (screen_height - 2 * paramsLayoutHeight);
 					lp.topMargin = (int) (paramsLayoutHeight);
 				} else if (surfaceAspect > cameraAspect)
 				{
-					int paramsLayoutHeight = (int) MainScreen.getAppResources().getDimension(R.dimen.paramsLayoutHeight);
+					int paramsLayoutHeight = (int) MainScreen.getAppResources()
+							.getDimension(R.dimen.paramsLayoutHeight);
 					// if wide-screen - decrease width of surface
 					lp.width = previewSurfaceWidth;
-	
+
 					lp.height = previewSurfaceWidth;
 					lp.topMargin = (int) (paramsLayoutHeight);
 				}
 			}
 		}
-		
+
 		Log.d("GUI", "setLayoutParams. width = " + lp.width + " height = " + lp.height);
 		MainScreen.getPreviewSurfaceView().setLayoutParams(lp);
 		MainScreen.setPreviewSurfaceLayoutWidth(lp.width);
@@ -1842,6 +1873,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		mManualExposureTimeSupported = false;
 		mManualFocusDistanceSupported = false;
 		mCameraChangeSupported = false;
+		
+		boolean isManualControlsUsed = false;
 
 		mEVLockSupported = false;
 		mWBLockSupported = false;
@@ -2256,19 +2289,30 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					}
 				}
 				
-				LinearLayout seekBarLayout = (LinearLayout) guiView.findViewById(R.id.focusDistanceLayout);
+//				LinearLayout seekBarLayout = (LinearLayout) guiView.findViewById(R.id.focusDistanceLayout);
 				if(mFocusMode == FOCUS_MF)
 				{
 					preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref, false).commit();
 					
-					guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
-					guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
+					if(guiView.findViewById(R.id.expandManualControls).getVisibility() == View.GONE)
+					{
+						guiView.findViewById(R.id.expandManualControls).setVisibility(View.VISIBLE);
+						guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
+					}
+//					guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
+//					guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 					guiView.findViewById(R.id.focusDistanceLayout).setVisibility(View.VISIBLE);
 					
-					manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
-					manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
+					isManualControlsUsed = true;
+					
+//					manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
+//					manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
 				}
-				seekBarLayout.setVisibility(mFocusMode != FOCUS_MF? View.GONE : View.VISIBLE);
+				else
+				{
+					guiView.findViewById(R.id.focusDistanceLayout).setVisibility(View.GONE);	
+				}
+//				seekBarLayout.setVisibility(mFocusMode != FOCUS_MF? View.GONE : View.VISIBLE);
 
 				mOriginalFocusMode= mFocusMode;
 				if (mFocusMode == FOCUS_AF_LOCK)
@@ -2428,27 +2472,30 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			while (it.hasNext())
 			{
 				int metering_name = it.next();
-				
-				//Samsung Galaxy Note 3 supports only center-weighted metering mode
-				if((metering_name == 3 || metering_name == 1) && (Build.MODEL.contains("SM-N900") || Build.MODEL.contains("SM-G900")))
+
+				// Samsung Galaxy Note 3 supports only center-weighted metering
+				// mode
+				if ((metering_name == 3 || metering_name == 1)
+						&& (Build.MODEL.contains("SM-N900") || Build.MODEL.contains("SM-G900")))
 					continue;
-				
+
 				if (meteringModeButtons.containsKey(metering_name))
 				{
 					activeMetering.add(meteringModeButtons.get(metering_name));
 					activeMeteringNames.add(metering_name);
 				}
 			}
-			
 
-			//Add manual exposure time
-			if (CameraController.isManualExposureTimeSupported())
+			// Add manual exposure time
+			String modeID = PluginManager.getInstance().getActiveModeID();
+			if (CameraController.isManualExposureTimeSupported() && !(modeID.equals("hdrmode") || modeID.equals("expobracketing") || modeID.equals("nightmode")))
 			{
 				mManualExposureTimeSupported = true;
-				
-				long initValue = preferences.getLong(MainScreen.sExposureTimePref, MainScreen.lDefaultExposureTimeValue);
+
+				long initValue = preferences
+						.getLong(MainScreen.sExposureTimePref, MainScreen.lDefaultExposureTimeValue);
 				mExposureTime = initValue;
-				
+
 				LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 				View paramMode = inflator.inflate(R.layout.gui_almalence_quick_control_grid_element, null, false);
 
@@ -2472,20 +2519,24 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							e.printStackTrace();
 							Log.d("set Manual exposure time failed", "icons_focus.get exception: " + e.getMessage());
 						}
-						
+
 						guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 						guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.VISIBLE);
 
 						mMeteringMode = CameraParameters.meteringModeManual;
-						
+
+						preferences.edit().putInt(MainScreen.sMeteringModePref, CameraParameters.meteringModeManual)
+								.commit();
 						preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, false).commit();
 
-						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, true, true);
-						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true);
-						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, true, true);
-//						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, true);
-						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, true);
-						PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_LOCKED);
+						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, true, true, false);
+						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true, false);
+						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, true, true, false);
+						// disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS,
+						// true, true);
+						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, true, false);
+						// PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST,
+						// PluginManager.MSG_FOCUS_LOCKED);
 						CameraController.setCameraExposureTime(mExposureTime);
 
 						initSettingsMenu(true);
@@ -2494,104 +2545,61 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 						guiView.findViewById(R.id.topPanel).setVisibility(View.VISIBLE);
 						quickControlsVisible = false;
-						
+
 						guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
 						manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
-						manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
+						manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS,
+								CLOSE_MANUAL_CONTROLS_DELAY);
 					}
 				});
 
 				meteringModeButtons.put(CameraParameters.meteringModeManual, paramMode);
 				activeMetering.add(meteringModeButtons.get(CameraParameters.meteringModeManual));
 				activeMeteringNames.add(CameraParameters.meteringModeManual);
-				
-				
+
 				SeekBar exBar = (SeekBar) guiView.findViewById(R.id.exposureTimeSeekBar);
 				if (exBar != null)
 				{
 					Long minValue = CameraController.getMinimumExposureTime();
 					Long maxValue = CameraController.getMaximumExposureTime();
-					
+
 					iExposureTimeMinIndex = getMinExposureTimeIndex(minValue);
 					iExposureTimeMaxIndex = getMaxExposureTimeIndex(maxValue);
-					
+
 					iExposureTimeIndexRange = iExposureTimeMaxIndex - iExposureTimeMinIndex;
-					
+
 					exBar.setMax(iExposureTimeIndexRange);
-					
+
 					int initValueIndex = 0;
-					
-					if(EXPOSURE_TIME_INDEXES.containsKey(initValue))
+
+					if (EXPOSURE_TIME_INDEXES.containsKey(initValue))
 						initValueIndex = EXPOSURE_TIME_INDEXES.get(initValue);
 					else
 					{
 						initValueIndex = iExposureTimeMinIndex;
 						initValue = EXPOSURE_TIME_VALUES.get(iExposureTimeMinIndex);
 					}
-					
+
 					exBar.setProgress(initValueIndex - iExposureTimeMinIndex);
-					
-					
+
 					TextView leftText = (TextView) guiView.findViewById(R.id.exposureTimeLeftText);
 					TextView rightText = (TextView) guiView.findViewById(R.id.exposureTimeRightText);
 
-					//TODO: EXPOSURE TIME
+					// TODO: EXPOSURE TIME
 					leftText.setText(EXPOSURE_TIME_NAMES.get(iExposureTimeMinIndex));
 					rightText.setText(EXPOSURE_TIME_NAMES.get(iExposureTimeMaxIndex));
 
 					final LinearLayout seekBarLayout = (LinearLayout) guiView.findViewById(R.id.exposureTimeLayout);
-					seekBarLayout.setVisibility(mMeteringMode == CameraParameters.meteringModeManual? View.VISIBLE : View.GONE);
-					
+					seekBarLayout.setVisibility(mMeteringMode == CameraParameters.meteringModeManual ? View.VISIBLE
+							: View.GONE);
+
 					final TextView expTimeValueText = (TextView) guiView.findViewById(R.id.exposureTimeValueText);
 					expTimeValueText.setText(EXPOSURE_TIME_NAMES.get(initValueIndex));
-					
 					exBar.setOnSeekBarChangeListener(this);
-					
-//					Switch modeSwitcher = (Switch) guiView.findViewById(R.id.exposureTimeModeSwitcher);
-//					modeSwitcher.setChecked(isAutoExposureTime);
-//					modeSwitcher.setOnCheckedChangeListener(new OnCheckedChangeListener()
-//					{
-//						@Override
-//						public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked)
-//						{
-//							preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, isChecked).commit();
-//							seekBarLayout.setVisibility(isChecked? View.GONE : View.VISIBLE);
-//							expTimeValueText.setVisibility(isChecked? View.GONE : View.VISIBLE);
-//							
-//							long expTimeValue = preferences.getLong(MainScreen.sExposureTimePref, MainScreen.lDefaultExposureTimeValue);
-//							
-//							if(!isChecked)
-//							{
-//								disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true);
-//								disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, true, true);
-//								disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, true);
-//								disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, true);
-//								PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_LOCKED);
-//								CameraController.setCameraExposureTime(expTimeValue);
-//							}
-//							else
-//							{
-//								disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, false, true);
-//								disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, false, true);
-//								disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, false, true);
-//								disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, false, true);
-//								PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_UNLOCKED);
-//								CameraController.resetCameraAEMode();
-//							}
-//
-//						}
-//					});
-					
-					
 				}
-				
-				
-			}
-			else
+
+			} else
 				mManualExposureTimeSupported = false;
-			
-			
-			
 
 			if (!activeMeteringNames.isEmpty())
 			{
@@ -2614,24 +2622,33 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					int icon_id = ICONS_METERING.get(initValue);
 					but.setImageResource(icon_id);
 				}
-				
-				if(mMeteringMode == CameraParameters.meteringModeManual)
+
+				if (mMeteringMode == CameraParameters.meteringModeManual)
 				{
-					guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
+					if (guiView.findViewById(R.id.expandManualControls).getVisibility() == View.GONE)
+					{
+						guiView.findViewById(R.id.expandManualControls).setVisibility(View.VISIBLE);
+						guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
+					}
 					guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.VISIBLE);
-					
+
+					manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
+
 					preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, false).commit();
-					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true);
-					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, true, true);
-					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, true);
-					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, true);
-					PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_LOCKED);
+					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, true, true, false);
+					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true, false);
+					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, true, true, false);
+					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, true, false);
+
+					CameraController.resetCameraAEMode();
 					CameraController.setCameraExposureTime(mExposureTime);
+					
+					isManualControlsUsed = true;
 				}
 				else
 				{
 					guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.GONE);
-					
+
 					preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, true).commit();
 					CameraController.resetCameraAEMode();
 				}
@@ -2647,187 +2664,24 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			this.mMeteringAreasSupported = false;
 			this.mMeteringMode = -1;
 		}
-		
 
-		// Create Manual Exposure time button and slider with supported values
-//		if (CameraController.isManualExposureTimeSupported())
-//		{
-//			mManualExposureTimeSupported = true;
-//			
-//			boolean isAutoExposureTime = preferences.getBoolean(MainScreen.sExposureTimeModePref, true);
-//
-//			SeekBar exBar = (SeekBar) guiView.findViewById(R.id.exposureTimeSeekBar);
-//			if (exBar != null)
-//			{
-//				long initValue = preferences.getLong(MainScreen.sExposureTimePref, MainScreen.lDefaultExposureTimeValue);
-//				Long minValue = CameraController.getMinimumExposureTime();
-//				Long maxValue = CameraController.getMaximumExposureTime();
-//				
-//				iExposureTimeMinIndex = getMinExposureTimeIndex(minValue);
-//				iExposureTimeMaxIndex = getMaxExposureTimeIndex(maxValue);
-//				
-//				iExposureTimeIndexRange = iExposureTimeMaxIndex - iExposureTimeMinIndex;
-//				
-//				exBar.setMax(iExposureTimeIndexRange);
-//				
-//				int initValueIndex = 0;
-//				
-//				if(EXPOSURE_TIME_INDEXES.containsKey(initValue))
-//					initValueIndex = EXPOSURE_TIME_INDEXES.get(initValue);
-//				else
-//				{
-//					initValueIndex = iExposureTimeMinIndex;
-//					initValue = EXPOSURE_TIME_VALUES.get(iExposureTimeMinIndex);
-//				}
-//				
-//				exBar.setProgress(initValueIndex - iExposureTimeMinIndex);
-//				
-//				
-//
-//				TextView leftText = (TextView) guiView.findViewById(R.id.exposureTimeLeftText);
-//				TextView rightText = (TextView) guiView.findViewById(R.id.exposureTimeRightText);
-//
-//				//TODO: EXPOSURE TIME
-//				leftText.setText(EXPOSURE_TIME_NAMES.get(iExposureTimeMinIndex));
-//				rightText.setText(EXPOSURE_TIME_NAMES.get(iExposureTimeMaxIndex));
-//
-//				mExposureTime = initValue;
-//				
-//				final LinearLayout seekBarLayout = (LinearLayout) guiView.findViewById(R.id.exposureTimeSeekBarAndButtonsLayout);
-//				seekBarLayout.setVisibility(isAutoExposureTime? View.GONE : View.VISIBLE);
-//				
-//				final TextView expTimeValueText = (TextView) guiView.findViewById(R.id.exposureTimeValueText);
-//				expTimeValueText.setText(EXPOSURE_TIME_NAMES.get(initValueIndex));
-//				expTimeValueText.setVisibility(isAutoExposureTime? View.GONE : View.VISIBLE);
-//				
-//				Switch modeSwitcher = (Switch) guiView.findViewById(R.id.exposureTimeModeSwitcher);
-//				modeSwitcher.setChecked(isAutoExposureTime);
-//				modeSwitcher.setOnCheckedChangeListener(new OnCheckedChangeListener()
-//				{
-//					@Override
-//					public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked)
-//					{
-//						preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, isChecked).commit();
-//						seekBarLayout.setVisibility(isChecked? View.GONE : View.VISIBLE);
-//						expTimeValueText.setVisibility(isChecked? View.GONE : View.VISIBLE);
-//						
-//						long expTimeValue = preferences.getLong(MainScreen.sExposureTimePref, MainScreen.lDefaultExposureTimeValue);
-//						
-//						if(!isChecked)
-//						{
-//							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true);
-//							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, true, true);
-//							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, true);
-//							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, true);
-//							PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_LOCKED);
-//							CameraController.setCameraExposureTime(expTimeValue);
-//						}
-//						else
-//						{
-//							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, false, true);
-//							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, false, true);
-//							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, false, true);
-//							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, false, true);
-//							PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_UNLOCKED);
-//							CameraController.resetCameraAEMode();
-//						}
-//
-//					}
-//				});
-//				
-//				if(!isAutoExposureTime)
-//				{
-//					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true);
-//					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, true, true);
-//					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, true);
-//					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, true);
-//					PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_LOCKED);
-//					CameraController.setCameraExposureTime(mExposureTime);
-//				}
-//
-//				exBar.setOnSeekBarChangeListener(this);
-//			}
-//
-////				RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_EXPOSURE_TIME);
-////				but.setImageResource(isAutoExposureTime? ICON_AUTO_EXPOSURE_TIME : ICON_MANUAL_EXPOSURE_TIME);
-//		} else
-//			mManualExposureTimeSupported = false;
 		
-
-		// Create Manual Focus distance button and slider with supported values
-//		if (CameraController.isManualFocusDistanceSupported())
-//		{
-//			mManualFocusDistanceSupported = true;
-//			
-//			isAutoFocusDistance = preferences.getBoolean(MainScreen.sFocusDistanceModePref, true);
-//			
-//			SeekBar focusBar = (SeekBar) guiView.findViewById(R.id.focusDistanceSeekBar);
-//			if (focusBar != null)
-//			{
-//				float initValue = preferences.getFloat(MainScreen.sFocusDistancePref, CameraController.getMinimumFocusDistance());
-//				focusBar.setMax((int)CameraController.getMinimumFocusDistance()*100);
-//				focusBar.setProgress((int)initValue*100);
-//
-//				TextView leftText = (TextView) guiView.findViewById(R.id.focusDistanceLeftText);
-//				TextView rightText = (TextView) guiView.findViewById(R.id.focusDistanceRightText);
-//				
-//				//TODO: FOCUS DISTANCE
-//				rightText.setText("Nearest");
-//				leftText.setText("Further");
-//				
-//				mFocusDistance = initValue;
-//				
-//				final LinearLayout seekBarLayout = (LinearLayout) guiView.findViewById(R.id.focusDistanceSeekBarAndButtonsLayout);
-//				seekBarLayout.setVisibility(isAutoFocusDistance? View.GONE : View.VISIBLE);
-//				
-//				Switch modeSwitcher = (Switch) guiView.findViewById(R.id.focusDistanceModeSwitcher);
-//				modeSwitcher.setChecked(isAutoFocusDistance);
-//				modeSwitcher.setOnCheckedChangeListener(new OnCheckedChangeListener()
-//				{
-//					@Override
-//					public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked)
-//					{
-//						preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref, isChecked).commit();
-//						seekBarLayout.setVisibility(isChecked? View.GONE : View.VISIBLE);
-//						
-//						float fDistValue = preferences.getFloat(MainScreen.sFocusDistancePref, 0);
-//						
-//						if(!isChecked)
-//						{
-//							isAutoFocusDistance = false;
-//							mOriginalFocusMode = preferences.getInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-//									: MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
-//							CameraController.setCameraFocusDistance(fDistValue);
-//							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, true);
-//							PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_LOCKED);
-//						}
-//						else
-//						{
-//							CameraController.resetCameraFocusDistance();
-//							setFocusMode(mOriginalFocusMode);
-//							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, false, true);
-//							isAutoFocusDistance = true;
-//							PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_UNLOCKED);
-//						}
-//
-//					}
-//				});
-//				
-//				if(!isAutoFocusDistance)
-//				{
-//					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, true, true);
-//					CameraController.setCameraFocusDistance(mFocusDistance);
-//					PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_LOCKED);
-//				}
-//
-//				focusBar.setOnSeekBarChangeListener(this);
-//			}
-//
-//				RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_FOCUS_DISTANCE);
-//				but.setImageResource(ICON_FOCUS_DISTANCE);
-//		} else
-//			mManualFocusDistanceSupported = false;
+		// Set Self-timer
+		boolean showSelfTimer = preferences.getBoolean(MainScreen.sShowDelayedCapturePref, false);
+		RotateImageView buttonSelfTimer = (RotateImageView) topMenuButtons.get(MODE_SELF_TIMER);
+		if (showSelfTimer) {
+			buttonSelfTimer.setImageResource(ICON_QC_SELF_TIMER_ACTIVE);
+		} else {
+			buttonSelfTimer.setImageResource(ICON_QC_SELF_TIMER_INACTIVE);
+		}
+		// Set Self-timer end
 		
+		if(!isManualControlsUsed)
+		{
+			manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
+			guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
+			guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
+		}
 		
 		
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD)
@@ -2898,41 +2752,39 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		}
 
 	}
-	
-	
+
 	protected int getMinExposureTimeIndex(long expTime)
 	{
 		Long minKey = 0l;
-		for(Long key : EXPOSURE_TIME_INDEXES.keySet())
+		for (Long key : EXPOSURE_TIME_INDEXES.keySet())
 		{
-			if(key > expTime)
+			if (key > expTime)
 			{
 				minKey = key;
 				break;
 			}
 		}
-		
-		if(EXPOSURE_TIME_INDEXES.containsKey(minKey))
+
+		if (EXPOSURE_TIME_INDEXES.containsKey(minKey))
 			return EXPOSURE_TIME_INDEXES.get(minKey);
-		
+
 		return 0;
 	}
-	
-	
+
 	protected int getMaxExposureTimeIndex(long expTime)
 	{
 		Long maxKey = 0l;
-		for(Long key : EXPOSURE_TIME_INDEXES.keySet())
+		for (Long key : EXPOSURE_TIME_INDEXES.keySet())
 		{
-			if(key < expTime)
+			if (key < expTime)
 				maxKey = key;
 			else
 				break;
 		}
-		
-		if(EXPOSURE_TIME_INDEXES.containsKey(maxKey))
+
+		if (EXPOSURE_TIME_INDEXES.containsKey(maxKey))
 			return EXPOSURE_TIME_INDEXES.get(maxKey);
-		
+
 		return EXPOSURE_TIME_INDEXES.keySet().size() - 1;
 	}
 
@@ -2960,7 +2812,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				if (isSecondaryMenusVisible())
 					hideSecondaryMenus();
 
-//				guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
+				// guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
 				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_LOCKED);
 			}
 
@@ -2968,7 +2820,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			{
 				settingsControlsVisible = false;
 
-//				guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
+				// guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 				PluginManager.getInstance()
 						.sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
 				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
@@ -2983,7 +2835,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			guiView.findViewById(R.id.modeLayout).bringToFront();
 		}
 		((Panel) guiView.findViewById(R.id.topPanel)).setOnPanelListener(pListener);
-		
+
 		// Create Exposure compensation button and slider with supported values
 		if (mEVSupported)
 		{
@@ -3026,10 +2878,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				return mISOSupported;
 			case MODE_MET:
 				return mMeteringAreasSupported;
-//			case MODE_EXPOSURE_TIME:
-//				return mManualExposureTimeSupported;
-//			case MODE_FOCUS_DISTANCE:
-//				return mManualFocusDistanceSupported;
+				// case MODE_EXPOSURE_TIME:
+				// return mManualExposureTimeSupported;
+				// case MODE_FOCUS_DISTANCE:
+				// return mManualFocusDistanceSupported;
+			case MODE_SELF_TIMER:
+				return true;
 			case MODE_CAM:
 				return mCameraChangeSupported;
 			default:
@@ -3042,7 +2896,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	// bInitMenu - by default should be true. if called several simultaneously -
 	// all should be false and last - true
-	public void disableCameraParameter(CameraParameter iParam, boolean bDisable, boolean bInitMenu)
+	public void disableCameraParameter(CameraParameter iParam, boolean bDisable, boolean bInitMenu, boolean bModeInit)
 	{
 		View topMenuView = null;
 		switch (iParam)
@@ -3050,42 +2904,42 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		case CAMERA_PARAMETER_EV:
 			topMenuView = topMenuButtons.get(MODE_EV);
 			isEVEnabled = !bDisable;
+			isEVInitEnabled = bModeInit? isEVEnabled : isEVInitEnabled;
 			break;
 		case CAMERA_PARAMETER_SCENE:
 			topMenuView = topMenuButtons.get(MODE_SCENE);
 			isSceneEnabled = !bDisable;
+			isSceneInitEnabled = bModeInit? isSceneEnabled : isSceneInitEnabled;
 			break;
 		case CAMERA_PARAMETER_WB:
 			topMenuView = topMenuButtons.get(MODE_WB);
 			isWBEnabled = !bDisable;
+			isWBInitEnabled = bModeInit? isWBEnabled : isWBInitEnabled;
 			break;
 		case CAMERA_PARAMETER_FOCUS:
 			topMenuView = topMenuButtons.get(MODE_FOCUS);
 			isFocusEnabled = !bDisable;
+			isFocusInitEnabled = bModeInit? isFocusEnabled : isFocusInitEnabled;
 			break;
 		case CAMERA_PARAMETER_FLASH:
 			topMenuView = topMenuButtons.get(MODE_FLASH);
 			isFlashEnabled = !bDisable;
+			isFlashInitEnabled = bModeInit? isFlashEnabled : isFlashInitEnabled;
 			break;
 		case CAMERA_PARAMETER_ISO:
 			topMenuView = topMenuButtons.get(MODE_ISO);
 			isIsoEnabled = !bDisable;
+			isIsoInitEnabled = bModeInit? isIsoEnabled : isIsoInitEnabled;
 			break;
 		case CAMERA_PARAMETER_METERING:
 			topMenuView = topMenuButtons.get(MODE_MET);
 			isMeteringEnabled = !bDisable;
+			isMeteringInitEnabled = bModeInit? isMeteringEnabled : isMeteringInitEnabled;
 			break;
-//		case CAMERA_PARAMETER_EXPTIME:
-//			topMenuView = topMenuButtons.get(MODE_EXPOSURE_TIME);
-//			isExposureTimeEnabled = !bDisable;
-//			break;
-//		case CAMERA_PARAMETER_FDISTANCE:
-//			topMenuView = topMenuButtons.get(MODE_FOCUS_DISTANCE);
-//			isFocusDistanceEnabled = !bDisable;
-//			break;
 		case CAMERA_PARAMETER_CAMERACHANGE:
 			topMenuView = topMenuButtons.get(MODE_CAM);
 			isCameraChangeEnabled = !bDisable;
+			isCameraChangeInitEnabled = bModeInit? isCameraChangeEnabled : isCameraChangeInitEnabled;
 			break;
 		default:
 			break;
@@ -3373,16 +3227,26 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			icon_text = MainScreen.getAppResources().getString(R.string.settings_mode_exposure);
 			isEnabled = isEVEnabled;
 			break;
-//		case EXTIME:
-//			icon_id = preferences.getBoolean(MainScreen.sExposureTimeModePref, true)? ICON_AUTO_EXPOSURE_TIME : ICON_MANUAL_EXPOSURE_TIME;
-//			icon_text = MainScreen.getAppResources().getString(R.string.settings_mode_exposuretime);
-//			isEnabled = isExposureTimeEnabled;
-//			break;
-//		case FDIST:
-//			icon_id = ICON_FOCUS_DISTANCE;
-//			icon_text = MainScreen.getAppResources().getString(R.string.settings_mode_focusdistance);
-//			isEnabled = isFocusDistanceEnabled;
-//			break;
+		// case EXTIME:
+		// icon_id = preferences.getBoolean(MainScreen.sExposureTimeModePref,
+		// true)? ICON_AUTO_EXPOSURE_TIME : ICON_MANUAL_EXPOSURE_TIME;
+		// icon_text =
+		// MainScreen.getAppResources().getString(R.string.settings_mode_exposuretime);
+		// isEnabled = isExposureTimeEnabled;
+		// break;
+		// case FDIST:
+		// icon_id = ICON_FOCUS_DISTANCE;
+		// icon_text =
+		// MainScreen.getAppResources().getString(R.string.settings_mode_focusdistance);
+		// isEnabled = isFocusDistanceEnabled;
+		// break;
+		case SELF_TIMER:
+			if (preferences.getBoolean(MainScreen.sShowDelayedCapturePref, false))
+				icon_id = ICON_QC_SELF_TIMER_ACTIVE;
+			else
+				icon_id = ICON_QC_SELF_TIMER_INACTIVE;
+			icon_text = MainScreen.getAppResources().getString(R.string.settings_mode_self_timer);
+			break;
 		case MORE:
 			icon_id = ICON_SETTINGS;
 			icon_text = MainScreen.getAppResources().getString(R.string.settings_mode_moresettings);
@@ -3457,18 +3321,24 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			else
 				createSettingEVOnClick(settingView);
 			break;
-//		case EXTIME:
-//			if (isQuickControl)
-//				createQuickControlExTimeOnClick(settingView);
-//			else
-//				createSettingExTimeOnClick(settingView);
-//			break;
-//		case FDIST:
-//			if (isQuickControl)
-//				createQuickControlFDistOnClick(settingView);
-//			else
-//				createSettingFDistOnClick(settingView);
-//			break;			
+		// case EXTIME:
+		// if (isQuickControl)
+		// createQuickControlExTimeOnClick(settingView);
+		// else
+		// createSettingExTimeOnClick(settingView);
+		// break;
+		// case FDIST:
+		// if (isQuickControl)
+		// createQuickControlFDistOnClick(settingView);
+		// else
+		// createSettingFDistOnClick(settingView);
+		// break;
+		case SELF_TIMER:
+			if (isQuickControl)
+				createQuickControlSelfTimerOnClick(settingView);
+			else
+				createSettingSelfTimerOnClick(settingView);
+			break;
 		case MORE:
 			if (isQuickControl)
 				return;
@@ -3562,14 +3432,17 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				if (mCameraChangeSupported)
 					addQuickSetting(SettingsType.CAMERA, true);
 				break;
-//			case R.id.exposureTimeButton:
-//				if (mEVSupported)
-//					addQuickSetting(SettingsType.EXTIME, true);
-//				break;
-//			case R.id.focusDistanceButton:
-//				if (mEVSupported)
-//					addQuickSetting(SettingsType.FDIST, true);
-//				break;
+			case R.id.selfTimerButton:
+				addQuickSetting(SettingsType.SELF_TIMER, true);
+				break;
+			// case R.id.exposureTimeButton:
+			// if (mEVSupported)
+			// addQuickSetting(SettingsType.EXTIME, true);
+			// break;
+			// case R.id.focusDistanceButton:
+			// if (mEVSupported)
+			// addQuickSetting(SettingsType.FDIST, true);
+			// break;
 			default:
 				break;
 			}
@@ -3672,31 +3545,34 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		});
 	}
-	
-//	private void createQuickControlExTimeOnClick(View ev)
-//	{
-//		ev.setOnClickListener(new OnClickListener()
-//		{
-//			public void onClick(View v)
-//			{
-//				quickControlOnClick(MODE_EXPOSURE_TIME, MainScreen.getMainContext().getResources().
-//						getDrawable(preferences.getBoolean(MainScreen.sExposureTimeModePref, true)? ICON_AUTO_EXPOSURE_TIME : ICON_MANUAL_EXPOSURE_TIME));
-//			}
-//
-//		});
-//	}
-	
-//	private void createQuickControlFDistOnClick(View ev)
-//	{
-//		ev.setOnClickListener(new OnClickListener()
-//		{
-//			public void onClick(View v)
-//			{
-//				quickControlOnClick(MODE_FOCUS_DISTANCE, MainScreen.getMainContext().getResources().getDrawable(ICON_FOCUS_DISTANCE));
-//			}
-//
-//		});
-//	}
+
+	// private void createQuickControlExTimeOnClick(View ev)
+	// {
+	// ev.setOnClickListener(new OnClickListener()
+	// {
+	// public void onClick(View v)
+	// {
+	// quickControlOnClick(MODE_EXPOSURE_TIME,
+	// MainScreen.getMainContext().getResources().
+	// getDrawable(preferences.getBoolean(MainScreen.sExposureTimeModePref,
+	// true)? ICON_AUTO_EXPOSURE_TIME : ICON_MANUAL_EXPOSURE_TIME));
+	// }
+	//
+	// });
+	// }
+
+	// private void createQuickControlFDistOnClick(View ev)
+	// {
+	// ev.setOnClickListener(new OnClickListener()
+	// {
+	// public void onClick(View v)
+	// {
+	// quickControlOnClick(MODE_FOCUS_DISTANCE,
+	// MainScreen.getMainContext().getResources().getDrawable(ICON_FOCUS_DISTANCE));
+	// }
+	//
+	// });
+	// }
 
 	private void createQuickControlSceneOnClick(View scene)
 	{
@@ -3704,7 +3580,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			public void onClick(View v)
 			{
-				quickControlOnClick(MODE_SCENE, MainScreen.getMainContext().getResources().getDrawable(ICONS_SCENE.get(mSceneMode)));
+				quickControlOnClick(MODE_SCENE,
+						MainScreen.getMainContext().getResources().getDrawable(ICONS_SCENE.get(mSceneMode)));
 			}
 		});
 	}
@@ -3728,7 +3605,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			{
 				try
 				{
-					quickControlOnClick(MODE_FOCUS, MainScreen.getMainContext().getResources().getDrawable(ICONS_FOCUS.get(mFocusMode)));
+					quickControlOnClick(MODE_FOCUS,
+							MainScreen.getMainContext().getResources().getDrawable(ICONS_FOCUS.get(mFocusMode)));
 				} catch (Exception e)
 				{
 					e.printStackTrace();
@@ -3744,7 +3622,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			public void onClick(View v)
 			{
-				quickControlOnClick(MODE_FLASH, MainScreen.getMainContext().getResources().getDrawable(ICONS_FLASH.get(mFlashMode)));
+				quickControlOnClick(MODE_FLASH,
+						MainScreen.getMainContext().getResources().getDrawable(ICONS_FLASH.get(mFlashMode)));
 			}
 
 		});
@@ -3756,7 +3635,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			public void onClick(View v)
 			{
-				quickControlOnClick(MODE_ISO, MainScreen.getMainContext().getResources().getDrawable(ICONS_ISO.get(mISO)));
+				quickControlOnClick(MODE_ISO,
+						MainScreen.getMainContext().getResources().getDrawable(ICONS_ISO.get(mISO)));
 			}
 
 		});
@@ -3768,8 +3648,27 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			public void onClick(View v)
 			{
-				quickControlOnClick(MODE_MET, MainScreen.getMainContext().getResources()
-						.getDrawable(ICONS_METERING.get(mMeteringMode)));
+				quickControlOnClick(MODE_MET,
+						MainScreen.getMainContext().getResources().getDrawable(ICONS_METERING.get(mMeteringMode)));
+			}
+
+		});
+	}
+
+	private void createQuickControlSelfTimerOnClick(View cameraChange)
+	{
+		cameraChange.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				int icon_id = ICON_SELF_TIMER_ACTIVE;
+				boolean show = preferences.getBoolean(MainScreen.sShowDelayedCapturePref, false);
+				if (!show)
+				{
+					icon_id = ICON_SELF_TIMER_INACTIVE;
+				}
+
+				quickControlOnClick(MODE_SELF_TIMER, MainScreen.getMainContext().getResources().getDrawable(icon_id));
 			}
 
 		});
@@ -3786,13 +3685,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		});
 	}
-	
+
 	private void quickControlOnClick(int qc, Drawable icon)
 	{
 		RotateImageView view = (RotateImageView) topMenuButtons.get(qc);
 
 		view.setImageDrawable(icon);
-		
+
 		switchViews(currentQuickView, view, String.valueOf(qc));
 		recreateQuickControlsMenu();
 		changeCurrentQuickControl(view);
@@ -3863,15 +3762,17 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		correctTopMenuButtonBackground(MainScreen.getInstance().findViewById(MODE_FLASH), isFlashEnabled);
 		correctTopMenuButtonBackground(MainScreen.getInstance().findViewById(MODE_ISO), isIsoEnabled);
 		correctTopMenuButtonBackground(MainScreen.getInstance().findViewById(MODE_MET), isMeteringEnabled);
-//		correctTopMenuButtonBackground(MainScreen.getInstance().findViewById(MODE_EXPOSURE_TIME), isExposureTimeEnabled);
-//		correctTopMenuButtonBackground(MainScreen.getInstance().findViewById(MODE_FOCUS_DISTANCE), isFocusDistanceEnabled);
+		// correctTopMenuButtonBackground(MainScreen.getInstance().findViewById(MODE_EXPOSURE_TIME),
+		// isExposureTimeEnabled);
+		// correctTopMenuButtonBackground(MainScreen.getInstance().findViewById(MODE_FOCUS_DISTANCE),
+		// isFocusDistanceEnabled);
 		correctTopMenuButtonBackground(MainScreen.getInstance().findViewById(MODE_CAM), isCameraChangeEnabled);
 
 		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
 
 		guiView.findViewById(R.id.topPanel).setVisibility(View.VISIBLE);
-		
-		guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
+
+//		guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 	}
 
 	/***************************************************************************************
@@ -3894,18 +3795,17 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			Handler h = new Handler();
 			h.postDelayed(new Runnable()
 			{
-	
+
 				@Override
 				public void run()
 				{
 					initSettingsMenuBody();
 				}
 			}, 2000);
-		}
-		else
+		} else
 			initSettingsMenuBody();
 	}
-	
+
 	private void initSettingsMenuBody()
 	{
 		// Clear view list to recreate all settings buttons
@@ -3955,17 +3855,20 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				if (mMeteringAreasSupported)
 					addQuickSetting(SettingsType.METERING, false);
 				break;
-//			case R.id.exposureTimeButton:
-//				if (mManualExposureTimeSupported)
-//					addQuickSetting(SettingsType.EXTIME, false);
-//				break;
-//			case R.id.focusDistanceButton:
-//				if (mManualFocusDistanceSupported)
-//					addQuickSetting(SettingsType.FDIST, false);
-//				break;
+			// case R.id.exposureTimeButton:
+			// if (mManualExposureTimeSupported)
+			// addQuickSetting(SettingsType.EXTIME, false);
+			// break;
+			// case R.id.focusDistanceButton:
+			// if (mManualFocusDistanceSupported)
+			// addQuickSetting(SettingsType.FDIST, false);
+			// break;
 			case R.id.camerachangeButton:
 				if (mCameraChangeSupported)
 					addQuickSetting(SettingsType.CAMERA, false);
+				break;
+			case R.id.selfTimerButton:
+				addQuickSetting(SettingsType.SELF_TIMER, false);
 				break;
 			default:
 				break;
@@ -4218,64 +4121,104 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			}
 		});
 	}
-	
-//	private void createSettingExTimeOnClick(View settingView)
-//	{
-//		settingView.setOnClickListener(new OnClickListener()
-//		{
-//			public void onClick(View v)
-//			{
-//				if (!isExposureTimeEnabled)
-//				{
-//					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
-//							MainScreen.getAppResources().getString(R.string.settings_not_available), true, false);
-//					return;
-//				}
-//				
-//				if(CameraController.isManualExposureTimeSupported())
-//				{
-//					if (iScreenType == 0)
-//						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
-//	
-//					if (guiView.findViewById(R.id.evLayout).getVisibility() != View.VISIBLE)
-//					{
-//						hideSecondaryMenus();
-//						showParams(MODE_EXPOSURE_TIME);
-//					} else
-//						hideSecondaryMenus();
-//				}
-//			}
-//		});
-//	}
-//	
-//	private void createSettingFDistOnClick(View settingView)
-//	{
-//		settingView.setOnClickListener(new OnClickListener()
-//		{
-//			public void onClick(View v)
-//			{
-//				if (!isFocusDistanceEnabled)
-//				{
-//					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
-//							MainScreen.getAppResources().getString(R.string.settings_not_available), true, false);
-//					return;
-//				}
-//				
-//				if(CameraController.isManualFocusDistanceSupported())
-//				{
-//					if (iScreenType == 0)
-//						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
-//	
-//					if (guiView.findViewById(R.id.evLayout).getVisibility() != View.VISIBLE)
-//					{
-//						hideSecondaryMenus();
-//						showParams(MODE_FOCUS_DISTANCE);
-//					} else
-//						hideSecondaryMenus();
-//				}
-//			}
-//		});
-//	}
+
+	// private void createSettingExTimeOnClick(View settingView)
+	// {
+	// settingView.setOnClickListener(new OnClickListener()
+	// {
+	// public void onClick(View v)
+	// {
+	// if (!isExposureTimeEnabled)
+	// {
+	// showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
+	// MainScreen.getAppResources().getString(R.string.settings_not_available),
+	// true, false);
+	// return;
+	// }
+	//
+	// if(CameraController.isManualExposureTimeSupported())
+	// {
+	// if (iScreenType == 0)
+	// ((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
+	//
+	// if (guiView.findViewById(R.id.evLayout).getVisibility() != View.VISIBLE)
+	// {
+	// hideSecondaryMenus();
+	// showParams(MODE_EXPOSURE_TIME);
+	// } else
+	// hideSecondaryMenus();
+	// }
+	// }
+	// });
+	// }
+	//
+	// private void createSettingFDistOnClick(View settingView)
+	// {
+	// settingView.setOnClickListener(new OnClickListener()
+	// {
+	// public void onClick(View v)
+	// {
+	// if (!isFocusDistanceEnabled)
+	// {
+	// showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
+	// MainScreen.getAppResources().getString(R.string.settings_not_available),
+	// true, false);
+	// return;
+	// }
+	//
+	// if(CameraController.isManualFocusDistanceSupported())
+	// {
+	// if (iScreenType == 0)
+	// ((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
+	//
+	// if (guiView.findViewById(R.id.evLayout).getVisibility() != View.VISIBLE)
+	// {
+	// hideSecondaryMenus();
+	// showParams(MODE_FOCUS_DISTANCE);
+	// } else
+	// hideSecondaryMenus();
+	// }
+	// }
+	// });
+	// }
+
+	private void createSettingSelfTimerOnClick(View settingView)
+	{
+		settingView.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				boolean show = preferences.getBoolean(MainScreen.sShowDelayedCapturePref, false);
+				if (show)
+				{
+					preferences.edit().putBoolean(MainScreen.sShowDelayedCapturePref, false).commit();
+				} else
+				{
+					preferences.edit().putBoolean(MainScreen.sShowDelayedCapturePref, true).commit();
+				}
+
+				RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_SELF_TIMER);
+				int icon_id = ICON_QC_SELF_TIMER_ACTIVE;
+				if (show)
+				{
+					icon_id = ICON_QC_SELF_TIMER_INACTIVE;
+				}
+				but.setImageResource(icon_id);
+
+				initSettingsMenu(false);
+				hideSecondaryMenus();
+				unselectPrimaryTopMenuButtons(-1);
+
+				boolean showDelayedCapturePrefCommon = preferences
+						.getBoolean(MainScreen.sShowDelayedCapturePref, false);
+				if (selfTimer == null)
+				{
+					selfTimer = new SelfTimerAndPhotoTimeLapse();
+				}
+				selfTimer.addSelfTimerControl(showDelayedCapturePrefCommon);
+			}
+		});
+	}
 
 	private void createSettingMoreOnClick(View settingView)
 	{
@@ -4287,10 +4230,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			}
 		});
 	}
-	
-	private void openMoreSettings() {
+
+	private void openMoreSettings()
+	{
 		MainScreen.getInstance().getCameraParametersBundle();
-				
+
 		PluginManager.getInstance().onShowPreferences();
 		Intent settingsActivity = new Intent(MainScreen.getMainContext(), Preferences.class);
 		MainScreen.getInstance().startActivity(settingsActivity);
@@ -4825,9 +4769,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			initQuickControlsMenu(v);
 			showQuickControlsSettings();
 			guiView.findViewById(R.id.topPanel).setVisibility(View.GONE);
-			
-//			RelativeLayout manualControlsLayout = (RelativeLayout) guiView.findViewById(R.id.manualControlsLayout);
-//			manualControlsLayout.setVisibility(View.GONE);
+
+			// RelativeLayout manualControlsLayout = (RelativeLayout)
+			// guiView.findViewById(R.id.manualControlsLayout);
+			// manualControlsLayout.setVisibility(View.GONE);
 		}
 		return true;
 	}
@@ -4873,7 +4818,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	{
 		if (!MainScreen.isApplicationStarted())
 			return;
-		
+
 		// hide hint screen
 		if (guiView.findViewById(R.id.hintLayout).getVisibility() == View.VISIBLE)
 			guiView.findViewById(R.id.hintLayout).setVisibility(View.INVISIBLE);
@@ -5145,60 +5090,99 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				}
 			}
 			break;
-//		case R.id.exposureTimeButton:
-//			{
-//				if (changeQuickControlIfVisible(button))
-//					break;
-//	
-//				if (!isExposureTimeEnabled)
-//				{
-//					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
-//							MainScreen.getAppResources().getString(R.string.settings_not_available), true, false);
-//					break;
-//				}
-//	
-//				LinearLayout layout = (LinearLayout) guiView.findViewById(R.id.exposureTimeLayout);
-//				if (layout.getVisibility() == View.GONE)
-//				{
-//					unselectPrimaryTopMenuButtons(MODE_EXPOSURE_TIME);
-//					hideSecondaryMenus();
-//					showParams(MODE_EXPOSURE_TIME);
-//					quickControlsVisible = true;
-//				} else
-//				{
-//					quickControlsVisible = false;
-//					unselectPrimaryTopMenuButtons(-1);
-//					hideSecondaryMenus();
-//				}
-//			}
-//			break;
-//		case R.id.focusDistanceButton:
-//			{
-//				if (changeQuickControlIfVisible(button))
-//					break;
-//	
-//				if (!isFocusDistanceEnabled)
-//				{
-//					showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
-//							MainScreen.getAppResources().getString(R.string.settings_not_available), true, false);
-//					break;
-//				}
-//	
-//				LinearLayout layout = (LinearLayout) guiView.findViewById(R.id.focusDistanceLayout);
-//				if (layout.getVisibility() == View.GONE)
-//				{
-//					unselectPrimaryTopMenuButtons(MODE_FOCUS_DISTANCE);
-//					hideSecondaryMenus();
-//					showParams(MODE_FOCUS_DISTANCE);
-//					quickControlsVisible = true;
-//				} else
-//				{
-//					quickControlsVisible = false;
-//					unselectPrimaryTopMenuButtons(-1);
-//					hideSecondaryMenus();
-//				}
-//			}
-//			break;			
+		case R.id.selfTimerButton:
+			{
+				if (changeQuickControlIfVisible(button))
+					break;
+
+				boolean show = preferences.getBoolean(MainScreen.sShowDelayedCapturePref, false);
+				if (show)
+				{
+					preferences.edit().putBoolean(MainScreen.sShowDelayedCapturePref, false).commit();
+				} else
+				{
+					preferences.edit().putBoolean(MainScreen.sShowDelayedCapturePref, true).commit();
+				}
+
+				RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_SELF_TIMER);
+				int icon_id = ICON_QC_SELF_TIMER_ACTIVE;
+				if (show)
+				{
+					icon_id = ICON_QC_SELF_TIMER_INACTIVE;
+				}
+				but.setImageResource(icon_id);
+
+				initSettingsMenu(false);
+				hideSecondaryMenus();
+				unselectPrimaryTopMenuButtons(-1);
+
+				boolean showDelayedCapturePrefCommon = preferences
+						.getBoolean(MainScreen.sShowDelayedCapturePref, false);
+				if (selfTimer == null)
+				{
+					selfTimer = new SelfTimerAndPhotoTimeLapse();
+				}
+				selfTimer.addSelfTimerControl(showDelayedCapturePrefCommon);
+			}
+			break;
+		// case R.id.exposureTimeButton:
+		// {
+		// if (changeQuickControlIfVisible(button))
+		// break;
+		//
+		// if (!isExposureTimeEnabled)
+		// {
+		// showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
+		// MainScreen.getAppResources().getString(R.string.settings_not_available),
+		// true, false);
+		// break;
+		// }
+		//
+		// LinearLayout layout = (LinearLayout)
+		// guiView.findViewById(R.id.exposureTimeLayout);
+		// if (layout.getVisibility() == View.GONE)
+		// {
+		// unselectPrimaryTopMenuButtons(MODE_EXPOSURE_TIME);
+		// hideSecondaryMenus();
+		// showParams(MODE_EXPOSURE_TIME);
+		// quickControlsVisible = true;
+		// } else
+		// {
+		// quickControlsVisible = false;
+		// unselectPrimaryTopMenuButtons(-1);
+		// hideSecondaryMenus();
+		// }
+		// }
+		// break;
+		// case R.id.focusDistanceButton:
+		// {
+		// if (changeQuickControlIfVisible(button))
+		// break;
+		//
+		// if (!isFocusDistanceEnabled)
+		// {
+		// showToast(null, Toast.LENGTH_SHORT, Gravity.CENTER,
+		// MainScreen.getAppResources().getString(R.string.settings_not_available),
+		// true, false);
+		// break;
+		// }
+		//
+		// LinearLayout layout = (LinearLayout)
+		// guiView.findViewById(R.id.focusDistanceLayout);
+		// if (layout.getVisibility() == View.GONE)
+		// {
+		// unselectPrimaryTopMenuButtons(MODE_FOCUS_DISTANCE);
+		// hideSecondaryMenus();
+		// showParams(MODE_FOCUS_DISTANCE);
+		// quickControlsVisible = true;
+		// } else
+		// {
+		// quickControlsVisible = false;
+		// unselectPrimaryTopMenuButtons(-1);
+		// hideSecondaryMenus();
+		// }
+		// }
+		// break;
 		case R.id.camerachangeButton:
 			{
 				if (changeQuickControlIfVisible(button))
@@ -5438,14 +5422,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref, true).commit();
 		final LinearLayout seekBarLayout = (LinearLayout) guiView.findViewById(R.id.focusDistanceLayout);
 		seekBarLayout.setVisibility(View.GONE);
-		CameraController.resetCameraFocusDistance();
-		if(guiView.findViewById(R.id.exposureTimeLayout).getVisibility() == View.GONE)
+		// CameraController.resetCameraFocusDistance();
+		if (guiView.findViewById(R.id.exposureTimeLayout).getVisibility() == View.GONE)
 		{
 			guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
 			guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
 			manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 		}
-		
+
 		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_UNLOCKED);
 		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_CHANGED);
 
@@ -5510,23 +5494,26 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private void setMeteringMode(int newMode)
 	{
 		guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.GONE);
-		if(guiView.findViewById(R.id.focusDistanceLayout).getVisibility() == View.GONE)
+		if (guiView.findViewById(R.id.focusDistanceLayout).getVisibility() == View.GONE)
 		{
 			guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
 			guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
 			manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 		}
-		
+
 		preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, true).commit();
-		
-		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, false, true);
-		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, false, true);
-		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, false, true);
-//		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS, false, true);
-		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, false, true);
+
+		if(isEVInitEnabled)
+			disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, false, true, false);
+		if(isIsoInitEnabled)
+			disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, false, true, false);
+		if(isWBInitEnabled)
+			disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, false, true, false);
+		if(isFlashInitEnabled)
+			disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, false, true, false);
 		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_UNLOCKED);
 		CameraController.resetCameraAEMode();
-		
+
 		if (newMode != -1 && mMeteringMode != newMode)
 		{
 			mMeteringMode = newMode;
@@ -5539,7 +5526,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_MET);
 		int icon_id = ICONS_METERING.get(mMeteringMode);
 		but.setImageResource(icon_id);
-		
+
 		initSettingsMenu(false);
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
@@ -5669,7 +5656,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		guiView.findViewById(R.id.modeLayout).setVisibility(View.GONE);
 		guiView.findViewById(R.id.vfLayout).setVisibility(View.GONE);
-		
+
 		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
 	}
 
@@ -5689,9 +5676,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	// Decide what layout to show when some main's parameters button is clicked
 	private void showParams(int iButton)
 	{
-//		RelativeLayout manualControlsLayout = (RelativeLayout) guiView.findViewById(R.id.manualControlsLayout);
-//		manualControlsLayout.setVisibility(View.GONE);
-		
+		// RelativeLayout manualControlsLayout = (RelativeLayout)
+		// guiView.findViewById(R.id.manualControlsLayout);
+		// manualControlsLayout.setVisibility(View.GONE);
+
 		DisplayMetrics metrics = new DisplayMetrics();
 		MainScreen.getInstance().getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		int width = metrics.widthPixels;
@@ -5951,13 +5939,15 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	// controls if info about new mode shown or not. to prevent from double info
 	private void initModeList()
 	{
-		boolean initModeList = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getBoolean(MainScreen.sInitModeListPref, false);
+		boolean initModeList = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getBoolean(
+				MainScreen.sInitModeListPref, false);
 		if (activeMode != null && !initModeList)
 		{
 			return;
 		}
-		
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit().putBoolean(MainScreen.sInitModeListPref, false).commit();
+
+		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
+				.putBoolean(MainScreen.sInitModeListPref, false).commit();
 
 		modeViews.clear();
 		buttonModeViewAssoc.clear();
@@ -6696,7 +6686,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	{
 		// Handle MultiTouch event.
 		// Actually we need this only for FocusVFPlugin.
-		if (event.getPointerCount() > 1) {
+		if (event.getPointerCount() > 1)
+		{
 			multiTouch = true;
 			PluginManager.getInstance().onTouch(view, event);
 			return true;
@@ -6706,14 +6697,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			PluginManager.getInstance().onTouch(view, event);
 			multiTouch = false;
 		}
-		
+
 		// We can't move on while staying in MultiTouch mode.
 		if (multiTouch)
 		{
 			return true;
 		}
-		//-- Handle MultiTouch event.
-		
+		// -- Handle MultiTouch event.
+
 		// hide hint screen
 		if (guiView.findViewById(R.id.hintLayout).getVisibility() == View.VISIBLE)
 		{
@@ -6738,7 +6729,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		if (view == MainScreen.getPreviewSurfaceView()
 				|| view == (View) MainScreen.getInstance().findViewById(R.id.mainLayout1))
 		{
-//			guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
+			// guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
 			((Panel) guiView.findViewById(R.id.topPanel)).touchListener.onTouch(view, event);
 		}
 
@@ -7006,39 +6997,38 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
 	{
-		if(seekBar == (SeekBar) guiView.findViewById(R.id.evSeekBar))
+		if (seekBar == (SeekBar) guiView.findViewById(R.id.evSeekBar))
 		{
 			int iEv = progress - CameraController.getMaxExposureCompensation();
 			CameraController.setCameraExposureCompensation(iEv);
 			preferences.edit().putInt(MainScreen.sEvPref, iEv).commit();
 			mEV = iEv;
-			
+
 			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_EV_CHANGED);
-		}
-		else if(seekBar == (SeekBar) guiView.findViewById(R.id.exposureTimeSeekBar))
+		} else if (seekBar == (SeekBar) guiView.findViewById(R.id.exposureTimeSeekBar))
 		{
-			if(mMeteringMode == CameraParameters.meteringModeManual)
+			if (mMeteringMode == CameraParameters.meteringModeManual)
 			{
+				Log.e("MainScreen", "onProgress");
 				int expIndex = progress + iExposureTimeMinIndex;
 				Long iTime = EXPOSURE_TIME_VALUES.get(expIndex);
 				CameraController.setCameraExposureTime(iTime);
 				preferences.edit().putLong(MainScreen.sExposureTimePref, iTime).commit();
 				mExposureTime = iTime;
-				
+
 				final TextView expTimeValueText = (TextView) guiView.findViewById(R.id.exposureTimeValueText);
 				expTimeValueText.setText(EXPOSURE_TIME_NAMES.get(expIndex));
-				
+
 				manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 				manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
 			}
-		}
-		else if(seekBar == (SeekBar) guiView.findViewById(R.id.focusDistanceSeekBar))
+		} else if (seekBar == (SeekBar) guiView.findViewById(R.id.focusDistanceSeekBar))
 		{
 			int iDistance = progress;
-			CameraController.setCameraFocusDistance(iDistance/100);
-			preferences.edit().putFloat(MainScreen.sFocusDistancePref, (float)iDistance/100).commit();
-			mFocusDistance = iDistance/100;
-			
+			CameraController.setCameraFocusDistance(iDistance / 100);
+			preferences.edit().putFloat(MainScreen.sFocusDistancePref, (float) iDistance / 100).commit();
+			mFocusDistance = iDistance / 100;
+
 			manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 			manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
 		}
@@ -7055,22 +7045,23 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	private void expoMinus()
 	{
-		if (!isEVEnabled) {
+		if (!isEVEnabled)
+		{
 			return;
 		}
-		
+
 		SeekBar evBar = (SeekBar) guiView.findViewById(R.id.evSeekBar);
 		if (evBar != null)
 		{
 			int minValue = CameraController.getMinExposureCompensation();
-			
+
 			int step = 1;
-			
+
 			int currProgress = evBar.getProgress();
 			int iEv = currProgress - step;
 			if (iEv < 0)
 				iEv = 0;
-			
+
 			CameraController.setCameraExposureCompensation(iEv + minValue);
 
 			evBar.setProgress(iEv);
@@ -7079,10 +7070,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	private void expoPlus()
 	{
-		if (!isEVEnabled) {
+		if (!isEVEnabled)
+		{
 			return;
 		}
-		
+
 		SeekBar evBar = (SeekBar) guiView.findViewById(R.id.evSeekBar);
 		if (evBar != null)
 		{
@@ -7101,9 +7093,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			evBar.setProgress(iEv);
 		}
 	}
-	
-	
-	
+
 	@Override
 	public void onStartTrackingTouch(SeekBar seekBar)
 	{
@@ -7226,7 +7216,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			} else if (settingsControlsVisible)
 			{
 				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
-				guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
+//				guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 				res++;
 			} else if (modeSelectorVisible)
 			{
@@ -7264,7 +7254,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				if (settingsControlsVisible)
 				{
 					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
-					guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
+//					guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 					return false;
 				}
 				if (modeSelectorVisible)
@@ -7630,12 +7620,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		boolean photoTimeLapseActive = prefs.getBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
-		if (photoTimeLapseActive) {
+		if (photoTimeLapseActive)
+		{
 			MainScreen.getInstance().guiManager.setShutterIcon(ShutterButton.DEFAULT);
-			selfTimer.updateTimelapseCount();			
+			selfTimer.updateTimelapseCount();
 			return;
 		}
-		
+
 		captureIndication = false;
 		if (!PluginManager.getInstance().getActiveModeID().equals("video"))
 		{
@@ -7648,9 +7639,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		boolean photoTimeLapseActive = prefs.getBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
 		boolean photoTimeLapseIsRunning = prefs.getBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false);
-		if (photoTimeLapseActive && photoTimeLapseIsRunning) {
+		if (photoTimeLapseActive && photoTimeLapseIsRunning)
+		{
 			MainScreen.getInstance().guiManager.setShutterIcon(ShutterButton.TIMELAPSE_ACTIVE);
-			selfTimer.updateTimelapseCount();			
+			selfTimer.updateTimelapseCount();
 			return;
 		}
 

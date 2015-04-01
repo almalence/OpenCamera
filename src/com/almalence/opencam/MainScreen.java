@@ -152,7 +152,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	private static final int			MIN_MPIX_SUPPORTED				= 1280 * 960;
 	private static final int			MIN_MPIX_PREVIEW				= 600 * 400;
-	private static final long			MPIX_8							= 3504 * 2336;
 
 	public static MainScreen			thiz;
 	public Context						mainContext;
@@ -2463,9 +2462,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		PluginManager.getInstance().menuButtonPressed();
 	}
 
-	public void disableCameraParameter(GUI.CameraParameter iParam, boolean bDisable, boolean bInitMenu)
+	public void disableCameraParameter(GUI.CameraParameter iParam, boolean bDisable, boolean bInitMenu, boolean bModeInit)
 	{
-		guiManager.disableCameraParameter(iParam, bDisable, bInitMenu);
+		guiManager.disableCameraParameter(iParam, bDisable, bInitMenu, bModeInit);
 	}
 
 	public void showOpenGLLayer(final int version)
@@ -3494,8 +3493,9 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			toast.setGravity(Gravity.CENTER, 0, 0);
 			toast.show();
 
-			// show appstore for this mode
-			launchPurchase(100);
+			// show google store with paid version
+			callStoreForUnlocked(this);
+			
 			return false;
 		} else if ((10 == launchesLeft) || (20 == launchesLeft) || (5 >= launchesLeft))
 		{
@@ -3504,6 +3504,10 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			Toast toast = Toast.makeText(this, left, Toast.LENGTH_LONG);
 			toast.setGravity(Gravity.CENTER, 0, 0);
 			toast.show();
+			
+			if ((1 == launchesLeft) || (2 == launchesLeft) || (10 == launchesLeft) || (20 == launchesLeft))
+				// show internal store
+				launchPurchase(100);
 		}
 		return true;
 	}
