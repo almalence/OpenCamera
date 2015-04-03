@@ -2322,6 +2322,14 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 				return true;
 		}
 
+		// <!-- -+-
+		if (((RelativeLayout) guiManager.getMainView().findViewById(R.id.viewPagerLayoutMain)).getVisibility() == View.VISIBLE)
+		{
+			guiManager.hideStore();
+			return true;
+		}
+		// -+- -->
+
 		if (PluginManager.getInstance().onKeyDown(true, keyCode, event))
 			return true;
 		if (guiManager.onKeyDown(true, keyCode, event))
