@@ -2318,6 +2318,14 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			} else if (buttonFunc == VOLUME_FUNC_NONE)
 				return true;
 		}
+		
+		// <!-- -+-
+		if (((RelativeLayout) guiManager.getMainView().findViewById(R.id.viewPagerLayoutMain)).getVisibility() == View.VISIBLE)
+		{
+			guiManager.hideStore();
+			return true;
+		}
+		// -+- -->
 
 		if (PluginManager.getInstance().onKeyDown(true, keyCode, event))
 			return true;
@@ -2791,13 +2799,19 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 */
 	
+			OpenIabHelper.Options.Builder builder = new OpenIabHelper.Options.Builder()
+            .setStoreSearchStrategy(OpenIabHelper.Options.SEARCH_STRATEGY_INSTALLER)
+            //.setVerifyMode(OpenIabHelper.Options.VERIFY_SKIP)
+            //.addPreferredStoreName(OpenIabHelper.NAME_SAMSUNG)
+            //.addStoreKeys(storeKeys);
+            ;
 /**/			
 			//FOR PLAY STORE
 			
-			OpenIabHelper.Options.Builder builder = new OpenIabHelper.Options.Builder()
-            .setStoreSearchStrategy(OpenIabHelper.Options.SEARCH_STRATEGY_INSTALLER_THEN_BEST_FIT)
-            .setVerifyMode(OpenIabHelper.Options.VERIFY_EVERYTHING)
-            .addStoreKeys(storeKeys);
+//			OpenIabHelper.Options.Builder builder = new OpenIabHelper.Options.Builder()
+//            .setStoreSearchStrategy(OpenIabHelper.Options.SEARCH_STRATEGY_INSTALLER_THEN_BEST_FIT)
+//            .setVerifyMode(OpenIabHelper.Options.VERIFY_EVERYTHING)
+//            .addStoreKeys(storeKeys);
 /**/			
 			
 			mHelper = new OpenIabHelper(this, builder.build());
@@ -2864,7 +2878,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		}
 	}
 
-	public String								titleUnlockAll				= "$6.95";
+	public String								titleUnlockAll				= "";
 	public String								titleUnlockAllCoupon		= "$3.95";
 	public String								titleUnlockHDR				= "$2.99";
 	public String								titleUnlockSuper			= "$2.99";
@@ -3078,23 +3092,23 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		// now will call store with abc unlocked
 		//UNCOMMENT for samsung!
-		//callStoreForUnlocked(this);
+		callStoreForUnlocked(this);
 		
 		//TODO: this is for all other markets!!!!! Do not call store!!!
-		String payload = "";
-		try 
-		{
-			mHelper.launchPurchaseFlow(MainScreen.thiz,
-					isCouponSale()?SKU_UNLOCK_ALL_COUPON:SKU_UNLOCK_ALL, ALL_REQUEST,
-					mPreferencePurchaseFinishedListener, payload);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			Log.e("Main billing", "Purchase result " + e.getMessage());
-			Toast.makeText(MainScreen.thiz,
-					"Error during purchase " + e.getMessage(),
-					Toast.LENGTH_LONG).show();
-		}
+//		String payload = "";
+//		try 
+//		{
+//			mHelper.launchPurchaseFlow(MainScreen.thiz,
+//					isCouponSale()?SKU_UNLOCK_ALL_COUPON:SKU_UNLOCK_ALL, ALL_REQUEST,
+//					mPreferencePurchaseFinishedListener, payload);
+//		}
+//		catch (Exception e) {
+//			e.printStackTrace();
+//			Log.e("Main billing", "Purchase result " + e.getMessage());
+//			Toast.makeText(MainScreen.thiz,
+//					"Error during purchase " + e.getMessage(),
+//					Toast.LENGTH_LONG).show();
+//		}
 
 
 	}
@@ -3554,13 +3568,12 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 	{
 		try
 		{
-			//SAMSUNG ONLY!
-//			Intent intent = new Intent();
-//			intent.setData(Uri.parse("samsungapps://ProductDetail/com.almalence.opencam_plus")); // The string_of_uri is an 
-//			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | 
-//			Intent.FLAG_ACTIVITY_CLEAR_TOP | 
-//			Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-//			startActivity(intent);
+			Intent intent = new Intent();
+			intent.setData(Uri.parse("amzn://apps/android?p=com.almalence.opencam_plus")); 
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | 
+			Intent.FLAG_ACTIVITY_CLEAR_TOP | 
+			Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+			startActivity(intent);
 			
 //			Intent intent = new Intent(Intent.ACTION_VIEW);
 //			intent.setData(Uri.parse("market://details?id=com.almalence.opencam_plus"));

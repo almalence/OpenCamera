@@ -7230,14 +7230,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				guiView.findViewById(R.id.topPanel).setVisibility(View.VISIBLE);
 				quickControlsVisible = false;
 			}
-
-			// <!-- -+-
-			if (((RelativeLayout) guiView.findViewById(R.id.viewPagerLayoutMain)).getVisibility() == View.VISIBLE)
-			{
-				hideStore();
-				res++;
-			}
-			// -+- -->
 		}
 
 		if (keyCode == KeyEvent.KEYCODE_CAMERA /*
