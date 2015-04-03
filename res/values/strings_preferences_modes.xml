@@ -8,6 +8,7 @@
 	<string name="Pref_Expobracketing_Title">Expo-bracketing</string>
 	<string name="Pref_HDR_Title">HDR</string>
 	<string name="Pref_Night_Title">Night</string>
+	<string name="Pref_Super_Title">Super</string>
 	<string name="Pref_Video_Title">Video</string>
 	<string name="Pref_MultiShot_Title">Smart multishot</string>
 	<string name="Pref_Preshot_Title">Pre-shot</string>

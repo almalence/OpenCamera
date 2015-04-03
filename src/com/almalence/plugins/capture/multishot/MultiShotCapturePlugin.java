@@ -49,7 +49,6 @@ public class MultiShotCapturePlugin extends PluginCapture
 
 	private static final int					MIN_MPIX_SUPPORTED	= 1280 * 960;
 	private static final int					MIN_MPIX_PREVIEW	= 600 * 400;
-	private static final long					MPIX_8				= 3504 * 2336;
 
 	private static int							captureIndex		= -1;
 

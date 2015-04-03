@@ -1,0 +1,30 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="upscaleResult"
+        android:title="@string/Pref_Super_TitleUpscale" />
+
+<!-- -+-  -->
+<com.almalence.opencam.ui.SeekBarPreference
+    android:defaultValue="0"
+    android:dialogMessage=""
+    android:key="brightnessPref"
+    android:max="4"
+    android:summary="@string/Pref_Super_BrightnessEnhancementValue"
+    android:text=""
+    android:title="@string/Pref_Super_TitleBrightnessEnhancement" />
+
+<!--  -+- -->
+<!-- +++
+	<com.almalence.opencam_plus.ui.SeekBarPreference
+        android:defaultValue="0"
+        android:dialogMessage=""
+        android:key="brightnessPref"
+        android:max="4"
+        android:summary="@string/Pref_Super_BrightnessEnhancementValue"
+        android:text=""
+        android:title="@string/Pref_Super_TitleBrightnessEnhancement" />
++++ -->
+
+</PreferenceScreen>

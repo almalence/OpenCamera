@@ -26,15 +26,29 @@ package com.almalence.opencam;
 
 import java.util.List;
 
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
-import android.view.Window;
-import android.view.WindowManager;
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Point;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.view.Display;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ImageView;
 
 /***
  * Preference activity class - manages preferences
@@ -48,18 +62,21 @@ public class Preferences extends PreferenceActivity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		
-		// On some devices app crashes on start, because of MainScreen.thiz is null.
-		// If MainScreen.thiz is null, we need to start MainScreen to initialize it, before starting Preferences.
-		if (MainScreen.thiz == null) {
+
+		// On some devices app crashes on start, because of MainScreen.thiz is
+		// null.
+		// If MainScreen.thiz is null, we need to start MainScreen to initialize
+		// it, before starting Preferences.
+		if (MainScreen.thiz == null)
+		{
 			Intent intent = new Intent(this, MainScreen.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); 
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			startActivity(intent);
 			finish();
 		}
 	}
-	
+
 	// Called only on Honeycomb and later
 	// loading headers for common and plugins
 	@Override
@@ -112,5 +129,59 @@ public class Preferences extends PreferenceActivity
 	protected boolean isValidFragment(String fragmentName)
 	{
 		return true;
+	}
+
+	@Override
+	public void onHeaderClick(Header header, int position)
+	{
+		super.onHeaderClick(header, position);
+		if (header.id == R.id.about_header)
+		{
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+			View view = getLayoutInflater().inflate(R.layout.about_dialog, null);
+			builder.setTitle(R.string.Pref_About_Title).setView(view).setCancelable(true);
+			AlertDialog alert = builder.create();
+			alert.show();
+
+			ImageView img = (ImageView) alert.findViewById(R.id.about_fb_logo);
+			img.setOnClickListener(new View.OnClickListener()
+			{
+				public void onClick(View v)
+				{
+					Intent intent = new Intent();
+					intent.setAction(Intent.ACTION_VIEW);
+					intent.addCategory(Intent.CATEGORY_BROWSABLE);
+					intent.setData(Uri.parse("https://www.facebook.com/abettercam"));
+					startActivity(intent);
+				}
+			});
+
+			img = (ImageView) alert.findViewById(R.id.about_gplus_logo);
+			img.setOnClickListener(new View.OnClickListener()
+			{
+				public void onClick(View v)
+				{
+					Intent intent = new Intent();
+					intent.setAction(Intent.ACTION_VIEW);
+					intent.addCategory(Intent.CATEGORY_BROWSABLE);
+					intent.setData(Uri.parse("https://plus.google.com/112729683723267883775"));
+					startActivity(intent);
+				}
+			});
+
+			img = (ImageView) alert.findViewById(R.id.about_youtube_logo);
+			img.setOnClickListener(new View.OnClickListener()
+			{
+				public void onClick(View v)
+				{
+					Intent intent = new Intent();
+					intent.setAction(Intent.ACTION_VIEW);
+					intent.addCategory(Intent.CATEGORY_BROWSABLE);
+					intent.setData(Uri.parse("http://www.youtube.com/watch?v=s6AusctWugg"));
+					startActivity(intent);
+				}
+			});
+		}
 	}
 }

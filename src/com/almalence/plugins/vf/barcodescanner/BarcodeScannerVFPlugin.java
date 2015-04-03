@@ -21,9 +21,9 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
-import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,6 +32,14 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.RelativeLayout;
 
+import com.almalence.ui.RotateImageView;
+import com.almalence.util.ImageConversion;
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.MultiFormatReader;
+import com.google.zxing.PlanarYUVLuminanceSource;
+import com.google.zxing.ReaderException;
+import com.google.zxing.Result;
+import com.google.zxing.common.HybridBinarizer;
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginManager;
@@ -48,14 +56,6 @@ import com.almalence.opencam.R;
 import com.almalence.opencam.SoundPlayer;
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
-import com.almalence.ui.RotateImageView;
-import com.almalence.util.ImageConversion;
-import com.google.zxing.BinaryBitmap;
-import com.google.zxing.MultiFormatReader;
-import com.google.zxing.PlanarYUVLuminanceSource;
-import com.google.zxing.ReaderException;
-import com.google.zxing.Result;
-import com.google.zxing.common.HybridBinarizer;
 
 public class BarcodeScannerVFPlugin extends PluginViewfinder
 {
@@ -234,11 +234,6 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 	public void createBoundView()
 	{
 		if (mBound != null)
-		{
-			return;
-		}
-		Camera camera = CameraController.getCamera();
-		if (null == camera)
 		{
 			return;
 		}
@@ -483,7 +478,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 				return null;
 			}
 
-			synchronized (lock)
+			synchronized (datas)
 			{
 				if (rawResult != null && !decodedProcessing)
 				{

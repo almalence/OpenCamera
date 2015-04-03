@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -99,7 +100,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.almalence.SwapHeap;
-
 import com.almalence.plugins.capture.bestshot.BestShotCapturePlugin;
 import com.almalence.plugins.capture.burst.BurstCapturePlugin;
 import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
@@ -215,7 +215,6 @@ public class PluginManager implements PluginManagerInterface
 	public static final int				MSG_CAPTURE_FINISHED_NORESULT			= 15;
 
 	public static final int				MSG_CAMERA_CONFIGURED					= 160;
-//	public static final int				MSG_CAMERA_READY						= 161;
 	public static final int				MSG_CAMERA_STOPED						= 162;
 	
 	public static final int				MSG_APPLICATION_STOP					= 163;
@@ -229,8 +228,6 @@ public class PluginManager implements PluginManagerInterface
 	public static final int				MSG_PROCESS_FINISHED					= 20;
 	public static final int				MSG_VOLUME_ZOOM							= 21;
 	// ^^ For HALv3 code version
-
-	public static final int				MSG_NEXT_FRAME							= 23;
 
 	public static final int				MSG_BAD_FRAME							= 24;
 	public static final int				MSG_OUT_OF_MEMORY						= 25;
@@ -256,6 +253,9 @@ public class PluginManager implements PluginManagerInterface
 	public static final int				MSG_FLASH_CHANGED						= 64;
 	public static final int				MSG_ISO_CHANGED							= 65;
 	public static final int				MSG_AEWB_CHANGED						= 66;
+	
+	public static final int				MSG_FOCUS_LOCKED						= 663;
+	public static final int				MSG_FOCUS_UNLOCKED						= 664;
 
 	// OpenGL layer messages
 	public static final int				MSG_OPENGL_LAYER_SHOW					= 70;
@@ -744,6 +744,7 @@ public class PluginManager implements PluginManagerInterface
 	{
 		onShowPreferences();
 		Intent settingsActivity = new Intent(MainScreen.getMainContext(), Preferences.class);
+		MainScreen.getInstance().getCameraParametersBundle();
 		MainScreen.getInstance().startActivity(settingsActivity);
 	}
 
@@ -884,6 +885,21 @@ public class PluginManager implements PluginManagerInterface
 					pluginList.get(activeCapture).onShutterClick();
 			} else
 			{
+				boolean keepScreenOn = prefs.getBoolean(MainScreen.sKeepScreenOn, false);
+				if (!keepScreenOn) {
+					MainScreen.getInstance().setKeepScreenOn(true);
+					Handler handler = new Handler();
+					handler.postDelayed(new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							MainScreen.getInstance().setKeepScreenOn(false);
+						}
+					}, delayInterval * 1000 + 500);
+				}
+				
+				
 				shutterRelease = false;
 				delayedCapture(delayInterval);
 			}
@@ -928,6 +944,11 @@ public class PluginManager implements PluginManagerInterface
 
 	private void AddModeSettings(String modeName, PreferenceFragment pf)
 	{
+		if (modeName.equals("super")) {
+			pf.addPreferencesFromResource(R.xml.preferences_processing_super);
+			return;
+		}
+		
 		Mode mode = ConfigParser.getInstance().getMode(modeName);
 		for (int j = 0; j < listCapture.size(); j++)
 		{
@@ -1061,6 +1082,9 @@ public class PluginManager implements PluginManagerInterface
 		} else if ("night".equals(settings))
 		{
 			AddModeSettings("nightmode", pf);
+		} else if ("super".equals(settings))
+		{
+			AddModeSettings("super", pf);
 		} else if ("video".equals(settings))
 		{
 			AddModeSettings("video", pf);
@@ -1383,6 +1407,16 @@ public class PluginManager implements PluginManagerInterface
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onAutoFocus(paramBoolean);
 	}
+	
+	@Override
+	public void onAutoFocusMoving(boolean paramBoolean)
+	{
+		for (int i = 0; i < activeVF.size(); i++)
+			pluginList.get(activeVF.get(i)).onAutoFocusMoving(paramBoolean);
+
+		if (null != pluginList.get(activeCapture))
+			pluginList.get(activeCapture).onAutoFocusMoving(paramBoolean);
+	}
 
 	void takePicture()
 	{
@@ -1562,10 +1596,6 @@ public class PluginManager implements PluginManagerInterface
 		case MSG_NO_CAMERA:
 			break;
 
-		case MSG_TAKE_PICTURE:
-			pluginManager.takePicture();
-			break;
-
 		case MSG_CAPTURE_FINISHED:
 			shutterRelease = true;
 
@@ -1575,6 +1605,11 @@ public class PluginManager implements PluginManagerInterface
 			MainScreen.getGUIManager().onCaptureFinished();
 			MainScreen.getGUIManager().startProcessingAnimation();
 
+			// Returns actual flash mode if it was changed during capturing.
+			if (!CameraController.isUseHALv3()) {
+				CameraController.setCameraFlashMode(PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(MainScreen.sFlashModePref, -1));
+			}
+			
 			int id = MainScreen.getAppResources().getIdentifier(getActiveMode().modeName, "string",
 					MainScreen.getInstance().getPackageName());
 			String modeName = MainScreen.getAppResources().getString(id);
@@ -1684,6 +1719,8 @@ public class PluginManager implements PluginManagerInterface
 				MainScreen.getInstance().guiManager.showCaptureIndication();
 			}
 			
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+			showAd = prefs.getInt("ADSMogoCounter", 0);
 			showAd++;
 			if ((showAd%10)==0)
 			{
@@ -1691,6 +1728,7 @@ public class PluginManager implements PluginManagerInterface
 				MainScreen.thiz.showInterstitial();
 				showAd=0;
 			}
+			prefs.edit().putInt("ADSMogoCounter", showAd).commit();
 			
 			break;
 
@@ -1862,7 +1900,9 @@ public class PluginManager implements PluginManagerInterface
 		String focal_lenght = String.valueOf(result.get(CaptureResult.LENS_FOCAL_LENGTH));
 		String flash_mode = String.valueOf(result.get(CaptureResult.FLASH_MODE));
 		String awb_mode = String.valueOf(result.get(CaptureResult.CONTROL_AWB_MODE));
-
+		String manufacturer = Build.MANUFACTURER;
+		String model = Build.MODEL;
+		
 		if (num != -1 && exposure_time != null && !exposure_time.equals("null"))
 			addToSharedMem("exiftag_exposure_time" + num + SessionID, exposure_time);
 		else if(exposure_time != null && !exposure_time.equals("null"))
@@ -1877,6 +1917,10 @@ public class PluginManager implements PluginManagerInterface
 			addToSharedMem("exiftag_flash" + SessionID, flash_mode);
 		if (awb_mode != null && !awb_mode.equals("null"))
 			addToSharedMem("exiftag_white_balance" + SessionID, awb_mode);
+		if (manufacturer != null && !manufacturer.equals("null"))
+			addToSharedMem("exiftag_make" + SessionID, manufacturer);
+		if (model != null && !model.equals("null"))
+			addToSharedMem("exiftag_model" + SessionID, model);
 
 		return true;
 	}
@@ -2818,6 +2862,21 @@ public class PluginManager implements PluginManagerInterface
 						{
 							ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
 							value.setRationals(ratValue);
+							exifDriver.getIfdExif().put(ExifDriver.TAG_FNUMBER, value);
+						}
+						
+						// TAG_FNUMBER and TAG_APERTURE_VALUE have same value. But it's stored in different ways.
+						// TAG_APERTURE_VALUE is actual aperture value of lens when the image was taken. 
+						// To convert this value to ordinary F-number(F-stop), 
+						// calculate this value's power of root 2 (=1.4142). 
+						// For example, if value is '5', F-number is 1.4142^5 = F5.6.
+						// So, to get actual aperture value from F-number we need to take Log. 
+						Double aperture = Math.log(Double.valueOf(tag_aperture)) / Math.log(Double.valueOf(Math.sqrt(2.d)));
+						int[][] ratValueApp = ExifManager.stringToRational(String.format("%.3f", aperture));
+						if (ratValueApp != null)
+						{
+							ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
+							value.setRationals(ratValueApp);
 							exifDriver.getIfdExif().put(ExifDriver.TAG_APERTURE_VALUE, value);
 						}
 					}

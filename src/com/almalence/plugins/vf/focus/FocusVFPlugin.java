@@ -35,9 +35,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
+
+//<!-- -+-
+import com.almalence.opencam.CameraParameters;
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.PluginManager;
+import com.almalence.opencam.PluginViewfinder;
+import com.almalence.opencam.R;
+import com.almalence.opencam.SoundPlayer;
+import com.almalence.opencam.cameracontroller.CameraController;
+
+//-+- -->
 
 import com.almalence.util.Util;
 
@@ -50,16 +64,6 @@ import com.almalence.util.Util;
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.SoundPlayer;
  +++ --> */
-// <!-- -+-
-import com.almalence.opencam.CameraParameters;
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginViewfinder;
-import com.almalence.opencam.R;
-import com.almalence.opencam.SoundPlayer;
-import com.almalence.opencam.cameracontroller.CameraController;
-
-//-+- -->
 
 /***
  * Implements touch to focus functionality
@@ -106,7 +110,9 @@ public class FocusVFPlugin extends PluginViewfinder
 	private SoundPlayer			mSoundPlayerFalse;
 	private RelativeLayout		focusLayout;
 	private RotateLayout		mFocusIndicatorRotateLayout;
+	private RotateLayout		mMeteringIndicatorRotateLayout;
 	private FocusIndicatorView	mFocusIndicator;
+	private ImageView			mMeteringIndicator;
 	private int					mPreviewWidth;
 	private int					mPreviewHeight;
 	private List<Area>			mFocusArea;												// focus
@@ -130,16 +136,18 @@ public class FocusVFPlugin extends PluginViewfinder
 	private boolean				mMeteringAreaSupported			= false;
 
 	private boolean				mFocusDisabled					= false;
+	private boolean				mFocusLocked					= false;
 	private boolean				isDoubleClick					= false;
 
 	private int					preferenceFocusMode				= -1;
+	private boolean				splitMode						= false;
 
 	private class MainHandler extends Handler
 	{
 		@Override
 		public void handleMessage(Message msg)
 		{
-			if (msg.what == RESET_TOUCH_FOCUS)
+			if (msg.what == RESET_TOUCH_FOCUS && !currentTouch)
 				cancelAutoFocus();
 			else if (msg.what == START_TOUCH_FOCUS)
 			{
@@ -171,8 +179,56 @@ public class FocusVFPlugin extends PluginViewfinder
 		viewLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 
 		mFocusIndicatorRotateLayout = (RotateLayout) v.findViewById(R.id.focus_indicator_rotate_layout);
+		mMeteringIndicatorRotateLayout = (RotateLayout) v.findViewById(R.id.metering_indicator_rotate_layout);
+
+		mFocusIndicatorRotateLayout.setOnTouchListener(new OnTouchListener()
+		{
+			@Override
+			public boolean onTouch(View v, MotionEvent event)
+			{
+				updateCurrentTouch(event);
+
+				if (splitMode)
+				{
+					onTouchFocusArea(event);
+					return true;
+				} else
+				{
+					// Check if it's double click
+					if (event.getAction() == MotionEvent.ACTION_UP)
+					{
+						lastTouchTime1 = lastTouchTime2;
+						lastTouchTime2 = System.currentTimeMillis();
+
+						if (lastTouchTime2 - lastTouchTime1 < 1000)
+						{
+							isDoubleClick = true;
+						} else
+						{
+							isDoubleClick = false;
+						}
+					}
+
+					onTouchFocusAndMeteringArea(event);
+					return true;
+				}
+			}
+		});
+
+		mMeteringIndicatorRotateLayout.setOnTouchListener(new OnTouchListener()
+		{
+			@Override
+			public boolean onTouch(View v, MotionEvent event)
+			{
+				updateCurrentTouch(event);
+
+				onTouchMeteringArea(event);
+				return true;
+			}
+		});
 
 		mFocusIndicator = (FocusIndicatorView) mFocusIndicatorRotateLayout.findViewById(R.id.focus_indicator);
+		mMeteringIndicator = (ImageView) mMeteringIndicatorRotateLayout.findViewById(R.id.metering_indicator);
 
 		resetTouchFocus();
 
@@ -183,6 +239,19 @@ public class FocusVFPlugin extends PluginViewfinder
 		} else
 		{
 			mDefaultFocusMode = CameraParameters.AF_MODE_AUTO;
+		}
+	}
+
+	private void updateCurrentTouch(MotionEvent event)
+	{
+		if (event.getAction() == MotionEvent.ACTION_DOWN)
+		{
+			currentTouch = true;
+		}
+
+		if (event.getAction() == MotionEvent.ACTION_UP)
+		{
+			currentTouch = false;
 		}
 	}
 
@@ -276,11 +345,14 @@ public class FocusVFPlugin extends PluginViewfinder
 		int[] supportedFocusModes = CameraController.getSupportedFocusModes();
 		if (supportedFocusModes != null)
 		{
-			if (!CameraController.isModeAvailable(supportedFocusModes, preferenceFocusMode))
+			if (!CameraController.isModeAvailable(supportedFocusModes, preferenceFocusMode)
+					&& preferenceFocusMode != CameraParameters.MF_MODE)
+			{
 				if (CameraController.isModeAvailable(supportedFocusModes, CameraParameters.AF_MODE_AUTO))
 					preferenceFocusMode = CameraParameters.AF_MODE_AUTO;
 				else
 					preferenceFocusMode = supportedFocusModes[0];
+			}
 		}
 
 		// preferenceFocusMode = CameraController.getFocusMode();
@@ -301,6 +373,11 @@ public class FocusVFPlugin extends PluginViewfinder
 		layout.width = (int) (len * MainScreen.getAppResources().getInteger(R.integer.focusIndicator_cropFactor));
 		layout.height = (int) (len * MainScreen.getAppResources().getInteger(R.integer.focusIndicator_cropFactor));
 		mFocusIndicator.requestLayout();
+
+		layout = mMeteringIndicator.getLayoutParams();
+		layout.width = (int) (len * MainScreen.getAppResources().getInteger(R.integer.focusIndicator_cropFactor));
+		layout.height = (int) (len * MainScreen.getAppResources().getInteger(R.integer.focusIndicator_cropFactor));
+		mMeteringIndicator.requestLayout();
 	}
 
 	/*
@@ -311,15 +388,15 @@ public class FocusVFPlugin extends PluginViewfinder
 	// This has to be initialized before initialize().
 	public void initializeParameters()
 	{
-		mFocusAreaSupported = (CameraController.getMaxAreasSupported() > 0 && isSupported(
+		mFocusAreaSupported = (CameraController.getMaxFocusAreasSupported() > 0 && isSupported(
 				CameraParameters.AF_MODE_AUTO, CameraController.getSupportedFocusModes()));
-		mMeteringAreaSupported = CameraController.getMaxAreasSupported() > 0;
+		mMeteringAreaSupported = CameraController.getMaxMeteringAreasSupported() > 0;
 	}
 
 	public void initialize(boolean mirror, int displayOrientation)
 	{
-		mPreviewWidth = MainScreen.getPreviewSurfaceView().getWidth();
-		mPreviewHeight = MainScreen.getPreviewSurfaceView().getHeight();
+		mPreviewWidth = MainScreen.getPreviewSurfaceLayoutWidth();
+		mPreviewHeight = MainScreen.getPreviewSurfaceLayoutHeight();
 
 		Matrix matrix = new Matrix();
 		Util.prepareMatrix(matrix, mirror, 90, mPreviewWidth, mPreviewHeight);
@@ -346,6 +423,7 @@ public class FocusVFPlugin extends PluginViewfinder
 					CameraController.setCameraFocusMode(CameraParameters.AF_MODE_AUTO);
 				}
 				setFocusParameters();
+				setMeteringParameters();
 				autoFocus();
 			}
 			// else if ((mState == STATE_SUCCESS || mState == STATE_FAIL)
@@ -377,9 +455,12 @@ public class FocusVFPlugin extends PluginViewfinder
 	@Override
 	public void onFocusButtonClick()
 	{
-		cancelAutoFocus();
-		resetTouchFocus();
-		autoFocus();
+		if (needAutoFocusCall() && !focusOnShutterDisabled())
+		{
+			cancelAutoFocus();
+			resetTouchFocus();
+			autoFocus();
+		}
 	}
 
 	public void setFocusParameters()
@@ -387,16 +468,37 @@ public class FocusVFPlugin extends PluginViewfinder
 		if (mFocusAreaSupported)
 			CameraController.setCameraFocusAreas(getFocusAreas());
 
+	}
+
+	public void setMeteringParameters()
+	{
 		if (mMeteringAreaSupported)
 		{
 			// Use the same area for focus and metering.
 			List<Area> area = getMeteringAreas();
 			if (area != null)
 			{
-//				CameraController.setCameraMeteringAreas(null);
+				// CameraController.setCameraMeteringAreas(null);
 				CameraController.setCameraMeteringAreas(area);
 			}
 		}
+	}
+
+	@Override
+	public void onAutoFocusMoving(boolean start)
+	{
+		if (!splitMode)
+			return;
+
+		if (start)
+		{
+			mState = STATE_FOCUSING;
+		} else
+		{
+			mState = STATE_SUCCESS;
+		}
+
+		updateFocusUI();
 	}
 
 	@Override
@@ -434,17 +536,17 @@ public class FocusVFPlugin extends PluginViewfinder
 				 * (!Parameters.FOCUS_MODE_CONTINUOUS_PICTURE.equals(mFocusMode)
 				 * && mSoundPlayerOK != null)
 				 */
-				if (mSoundPlayerOK != null)
+				if (mSoundPlayerOK != null && !splitMode && !currentTouch)
 					if (!MainScreen.isShutterSoundEnabled() && !PluginManager.getInstance().muteSounds())
 						mSoundPlayerOK.play();
 
 				// With enabled preference 'Shot on tap' perform shutter button
 				// click after success focusing.
 				String modeID = PluginManager.getInstance().getActiveMode().modeID;
-				if (MainScreen.isShotOnTap() == 1 && !modeID.equals("video"))
+				if (MainScreen.isShotOnTap() == 1 && !modeID.equals("video") && !splitMode && !currentTouch)
 					MainScreen.getGUIManager().onHardwareShutterButtonPressed();
 
-				if (MainScreen.isShotOnTap() == 2 && !modeID.equals("video"))
+				if (MainScreen.isShotOnTap() == 2 && !modeID.equals("video") && !splitMode && !currentTouch)
 				{
 					if (isDoubleClick)
 					{
@@ -460,7 +562,9 @@ public class FocusVFPlugin extends PluginViewfinder
 				mState = STATE_FAIL;
 			}
 			updateFocusUI();
-			mHandler.sendEmptyMessageDelayed(RESET_TOUCH_FOCUS, RESET_TOUCH_FOCUS_DELAY);
+
+			if (!splitMode)
+				mHandler.sendEmptyMessageDelayed(RESET_TOUCH_FOCUS, RESET_TOUCH_FOCUS_DELAY);
 			// If this is triggered by touch focus, cancel focus after a
 			// while.
 		} else if (mState == STATE_IDLE)
@@ -475,10 +579,36 @@ public class FocusVFPlugin extends PluginViewfinder
 	private static boolean		focusCanceled	= false;
 	private static boolean		delayedFocus	= false;
 	private static MotionEvent	lastEvent		= null;
+	private static boolean		currentTouch	= false;
 
 	@Override
 	public boolean onTouch(View view, MotionEvent e)
 	{
+		updateCurrentTouch(e);
+
+		if (e.getPointerCount() > 1)
+		{
+			splitMode = true;
+			mHandler.removeMessages(START_TOUCH_FOCUS);
+
+			onTouchFocusArea(e);
+			onTouchMeteringArea(e);
+
+			return true;
+		}
+
+		if (splitMode && e.getAction() == MotionEvent.ACTION_DOWN)
+		{
+			mMeteringIndicatorRotateLayout.setVisibility(View.GONE);
+			MainScreen.getInstance().setCameraMeteringMode(MainScreen.getMeteringMode());
+			splitMode = false;
+		}
+
+		if (splitMode)
+		{
+			return true;
+		}
+
 		// Check if it's double click
 		if (e.getAction() == MotionEvent.ACTION_UP)
 		{
@@ -494,12 +624,12 @@ public class FocusVFPlugin extends PluginViewfinder
 				{
 					// Cancel delayed focus, which was created by second click
 					mHandler.removeMessages(START_TOUCH_FOCUS);
-					
+
 					// If state is Focused start capture
 					if (mState == STATE_SUCCESS)
 					{
 						String modeID = PluginManager.getInstance().getActiveMode().modeID;
-						if (!modeID.equals("video"))
+						if (!modeID.equals("video") && !currentTouch)
 						{
 							MainScreen.getGUIManager().onHardwareShutterButtonPressed();
 							isDoubleClick = false;
@@ -531,11 +661,16 @@ public class FocusVFPlugin extends PluginViewfinder
 			cancelAutoFocus();
 			int fm = CameraController.getFocusMode();
 			if ((preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE || preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
-					&& fm != -1 && preferenceFocusMode != CameraController.getFocusMode())
+					&& fm != -1
+					&& preferenceFocusMode != CameraController.getFocusMode()
+					&& preferenceFocusMode != CameraParameters.MF_MODE)
 			{
 				CameraController.setCameraFocusMode(preferenceFocusMode);
-			}
-			else if(Build.MODEL.contains("SM-N900")) //Kind of hack to prevent Note 3 of permanent 'auto focus failed' state
+			} else if (Build.MODEL.contains("SM-N900") && preferenceFocusMode != CameraParameters.MF_MODE)
+			// Kind of hack to
+			// prevent Note 3 of
+			// permanent 'auto focus
+			// failed' state
 			{
 				CameraController.setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_PICTURE);
 				CameraController.setCameraFocusMode(preferenceFocusMode);
@@ -546,28 +681,28 @@ public class FocusVFPlugin extends PluginViewfinder
 		switch (e.getAction())
 		{
 		case MotionEvent.ACTION_DOWN:
-				focusCanceled = false;
-				delayedFocus = false;
-				X = e.getX();
-				Y = e.getY();
-	
-				lastEvent = MotionEvent.obtain(e);
-				mHandler.sendEmptyMessageDelayed(START_TOUCH_FOCUS, START_TOUCH_FOCUS_DELAY);
+			focusCanceled = false;
+			delayedFocus = false;
+			X = e.getX();
+			Y = e.getY();
+
+			lastEvent = MotionEvent.obtain(e);
+			mHandler.sendEmptyMessageDelayed(START_TOUCH_FOCUS, START_TOUCH_FOCUS_DELAY);
 
 			return true;
 		case MotionEvent.ACTION_MOVE:
 			{
-					float difX = e.getX();
-					float difY = e.getY();
-	
-					if ((Math.abs(difX - X) > 50 || Math.abs(difY - Y) > 50) && !focusCanceled)
-					{
-						focusCanceled = true;
-						cancelAutoFocus();
-						mHandler.removeMessages(START_TOUCH_FOCUS);
-						return true;
-					} else
-						return true;
+				float difX = e.getX();
+				float difY = e.getY();
+
+				if ((Math.abs(difX - X) > 50 || Math.abs(difY - Y) > 50) && !focusCanceled)
+				{
+					focusCanceled = true;
+					cancelAutoFocus();
+					mHandler.removeMessages(START_TOUCH_FOCUS);
+					return true;
+				} else
+					return true;
 			}
 		case MotionEvent.ACTION_UP:
 			mHandler.removeMessages(START_TOUCH_FOCUS);
@@ -583,56 +718,215 @@ public class FocusVFPlugin extends PluginViewfinder
 		return true;
 	}
 
-	public void onTouchAreas(MotionEvent e)
+	public void onTouchFocusArea(MotionEvent e)
 	{
+		if (!mFocusAreaSupported)
+			return;
+
+		int xRaw = (int) e.getRawX();
+		int yRaw = (int) e.getRawY();
+
+		if (e.getPointerCount() > 1)
+		{
+			final int location[] = { 0, 0 };
+			focusLayout.getLocationOnScreen(location);
+			xRaw = (int) e.getX(0) + location[0];
+			yRaw = (int) e.getY(0) + location[1];
+		}
+
 		// Initialize variables.
-		int x = Math.round(e.getX());
-		int y = Math.round(e.getY());
 		int focusWidth = mFocusIndicatorRotateLayout.getWidth();
 		int focusHeight = mFocusIndicatorRotateLayout.getHeight();
 		int previewWidth = mPreviewWidth;
 		int previewHeight = mPreviewHeight;
 		int displayWidth = MainScreen.getAppResources().getDisplayMetrics().widthPixels;
+		int displayHeight = MainScreen.getAppResources().getDisplayMetrics().heightPixels;
 		int diffWidth = displayWidth - previewWidth;
+		int diffHeight = displayHeight - previewHeight;
 
+		// Initialize variables.
 		int paramsLayoutHeight = 0;
 
 		int xOffset = (focusLayout.getWidth() - previewWidth) / 2;
 		int yOffset = (focusLayout.getHeight() - previewHeight) / 2;
-		
+
 		if (mFocusArea == null)
 		{
 			mFocusArea = new ArrayList<Area>();
 			mFocusArea.add(new Area(new Rect(), 1000));
+		}
+
+		// Use margin to set the metering indicator to the touched area.
+		RelativeLayout.LayoutParams p = (RelativeLayout.LayoutParams) mFocusIndicatorRotateLayout.getLayoutParams();
+		int left = Util.clamp(xRaw - focusWidth / 2 + xOffset, diffWidth / 2, (previewWidth - focusWidth + xOffset * 2)
+				- diffWidth / 2);
+		int top = Util.clamp(yRaw - focusHeight / 2 + yOffset - diffHeight / 2, 0, previewHeight - focusHeight
+				+ yOffset * 2);
+
+		p.leftMargin = left;
+		p.topMargin = top;
+
+		int[] rules = p.getRules();
+		rules[RelativeLayout.CENTER_IN_PARENT] = 0;
+
+		mFocusIndicatorRotateLayout.setLayoutParams(p);
+
+		calculateTapAreaByTopLeft(focusWidth, focusHeight, 1f, top, left,
+				MainScreen.getPreviewSurfaceView().getWidth(), MainScreen.getPreviewSurfaceView().getHeight(),
+				mFocusArea.get(0).rect);
+
+		// Set the focus area and metering area.
+		if (mFocusAreaSupported
+				&& (e.getActionMasked() == MotionEvent.ACTION_UP || e.getActionMasked() == MotionEvent.ACTION_POINTER_UP))
+		{
+			setFocusParameters();
+
+			int focusMode = CameraController.getFocusMode();
+			if (focusMode == CameraParameters.AF_MODE_AUTO || focusMode == CameraParameters.AF_MODE_MACRO)
+			{
+				CameraController.cancelAutoFocus();
+				autoFocus();
+			} else
+			{
+				mState = STATE_FOCUSING;
+				updateFocusUI();
+			}
+		}
+		mFocusIndicatorRotateLayout.requestLayout();
+	}
+
+	public void onTouchMeteringArea(MotionEvent e)
+	{
+		if (!mMeteringAreaSupported || Build.MODEL.contains("SM-N900") || Build.MODEL.contains("SM-G900"))
+		{
+			if (e.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN
+					|| e.getActionMasked() == MotionEvent.ACTION_DOWN)
+				Toast.makeText(MainScreen.getInstance(), R.string.manual_exposure_unsupported, Toast.LENGTH_SHORT)
+						.show();
+
+			return;
+		}
+
+		int xRaw = (int) e.getRawX();
+		int yRaw = (int) e.getRawY();
+
+		if (e.getPointerCount() > 1)
+		{
+			final int location[] = { 0, 0 };
+			focusLayout.getLocationOnScreen(location);
+			xRaw = (int) e.getX(1) + location[0];
+			yRaw = (int) e.getY(1) + location[1];
+		}
+
+		int meteringWidth = mMeteringIndicatorRotateLayout.getWidth();
+		int meteringHeight = mMeteringIndicatorRotateLayout.getHeight();
+		int previewWidth = mPreviewWidth;
+		int previewHeight = mPreviewHeight;
+		int displayWidth = MainScreen.getAppResources().getDisplayMetrics().widthPixels;
+		int displayHeight = MainScreen.getAppResources().getDisplayMetrics().heightPixels;
+		int diffWidth = displayWidth - previewWidth;
+		int diffHeight = displayHeight - previewHeight;
+
+		// Initialize variables.
+		int paramsLayoutHeight = 0;
+
+		int xOffset = (focusLayout.getWidth() - previewWidth) / 2;
+		int yOffset = (focusLayout.getHeight() - previewHeight) / 2;
+
+		if (mMeteringArea == null)
+		{
 			mMeteringArea = new ArrayList<Area>();
 			mMeteringArea.add(new Area(new Rect(), 1000));
 		}
 
-		
-		boolean isNexus6 = Build.MODEL.contains("Nexus 6");
+		// Use margin to set the metering indicator to the touched area.
+		RelativeLayout.LayoutParams p = (RelativeLayout.LayoutParams) mMeteringIndicatorRotateLayout.getLayoutParams();
+		int left = Util.clamp(xRaw - meteringWidth / 2 + xOffset, diffWidth / 2,
+				(previewWidth - meteringWidth + xOffset * 2) - diffWidth / 2);
+		int top = Util.clamp(yRaw - meteringHeight / 2 + yOffset - diffHeight / 2, 0, previewHeight - meteringHeight
+				+ yOffset * 2);
+
+		p.leftMargin = left;
+		p.topMargin = top;
+
+		mMeteringIndicatorRotateLayout.setLayoutParams(p);
+
 		// Convert the coordinates to driver format.
-		// AE area is bigger because exposure is sensitive and
-		// easy to over- or underexposure if area is too small.
-		calculateTapArea(focusWidth, focusHeight, 1f, x, y, MainScreen.getPreviewSurfaceView().getWidth(), MainScreen
-				.getPreviewSurfaceView().getHeight(), mFocusArea.get(0).rect);
-		if (MainScreen.getMeteringMode() != -1 && MainScreen.getMeteringMode() == CameraParameters.meteringModeSpot)
-			calculateTapArea(20 + (isNexus6? focusWidth : 0), 20 + (isNexus6? focusHeight : 0), 1f, x, y, MainScreen.getPreviewSurfaceView().getWidth(), MainScreen
-					.getPreviewSurfaceView().getHeight(), mMeteringArea.get(0).rect);
-		else
-			mMeteringArea = null;
-		
-		// Use margin to set the focus indicator to the touched area.
+		calculateTapAreaByTopLeft(meteringWidth, meteringHeight, 1f, top, left, MainScreen.getPreviewSurfaceView()
+				.getWidth(), MainScreen.getPreviewSurfaceView().getHeight(), mMeteringArea.get(0).rect);
+
+		// Set the focus area and metering area.
+		if (e.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN || e.getActionMasked() == MotionEvent.ACTION_DOWN)
+		{
+			mMeteringIndicatorRotateLayout.setVisibility(View.VISIBLE);
+		}
+
+		if (e.getActionMasked() == MotionEvent.ACTION_POINTER_UP || e.getActionMasked() == MotionEvent.ACTION_UP)
+		{
+			setMeteringParameters();
+		}
+
+		mMeteringIndicatorRotateLayout.requestLayout();
+	}
+
+	public void onTouchFocusAndMeteringArea(MotionEvent e)
+	{
+		if (!mFocusAreaSupported)
+			return;
+
+		int xRaw = (int) e.getRawX();
+		int yRaw = (int) e.getRawY();
+
+		// Initialize variables.
+		int focusWidth = mFocusIndicatorRotateLayout.getWidth();
+		int focusHeight = mFocusIndicatorRotateLayout.getHeight();
+		int previewWidth = mPreviewWidth;
+		int previewHeight = mPreviewHeight;
+		int displayWidth = MainScreen.getAppResources().getDisplayMetrics().widthPixels;
+		int displayHeight = MainScreen.getAppResources().getDisplayMetrics().heightPixels;
+		int diffWidth = displayWidth - previewWidth;
+		int diffHeight = displayHeight - previewHeight;
+
+		// Initialize variables.
+		int xOffset = (focusLayout.getWidth() - previewWidth) / 2;
+		int yOffset = (focusLayout.getHeight() - previewHeight) / 2;
+
+		if (mFocusArea == null)
+		{
+			mFocusArea = new ArrayList<Area>();
+			mFocusArea.add(new Area(new Rect(), 1000));
+		}
+
+		if (mMeteringArea == null)
+		{
+			mMeteringArea = new ArrayList<Area>();
+			mMeteringArea.add(new Area(new Rect(), 1000));
+		}
+
+		// Use margin to set the metering indicator to the touched area.
 		RelativeLayout.LayoutParams p = (RelativeLayout.LayoutParams) mFocusIndicatorRotateLayout.getLayoutParams();
-		int left = Util.clamp(x - focusWidth / 2 + xOffset, diffWidth / 2, (previewWidth - focusWidth + xOffset * 2)
+		int left = Util.clamp(xRaw - focusWidth / 2 + xOffset, diffWidth / 2, (previewWidth - focusWidth + xOffset * 2)
 				- diffWidth / 2);
-		int top = Util.clamp(y - focusHeight / 2 + yOffset, paramsLayoutHeight / 2,
-				(previewHeight - focusHeight + yOffset * 2) - paramsLayoutHeight / 2);
-		p.setMargins(left, top, 0, 0);
-		// Disable "center" rule because we no longer want to put it in the
-		// center.
+		int top = Util.clamp(yRaw - focusHeight / 2 + yOffset - diffHeight / 2, 0, previewHeight - focusHeight
+				+ yOffset * 2);
+
+		p.leftMargin = left;
+		p.topMargin = top;
+
 		int[] rules = p.getRules();
 		rules[RelativeLayout.CENTER_IN_PARENT] = 0;
-		mFocusIndicatorRotateLayout.requestLayout();
+
+		mFocusIndicatorRotateLayout.setLayoutParams(p);
+
+		calculateTapAreaByTopLeft(focusWidth, focusHeight, 1f, top, left,
+				MainScreen.getPreviewSurfaceView().getWidth(), MainScreen.getPreviewSurfaceView().getHeight(),
+				mFocusArea.get(0).rect);
+
+		if (MainScreen.getMeteringMode() != -1 && MainScreen.getMeteringMode() == CameraParameters.meteringModeSpot)
+			calculateTapAreaByTopLeft(focusWidth, focusHeight, 1f, top, left, MainScreen.getPreviewSurfaceView()
+					.getWidth(), MainScreen.getPreviewSurfaceView().getHeight(), mMeteringArea.get(0).rect);
+		else
+			mMeteringArea = null;
 
 		// Set the focus area and metering area.
 		if (mFocusAreaSupported && needAutoFocusCall() && (e.getAction() == MotionEvent.ACTION_UP))
@@ -651,21 +945,140 @@ public class FocusVFPlugin extends PluginViewfinder
 			// cancelAutoFocus then success focus state (FOCUS_LOCKED) return
 			// immediately and re-focusing occurs after
 			// image capturing is called.
-//			 new CountDownTimer(100, 100)
-//			 {
-//			 public void onTick(long millisUntilFinished)
-//			 {
-//			 // Not used
-//			 }
-//			
-//			 public void onFinish()
-//			 {
-//			 setFocusParameters();
-//			 autoFocus();
-//			 }
-//			 }.start();
+			// new CountDownTimer(100, 100)
+			// {
+			// public void onTick(long millisUntilFinished)
+			// {
+			// // Not used
+			// }
+			//
+			// public void onFinish()
+			// {
+			// setFocusParameters();
+			// autoFocus();
+			// }
+			// }.start();
 			// Back to direct call to work on S2. TODO: Check on Android 5
 			setFocusParameters();
+			setMeteringParameters();
+			autoFocus();
+
+		} else if (e.getAction() == MotionEvent.ACTION_UP && MainScreen.isShotOnTap() == 1
+				&& !PluginManager.getInstance().getActiveMode().modeID.equals("video") && !currentTouch)
+		{
+
+			MainScreen.getGUIManager().onHardwareShutterButtonPressed();
+		} else if (e.getAction() == MotionEvent.ACTION_UP && MainScreen.isShotOnTap() == 2
+				&& !PluginManager.getInstance().getActiveMode().modeID.equals("video") && !currentTouch)
+		{
+			if (isDoubleClick)
+			{
+				MainScreen.getGUIManager().onHardwareShutterButtonPressed();
+				isDoubleClick = false;
+			}
+		} else if (e.getAction() == MotionEvent.ACTION_UP)
+		{ // Just show the indicator in all other cases.
+			autoFocus();
+			// updateFocusUI();
+			// Reset the metering area in 3 seconds.
+			mHandler.removeMessages(RESET_TOUCH_FOCUS);
+			mHandler.sendEmptyMessageDelayed(RESET_TOUCH_FOCUS, RESET_TOUCH_FOCUS_DELAY);
+		}
+		
+		mFocusIndicatorRotateLayout.requestLayout();
+	}
+
+	public void onTouchAreas(MotionEvent e)
+	{
+		// Initialize variables.
+		int x = Math.round(e.getX());
+		int y = Math.round(e.getY());
+		int focusWidth = mFocusIndicatorRotateLayout.getWidth();
+		int focusHeight = mFocusIndicatorRotateLayout.getHeight();
+		int previewWidth = mPreviewWidth;
+		int previewHeight = mPreviewHeight;
+		int displayWidth = MainScreen.getAppResources().getDisplayMetrics().widthPixels;
+		int diffWidth = displayWidth - previewWidth;
+
+		int paramsLayoutHeight = 0;
+
+		int xOffset = (focusLayout.getWidth() - previewWidth) / 2;
+		int yOffset = (focusLayout.getHeight() - previewHeight) / 2;
+
+		if (mFocusArea == null)
+		{
+			mFocusArea = new ArrayList<Area>();
+			mFocusArea.add(new Area(new Rect(), 1000));
+		}
+
+		if (mMeteringArea == null)
+		{
+			mMeteringArea = new ArrayList<Area>();
+			mMeteringArea.add(new Area(new Rect(), 1000));
+		}
+
+		boolean isNexus6 = Build.MODEL.contains("Nexus 6");
+		// Convert the coordinates to driver format.
+		// AE area is bigger because exposure is sensitive and
+		// easy to over- or underexposure if area is too small.
+		calculateTapArea(focusWidth, focusHeight, 1f, x, y, MainScreen.getPreviewSurfaceView().getWidth(), MainScreen
+				.getPreviewSurfaceView().getHeight(), mFocusArea.get(0).rect);
+		if (MainScreen.getMeteringMode() != -1 && MainScreen.getMeteringMode() == CameraParameters.meteringModeSpot)
+			calculateTapArea(20 + (isNexus6 ? focusWidth : 0), 20 + (isNexus6 ? focusHeight : 0), 1f, x, y, MainScreen
+					.getPreviewSurfaceView().getWidth(), MainScreen.getPreviewSurfaceView().getHeight(),
+					mMeteringArea.get(0).rect);
+		else
+			mMeteringArea = null;
+
+		if (mFocusAreaSupported)
+		{
+			// Use margin to set the focus indicator to the touched area.
+			RelativeLayout.LayoutParams p = (RelativeLayout.LayoutParams) mFocusIndicatorRotateLayout.getLayoutParams();
+			int left = Util.clamp(x - focusWidth / 2 + xOffset, diffWidth / 2,
+					(previewWidth - focusWidth + xOffset * 2) - diffWidth / 2);
+			int top = Util.clamp(y - focusHeight / 2 + yOffset, paramsLayoutHeight / 2,
+					(previewHeight - focusHeight + yOffset * 2) - paramsLayoutHeight / 2);
+			p.setMargins(left, top, 0, 0);
+			// Disable "center" rule because we no longer want to put it in the
+			// center.
+			int[] rules = p.getRules();
+			rules[RelativeLayout.CENTER_IN_PARENT] = 0;
+			mFocusIndicatorRotateLayout.requestLayout();
+		}
+
+		// Set the focus area and metering area.
+		if (mFocusAreaSupported && needAutoFocusCall() && (e.getAction() == MotionEvent.ACTION_UP))
+		{
+			CameraController.cancelAutoFocus();
+			if (preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
+					|| preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
+			{
+				CameraController.setCameraFocusMode(CameraParameters.AF_MODE_AUTO);
+			}
+
+			// This time is useful for Android L. Camera2 dosn't have time
+			// between cancelAutoFocus and autoFocus calls
+			// to reset current focus state and initiate new focusing procedure.
+			// If autoFocus is called right after
+			// cancelAutoFocus then success focus state (FOCUS_LOCKED) return
+			// immediately and re-focusing occurs after
+			// image capturing is called.
+			// new CountDownTimer(100, 100)
+			// {
+			// public void onTick(long millisUntilFinished)
+			// {
+			// // Not used
+			// }
+			//
+			// public void onFinish()
+			// {
+			// setFocusParameters();
+			// autoFocus();
+			// }
+			// }.start();
+			// Back to direct call to work on S2. TODO: Check on Android 5
+			setFocusParameters();
+			setMeteringParameters();
 			autoFocus();
 
 		} else if (e.getAction() == MotionEvent.ACTION_UP && MainScreen.isShotOnTap() == 1
@@ -683,7 +1096,8 @@ public class FocusVFPlugin extends PluginViewfinder
 			}
 		} else
 		{ // Just show the indicator in all other cases.
-			updateFocusUI();
+			autoFocus();
+			// updateFocusUI();
 			// Reset the metering area in 3 seconds.
 			mHandler.removeMessages(RESET_TOUCH_FOCUS);
 			mHandler.sendEmptyMessageDelayed(RESET_TOUCH_FOCUS, RESET_TOUCH_FOCUS_DELAY);
@@ -711,6 +1125,11 @@ public class FocusVFPlugin extends PluginViewfinder
 		onPreviewStopped();
 	}
 
+	private void manualFocusStart()
+	{
+		updateFocusUI();
+	}
+
 	private void autoFocus()
 	{
 		if (CameraController.autoFocus())
@@ -723,6 +1142,7 @@ public class FocusVFPlugin extends PluginViewfinder
 
 	private void cancelAutoFocus()
 	{
+		Log.e(TAG, "cancelAutofocus");
 		// Note: CameraController.getFocusMode(); will return
 		// 'FOCUS_MODE_AUTO' if actual
 		// mode is in fact FOCUS_MODE_CONTINUOUS_PICTURE or
@@ -730,12 +1150,12 @@ public class FocusVFPlugin extends PluginViewfinder
 		int fm = CameraController.getFocusMode();
 		if (fm != -1)
 		{
-			CameraController.cancelAutoFocus();
-			if (fm != preferenceFocusMode)
+			// CameraController.cancelAutoFocus();
+			if (fm != preferenceFocusMode && preferenceFocusMode != CameraParameters.MF_MODE)
 			{
 				// Log.e(TAG, "cancelAutoFocus. setFocusMode = " +
 				// preferenceFocusMode);
-				// CameraController.cancelAutoFocus();
+				CameraController.cancelAutoFocus();
 				CameraController.setCameraFocusMode(preferenceFocusMode);
 			}
 		}
@@ -744,6 +1164,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		// Otherwise, focus mode stays at auto and the tap area passed to the
 		// driver is not reset.
 		CameraController.setCameraFocusAreas(null);
+		MainScreen.getInstance().setCameraMeteringMode(MainScreen.getMeteringMode());
 		resetTouchFocus();
 
 		mState = STATE_IDLE;
@@ -851,6 +1272,9 @@ public class FocusVFPlugin extends PluginViewfinder
 		if (!mInitialized)
 			return;
 
+		splitMode = false;
+		mMeteringIndicatorRotateLayout.setVisibility(View.GONE);
+
 		// Put focus indicator to the center.
 		RelativeLayout.LayoutParams p = (RelativeLayout.LayoutParams) mFocusIndicatorRotateLayout.getLayoutParams();
 		int[] rules = p.getRules();
@@ -884,6 +1308,40 @@ public class FocusVFPlugin extends PluginViewfinder
 
 		int right = Util.clamp(x + areaWidth / 2, areaWidth, previewWidth);
 		int bottom = Util.clamp(y + areaHeight / 2, areaHeight, previewHeight);
+
+		RectF rectF = new RectF(left, top, right, bottom);
+		mMatrix.mapRect(rectF);
+		Util.rectFToRect(rectF, rect);
+
+		if (rect.left < -1000)
+			rect.left = -1000;
+		if (rect.left > 1000)
+			rect.left = 1000;
+
+		if (rect.right < -1000)
+			rect.right = -1000;
+		if (rect.right > 1000)
+			rect.right = 1000;
+
+		if (rect.top < -1000)
+			rect.top = -1000;
+		if (rect.top > 1000)
+			rect.top = 1000;
+
+		if (rect.bottom < -1000)
+			rect.bottom = -1000;
+		if (rect.bottom > 1000)
+			rect.bottom = 1000;
+	}
+
+	public void calculateTapAreaByTopLeft(int focusWidth, int focusHeight, float areaMultiple, int top, int left,
+			int previewWidth, int previewHeight, Rect rect)
+	{
+		int areaWidth = (int) (focusWidth * areaMultiple);
+		int areaHeight = (int) (focusHeight * areaMultiple);
+
+		int right = Util.clamp(left + areaWidth, areaWidth, previewWidth);
+		int bottom = Util.clamp(top + areaHeight, areaHeight, previewHeight);
 
 		RectF rectF = new RectF(left, top, right, bottom);
 		mMatrix.mapRect(rectF);
@@ -960,8 +1418,8 @@ public class FocusVFPlugin extends PluginViewfinder
 																// auto-focus
 																// call
 				|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
-				|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO || mFocusDisabled || !CameraController
-					.isFocusModeSupported());
+				|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO || focusMode == CameraParameters.MF_MODE
+				|| mFocusDisabled || mFocusLocked || !CameraController.isFocusModeSupported());
 	}
 
 	private boolean isContinuousFocusMode()
@@ -981,11 +1439,17 @@ public class FocusVFPlugin extends PluginViewfinder
 		if (arg1 == PluginManager.MSG_CONTROL_LOCKED)
 		{
 			mFocusDisabled = true;
-			cancelAutoFocus();
+			// cancelAutoFocus();
 		} else if (arg1 == PluginManager.MSG_CONTROL_UNLOCKED)
 		{
 			mFocusDisabled = false;
-			cancelAutoFocus();
+			// cancelAutoFocus();
+		} else if (arg1 == PluginManager.MSG_FOCUS_LOCKED)
+		{
+			mFocusLocked = true;
+		} else if (arg1 == PluginManager.MSG_FOCUS_UNLOCKED)
+		{
+			mFocusLocked = false;
 		} else if (arg1 == PluginManager.MSG_CAPTURE_FINISHED)
 		{
 			mFocusDisabled = false;
@@ -1001,5 +1465,13 @@ public class FocusVFPlugin extends PluginViewfinder
 		}
 
 		return false;
+	}
+
+	@Override
+	public void onCaptureFinished()
+	{
+		mFocusDisabled = false;
+		if (!mFocusLocked)
+			cancelAutoFocus();
 	}
 }

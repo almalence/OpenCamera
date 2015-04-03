@@ -47,8 +47,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.almalence.ui.RotateImageView;
-
-
 //<!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;

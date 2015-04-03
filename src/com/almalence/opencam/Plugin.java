@@ -237,6 +237,11 @@ public abstract class Plugin
 	public void onAutoFocus(boolean paramBoolean)
 	{
 	}
+	
+	public void onAutoFocusMoving(boolean paramBoolean)
+	{
+	}
+
 
 	public void takePicture()
 	{
@@ -307,7 +312,7 @@ public abstract class Plugin
 
 			if ((mpix >= CameraController.MIN_MPIX_SUPPORTED) && (mpix < maxMpix))
 			{
-				if (mpix > defaultCaptureMpix && mpix <= MPIX_8)
+				if (mpix > defaultCaptureMpix && (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT || mpix <= MPIX_8))
 				{
 					defaultCaptureIdx = Integer.parseInt(CameraController.getResolutionsIdxesList().get(ii));
 					defaultCaptureMpix = mpix;

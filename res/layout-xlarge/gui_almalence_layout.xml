@@ -267,6 +267,151 @@
 	    android:layout_marginLeft="2dip"
 		android:layout_marginRight="2dip"
 		android:visibility="visible">
+          	<com.almalence.ui.RotateImageView 
+		    android:id="@+id/expandManualControls"
+			android:background="@android:color/transparent"
+			android:src="@drawable/gui_almalence_manual_expand"					
+			android:layout_height="40dip"
+			android:layout_width="40dip"
+	   		android:layout_gravity="top|left"
+	   		android:visibility="gone"/>
+		<RelativeLayout android:id="@+id/manualControlsLayout"
+     		android:background="@drawable/ev_background"
+     		android:orientation="vertical"
+     		android:layout_width="wrap_content"
+     		android:layout_height="wrap_content"        		
+  			android:layout_gravity="top"
+			android:visibility="visible">	 	 	
+			<LinearLayout
+			 	android:id="@+id/exposureTimeLayout"
+			 	android:orientation="horizontal"
+			 	android:layout_width="wrap_content"
+		  		android:layout_height="wrap_content"
+		  		android:layout_marginLeft="3dip"	    		
+		  		android:paddingTop="10dip"
+		  		android:paddingLeft="10dip"
+		  		android:paddingRight="10dip"
+		  		android:layout_gravity="top"
+		  		android:visibility="gone">
+		   		<TextView android:id="@+id/exposureTimeTitleText"
+		   		    	  android:layout_width="wrap_content"
+		   		    	  android:layout_height="match_parent"		    		    	  
+						  android:textSize="@dimen/exposureTimeTitleSize"
+						  android:paddingLeft="10dp"							  
+						  android:textStyle="bold"
+						  android:text="EV"
+						  android:textColor="@android:color/white"							  
+						  android:gravity="center"
+						  android:layout_gravity="center_vertical"/>
+		   		<LinearLayout
+			 	 	android:id="@+id/exposureTimeSeekBarLayout"		 	 	    	 	 	    
+			 	 	android:orientation="vertical"
+			 	 	android:gravity="right"
+			 	 	android:layout_width="@dimen/exposureSeekBarWidth"
+		    		android:layout_height="wrap_content">
+		   			<TextView android:id="@+id/exposureTimeValueText"
+		    		    	  android:layout_width="@dimen/exposureTitleWidth"
+		    		    	  android:layout_height="wrap_content"
+							  android:textSize="@dimen/exposureTimeTitleSize"
+							  android:textStyle="bold"
+							  android:textColor="@android:color/white"							  
+							  android:gravity="center"
+							  android:layout_gravity="center_horizontal"/>		    		
+		    		<LinearLayout
+				 	 	android:orientation="vertical"
+				 	 	android:layout_width="wrap_content"
+			    		android:layout_height="wrap_content">		    		
+			    		<SeekBar android:id="@+id/exposureTimeSeekBar"
+								 android:layout_width="@dimen/exposureSeekBarWidth"
+								 android:layout_height="wrap_content"
+								 android:orientation="horizontal"/>
+			    		<RelativeLayout
+					 	 	android:id="@+id/exposureTimeTextLayout"		 	 	    	 	 	    
+					 	 	android:orientation="horizontal"
+					 	 	android:layout_width="@dimen/exposureSeekBarWidth"
+				    		android:layout_height="wrap_content">
+				    		<TextView android:id="@+id/exposureTimeLeftText"
+				    		    	  android:layout_width="match_parent"
+				    		    	  android:layout_height="wrap_content"
+				    		    	  android:layout_alignParentLeft="true"		    		    	  
+									  android:textSize="@dimen/exposureTimeTitleSize"
+									  android:paddingLeft="10dp"							  
+									  android:textStyle="bold"
+									  android:textColor="@android:color/white"							  
+									  android:gravity="left"/>
+				    		<TextView android:id="@+id/exposureTimeRightText"
+				    		    	  android:layout_width="match_parent"
+				    		    	  android:layout_height="wrap_content"
+				    		    	  android:layout_alignParentRight="true"		    		          
+									  android:textSize="@dimen/exposureTimeTitleSize"
+									  android:paddingRight="10dp"							  
+									  android:textStyle="bold"
+									  android:textColor="@android:color/white"
+									  android:gravity="right"/>
+			    		</RelativeLayout>
+		   			</LinearLayout>
+	  			</LinearLayout>	    		
+	  		</LinearLayout>	
+	  		
+			<LinearLayout
+			 	android:id="@+id/focusDistanceLayout"
+			 	android:orientation="horizontal"
+			 	android:layout_width="wrap_content"
+		  		android:layout_height="wrap_content"
+		  		android:layout_marginLeft="3dip"	    		
+		  		android:paddingTop="10dip"
+		  		android:paddingLeft="10dip"
+		  		android:paddingRight="10dip"
+		  		android:layout_below="@id/exposureTimeLayout"
+		  		android:layout_gravity="bottom"
+		  		android:visibility="gone">
+		   		<TextView android:id="@+id/focusDistanceTitleText"
+		   		    	  android:layout_width="wrap_content"
+		   		    	  android:layout_height="match_parent"		    		    	  
+						  android:textSize="@dimen/exposureTimeTitleSize"
+						  android:paddingLeft="10dp"							  
+						  android:textStyle="bold"
+						  android:text="MF"
+						  android:textColor="@android:color/white"							  
+						  android:gravity="center"
+						  android:layout_gravity="center_vertical"/>	    		
+		   		<LinearLayout
+		 	 	android:orientation="vertical"
+		 	 	android:layout_width="wrap_content"
+		   		android:layout_height="wrap_content">		    		
+		    		<SeekBar android:id="@+id/focusDistanceSeekBar"
+							 android:layout_width="@dimen/exposureSeekBarWidth"
+							 android:layout_height="wrap_content"
+							 android:orientation="horizontal"/>
+		    		<RelativeLayout
+				 	 	android:id="@+id/focusDistanceTextLayout"		 	 	    	 	 	    
+				 	 	android:orientation="horizontal"
+				 	 	android:layout_width="@dimen/exposureSeekBarWidth"
+			    		android:layout_height="wrap_content">
+			    		<TextView android:id="@+id/focusDistanceLeftText"
+			    		    	  android:layout_width="match_parent"
+			    		    	  android:layout_height="wrap_content"		    		    	  
+								  android:textSize="@dimen/exposureTimeTitleSize"
+								  android:paddingLeft="10dp"							  
+								  android:textStyle="bold"
+								  android:textColor="@android:color/white"							  
+								  android:gravity="left"
+								  android:layout_gravity="left"
+								  android:layout_alignParentLeft="true"/>
+			    		<TextView android:id="@+id/focusDistanceRightText"
+			    		    	  android:layout_width="match_parent"
+			    		    	  android:layout_height="wrap_content"		    		          
+								  android:textSize="@dimen/exposureTimeTitleSize"
+								  android:paddingRight="10dp"							  
+								  android:textStyle="bold"
+								  android:textColor="@android:color/white"
+								  android:gravity="right"
+								  android:layout_gravity="right"
+								  android:layout_alignParentRight="true"/>
+		    		</RelativeLayout>
+		   		</LinearLayout>
+	  		</LinearLayout>	
+  		</RelativeLayout>          	
 	</RelativeLayout>
 	
 	
@@ -334,6 +479,14 @@
 					android:layout_weight="1"
 			   		android:layout_gravity="center"
 			   		android:layout_margin="7dip"
+			   		android:onClick="onButtonClick"/>	
+			<com.almalence.ui.RotateImageView android:id="@+id/selfTimerButton"
+					android:background="@android:color/transparent"					
+					android:layout_height="match_parent"
+					android:layout_width="0dip"
+					android:layout_weight="1"
+			   		android:layout_gravity="center"
+			   		android:layout_margin="7dip"
 			   		android:onClick="onButtonClick"/>			
 			<com.almalence.ui.RotateImageView android:id="@+id/camerachangeButton"
 					android:background="@android:color/transparent"					
@@ -342,7 +495,7 @@
 					android:layout_weight="1"
 			   		android:layout_gravity="center"
 			   		android:layout_margin="7dip"
-			   		android:onClick="onButtonClick"/>									
+			   		android:onClick="onButtonClick"/>												
 	</LinearLayout>
 	
 	<RelativeLayout android:id="@+id/qcLayout"
@@ -588,7 +741,7 @@
 					    android:stretchMode="columnWidth"
 					    android:gravity="center"					    
 					/>
-			</RelativeLayout>				
+			</RelativeLayout>										
 	</RelativeLayout>	 	
 		
 	   <LinearLayout

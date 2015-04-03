@@ -274,7 +274,6 @@ extern "C" JNIEXPORT void JNICALL Java_com_almalence_plugins_capture_video_Realt
                         mtx,
                         sx,
                         sy,
-                        filter,
                         max_amplify,
                         local_mapping,
                         force_update,

@@ -1,6 +1,6 @@
 eclipse.preferences.version=1
 environment/project/com.android.toolchain.gcc.1245095277/PATH/delimiter=\:
 environment/project/com.android.toolchain.gcc.1245095277/PATH/operation=replace
-environment/project/com.android.toolchain.gcc.1245095277/PATH/value=/usr/lib/lightdm/lightdm\:/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/usr/games\:/usr/local/games\:/home/sergey/android_tools/android-ndk-r9d
+environment/project/com.android.toolchain.gcc.1245095277/PATH/value=/usr/lib/lightdm/lightdm\:/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/usr/games\:/usr/local/games\:/home/sergey/android_tools/android-ndk-r10d
 environment/project/com.android.toolchain.gcc.1245095277/append=true
 environment/project/com.android.toolchain.gcc.1245095277/appendContributed=true

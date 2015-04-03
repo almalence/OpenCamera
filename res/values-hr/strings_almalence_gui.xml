@@ -96,10 +96,4 @@
 	
 	<string name="moreText">Više...</string>
 	
-	<string name="Preference_DefaultModeName">Zadani naziv modela</string>
-	<string name="Preference_QuickControlButton1">brzi kontrolni gumb 1</string>
-	<string name="Preference_QuickControlButton2">brzi kontrolni gumb 2</string>
-	<string name="Preference_QuickControlButton3">brzi kontrolni gumb 3</string>
-	<string name="Preference_QuickControlButton4">brzi kontrolni gumb 4</string>
-	
 </resources>

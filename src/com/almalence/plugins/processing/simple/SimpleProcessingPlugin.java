@@ -152,8 +152,32 @@ public class SimpleProcessingPlugin extends PluginProcessing
 				}
 
 				float[] gammaTable = new float[] { 0.5f, 0.6f, 0.7f };
+				int val = 1;
+				try
+				{
+					val = Integer.parseInt(prefs.getString("noisePrefDro", "1"));
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+				float dark_noise_pass = 0.35f;
+				switch (val)
+				{
+				case 0:
+					dark_noise_pass = 0.1f;
+					break;
+				case 1:
+					dark_noise_pass = 0.35f;
+					break;
+				case 2:
+					dark_noise_pass = 0.7f;
+					break;
+				default:
+					break;
+				}
+				
 				int yuv = AlmaShotDRO.DroProcess(inputYUV, mImageWidth, mImageHeight, 1.5f, DROLocalTMPreference, 0,
-						prefPullYUV, 0.35f, gammaTable[modePrefDro]);
+						prefPullYUV, dark_noise_pass, gammaTable[modePrefDro]);
 
 				AlmaShotDRO.Release();
 

@@ -92,6 +92,7 @@
     <string name="focusContinuousVideo">Continuous video</string>
     <string name="focusContinuousPicture">Continuous picture</string>
     <string name="focusAFLock">AF lock</string>
+    <string name="focusMF">Manual</string>
     
     <string name="flashAuto">Auto</string>
     <string name="flashOn">On</string>
@@ -177,6 +178,7 @@
     <string name="focusContinuousVideoSystem">continuous-video</string>
     <string name="focusContinuousPictureSystem">continuous-picture</string>
     <string name="focusAfLockSystem">af-lock</string>
+    <string name="focusMFSystem">manual-focus</string>
     
     <string name="focusAutoKey">00_auto</string>
     <string name="focusContinuousVideoKey">01_continuous-video</string>
@@ -187,6 +189,7 @@
     <string name="focusInfinityKey">06_infinity</string>    
     <string name="focusEdofKey">07_edof</string>    
     <string name="focusAfLockKey">08_af-lock</string>
+    <string name="focusMFKey">09_manual-focus</string>
     
     <string name="flashAutoSystem">auto</string>
     <string name="flashOnSystem">on</string>
@@ -237,6 +240,7 @@
     <string name="meteringMatrixSystem">Matrix</string>
     <string name="meteringCenterSystem">Center-weighted</string>
     <string name="meteringSpotSystem">Spot</string>
+    <string name="meteringManualSystem">Manual exposure</string>
     
     <string name="settings_mode_scene">Scene mode</string>
     <string name="settings_mode_wb">White balance</string>
@@ -247,7 +251,10 @@
     <string name="settings_mode_rear">Rear camera</string>
     <string name="settings_mode_front">Front camera</string>
     <string name="settings_mode_exposure">Exposure</string>
+    <string name="settings_mode_exposuretime">Exposure time</string>
+    <string name="settings_mode_focusdistance">Focus distance</string>
     <string name="settings_mode_moresettings">More settings</string>
+    <string name="settings_mode_self_timer">Self-timer</string>
     <string name="settings_mode_aeaflock">AE\\AF Locked</string>
     <string name="settings_mode_aeafunlock">AE\\AF UnLocked</string>
     

@@ -8,6 +8,7 @@
 	<string name="Pref_Expobracketing_Title">Экспо-брекетинг</string>
 	<string name="Pref_HDR_Title">HDR</string>
 	<string name="Pref_Night_Title">Ночь</string>
+	<string name="Pref_Super_Title">Super</string>
 	<string name="Pref_Video_Title">Видео</string>
 	<string name="Pref_Preshot_Title">Pre-shot</string>
 	<string name="Pref_ObjectRemoval_Title">Удаление объектов</string>

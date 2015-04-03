@@ -28,8 +28,16 @@
 		
 		<PreferenceScreen
 			 android:fragment="com.almalence.opencam.Fragment"
-			 android:title="@string/Pref_Night_Title">
+			 android:title="@string/Pref_Night_Title"
+			 android:key="night">
 			 <extra android:name="type" android:value="night"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.opencam.Fragment"
+			 android:title="@string/Pref_Super_Title"
+			 android:key="super">
+			 <extra android:name="type" android:value="super"/>
 		</PreferenceScreen>
 		
 		<PreferenceScreen
@@ -90,6 +98,13 @@
 			 android:fragment="com.almalence.opencam_plus.Fragment"
 			 android:title="@string/Pref_Night_Title">
 			 <extra android:name="type" android:value="night"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.opencam_plus.Fragment"
+			 android:title="@string/Pref_Super_Title"
+			 android:key="super">
+			 <extra android:name="type" android:value="super"/>
 		</PreferenceScreen>
 		
 		<PreferenceScreen
