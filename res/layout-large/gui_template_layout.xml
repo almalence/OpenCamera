@@ -116,6 +116,15 @@
        android:background="@android:color/transparent"   
        android:visibility="gone">
 	</RelativeLayout>
+	
+    <RelativeLayout
+       android:id="@+id/specialPluginsLayout"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:orientation="vertical"    
+       android:background="@android:color/transparent"   
+       android:visibility="gone">
+	</RelativeLayout>
       
 	 	
 	<RelativeLayout android:id="@+id/modeLayout"

@@ -48,12 +48,7 @@ import android.provider.MediaStore.Video;
 import android.provider.MediaStore.Video.VideoColumns;
 import android.util.Log;
 
-//<!-- -+-
-import com.almalence.opencam.PluginManager;
-//-+- -->
-/* <!-- +++
-import com.almalence.opencam_plus.PluginManager;
-+++ --> */
+import com.almalence.opencam.TemplatePluginManager;
 
 import com.almalence.util.Util;
 
@@ -328,9 +323,9 @@ public class Thumbnail
 			Uri query = baseUri.buildUpon().appendQueryParameter("limit", "1").build();
 			String[] projection = new String[] { ImageColumns._ID, ImageColumns.ORIENTATION, ImageColumns.DATE_TAKEN };
 			
-			File saveDir = PluginManager.getSaveDir(false);
+			File saveDir = TemplatePluginManager.getSaveDir(false);
 			if (!saveDir.canWrite()) {
-				saveDir = PluginManager.getSaveDir(true);
+				saveDir = TemplatePluginManager.getSaveDir(true);
 			}
 			
 			String selection = ImageColumns.DATA + " like '" + saveDir.getAbsolutePath() + "%' AND " + ImageColumns.MIME_TYPE + "='image/jpeg'";
@@ -365,9 +360,9 @@ public class Thumbnail
 			Uri query = baseUri.buildUpon().appendQueryParameter("limit", "1").build();
 			String[] projection = new String[] { ImageColumns._ID, ImageColumns.ORIENTATION, ImageColumns.DATE_TAKEN };
 			
-			File saveDir = PluginManager.getSaveDir(false);
+			File saveDir = TemplatePluginManager.getSaveDir(false);
 			if (!saveDir.canWrite()) {
-				saveDir = PluginManager.getSaveDir(true);
+				saveDir = TemplatePluginManager.getSaveDir(true);
 			}
 			
 			String selection = ImageColumns.DATA + " like '" + saveDir.getAbsolutePath() + "%' AND " + ImageColumns.MIME_TYPE + "='image/jpeg'";
@@ -447,9 +442,9 @@ public class Thumbnail
 			Uri query = baseUri.buildUpon().appendQueryParameter("limit", "1").build();
 			String[] projection = new String[] { VideoColumns._ID, VideoColumns.DATA, VideoColumns.DATE_TAKEN };
 			
-			File saveDir = PluginManager.getSaveDir(false);
+			File saveDir = TemplatePluginManager.getSaveDir(false);
 			if (!saveDir.canWrite()) {
-				saveDir = PluginManager.getSaveDir(true);
+				saveDir = TemplatePluginManager.getSaveDir(true);
 			}
 			
 			String selection = VideoColumns.DATA + " like '" + saveDir.getAbsolutePath() + "%' AND " + VideoColumns.MIME_TYPE + "='video/mp4'";
@@ -483,9 +478,9 @@ public class Thumbnail
 			Uri query = baseUri.buildUpon().appendQueryParameter("limit", "1").build();
 			String[] projection = new String[] { VideoColumns._ID, VideoColumns.DATA, VideoColumns.DATE_TAKEN };
 			
-			File saveDir = PluginManager.getSaveDir(false);
+			File saveDir = TemplatePluginManager.getSaveDir(false);
 			if (!saveDir.canWrite()) {
-				saveDir = PluginManager.getSaveDir(true);
+				saveDir = TemplatePluginManager.getSaveDir(true);
 			}
 			
 			String selection = VideoColumns.DATA + " like '" + saveDir.getAbsolutePath() + "%' AND " + VideoColumns.MIME_TYPE + "='video/mp4'";

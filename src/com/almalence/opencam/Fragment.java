@@ -62,7 +62,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 
 		String settings = getArguments().getString("type");
 
-		PluginManager.getInstance().loadHeaderContent(settings, this);
+		ApplicationScreen.getPluginManager().loadHeaderContent(settings, this);
 
 		if (null == getPreferenceScreen())
 			return;

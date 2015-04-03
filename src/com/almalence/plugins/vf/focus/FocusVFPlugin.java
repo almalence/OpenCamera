@@ -54,7 +54,7 @@ import com.almalence.opencam.ApplicationInterface;
 // <!-- -+-
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.PluginManager;
+import com.almalence.opencam.PluginManagerBase;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
 import com.almalence.opencam.SoundPlayer;
@@ -434,12 +434,12 @@ public class FocusVFPlugin extends PluginViewfinder
 				 * && mSoundPlayerOK != null)
 				 */
 				if (mSoundPlayerOK != null)
-					if (!ApplicationScreen.instance.isShutterSoundEnabled() && !PluginManager.getInstance().muteSounds())
+					if (!ApplicationScreen.instance.isShutterSoundEnabled() && !ApplicationScreen.getPluginManager().muteSounds())
 						mSoundPlayerOK.play();
 
 				// With enabled preference 'Shot on tap' perform shutter button
 				// click after success focusing.
-				String modeID = PluginManager.getInstance().getActiveMode().modeID;
+				String modeID = ApplicationScreen.getPluginManager().getActiveMode().modeID;
 				if (ApplicationScreen.instance.isShotOnTap() == 1 && !modeID.equals("video"))
 					ApplicationScreen.getGUIManager().onHardwareShutterButtonPressed();
 
@@ -454,7 +454,7 @@ public class FocusVFPlugin extends PluginViewfinder
 			} else
 			{
 				if (mSoundPlayerFalse != null)
-					if (!ApplicationScreen.instance.isShutterSoundEnabled() && !PluginManager.getInstance().muteSounds())
+					if (!ApplicationScreen.instance.isShutterSoundEnabled() && !ApplicationScreen.getPluginManager().muteSounds())
 						mSoundPlayerFalse.play();
 				mState = STATE_FAIL;
 			}
@@ -497,7 +497,7 @@ public class FocusVFPlugin extends PluginViewfinder
 					// If state is Focused start capture
 					if (mState == STATE_SUCCESS)
 					{
-						String modeID = PluginManager.getInstance().getActiveMode().modeID;
+						String modeID = ApplicationScreen.getPluginManager().getActiveMode().modeID;
 						if (!modeID.equals("video"))
 						{
 							ApplicationScreen.getGUIManager().onHardwareShutterButtonPressed();
@@ -519,8 +519,8 @@ public class FocusVFPlugin extends PluginViewfinder
 				|| mState == STATE_INACTIVE
 				|| mFocusDisabled
 				|| !CameraController.isFocusModeSupported()
-				|| (!(needAutoFocusCall() || isContinuousFocusMode()) && !(ApplicationScreen.instance.isShotOnTap() > 0 && !PluginManager
-						.getInstance().getActiveMode().modeID.equals("video"))))
+				|| (!(needAutoFocusCall() || isContinuousFocusMode()) && !(ApplicationScreen.instance.isShotOnTap() > 0 && !ApplicationScreen
+						.getPluginManager().getActiveMode().modeID.equals("video"))))
 			return false;
 
 		// Let users be able to cancel previous touch focus.
@@ -668,12 +668,12 @@ public class FocusVFPlugin extends PluginViewfinder
 			autoFocus();
 
 		} else if (e.getAction() == MotionEvent.ACTION_UP && ApplicationScreen.instance.isShotOnTap() == 1
-				&& !PluginManager.getInstance().getActiveMode().modeID.equals("video"))
+				&& !ApplicationScreen.getPluginManager().getActiveMode().modeID.equals("video"))
 		{
 
 			ApplicationScreen.getGUIManager().onHardwareShutterButtonPressed();
 		} else if (e.getAction() == MotionEvent.ACTION_UP && ApplicationScreen.instance.isShotOnTap() == 2
-				&& !PluginManager.getInstance().getActiveMode().modeID.equals("video"))
+				&& !ApplicationScreen.getPluginManager().getActiveMode().modeID.equals("video"))
 		{
 			if (isDoubleClick)
 			{

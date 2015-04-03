@@ -37,24 +37,20 @@ import android.util.Log;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.ui.GUI.CameraParameter;
  import com.almalence.opencam_plus.CameraParameters;
+ import com.almalence.opencam_plus.ApplicationInterface;
  import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.PluginCapture;
- import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.R;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.GUI.CameraParameter;
-import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.CameraParameters;
+import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginCapture;
-import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
 //-+- -->
-
-import com.almalence.SwapHeap;
-import com.almalence.YuvImage;
 
 /***
  * Implements burst capture plugin - captures predefined number of images
@@ -273,7 +269,7 @@ public class BurstCapturePlugin extends PluginCapture
 		if (frame == 0)
 		{
 			Log.d("Burst", "Load to heap failed");
-			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			imagesTakenRAW = 0;
@@ -287,14 +283,14 @@ public class BurstCapturePlugin extends PluginCapture
 			imagesTakenRAW++;
 
 		imagesTaken++;
-		PluginManager.getInstance().addToSharedMem("frame" + imagesTaken + SessionID, String.valueOf(frame));
-		PluginManager.getInstance().addToSharedMem("framelen" + imagesTaken + SessionID, String.valueOf(frame_len));
+		ApplicationScreen.getPluginManager().addToSharedMem("frame" + imagesTaken + SessionID, String.valueOf(frame));
+		ApplicationScreen.getPluginManager().addToSharedMem("framelen" + imagesTaken + SessionID, String.valueOf(frame_len));
 
-		PluginManager.getInstance().addToSharedMem("frameisraw" + imagesTaken + SessionID, String.valueOf(isRAW));
+		ApplicationScreen.getPluginManager().addToSharedMem("frameisraw" + imagesTaken + SessionID, String.valueOf(isRAW));
 
-		PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken + SessionID,
+		ApplicationScreen.getPluginManager().addToSharedMem("frameorientation" + imagesTaken + SessionID,
 				String.valueOf(ApplicationScreen.getGUIManager().getDisplayOrientation()));
-		PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID,
+		ApplicationScreen.getPluginManager().addToSharedMem("framemirrored" + imagesTaken + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
 
 		try
@@ -303,7 +299,7 @@ public class BurstCapturePlugin extends PluginCapture
 		} catch (RuntimeException e)
 		{
 			Log.e("Burst", "StartPreview fail");
-			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			imagesTakenRAW = 0;
@@ -314,12 +310,12 @@ public class BurstCapturePlugin extends PluginCapture
 
 		if ((captureRAW && imagesTaken >= (imageAmount * 2)) || (!captureRAW && imagesTaken >= imageAmount))
 		{
-			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
+			ApplicationScreen.getPluginManager().addToSharedMem("amountofcapturedframes" + SessionID,
 					String.valueOf(imagesTaken));
-			PluginManager.getInstance().addToSharedMem("amountofcapturedrawframes" + SessionID,
+			ApplicationScreen.getPluginManager().addToSharedMem("amountofcapturedrawframes" + SessionID,
 					String.valueOf(imagesTakenRAW));
 
-			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			imagesTakenRAW = 0;
@@ -338,11 +334,11 @@ public class BurstCapturePlugin extends PluginCapture
 		resultCompleted++;
 		if (result.getSequenceId() == requestID)
 		{
-			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, resultCompleted);
+			ApplicationScreen.getPluginManager().addToSharedMemExifTagsFromCaptureResult(result, SessionID, resultCompleted);
 		}
 
 		if (captureRAW)
-			PluginManager.getInstance().addRAWCaptureResultToSharedMem("captureResult" + resultCompleted + SessionID,
+			ApplicationScreen.getPluginManager().addRAWCaptureResultToSharedMem("captureResult" + resultCompleted + SessionID,
 					result);
 	}
 

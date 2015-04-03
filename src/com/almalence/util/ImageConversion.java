@@ -33,8 +33,6 @@ import com.almalence.opencam_plus.ApplicationScreen;
 import com.almalence.opencam.ApplicationScreen;
 //-+- -->
 
-import com.almalence.plugins.processing.groupshot.AlmaShotSeamless;
-
 public class ImageConversion
 {
 	public static native int JpegConvert(byte[] in, int sx, int sy, boolean rotate, boolean mirrored, int rotationDegree);
@@ -129,62 +127,62 @@ public class ImageConversion
 		return bitmap;
 	}
 
-	public static Bitmap decodeYUVfromBuffer(int yuv, int width, int height)
-	{
-		Size mInputFrameSize = new Size(width, height);
-		Size mOutputFrameSize = null;
-		
-		Display display = ((WindowManager) ApplicationScreen.instance.getSystemService(Context.WINDOW_SERVICE))
-				.getDefaultDisplay();
-		int mDisplayWidth = display.getHeight();
-		int mDisplayHeight = display.getWidth();
-
-		float widthScale = (float) width / (float) mDisplayWidth;
-		float heightScale = (float) height / (float) mDisplayHeight;
-		float scale = widthScale > heightScale ? widthScale : heightScale;
-		float imageRatio = (float) width / (float) height;
-		float displayRatio = (float) mDisplayWidth / (float) mDisplayHeight;
-		
-		int scaledWidth = 0;
-		int scaledHeight = 0;
-		if (imageRatio > displayRatio)
-		{
-			scaledWidth =  mDisplayWidth;
-			scaledHeight = (int)(mDisplayWidth/displayRatio);			
-		} else
-		{
-			scaledWidth =  (int)(mDisplayHeight * imageRatio);
-			scaledHeight = mDisplayHeight;
-		}
-		
-		mOutputFrameSize = new Size(scaledWidth, scaledHeight);
-
-//		Log.e("ImageConversion", "decodeYUVfromBuffer. width = " + width + " height = " + height);
-//		Log.e("ImageConversion", "decode to width = " + scaledWidth + " height = " + scaledHeight);
-		Rect rect = new Rect(0, 0, width, height);		
-		Bitmap bitmap = Bitmap.createBitmap(AlmaShotSeamless.NV21toARGB(yuv, mInputFrameSize, rect, mOutputFrameSize), scaledWidth, scaledHeight, Config.ARGB_8888);
-		
-//		File saveDir = PluginManager.getSaveDir(false);
-//		Calendar d = Calendar.getInstance();
+//	public static Bitmap decodeYUVfromBuffer(int yuv, int width, int height)
+//	{
+//		Size mInputFrameSize = new Size(width, height);
+//		Size mOutputFrameSize = null;
+//		
+//		Display display = ((WindowManager) ApplicationScreen.instance.getSystemService(Context.WINDOW_SERVICE))
+//				.getDefaultDisplay();
+//		int mDisplayWidth = display.getHeight();
+//		int mDisplayHeight = display.getWidth();
 //
-//		File file = new File(saveDir, String.format("%04d-%02d-%02d_%02d-%02d-%02d_OPENCAM_GS.jpg",
-//				d.get(Calendar.YEAR), d.get(Calendar.MONTH) + 1, d.get(Calendar.DAY_OF_MONTH),
-//				d.get(Calendar.HOUR_OF_DAY), d.get(Calendar.MINUTE), d.get(Calendar.SECOND)));
-//
-//		FileOutputStream os;
-//		try
+//		float widthScale = (float) width / (float) mDisplayWidth;
+//		float heightScale = (float) height / (float) mDisplayHeight;
+//		float scale = widthScale > heightScale ? widthScale : heightScale;
+//		float imageRatio = (float) width / (float) height;
+//		float displayRatio = (float) mDisplayWidth / (float) mDisplayHeight;
+//		
+//		int scaledWidth = 0;
+//		int scaledHeight = 0;
+//		if (imageRatio > displayRatio)
 //		{
-//			os = new FileOutputStream(file);
-//			if (os != null)
-//			{
-//				bitmap.compress(Bitmap.CompressFormat.JPEG, 90, os);
-//			}
-//			os.close();
-//		} catch (Exception e)
+//			scaledWidth =  mDisplayWidth;
+//			scaledHeight = (int)(mDisplayWidth/displayRatio);			
+//		} else
 //		{
-//			e.printStackTrace();
+//			scaledWidth =  (int)(mDisplayHeight * imageRatio);
+//			scaledHeight = mDisplayHeight;
 //		}
-		
-		return bitmap;
-	}
+//		
+//		mOutputFrameSize = new Size(scaledWidth, scaledHeight);
+//
+////		Log.e("ImageConversion", "decodeYUVfromBuffer. width = " + width + " height = " + height);
+////		Log.e("ImageConversion", "decode to width = " + scaledWidth + " height = " + scaledHeight);
+//		Rect rect = new Rect(0, 0, width, height);		
+//		Bitmap bitmap = Bitmap.createBitmap(AlmaShotSeamless.NV21toARGB(yuv, mInputFrameSize, rect, mOutputFrameSize), scaledWidth, scaledHeight, Config.ARGB_8888);
+//		
+////		File saveDir = PluginManager.getSaveDir(false);
+////		Calendar d = Calendar.getInstance();
+////
+////		File file = new File(saveDir, String.format("%04d-%02d-%02d_%02d-%02d-%02d_OPENCAM_GS.jpg",
+////				d.get(Calendar.YEAR), d.get(Calendar.MONTH) + 1, d.get(Calendar.DAY_OF_MONTH),
+////				d.get(Calendar.HOUR_OF_DAY), d.get(Calendar.MINUTE), d.get(Calendar.SECOND)));
+////
+////		FileOutputStream os;
+////		try
+////		{
+////			os = new FileOutputStream(file);
+////			if (os != null)
+////			{
+////				bitmap.compress(Bitmap.CompressFormat.JPEG, 90, os);
+////			}
+////			os.close();
+////		} catch (Exception e)
+////		{
+////			e.printStackTrace();
+////		}
+//		
+//		return bitmap;
+//	}
 }

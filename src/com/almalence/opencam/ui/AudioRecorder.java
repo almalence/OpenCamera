@@ -1,4 +1,4 @@
-package com.almalence.plugins.capture.video;
+package com.almalence.opencam.ui;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
