@@ -367,15 +367,18 @@ public class SelfTimerAndPhotoTimeLapse
 		boolean photoTimeLapseActive = prefs.getBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
 		boolean photoTimeLapseIsRunning = prefs.getBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false);
 
-		if (photoTimeLapseActive && photoTimeLapseIsRunning) {
-			timeLapseCount.setVisibility(View.VISIBLE);
-			int count = prefs.getInt(MainScreen.sPhotoTimeLapseCount, 0);
-			timeLapseCount.setText(String.valueOf(count));
-			timeLapseButton.setVisibility(View.GONE);
-		} else {
-			timeLapseCount.setText(String.valueOf(0));
-			timeLapseCount.setVisibility(View.GONE);
-			timeLapseButton.setVisibility(View.VISIBLE);
+		if ((timeLapseCount != null) && (timeLapseButton != null))
+		{
+			if (photoTimeLapseActive && photoTimeLapseIsRunning) {
+				timeLapseCount.setVisibility(View.VISIBLE);
+				int count = prefs.getInt(MainScreen.sPhotoTimeLapseCount, 0);
+				timeLapseCount.setText(String.valueOf(count));
+				timeLapseButton.setVisibility(View.GONE);
+			} else {
+				timeLapseCount.setText(String.valueOf(0));
+				timeLapseCount.setVisibility(View.GONE);
+				timeLapseButton.setVisibility(View.VISIBLE);
+			}
 		}
 	}
 
