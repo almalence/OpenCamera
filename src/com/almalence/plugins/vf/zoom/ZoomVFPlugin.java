@@ -270,6 +270,7 @@ public class ZoomVFPlugin extends PluginViewfinder
 			zoomBar.setMax(CameraController.getMaxZoom());
 			zoomBar.setProgressAndThumb(0);
 			zoomPanel.setVisibility(View.VISIBLE);
+			CameraController.setZoom(zoomCurrent);
 		} else
 			zoomPanel.setVisibility(View.GONE);
 	}
