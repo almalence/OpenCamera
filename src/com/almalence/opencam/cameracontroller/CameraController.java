@@ -1790,12 +1790,20 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (camera == null || (camera != null && camera.getParameters() == null))
+			try
+			{
+				if (camera == null || (camera != null && camera.getParameters() == null))
+					return;
+	
+				Camera.Parameters params = camera.getParameters();
+				params.setAutoExposureLock(lock);
+				camera.setParameters(params);
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
 				return;
-
-			Camera.Parameters params = camera.getParameters();
-			params.setAutoExposureLock(lock);
-			camera.setParameters(params);
+			}
 		} else
 			HALv3.setAutoExposureLock(lock);
 	}
@@ -1804,10 +1812,18 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (!CameraController.isHALv3)
 		{
-			if (camera == null || (camera != null && camera.getParameters() == null))
+			try
+			{
+				if (camera == null || (camera != null && camera.getParameters() == null))
+					return false;
+	
+				return camera.getParameters().isAutoWhiteBalanceLockSupported();
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
 				return false;
-
-			return camera.getParameters().isAutoWhiteBalanceLockSupported();
+			}
 		} else
 			return true;
 	}
