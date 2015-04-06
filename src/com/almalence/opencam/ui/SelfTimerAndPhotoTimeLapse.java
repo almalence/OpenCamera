@@ -384,6 +384,8 @@ public class SelfTimerAndPhotoTimeLapse
 
 	private void updateTimelapseButton(int delayInterval)
 	{
+		if (timeLapseButton == null)
+			return;
 		switch (delayInterval)
 		{
 		case 0:
