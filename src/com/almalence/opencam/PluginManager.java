@@ -2470,6 +2470,11 @@ public class PluginManager implements PluginManagerInterface
 			boolean hasDNGResult = false;
 			for (int i = 1; i <= imagesAmount; i++)
 			{
+				// Take only one result frame from several results
+				// Used for PreShot plugin that may decide which result to save
+				if (imagesAmount == 1 && imageIndex != 0)
+					i = imageIndex;
+				
 				String format = getFromSharedMem("resultframeformat" + i + Long.toString(sessionID));
 				
 				if(format != null && format.equalsIgnoreCase("dng"))
@@ -2520,10 +2525,7 @@ public class PluginManager implements PluginManagerInterface
 					}
 				}
 
-				// Take only one result frame from several results
-				// Used for PreShot plugin that may decide which result to save
-				if (imagesAmount == 1 && imageIndex != 0)
-					i = imageIndex;
+				
 
 				String resultOrientation = getFromSharedMem("resultframeorientation" + i + Long.toString(sessionID));
 				int orientation = 0;
