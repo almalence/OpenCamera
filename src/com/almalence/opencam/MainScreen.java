@@ -3462,8 +3462,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 						matchPromo = true;
 				}
 
-				// if (promo.equalsIgnoreCase("appoftheday") ||
-				// promo.equalsIgnoreCase("stelapps"))
 				if (matchPromo)
 				{
 					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
@@ -3498,7 +3496,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		if (!projDir.exists())
 		{
 			projDir.mkdirs();
-			WriteLaunches(projDir, 30);
+			WriteLaunches(projDir, 10);
 		}
 		int left = ReadLaunches(projDir);
 		return left;
@@ -3512,14 +3510,14 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		if (!projDir.exists())
 		{
 			projDir.mkdirs();
-			WriteLaunches(projDir, 30);
+			WriteLaunches(projDir, 10);
 		}
 
 		int left = ReadLaunches(projDir);
 		if (left > 0)
 			WriteLaunches(projDir, left - 1);
 
-		if (left == 5 || left == 3)
+		if (left == 7)
 		{
 			// show subscription dialog
 			showSubscriptionDialog();
@@ -3623,7 +3621,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			callStoreForUnlocked(this);
 			
 			return false;
-		} else if ((10 == launchesLeft) || (20 == launchesLeft) || (5 >= launchesLeft))
+		} else if (5 >= launchesLeft)
 		{
 			// show appstore button and say that it cost money
 			String left = String.format(getResources().getString(R.string.trial_left), modename, launchesLeft);
@@ -3631,7 +3629,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 			toast.setGravity(Gravity.CENTER, 0, 0);
 			toast.show();
 			
-			if ((1 == launchesLeft) || (2 == launchesLeft) || (10 == launchesLeft) || (20 == launchesLeft))
+			if ((1 == launchesLeft) || (2 == launchesLeft) || (3== launchesLeft))
 				// show internal store
 				launchPurchase(100);
 		}
