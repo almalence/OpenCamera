@@ -1279,18 +1279,18 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 		boolean isHALv3 = prefs.getBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
 				(CameraController.isNexus() || CameraController.isFlex2()) ? true : false);
-		String modeID = PluginManager.getInstance().getActiveModeID();
-
-		// Temp fix HDR modes for LG G Flex 2.
-		boolean isLgGFlex2 = Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h959")
-				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h510")
-				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-f510k");
-
-		if (modeID.equals("video")
-				|| (Build.MODEL.contains("Nexus 6") && (modeID.equals("pixfix") || modeID.equals("panorama_augmented")))
-				|| (isLgGFlex2 && (modeID.equals("hdrmode") || modeID.equals("expobracketing"))))
-			isHALv3 = false;
-
+//		String modeID = PluginManager.getInstance().getActiveModeID();
+//
+//		// Temp fix HDR modes for LG G Flex 2.
+//		boolean isLgGFlex2 = Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h959")
+//				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h510")
+//				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-f510k");
+//
+//		if (modeID.equals("video")
+//				|| (Build.MODEL.contains("Nexus 6") && (modeID.equals("pixfix") || modeID.equals("panorama_augmented")))
+//				|| (isLgGFlex2 && (modeID.equals("hdrmode") || modeID.equals("expobracketing"))))
+//			isHALv3 = false;
+//
 		CameraController.useHALv3(isHALv3);
 		prefs.edit()
 				.putBoolean(getResources().getString(R.string.Preference_UseHALv3Key), CameraController.isUseHALv3())

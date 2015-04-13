@@ -142,28 +142,28 @@ public class NightCapturePlugin extends PluginCapture
 	@TargetApi(21)
 	public void onCreate()
 	{
-		//onCreate called once at application starts. Initialize variables for camera2 API detection.
-		usingCamera2API = CameraController.isUseHALv3(); 
-		usingSuperMode = CameraController.isUseSuperMode();
-
-		if (usingSuperMode)
-		{
-			CameraCharacteristics camCharacter = CameraController.getCameraCharacteristics();
-			minExposure = camCharacter.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE).getLower();
-			minSensitivity = camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE).getLower();
-			if (minExposure < 1000) minExposure = 1000; // not expecting minimum exposure to be below 1usec
-			if (minSensitivity < 25) minSensitivity = 25; // not expecting minimum sensitivity to be below ISO25
-			//Log.i("NightCapturePlugin", "minSensitivity: "+minSensitivity+" minExposure: "+minExposure+"ns");
-			
-			
-			MainScreen.getGUIManager().showHelp(MainScreen.getInstance().getString(R.string.Super_Help_Header),
-					MainScreen.getAppResources().getString(R.string.Super_Help),
-					R.drawable.store_super, "superShowHelp");
-		}
-		else
-		{
-			cameraPreview = new GLCameraPreview(MainScreen.getMainContext());
-		}
+//		//onCreate called once at application starts. Initialize variables for camera2 API detection.
+//		usingCamera2API = CameraController.isUseHALv3(); 
+//		usingSuperMode = CameraController.isUseSuperMode();
+//
+//		if (usingSuperMode)
+//		{
+//			CameraCharacteristics camCharacter = CameraController.getCameraCharacteristics();
+//			minExposure = camCharacter.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE).getLower();
+//			minSensitivity = camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE).getLower();
+//			if (minExposure < 1000) minExposure = 1000; // not expecting minimum exposure to be below 1usec
+//			if (minSensitivity < 25) minSensitivity = 25; // not expecting minimum sensitivity to be below ISO25
+//			//Log.i("NightCapturePlugin", "minSensitivity: "+minSensitivity+" minExposure: "+minExposure+"ns");
+//			
+//			
+//			MainScreen.getGUIManager().showHelp(MainScreen.getInstance().getString(R.string.Super_Help_Header),
+//					MainScreen.getAppResources().getString(R.string.Super_Help),
+//					R.drawable.store_super, "superShowHelp");
+//		}
+//		else
+//		{
+//			cameraPreview = new GLCameraPreview(MainScreen.getMainContext());
+//		}
 		
 		nightVisionLayerShowPref = MainScreen.getAppResources().getString(R.string.NightVisionLayerShow);
 		nightCaptureFocusPref = MainScreen.getAppResources().getString(R.string.NightCaptureFocusPref);
