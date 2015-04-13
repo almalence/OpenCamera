@@ -1,7 +1,6 @@
 package com.almalence.opencam.ui;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,14 +15,13 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
 
-import com.almalence.googsharing.Thumbnail;
 import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
 import com.almalence.opencam.Plugin.ViewfinderZone;
 import com.almalence.opencam.cameracontroller.CameraController.Size;
@@ -37,20 +35,6 @@ public class TemplateGUI extends GUI
 	
 	//Orientation listener
 	private OrientationEventListener			orientListener;
-	
-	// Mode selector layout
-	private ElementAdapter						modeAdapter;
-	private List<View>							modeViews;
-	private ViewGroup							activeMode					= null;
-	private boolean								modeSelectorVisible			= false;
-	
-	// Assoc list for storing association between mode button and mode ID
-	private Map<View, String>					buttonModeViewAssoc;
-
-	private Thumbnail							mThumbnail;
-	private RotateImageView						thumbnailView;
-
-	private RotateImageView						shutterButton;
 	
 	@Override
 	public void onStart()
@@ -79,7 +63,7 @@ public class TemplateGUI extends GUI
 
 				TemplateGUI.mPreviousDeviceOrientation = AlmalenceGUI.mDeviceOrientation;
 
-				ApplicationScreen.getPluginManager().onOrientationChanged(getDisplayOrientation());
+				PluginManager.getInstance().onOrientationChanged(getDisplayOrientation());
 			}
 		};
 

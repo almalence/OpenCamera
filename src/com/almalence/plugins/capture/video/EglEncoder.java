@@ -1,4 +1,4 @@
-package com.almalence.opencam.ui;
+package com.almalence.plugins.capture.video;
 
 import android.annotation.SuppressLint;
 import android.media.MediaCodec;
@@ -25,7 +25,7 @@ import java.nio.FloatBuffer;
 @SuppressLint("NewApi")
 public class EglEncoder
 {
-	private static final String			TAG				= "EglEncoder";
+	private static final String			TAG				= "Almalence";
 	private static final boolean		VERBOSE			= false;		// lots
 																		// of
 																		// logging

@@ -31,14 +31,15 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
 
 /* <!-- +++
- import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.PluginManagerBase;
+ import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
+
+import com.almalence.plugins.capture.video.EglEncoder;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
@@ -126,9 +127,9 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 	{
 		Log.i(TAG, "GLLayer.onSurfaceCreated()");
 
-		ApplicationScreen.getPluginManager().onGLSurfaceCreated(gl, config);
+		PluginManager.getInstance().onGLSurfaceCreated(gl, config);
 
-		if (ApplicationScreen.getPluginManager().shouldPreviewToGPU())
+		if (PluginManager.getInstance().shouldPreviewToGPU())
 		{
 			final int[] tex = new int[1];
 			GLES20.glGenTextures(1, tex, 0);
@@ -147,7 +148,7 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 				@Override
 				public void onFrameAvailable(final SurfaceTexture surfaceTexture)
 				{
-					ApplicationScreen.getPluginManager().onFrameAvailable();
+					PluginManager.getInstance().onFrameAvailable();
 				}
 			});
 
@@ -183,7 +184,7 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 	@Override
 	public void onSurfaceChanged(GL10 gl, int width, int height)
 	{
-		ApplicationScreen.getPluginManager().onGLSurfaceChanged(gl, width, height);
+		PluginManager.getInstance().onGLSurfaceChanged(gl, width, height);
 	}
 
 	/**
@@ -191,6 +192,6 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 	 */
 	public void onDrawFrame(GL10 gl)
 	{
-		ApplicationScreen.getPluginManager().onGLDrawFrame(gl);
+		PluginManager.getInstance().onGLDrawFrame(gl);
 	}
 }

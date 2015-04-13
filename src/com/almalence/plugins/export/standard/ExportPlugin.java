@@ -27,11 +27,13 @@ import android.view.View;
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.PluginExport;
+ import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.R;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginExport;
+import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
 //-+- -->
 
@@ -67,10 +69,10 @@ public class ExportPlugin extends PluginExport
 		sessionID = SessionID;
 		getPrefs();
 
-		isResultFromProcessingPlugin = Boolean.parseBoolean(ApplicationScreen.getPluginManager().getFromSharedMem(
+		isResultFromProcessingPlugin = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem(
 				"ResultFromProcessingPlugin" + sessionID));
 
-		ApplicationScreen.getPluginManager().saveResultPicture(sessionID);
+		PluginManager.getInstance().saveResultPicture(sessionID);
 	}
 
 	private void getPrefs()

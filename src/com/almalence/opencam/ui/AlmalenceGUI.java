@@ -106,7 +106,7 @@ import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.Mode;
 import com.almalence.opencam.Plugin;
-import com.almalence.opencam.AlmalencePluginManager;
+import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginType;
 import com.almalence.opencam.Preferences;
 import com.almalence.opencam.R;
@@ -1068,7 +1068,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 				AlmalenceGUI.mPreviousDeviceOrientation = AlmalenceGUI.mDeviceOrientation;
 
-				ApplicationScreen.getPluginManager().onOrientationChanged(getDisplayOrientation());
+				PluginManager.getInstance().onOrientationChanged(getDisplayOrientation());
 
 				if (selfTimer != null)
 					selfTimer.setOrientation();
@@ -1136,7 +1136,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		guiView.findViewById(R.id.buttonGallery).setEnabled(true);
 		guiView.findViewById(R.id.buttonShutter).setEnabled(true);
 		guiView.findViewById(R.id.buttonSelectMode).setEnabled(true);
-		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
 	}
 
 	@Override
@@ -1302,7 +1302,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			store.HideUnlockControl();
 		else
 		{
-			String modeID = ApplicationScreen.getPluginManager().getActiveMode().modeID;
+			String modeID = PluginManager.getInstance().getActiveMode().modeID;
 			visibilityUnlockControl(UNLOCK_MODE_PREFERENCES.get(modeID));
 		}
 	}
@@ -1533,11 +1533,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	{
 		topMenuPluginButtons.clear();
 
-		createPluginTopMenuButtons(ApplicationScreen.getPluginManager().getActivePlugins(PluginType.ViewFinder));
-		createPluginTopMenuButtons(ApplicationScreen.getPluginManager().getActivePlugins(PluginType.Capture));
-		createPluginTopMenuButtons(ApplicationScreen.getPluginManager().getActivePlugins(PluginType.Processing));
-		createPluginTopMenuButtons(ApplicationScreen.getPluginManager().getActivePlugins(PluginType.Filter));
-		createPluginTopMenuButtons(ApplicationScreen.getPluginManager().getActivePlugins(PluginType.Export));
+		createPluginTopMenuButtons(PluginManager.getInstance().getActivePlugins(PluginType.ViewFinder));
+		createPluginTopMenuButtons(PluginManager.getInstance().getActivePlugins(PluginType.Capture));
+		createPluginTopMenuButtons(PluginManager.getInstance().getActivePlugins(PluginType.Processing));
+		createPluginTopMenuButtons(PluginManager.getInstance().getActivePlugins(PluginType.Filter));
+		createPluginTopMenuButtons(PluginManager.getInstance().getActivePlugins(PluginType.Export));
 	}
 
 	public void createPluginTopMenuButtons(List<Plugin> plugins)
@@ -1580,7 +1580,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		List<View> info_views = null;
 		Map<View, Plugin.ViewfinderZone> plugin_views = null;
 
-		List<Plugin> plugins = ApplicationScreen.getPluginManager().getActivePlugins(type);
+		List<Plugin> plugins = PluginManager.getInstance().getActivePlugins(type);
 		if (!plugins.isEmpty())
 		{
 			for (int i = 0; i < plugins.size(); i++)
@@ -1896,7 +1896,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 							ApplicationScreen.instance.setFocusModePref(afMode);
 
-							ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
+							PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST,
 									ApplicationInterface.MSG_FOCUS_CHANGED);
 
 							initSettingsMenu(true);
@@ -2204,7 +2204,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		if (mEVSupported)
 		{
-			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_EV_CHANGED);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_EV_CHANGED);
 		}
 
 	}
@@ -2233,14 +2233,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				if (isSecondaryMenusVisible())
 					hideSecondaryMenus();
 
-				ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_LOCKED);
+				PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_LOCKED);
 			}
 
 			public void onPanelClosed(Panel panel)
 			{
 				settingsControlsVisible = false;
 
-				ApplicationScreen.getPluginManager()
+				PluginManager.getInstance()
 						.sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
 				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
 			}
@@ -2378,7 +2378,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	{
 		if (!qcID.equals("") && topMenuPluginButtons.containsKey(qcID))
 		{
-			Plugin plugin = ApplicationScreen.getPluginManager().getPlugin(qcID);
+			Plugin plugin = PluginManager.getInstance().getPlugin(qcID);
 			RotateImageView view = (RotateImageView) topMenuPluginButtons.get(qcID);
 			view.setImageResource(plugin.getQuickControlIconID());
 			return view;
@@ -2803,11 +2803,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		}
 
 		// Add quick conrols from plugins
-		initPluginQuickControls(ApplicationScreen.getPluginManager().getActivePlugins(PluginType.ViewFinder));
-		initPluginQuickControls(ApplicationScreen.getPluginManager().getActivePlugins(PluginType.Capture));
-		initPluginQuickControls(ApplicationScreen.getPluginManager().getActivePlugins(PluginType.Processing));
-		initPluginQuickControls(ApplicationScreen.getPluginManager().getActivePlugins(PluginType.Filter));
-		initPluginQuickControls(ApplicationScreen.getPluginManager().getActivePlugins(PluginType.Export));
+		initPluginQuickControls(PluginManager.getInstance().getActivePlugins(PluginType.ViewFinder));
+		initPluginQuickControls(PluginManager.getInstance().getActivePlugins(PluginType.Capture));
+		initPluginQuickControls(PluginManager.getInstance().getActivePlugins(PluginType.Processing));
+		initPluginQuickControls(PluginManager.getInstance().getActivePlugins(PluginType.Filter));
+		initPluginQuickControls(PluginManager.getInstance().getActivePlugins(PluginType.Export));
 
 		quickControlAdapter.Elements = quickControlChangeres;
 		quickControlAdapter.notifyDataSetChanged();
@@ -3043,7 +3043,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				: AlmalenceGUI.mDeviceOrientation % 360 + 360;
 		rotateSquareViews(degree, 0);
 
-		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_LOCKED);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_LOCKED);
 	}
 
 	private void closeQuickControlsSettings()
@@ -3067,7 +3067,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		correctTopMenuButtonBackground(ApplicationScreen.instance.findViewById(MODE_MET), isMeteringEnabled);
 		correctTopMenuButtonBackground(ApplicationScreen.instance.findViewById(MODE_CAM), isCameraChangeEnabled);
 
-		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
 
 		guiView.findViewById(R.id.topPanel).setVisibility(View.VISIBLE);
 	}
@@ -3163,11 +3163,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		}
 
 		// Add quick conrols from plugins
-		initPluginSettingsControls(ApplicationScreen.getPluginManager().getActivePlugins(PluginType.ViewFinder));
-		initPluginSettingsControls(ApplicationScreen.getPluginManager().getActivePlugins(PluginType.Capture));
-		initPluginSettingsControls(ApplicationScreen.getPluginManager().getActivePlugins(PluginType.Processing));
-		initPluginSettingsControls(ApplicationScreen.getPluginManager().getActivePlugins(PluginType.Filter));
-		initPluginSettingsControls(ApplicationScreen.getPluginManager().getActivePlugins(PluginType.Export));
+		initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.ViewFinder));
+		initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.Capture));
+		initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.Processing));
+		initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.Filter));
+		initPluginSettingsControls(PluginManager.getInstance().getActivePlugins(PluginType.Export));
 
 		// The very last control is always MORE SETTINGS
 		addQuickSetting(SettingsType.MORE, false);
@@ -3415,7 +3415,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			public void onClick(View v)
 			{
-				ApplicationScreen.getPluginManager().onShowPreferences();
+				PluginManager.getInstance().onShowPreferences();
 				Intent settingsActivity = new Intent(ApplicationScreen.getMainContext(), Preferences.class);
 				ApplicationScreen.instance.startActivity(settingsActivity);
 				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
@@ -3432,7 +3432,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	private void cameraSwitched(boolean restart)
 	{
-		if (ApplicationScreen.getPluginManager().getProcessingCounter() != 0)
+		if (PluginManager.getInstance().getProcessingCounter() != 0)
 			return;
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		boolean isFrontCamera = prefs.getBoolean(
@@ -3490,7 +3490,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		modeSelectorVisible = true;
 
-		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_LOCKED);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_LOCKED);
 	}
 
 	private void hideModeList()
@@ -3531,7 +3531,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		modeSelectorVisible = false;
 
-		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
 	}
 
 	@Override
@@ -3539,7 +3539,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	{
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
-		ApplicationScreen.getPluginManager().onShutterClick();
+		PluginManager.getInstance().onShutterClick();
 	}
 
 	@Override
@@ -3547,7 +3547,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	{
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
-		ApplicationScreen.getPluginManager().onFocusButtonClick();
+		PluginManager.getInstance().onFocusButtonClick();
 	}
 
 	private void shutterButtonPressed()
@@ -3555,7 +3555,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
 		lockControls = true;
-		ApplicationScreen.getPluginManager().onShutterClick();
+		PluginManager.getInstance().onShutterClick();
 	}
 
 	private void infoSlide(boolean toLeft, float xToVisible, float xToInvisible)
@@ -3970,7 +3970,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					String pluginID = it.next();
 					if (v == topMenuPluginButtons.get(pluginID))
 					{
-						Plugin plugin = ApplicationScreen.getPluginManager().getPlugin(pluginID);
+						Plugin plugin = PluginManager.getInstance().getPlugin(pluginID);
 						plugin.onQuickControlClick();
 
 						int icon_id = plugin.getQuickControlIconID();
@@ -4394,7 +4394,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			but.setImageResource(icon_id);
 			ApplicationScreen.instance.setWBModePref(mWB);
 
-			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_WB_CHANGED);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_WB_CHANGED);
 		}
 		if (mFocusMode != -1)
 		{
@@ -4414,7 +4414,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					.putInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
 							: ApplicationScreen.sFrontFocusModePref, mFocusMode).commit();
 
-			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_FOCUS_CHANGED);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_FOCUS_CHANGED);
 		}
 		if (mFlashMode != -1)
 		{
@@ -4423,7 +4423,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			but.setImageResource(icon_id);
 			preferences.edit().putInt(ApplicationScreen.sFlashModePref, mFlashMode).commit();
 
-			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_FLASH_CHANGED);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_FLASH_CHANGED);
 		}
 		if (mISO != -1)
 		{
@@ -4432,7 +4432,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			but.setImageResource(icon_id);
 			preferences.edit().putInt(ApplicationScreen.sISOPref, mISO).commit();
 
-			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_ISO_CHANGED);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_ISO_CHANGED);
 		}
 		ApplicationScreen.instance.setSceneModePref(newMode);
 
@@ -4444,7 +4444,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
 
-		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_SCENE_CHANGED);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_SCENE_CHANGED);
 	}
 
 	private void setWhiteBalance(int newMode)
@@ -4471,7 +4471,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
 
-		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_WB_CHANGED);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_WB_CHANGED);
 	}
 
 	private void setFocusMode(int newMode)
@@ -4504,7 +4504,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			Log.e("setFocusMode", "icons_focus.get exception: " + e.getMessage());
 		}
 
-		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_FOCUS_CHANGED);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_FOCUS_CHANGED);
 
 		initSettingsMenu(false);
 		hideSecondaryMenus();
@@ -4536,7 +4536,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
 
-		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_FLASH_CHANGED);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_FLASH_CHANGED);
 	}
 
 	private void setISO(int newMode)
@@ -4561,7 +4561,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
 
-		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_ISO_CHANGED);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_ISO_CHANGED);
 	}
 
 	private void setMeteringMode(int newMode)
@@ -4709,7 +4709,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		guiView.findViewById(R.id.modeLayout).setVisibility(View.GONE);
 		guiView.findViewById(R.id.vfLayout).setVisibility(View.GONE);
 
-		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
 	}
 
 	public boolean isSecondaryMenusVisible()
@@ -4803,7 +4803,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		quickControlsVisible = true;
 
-		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_LOCKED);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_LOCKED);
 	}
 
 	private void setButtonSelected(Map<Integer, View> buttonsList, int mode_id)
@@ -5051,7 +5051,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				modeViews.add(mode);
 
 				// select active mode in grid with frame
-				if (ApplicationScreen.getPluginManager().getActiveModeID() == tmp.modeID)
+				if (PluginManager.getInstance().getActiveModeID() == tmp.modeID)
 				{
 					mode.findViewById(R.id.modeSelectLayout2).setBackgroundResource(
 							R.drawable.thumbnail_background_selected_inner);
@@ -5084,7 +5084,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		Mode mode = ConfigParser.getInstance().getMode(key);
 		// if selected the same mode - do not reinitialize camera
 		// and other objects.
-		if (ApplicationScreen.getPluginManager().getActiveModeID() == mode.modeID)
+		if (PluginManager.getInstance().getActiveModeID() == mode.modeID)
 			return false;
 
 		final Mode tmpActiveMode = mode;
@@ -5094,7 +5094,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 			if (prefs.getBoolean("videoStartStandardPref", false))
 			{
-				ApplicationScreen.getPluginManager().onPause(true);
+				PluginManager.getInstance().onPause(true);
 				Intent intent = new Intent(android.provider.MediaStore.ACTION_VIDEO_CAPTURE);
 				ApplicationScreen.instance.startActivity(intent);
 				return true;
@@ -5115,7 +5115,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 			public void onFinish()
 			{
-				ApplicationScreen.getPluginManager().switchMode(tmpActiveMode);
+				PluginManager.getInstance().switchMode(tmpActiveMode);
 			}
 		}.start();
 
@@ -5744,7 +5744,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		}
 
 		if (view == (LinearLayout) guiView.findViewById(R.id.evLayout)
-				|| (lockControls && !ApplicationScreen.getPluginManager().getActiveModeID().equals("video")))
+				|| (lockControls && !PluginManager.getInstance().getActiveModeID().equals("video")))
 			return true;
 
 		// to possibly slide-out top panel
@@ -5819,7 +5819,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			return true;
 		else if (!isMenuOpened)
 			// call onTouch of active vf and capture plugins
-			ApplicationScreen.getPluginManager().onTouch(view, event);
+			PluginManager.getInstance().onTouch(view, event);
 
 		RelativeLayout pluginLayout = (RelativeLayout) guiView.findViewById(R.id.pluginsLayout);
 		RelativeLayout fullscreenLayout = (RelativeLayout) guiView.findViewById(R.id.fullscreenLayout);
@@ -6021,7 +6021,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		ApplicationScreen.instance.setEVPref(iEv);
 		mEV = iEv;
 		
-		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_EV_CHANGED);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_EV_CHANGED);
 	}
 
 	@Override
@@ -6255,7 +6255,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		if (res == 0)
 			if (keyCode == KeyEvent.KEYCODE_BACK)
 			{
-				if (ApplicationScreen.getPluginManager().getProcessingCounter() != 0)
+				if (PluginManager.getInstance().getProcessingCounter() != 0)
 				{
 					// splash screen about processing
 					AlertDialog.Builder builder = new AlertDialog.Builder(ApplicationScreen.instance)
@@ -6284,7 +6284,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		Uri uri = this.mThumbnail.getUri();
 
-		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_STOP_CAPTURE);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_STOP_CAPTURE);
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		boolean isAllowedExternal = prefs.getBoolean(
@@ -6374,7 +6374,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		updateThumbnailButton();
 		thumbnailView.invalidate();
 
-		if (0 != ApplicationScreen.getPluginManager().getProcessingCounter())
+		if (0 != PluginManager.getInstance().getProcessingCounter())
 		{
 			new CountDownTimer(10, 10)
 			{
@@ -6399,7 +6399,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		guiView.findViewById(R.id.buttonSelectMode).setEnabled(false);
 		guiView.findViewById(R.id.postprocessingLayout).setVisibility(View.VISIBLE);
 		guiView.findViewById(R.id.postprocessingLayout).bringToFront();
-		List<Plugin> processingPlugins = ApplicationScreen.getPluginManager().getActivePlugins(PluginType.Processing);
+		List<Plugin> processingPlugins = PluginManager.getInstance().getActivePlugins(PluginType.Processing);
 		if (!processingPlugins.isEmpty())
 		{
 			View postProcessingView = processingPlugins.get(0).getPostProcessingView();
@@ -6610,7 +6610,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		}
 		
 		captureIndication = false;
-		if (!ApplicationScreen.getPluginManager().getActiveModeID().equals("video"))
+		if (!PluginManager.getInstance().getActiveModeID().equals("video"))
 		{
 			((RotateImageView) guiView.findViewById(R.id.buttonShutter)).setImageResource(R.drawable.button_shutter);
 		}
@@ -6637,7 +6637,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 			public void onFinish()
 			{
-				if (!ApplicationScreen.getPluginManager().getActiveModeID().equals("video"))
+				if (!PluginManager.getInstance().getActiveModeID().equals("video"))
 				{
 					((RotateImageView) guiView.findViewById(R.id.buttonShutter))
 							.setImageResource(R.drawable.button_shutter);

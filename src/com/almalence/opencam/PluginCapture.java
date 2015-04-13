@@ -59,9 +59,9 @@ public abstract class PluginCapture extends Plugin
 		if (imagesTaken == 0)
 		{
 			if (frameData != null)
-				ApplicationScreen.getPluginManager().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
+				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 			else
-				ApplicationScreen.getPluginManager().addToSharedMemExifTagsFromCamera(SessionID);
+				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
 		}
 	}
 
