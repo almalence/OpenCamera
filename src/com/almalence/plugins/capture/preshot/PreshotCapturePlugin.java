@@ -100,6 +100,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		if(Build.MODEL.equals("Nexus 6") && camera2Preference)
 		{
 			prefs.edit().putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), false).commit();
+			CameraController.useHALv3(false);
 			
 			CameraController.isOldCameraOneModeLaunched = true;
 			PluginManager.getInstance().setSwitchModeType(true);
@@ -137,7 +138,10 @@ public class PreshotCapturePlugin extends PluginCapture
 		MainScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
 		
 		if(Build.MODEL.equals("Nexus 6") && camera2Preference)
+		{
 			CameraController.needCameraRelaunch(true);
+			CameraController.useHALv3(camera2Preference);
+		}
 	}
 
 	@Override
