@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/zoomLayout"
+		android:layout_width="@dimen/zoompanel_width"
+		android:layout_height="fill_parent"
+		android:orientation="vertical"
+		android:visibility="gone"
+		android:gravity="center_vertical"						
+		android:layout_centerVertical="true">
+
+		    <com.almalence.ui.VerticalSeekBar android:id="@+id/zoomSeekBar"
+					android:layout_width="wrap_content"
+					android:layout_height="fill_parent"
+					android:thumbOffset="20px"
+					android:paddingLeft="36px"
+					android:paddingRight="36px"
+					android:minWidth="16dip"
+					android:maxWidth="16dip"
+					android:thumb="@drawable/scrubber_control_selector_holo_light"
+					android:progressDrawable="@drawable/scrubber_secondary_holo"/>
+</LinearLayout>

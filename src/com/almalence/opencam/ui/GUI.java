@@ -296,6 +296,9 @@ public abstract class GUI
 		return displayRotationCurrent;
 	} // used to operate with plugin's views
 
+	// mode help procedure
+	abstract public void showHelp(String modeName, String text, int imageID, String Prefs);
+
 	public void showStore()
 	{
 	}
