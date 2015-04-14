@@ -45,6 +45,7 @@ import android.hardware.Camera;
 import android.media.AudioManager;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Build.VERSION;
@@ -209,6 +210,8 @@ public class VideoCapturePlugin extends PluginCapture
 	private com.almalence.ui.Switch.Switch		modeSwitcher;
 
 	private DROVideoEngine						droEngine						= new DROVideoEngine();
+	
+	public static final String 					ACTION_NEW_VIDEO = "android.hardware.action.NEW_VIDEO";
 
 	public VideoCapturePlugin()
 	{
@@ -1475,7 +1478,8 @@ public class VideoCapturePlugin extends PluginCapture
 		filesSavedNames[0] = fileSaved.toString();
 		filesListToExport.clear();
 
-		MainScreen.getInstance().getContentResolver().insert(Video.Media.EXTERNAL_CONTENT_URI, values);
+		Uri uri = MainScreen.getInstance().getContentResolver().insert(Video.Media.EXTERNAL_CONTENT_URI, values);
+		MainScreen.getMainContext().sendBroadcast(new Intent(ACTION_NEW_VIDEO, uri));
 
 		try
 		{

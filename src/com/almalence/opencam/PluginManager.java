@@ -72,6 +72,7 @@ import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.DngCreator;
 import android.location.Location;
 import android.media.ExifInterface;
+import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -281,6 +282,8 @@ public class PluginManager implements PluginManagerInterface
 	
 	private static Map<Integer, Integer>	exifOrientationMap;
 
+	public static final String 			ACTION_NEW_PICTURE = "android.hardware.action.NEW_PICTURE";
+	
 	public static PluginManager getInstance()
 	{
 		if (pluginManager == null)
@@ -3102,7 +3105,8 @@ public class PluginManager implements PluginManagerInterface
 					}
 				}
 
-				MainScreen.getInstance().getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+				Uri uri = MainScreen.getInstance().getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);			
+				broadcastNewPicture(uri);
 			}
 
 			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED);
@@ -3121,6 +3125,13 @@ public class PluginManager implements PluginManagerInterface
 		}
 	}
 
+	private static void broadcastNewPicture(Uri uri) 
+	{
+		MainScreen.getMainContext().sendBroadcast(new Intent(ACTION_NEW_PICTURE, uri));
+		// Keep compatibility
+		MainScreen.getMainContext().sendBroadcast(new Intent("com.android.camera.NEW_PICTURE", uri));
+	}
+	
 	private void addTimestamp(File file)
 	{
 		try
