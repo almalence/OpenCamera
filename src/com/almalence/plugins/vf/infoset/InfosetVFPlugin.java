@@ -350,7 +350,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 			addInfoView(evInfoText);
 		}
 
-//		initInfoIndicators();
+		initInfoIndicators();
 	}
 
 	@Override

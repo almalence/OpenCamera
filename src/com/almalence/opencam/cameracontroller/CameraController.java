@@ -187,7 +187,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static Map<Integer, Integer>			mode_iso_HALv3;
 	private static Map<String, Integer>				key_iso;
 	private static Map<String, Integer>				key_iso2;
-	private static boolean							isUseISO2Keys					= false;
+	private static boolean							isUseISO2Keys					= true;
 
 	private static CameraController					cameraController				= null;
 
