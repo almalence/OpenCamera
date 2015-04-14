@@ -1799,8 +1799,7 @@ public class PluginManager implements PluginManagerInterface
 	{
 		Mode mode = getActiveMode();
 		if (mode.SKU != null)
-			if (!mode.SKU.isEmpty())
-				MainScreen.getInstance().decrementLeftLaunches(mode.modeID);
+			MainScreen.getInstance().decrementLeftLaunches(mode.modeID);
 	}
 
 	// -+- -->

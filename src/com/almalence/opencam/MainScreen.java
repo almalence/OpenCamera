@@ -3516,13 +3516,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		int left = ReadLaunches(projDir);
 		if (left > 0)
 			WriteLaunches(projDir, left - 1);
-
-		if (left == 7)
-		{
-			// show subscription dialog
-			showSubscriptionDialog();
-			return;
-		}
 	}
 
 	// writes number of launches left into memory
@@ -3565,15 +3558,24 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 
 	public boolean checkLaunches(Mode mode)
 	{
+		// if all unlocked
+		if (unlockAllPurchased)
+			return true;
+		
 		// if mode free
 		if (mode.SKU == null)
 			return true;
 		if (mode.SKU.isEmpty())
-			return true;
+		{
+			int launchesLeft = MainScreen.thiz.getLeftLaunches(mode.modeID);
 
-		// if all unlocked
-		if (unlockAllPurchased)
+			if ((1 == launchesLeft) || (3== launchesLeft))
+			{
+				// show internal store
+				launchPurchase(100);
+			}
 			return true;
+		}
 
 		// if current mode unlocked
 		if (mode.SKU.equals("plugin_almalence_super"))
