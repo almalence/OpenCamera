@@ -274,6 +274,7 @@
 	<string name="Pref_Advanced_Preference_Summary">Settings for expert users</string>
 	<string name="Pref_Unlock_Preference_Title">Unlock</string>
 	<string name="Pref_Unlock_Preference_Summary">Unlock premium features</string>
+	<string name="Pref_Help_Preference_Title">Help</string>
 	
 	<string name="layout_hint_bottom">Select camera mode</string>
 	<string name="layout_hint_center">Swipe for more/less info</string>

@@ -79,58 +79,47 @@ public class AlmalenceStore
 	{
 		LayoutInflater inflater = LayoutInflater.from(MainScreen.getInstance());
 		List<RelativeLayout> pages = new ArrayList<RelativeLayout>();
-
+		
+		// <!-- -+-
+		final boolean unlocked = false;
+		//-+- -->
+		/* <!-- +++
+		final boolean unlocked = true; 
+		 +++ --> */
+		
 		// page 1
 		RelativeLayout page = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_pager_fragment, null);
 		initStoreList();
+		
 		RelativeLayout store = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_store, null);
 		final ImageView imgStoreNext = (ImageView) store.findViewById(R.id.storeWhatsNew);
 		GridView gridview = (GridView) store.findViewById(R.id.storeGrid);
 		gridview.setAdapter(storeAdapter);
+	
+		if (!unlocked)
+		{
+			page.addView(store);
+			pages.add(page);
+		}
 
-		page.addView(store);
-		pages.add(page);
-
-//		// page 2
-//		page = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_pager_fragment, null);
-//		RelativeLayout whatsnew = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_whatsnew, null);
-//		final ImageView imgWhatNewNext = (ImageView) whatsnew.findViewById(R.id.storeFeatures);
-//		final ImageView imgWhatNewPrev = (ImageView) whatsnew.findViewById(R.id.storeStore);
-//		imgWhatNewNext.setVisibility(View.INVISIBLE);
-//		imgWhatNewPrev.setVisibility(View.INVISIBLE);
-//		TextView text_whatsnew = (TextView) whatsnew.findViewById(R.id.text_whatsnew);
-//		text_whatsnew.setText(MainScreen.getAppResources().getString(R.string.storeWhatsnew));
-//
-//		page.addView(whatsnew);
-//		pages.add(page);
-
-		// page 3
+		// page 2
 		page = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_pager_fragment, null);
 		RelativeLayout features = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_features, null);
-		//final ImageView imgFeaturesNext = (ImageView) features.findViewById(R.id.storeTips);
 		final ImageView imgFeaturesPrev = (ImageView) features.findViewById(R.id.storeWhatsNew);
-		//TextView text_features = (TextView) features.findViewById(R.id.text_features);
-		//text_features.setText(MainScreen.getAppResources().getString(R.string.storeFeatures));
+		imgFeaturesPrev.setVisibility(View.INVISIBLE);
 		WebView wv = (WebView)features.findViewById(R.id.text_features);
 		wv.loadUrl("file:///android_asset/www/features.html");
 
 		page.addView(features);
 		pages.add(page);
 
-//		// page 4
-//		page = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_pager_fragment, null);
-//		RelativeLayout tips = (RelativeLayout) inflater.inflate(R.layout.gui_almalence_tips, null);
-//		final ImageView imgTipsPrev = (ImageView) tips.findViewById(R.id.storeTips);
-//		TextView text_tips = (TextView) tips.findViewById(R.id.text_tips);
-//		text_tips.setText(MainScreen.getAppResources().getString(R.string.storeTips));
-//
-//		page.addView(tips);
-//		pages.add(page);
-
 		SamplePagerAdapter pagerAdapter = new SamplePagerAdapter(pages);
 		final ViewPager viewPager = new ViewPager(MainScreen.getInstance());
 		viewPager.setAdapter(pagerAdapter);
-		viewPager.setCurrentItem(0);
+		if (!unlocked)
+			viewPager.setCurrentItem(0);
+		else
+			viewPager.setCurrentItem(1);
 		viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener()
 		{
 			@Override
@@ -142,38 +131,17 @@ public class AlmalenceStore
 					// 0
 					imgStoreNext.setVisibility(View.VISIBLE);
 					// 1
-//					imgWhatNewNext.setVisibility(View.INVISIBLE);
-//					imgWhatNewPrev.setVisibility(View.INVISIBLE);
 					imgFeaturesPrev.setVisibility(View.INVISIBLE);
 					break;
-//				case 1:
-//					// 0
-//					imgStoreNext.setVisibility(View.INVISIBLE);
-//					// 1
-//					imgWhatNewNext.setVisibility(View.VISIBLE);
-//					imgWhatNewPrev.setVisibility(View.VISIBLE);
-//					// 2
-//					//imgFeaturesNext.setVisibility(View.INVISIBLE);
-//					imgFeaturesPrev.setVisibility(View.INVISIBLE);
-//					break;
 				case 1:
-					// 1
-//					imgWhatNewNext.setVisibility(View.INVISIBLE);
-//					imgWhatNewPrev.setVisibility(View.INVISIBLE);
+					// 0
 					imgStoreNext.setVisibility(View.INVISIBLE);
-					// 2
-					//imgFeaturesNext.setVisibility(View.VISIBLE);
-					imgFeaturesPrev.setVisibility(View.VISIBLE);
-//					// 3
-//					imgTipsPrev.setVisibility(View.INVISIBLE);
+					// 1
+					if (!unlocked)
+						imgFeaturesPrev.setVisibility(View.VISIBLE);
+					else
+						imgFeaturesPrev.setVisibility(View.INVISIBLE);
 					break;
-//				case 3:
-//					// 2
-//					imgFeaturesNext.setVisibility(View.INVISIBLE);
-//					imgFeaturesPrev.setVisibility(View.INVISIBLE);
-//					// 3
-//					imgTipsPrev.setVisibility(View.VISIBLE);
-//					break;
 				default:
 					break;
 				}
@@ -188,27 +156,6 @@ public class AlmalenceStore
 			}
 		});
 		
-//		imgWhatNewNext.setOnClickListener(new OnClickListener()
-//		{
-//			public void onClick(View v)
-//			{
-//				viewPager.setCurrentItem(2);
-//			}
-//		});
-//		imgWhatNewPrev.setOnClickListener(new OnClickListener()
-//		{
-//			public void onClick(View v)
-//			{
-//				viewPager.setCurrentItem(0);
-//			}
-//		});
-//		imgFeaturesNext.setOnClickListener(new OnClickListener()
-//		{
-//			public void onClick(View v)
-//			{
-//				viewPager.setCurrentItem(3);
-//			}
-//		});
 		imgFeaturesPrev.setOnClickListener(new OnClickListener()
 		{
 			public void onClick(View v)
@@ -216,13 +163,6 @@ public class AlmalenceStore
 				viewPager.setCurrentItem(0);
 			}
 		});
-//		imgTipsPrev.setOnClickListener(new OnClickListener()
-//		{
-//			public void onClick(View v)
-//			{
-//				viewPager.setCurrentItem(2);
-//			}
-//		});
 		
 		guiView.findViewById(R.id.buttonGallery).setEnabled(false);
 		guiView.findViewById(R.id.buttonShutter).setEnabled(false);
@@ -233,6 +173,7 @@ public class AlmalenceStore
 
 		MainScreen.getGUIManager().lockControls = true;
 
+		// <!-- -+-
 		if (MainScreen.getInstance().showPromoRedeemed)
 		{
 			Toast.makeText(MainScreen.getInstance(),
@@ -247,7 +188,8 @@ public class AlmalenceStore
 					.show();
 			MainScreen.getInstance().showPromoRedeemedJulius = false;
 		}
-
+		//-+- -->
+		
 		final RelativeLayout pagerLayout = ((RelativeLayout) guiView.findViewById(R.id.viewPagerLayout));
 		pagerLayout.addView(viewPager);
 				
@@ -290,17 +232,18 @@ public class AlmalenceStore
 		MainScreen.getGUIManager().lockControls = false;
 	}
 
+	
 	private void initStoreList()
 	{
 		storeViews.clear();
 		buttonStoreViewAssoc.clear();
 
+		// <!-- -+-
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		boolean bOnSale = prefs.getBoolean("bOnSale", false);
 
 		for (int i = 0; i < STORE_ELEMENTS_NUMBER; i++)
 		{
-
 			LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 			View item = inflator.inflate(R.layout.gui_almalence_store_grid_element, null, false);
 			ImageView icon = (ImageView) item.findViewById(R.id.storeImage);
@@ -341,16 +284,6 @@ public class AlmalenceStore
 					price.setText(MainScreen.getInstance().titleSubscriptionYear+"/"+MainScreen.getAppResources()
 							.getString(R.string.Pref_Upgrde_SubscriptionYear_Year));
 				break;
-//			case 2:
-//				// subscription month
-//				icon.setImageResource(R.drawable.store_promo);
-//				description.setText(MainScreen.getAppResources()
-//						.getString(R.string.Pref_Upgrde_SubscriptionMonth_Preference_Title));
-//				if (MainScreen.getInstance().isPurchasedUnlockAllSubscriptionMonth() || MainScreen.getInstance().isPurchasedAll())
-//					price.setText(R.string.already_unlocked);
-//				else
-//					price.setText("");//MainScreen.getInstance().titleSubscriptionMonth);
-//				break;
 			case 2:
 				// Super
 				icon.setImageResource(R.drawable.store_super);
@@ -397,16 +330,6 @@ public class AlmalenceStore
 				else
 					price.setText(MainScreen.getInstance().titleUnlockMoving);
 				break;
-//			case 4:
-//				// Groupshot
-//				icon.setImageResource(R.drawable.store_groupshot);
-//				description.setText(MainScreen.getAppResources()
-//						.getString(R.string.Pref_Upgrde_Groupshot_Preference_Title));
-//				if (MainScreen.getInstance().isPurchasedGroupshot() || MainScreen.getInstance().isPurchasedAll())
-//					price.setText(R.string.already_unlocked);
-//				else
-//					price.setText(MainScreen.getInstance().titleUnlockGroup);
-//				break;
 			case 6:
 				// Promo code
 				icon.setImageResource(R.drawable.store_promo);
@@ -421,17 +344,6 @@ public class AlmalenceStore
 				break;
 			}
 
-//			item.setOnTouchListener(new OnTouchListener()
-//			{
-//				@Override
-//				public boolean onTouch(View v, MotionEvent event)
-//				{
-//					if (event.getAction() == MotionEvent.ACTION_CANCEL)
-//						purchasePressed(v);
-//					return false;
-//				}
-//			});
-
 			item.setOnClickListener(new OnClickListener()
 			{
 				public void onClick(View v)
@@ -444,12 +356,14 @@ public class AlmalenceStore
 			buttonStoreViewAssoc.put(item, i);
 			storeViews.add(item);
 		}
+		//-+- -->
 
 		storeAdapter.Elements = storeViews;
 	}
 
 	private void purchasePressed(View v)
 	{
+		// <!-- -+-
 		// get inapp associated with pressed button
 		Integer id = buttonStoreViewAssoc.get(v);
 		if (id == null)
@@ -462,9 +376,6 @@ public class AlmalenceStore
 		case 1:// Year subscription
 			MainScreen.getInstance().purchasedUnlockAllSubscriptionYear();
 			break;
-//		case 2:// Month subscription
-//			MainScreen.getInstance().purchasedUnlockAllSubscriptionMonth();
-//			break;
 		case 2:// HDR
 			if (CameraController.isSuperModePossible())
 				MainScreen.getInstance().purchaseSuper();
@@ -480,9 +391,6 @@ public class AlmalenceStore
 		case 5:// multishot
 			MainScreen.getInstance().purchaseMultishot();
 			break;
-//		case 4:// Groupshot
-//			MainScreen.getInstance().purchaseGroupshot();
-//			break;
 		case 6:// Promo
 			if (!MainScreen.getInstance().isPurchasedAll())
 				MainScreen.getInstance().enterPromo();
@@ -491,8 +399,11 @@ public class AlmalenceStore
 		default:
 			break;
 		}
+		//-+- -->
 	}
 
+	//-+- -->
+	
 	public void ShowUnlockControl()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());

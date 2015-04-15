@@ -1270,11 +1270,9 @@ public class PluginManager implements PluginManagerInterface
 			addHeadersContent(pf, inactivePlugins, true);
 		} else if ("plugins_settings".equals(settings))
 		{
-			// <!-- -+-
 			pf.getActivity().finish();
 			Preferences.closePrefs();
 			MainScreen.getInstance().setShowStore(true);
-			// -+- -->
 		}
 	}
 

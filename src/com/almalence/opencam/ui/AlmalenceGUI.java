@@ -183,9 +183,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private boolean											modeSelectorVisible			= false;
 	// If quick settings layout is showing now
 
-	// <!-- -+-
 	private AlmalenceStore									store;
-	// -+- -->
 
 	private SelfTimerAndPhotoTimeLapse						selfTimer;
 
@@ -1051,7 +1049,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	protected void hideManualControls()
 	{
-		// Log.e("GUI", "received CLOSE_MANUAL_CONTROLS");
 		guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
 		guiView.findViewById(R.id.expandManualControls).setVisibility(View.VISIBLE);
 	}
@@ -1243,9 +1240,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 				((TextView) guiView.findViewById(R.id.blockingText)).setRotation(-AlmalenceGUI.mDeviceOrientation);
 
-				// <!-- -+-
 				store.setOrientation();
-				// -+- -->
 
 				AlmalenceGUI.mPreviousDeviceOrientation = AlmalenceGUI.mDeviceOrientation;
 
@@ -1308,10 +1303,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		if (settingsControlsVisible)
 			((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
 
-		// <!-- -+-
 		if (((RelativeLayout) guiView.findViewById(R.id.viewPagerLayoutMain)).getVisibility() == View.VISIBLE)
 			hideStore();
-		// -+- -->
 
 		lockControls = false;
 		guiView.findViewById(R.id.buttonGallery).setEnabled(true);
@@ -1323,17 +1316,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	@Override
 	public void showStore()
 	{
-		// <!-- -+-
 		store.showStore();
-		// -+- -->
 	}
 
 	@Override
 	public void hideStore()
 	{
-		// <!-- -+-
 		store.hideStore();
-		// -+- -->
 	}
 
 	@Override
@@ -1488,8 +1477,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		shutterButton = ((RotateImageView) guiView.findViewById(R.id.buttonShutter));
 		shutterButton.setOnLongClickListener(this);
 
-		// <!-- -+-
 		store = new AlmalenceStore(guiView);
+		// <!-- -+-
 		manageUnlockControl();
 		// -+- -->
 	}
@@ -1603,7 +1592,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	@Override
 	public void onGUICreate()
 	{
-		// Log.e("GUI", "onGUICreate");
 		if (MainScreen.getInstance().findViewById(R.id.infoLayout).getVisibility() == View.VISIBLE)
 			iInfoViewHeight = MainScreen.getInstance().findViewById(R.id.infoLayout).getHeight();
 		// Recreate plugin views
@@ -1665,13 +1653,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		View help = guiView.findViewById(R.id.mode_help);
 		help.bringToFront();
 
-		// <!-- -+-
 		if (MainScreen.getInstance().isShowStore())
 		{
 			showStore();
 			MainScreen.getInstance().setShowStore(false);
 		}
-		// -+- -->
 	}
 
 	@Override

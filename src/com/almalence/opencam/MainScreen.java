@@ -2633,10 +2633,22 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		return MainScreen.thiz.getResources();
 	}
 
+	
+	private boolean		showStore = false;
+	
+	public void setShowStore(boolean show)
+	{
+		showStore = show;
+	}
+
+	public boolean isShowStore()
+	{
+		return showStore;
+	}
+	
 	/*******************************************************/
 	/************************ Billing ************************/
 
-	private boolean		showStore					= false;
 	// <!-- -+-
 	OpenIabHelper		mHelper;
 
@@ -2732,16 +2744,6 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		// "100000103369/000001018393");
 		// OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_SAMSUNG,
 		// "100000103369/000001018394");
-	}
-
-	public void setShowStore(boolean show)
-	{
-		showStore = show;
-	}
-
-	public boolean isShowStore()
-	{
-		return showStore;
 	}
 
 	public void activateCouponSale()
