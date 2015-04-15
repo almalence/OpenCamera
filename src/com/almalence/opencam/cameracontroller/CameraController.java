@@ -2742,6 +2742,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						} else
 						{
 							String flashmode = CameraController.mode_flash.get(mode);
+							if (flashmode == null)
+								return;
 							params.setFlashMode(flashmode);
 							setCameraParameters(params);
 						}
