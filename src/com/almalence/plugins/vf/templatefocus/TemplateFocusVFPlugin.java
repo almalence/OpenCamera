@@ -213,8 +213,8 @@ public class TemplateFocusVFPlugin extends PluginViewfinder
 	{
 		ApplicationScreen.getGUIManager().removeViews(focusLayout, R.id.specialPluginsLayout);
 
-		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT,
-				LayoutParams.FILL_PARENT);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+				LayoutParams.MATCH_PARENT);
 		params.addRule(RelativeLayout.CENTER_IN_PARENT);
 
 		((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout)).addView(this.focusLayout,

@@ -352,6 +352,7 @@ public class TemplateGUI extends GUI
 		ApplicationScreen.setPreviewSurfaceLayoutWidth(lp.width);
 		ApplicationScreen.setPreviewSurfaceLayoutHeight(lp.height);
 		guiView.findViewById(R.id.fullscreenLayout).setLayoutParams(lp);
+		guiView.findViewById(R.id.specialPluginsLayout).setLayoutParams(lp);
 
 	}
 

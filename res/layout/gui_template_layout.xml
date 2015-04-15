@@ -115,7 +115,7 @@
        android:layout_height="match_parent"
        android:orientation="vertical"    
        android:background="@android:color/transparent"   
-       android:visibility="gone">
+       android:visibility="visible">
 	</RelativeLayout>
 	
     <RelativeLayout
@@ -124,7 +124,7 @@
        android:layout_height="match_parent"
        android:orientation="vertical"    
        android:background="@android:color/transparent"   
-       android:visibility="gone">
+       android:visibility="visible">
 	</RelativeLayout>
       
 	 	

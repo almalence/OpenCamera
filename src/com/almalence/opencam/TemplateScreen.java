@@ -315,7 +315,9 @@ public class TemplateScreen extends ApplicationScreen
 	@Override
 	public int isShotOnTap()
 	{
-		return 1;
+		return 2; 	//1 - shot on single click,
+					//2 - shot on double click,
+					//any other number - shot only on shutter button click
 	}
 
 	@Override
