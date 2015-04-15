@@ -16,7 +16,7 @@ Portions created by Initial Developer are Copyright (C) 2013
 by Almalence Inc. All Rights Reserved.
  */
 
-package com.almalence.plugins.export.standard;
+package com.almalence.plugins.export.template;
 
 import android.content.SharedPreferences;
 import android.location.GpsStatus;
@@ -43,7 +43,7 @@ import com.almalence.util.MLocation;
  * in specified format and with specified pattern name
  ***/
 
-public class ExportPlugin extends PluginExport
+public class TemplateExportPlugin extends PluginExport
 {
 	boolean					should_save						= false;
 	private RotateImageView	gpsInfoImage;
@@ -56,7 +56,7 @@ public class ExportPlugin extends PluginExport
 
 	private long			sessionID						= 0;
 
-	public ExportPlugin()
+	public TemplateExportPlugin()
 	{
 		super("com.almalence.plugins.export", R.xml.preferences_export_export, 0, 0, null);
 	}
@@ -104,7 +104,7 @@ public class ExportPlugin extends PluginExport
 				public void onGpsStatusChanged(int event)
 				{
 
-					ExportPlugin.this.ShowGPSStatus(event);
+					TemplateExportPlugin.this.ShowGPSStatus(event);
 				}
 			});
 		} else

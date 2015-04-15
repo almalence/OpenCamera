@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.almalence.plugins.vf.focus;
+package com.almalence.plugins.vf.templatefocus;
 
 import android.annotation.TargetApi;
 import android.content.Context;

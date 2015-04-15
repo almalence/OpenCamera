@@ -16,7 +16,7 @@ Portions created by Initial Developer are Copyright (C) 2013
 by Almalence Inc. All Rights Reserved.
  */
 
-package com.almalence.plugins.capture.standard;
+package com.almalence.plugins.capture.template;
 
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
@@ -41,7 +41,7 @@ import com.almalence.opencam.ApplicationInterface;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.TemplateScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.TemplatePluginManager;
 import com.almalence.opencam.R;
@@ -53,12 +53,12 @@ import com.almalence.opencam.cameracontroller.CameraController;
  * shared memory
  ***/
 
-public class CapturePlugin extends PluginCapture
+public class TemplateCapturePlugin extends PluginCapture
 {
 	public static final String	CAMERA_IMAGE_BUCKET_NAME	= Environment.getExternalStorageDirectory().toString()
 																	+ "/DCIM/Camera/tmp_raw_img";
 
-	public CapturePlugin()
+	public TemplateCapturePlugin()
 	{
 		super("com.almalence.plugins.capture", 0, 0, 0, null);
 	}

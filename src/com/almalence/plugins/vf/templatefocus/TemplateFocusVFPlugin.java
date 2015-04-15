@@ -16,7 +16,7 @@ Portions created by Initial Developer are Copyright (C) 2013
 by Almalence Inc. All Rights Reserved.
  */
 
-package com.almalence.plugins.vf.focus;
+package com.almalence.plugins.vf.templatefocus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,9 +66,9 @@ import com.almalence.opencam.cameracontroller.CameraController;
  * Implements touch to focus functionality
  ***/
 
-public class FocusVFPlugin extends PluginViewfinder
+public class TemplateFocusVFPlugin extends PluginViewfinder
 {
-	private static final String	TAG								= "AlmalenceFocusPlugin";
+	private static final String	TAG								= "TemplateFocusPlugin";
 
 	private static final int	RESET_TOUCH_FOCUS				= 0;
 	private static final int	START_TOUCH_FOCUS				= 1;
@@ -153,7 +153,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		}
 	}
 
-	public FocusVFPlugin()
+	public TemplateFocusVFPlugin()
 	{
 		super("com.almalence.plugins.focusvf", 0, 0, 0, null);
 
@@ -164,7 +164,7 @@ public class FocusVFPlugin extends PluginViewfinder
 	@Override
 	public void onCreate()
 	{
-		View v = LayoutInflater.from(ApplicationScreen.getMainContext()).inflate(R.layout.plugin_vf_focus_layout, null);
+		View v = LayoutInflater.from(ApplicationScreen.getMainContext()).inflate(R.layout.plugin_vf_templatefocus_layout, null);
 		focusLayout = (RelativeLayout) v.findViewById(R.id.focus_layout);
 
 		RelativeLayout.LayoutParams viewLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT,

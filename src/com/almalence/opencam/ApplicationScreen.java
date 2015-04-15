@@ -713,10 +713,10 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	
 	protected void onApplicationDestroy()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(TemplateScreen.getMainContext());
 
-		prefs.edit().putBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false);
-		prefs.edit().putBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
+		prefs.edit().putBoolean(TemplateScreen.sPhotoTimeLapseIsRunningPref, false);
+		prefs.edit().putBoolean(TemplateScreen.sPhotoTimeLapseActivePref, false);
 		
 		ApplicationScreen.getGUIManager().onDestroy();
 		ApplicationScreen.getPluginManager().onDestroy();
@@ -972,7 +972,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public String  getSpecialImageSizeIndexPref()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
-		return prefs.getString(MainScreen.sImageSizeMultishotBackPref, "-1");
+		return prefs.getString(TemplateScreen.sImageSizeMultishotBackPref, "-1");
 	}
 
 	public static int selectImageDimensionMultishot()

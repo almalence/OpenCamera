@@ -16,7 +16,7 @@ Portions created by Initial Developer are Copyright (C) 2013
 by Almalence Inc. All Rights Reserved.
  */
 
-package com.almalence.plugins.vf.grid;
+package com.almalence.plugins.vf.templategrid;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -45,13 +45,13 @@ import com.almalence.opencam.cameracontroller.CameraController;
  * Implements viewfinder plugin - adds different grids on VF
  ***/
 
-public class GridVFPlugin extends PluginViewfinder
+public class TemplateGridVFPlugin extends PluginViewfinder
 {
 	ImageView	grid		= null;
 
 	private int	gridType	= 1;
 
-	public GridVFPlugin()
+	public TemplateGridVFPlugin()
 	{
 		super("com.almalence.plugins.gridvf", R.xml.preferences_vf_grid, 0, R.drawable.plugin_vf_grid_none, "Grid type");
 	}

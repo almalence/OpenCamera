@@ -359,11 +359,11 @@ public class HALv3
 			if (cm.getName() == android.util.Size[].class.getName())
 			{
 				android.util.Size[] s = (android.util.Size[]) cc.get(cm);
-				Log.i(TAG, "Camera characteristics: " + cm.getName() + ": " + s[0].toString());
+				Log.i(TAG, "Camera characteristics 1: " + cm.getName() + ": " + s[0].toString());
 			} else
 			{
 				String cmTypeName = cm.getName();
-				Log.i(TAG, "Camera characteristics: " + cm.getName() + "(" + cmTypeName + "): " + cc.get(cm));
+				Log.i(TAG, "Camera characteristics 2: " + cm.getName() + "(" + cmTypeName + "): " + cc.get(cm));
 			}
 		}
 
@@ -1725,7 +1725,7 @@ public class HALv3
 			Log.e(TAG, "CameraDevice.StateCallback.onOpened");
 
 			HALv3.getInstance().camDevice = arg0;
-
+			
 			messageHandler.sendEmptyMessage(ApplicationInterface.MSG_CAMERA_OPENED);
 
 			// dumpCameraCharacteristics();

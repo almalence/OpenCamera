@@ -25,14 +25,8 @@
 	<mode id="single" name="single_mode_name" savename="">
 		<icon		id="gui_almalence_mode_single"/>
 
-	    <vf 		id="com.almalence.plugins.histogramvf"/> 
-	    <vf 		id="com.almalence.plugins.barcodescannervf"/>   
 	    <vf 		id="com.almalence.plugins.gridvf"/>
-	    <vf 		id="com.almalence.plugins.zoomvf"/>
 	    <vf 		id="com.almalence.plugins.focusvf"/>
-	    <vf 		id="com.almalence.plugins.infosetvf"/>
-	    <vf 		id="com.almalence.plugins.aeawlockvf"/>
-	    <vf 		id="com.almalence.plugins.gyrovf"/>
 	
 	    <capture 	id="com.almalence.plugins.capture" />    
 	
@@ -77,13 +71,7 @@
 	    <icon		id="gui_almalence_mode_burst"/>
 	    
 	    <vf 		id="com.almalence.plugins.gridvf"/>
-		<vf 		id="com.almalence.plugins.zoomvf"/>
-	    <vf 		id="com.almalence.plugins.histogramvf"/>
-	    <vf 		id="com.almalence.plugins.barcodescannervf"/>
 	    <vf 		id="com.almalence.plugins.focusvf"/>
-	    <vf 		id="com.almalence.plugins.infosetvf"/>
-	    <vf 		id="com.almalence.plugins.aeawlockvf"/>   
-	    <vf 		id="com.almalence.plugins.gyrovf"/>
 	
 	    <capture 	id="com.almalence.plugins.burstcapture" />    
 	
@@ -99,7 +87,7 @@
 		
 	</mode>
 	
-	<mode id="expobracketing" name="expobracketing_mode_name"  savename="BKT">
+	<!-- <mode id="expobracketing" name="expobracketing_mode_name"  savename="BKT">
 	
 	    <icon		id="gui_almalence_mode_expobracketing"/>
 	    
@@ -122,9 +110,9 @@
 		
 		<howtotext  id=""/>
 	
-	</mode>
+	</mode> -->
 	
-	<mode id="hdrmode" name="hdr_mode_name"  savename="HDR">
+	<!-- <mode id="hdrmode" name="hdr_mode_name"  savename="HDR">
 	
 	    <icon		id="gui_almalence_mode_hdr"/>
 	    
@@ -147,9 +135,9 @@
 		
 		<howtotext  id=""/>
 	
-	</mode>
+	</mode> -->
 	
-	<mode id="nightmode" name="night_mode_name"  savename="NIGHT" nameHAL="super_mode_name"  savenameHAL="SUPER">
+	<!-- <mode id="nightmode" name="night_mode_name"  savename="NIGHT" nameHAL="super_mode_name"  savenameHAL="SUPER">
 	
 	    <icon		id="gui_almalence_mode_night"/>
 	    <iconHAL	id="gui_almalence_mode_super"/>
@@ -172,9 +160,9 @@
 		<howtotext  id=""/>
 
 		<sku 		id="plugin_almalence_super"/>		
-	</mode>
+	</mode> -->
 	
-	<mode id="video" name="video_mode_name"  savename="">
+	<!-- <mode id="video" name="video_mode_name"  savename="">
 	
 	    <icon		id="gui_almalence_mode_video"/>
 	    
@@ -197,9 +185,9 @@
 		
 		<howtotext  id=""/>
 			
-	</mode>
+	</mode> -->
 	 
-	<mode id="pixfix" name="preshot_mode_name"  savename="PRESHOT">
+	<!-- <mode id="pixfix" name="preshot_mode_name"  savename="PRESHOT">
 	
 	    <icon		id="gui_almalence_mode_backintime"/>
 	    
@@ -224,9 +212,9 @@
 		
 		<howtotext  id="preshot_mode_howto"/>
 			
-	</mode>
+	</mode> -->
 	
-	<mode id="multishot" name="multishot_mode_name"  savename="MS">
+	<!-- <mode id="multishot" name="multishot_mode_name"  savename="MS">
 	
 	    <icon		id="gui_almalence_mode_moving"/>
 	    
@@ -250,9 +238,9 @@
 		
 		<howtotext  id=""/>
 			
-	</mode>
+	</mode> -->
 	
-	<mode id="panorama_augmented" name="panorama_mode_name"  savename="PANO">
+	<!-- <mode id="panorama_augmented" name="panorama_mode_name"  savename="PANO">
 	
 	    <icon		id="gui_almalence_mode_panorama"/>
 	    
@@ -274,7 +262,7 @@
 		<sku		id="plugin_almalence_panorama"/>
 		
 		<howtotext  id=""/>
-	</mode>
+	</mode> -->
 
 <!-- 
 	<mode id="hires_portrait" name="hiresportrait_mode_name"  savename="PRT">
@@ -299,7 +287,7 @@
 		<howtotext  id=""/>
 	</mode>
 	-->
-	<mode id="bestshotmode" name="bestshot_mode_name"  savename="BEST">
+	<!--  <mode id="bestshotmode" name="bestshot_mode_name"  savename="BEST">
 	    
 	    <icon		id="gui_almalence_mode_bestshot"/>
 	    
@@ -323,6 +311,6 @@
 		
 		<howtotext  id=""/>
 		
-	</mode>
+	</mode> -->
 
 </config>	

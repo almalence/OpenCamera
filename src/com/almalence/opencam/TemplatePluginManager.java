@@ -20,12 +20,12 @@ package com.almalence.opencam;
 
 import android.preference.PreferenceFragment;
 
-import com.almalence.plugins.capture.burst.BurstCapturePlugin;
-import com.almalence.plugins.capture.standard.CapturePlugin;
-import com.almalence.plugins.export.standard.ExportPlugin;
-import com.almalence.plugins.processing.simple.SimpleProcessingPlugin;
-import com.almalence.plugins.vf.focus.FocusVFPlugin;
-import com.almalence.plugins.vf.grid.GridVFPlugin;
+import com.almalence.plugins.capture.template.TemplateCapturePlugin;
+import com.almalence.plugins.capture.templateburst.TemplateBurstCapturePlugin;
+import com.almalence.plugins.export.template.TemplateExportPlugin;
+import com.almalence.plugins.processing.template.TemplateProcessingPlugin;
+import com.almalence.plugins.vf.templatefocus.TemplateFocusVFPlugin;
+import com.almalence.plugins.vf.templategrid.TemplateGridVFPlugin;
 
 /***
  * Plugins managing class.
@@ -68,30 +68,30 @@ public class TemplatePluginManager extends PluginManagerBase
 		 */
 
 		// VF
-		GridVFPlugin gridVFPlugin = new GridVFPlugin();
+		TemplateGridVFPlugin gridVFPlugin = new TemplateGridVFPlugin();
 		pluginList.put(gridVFPlugin.getID(), gridVFPlugin);
 		listVF.add(gridVFPlugin);
 
-		FocusVFPlugin focusVFPlugin = new FocusVFPlugin();
+		TemplateFocusVFPlugin focusVFPlugin = new TemplateFocusVFPlugin();
 		pluginList.put(focusVFPlugin.getID(), focusVFPlugin);
 		listVF.add(focusVFPlugin);
 
 		// Capture
-		CapturePlugin testCapturePlugin = new CapturePlugin();
+		TemplateCapturePlugin testCapturePlugin = new TemplateCapturePlugin();
 		pluginList.put(testCapturePlugin.getID(), testCapturePlugin);
 		listCapture.add(testCapturePlugin);
 
-		BurstCapturePlugin burstCapturePlugin = new BurstCapturePlugin();
+		TemplateBurstCapturePlugin burstCapturePlugin = new TemplateBurstCapturePlugin();
 		pluginList.put(burstCapturePlugin.getID(), burstCapturePlugin);
 		listCapture.add(burstCapturePlugin);
 
 		// Processing
-		SimpleProcessingPlugin simpleProcessingPlugin = new SimpleProcessingPlugin();
+		TemplateProcessingPlugin simpleProcessingPlugin = new TemplateProcessingPlugin();
 		pluginList.put(simpleProcessingPlugin.getID(), simpleProcessingPlugin);
 		listProcessing.add(simpleProcessingPlugin);
 
 		// Export
-		ExportPlugin testExportPlugin = new ExportPlugin();
+		TemplateExportPlugin testExportPlugin = new TemplateExportPlugin();
 		pluginList.put(testExportPlugin.getID(), testExportPlugin);
 		listExport.add(testExportPlugin);		
 	}

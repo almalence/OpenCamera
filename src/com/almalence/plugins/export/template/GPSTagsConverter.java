@@ -16,7 +16,7 @@ Portions created by Initial Developer are Copyright (C) 2013
 by Almalence Inc. All Rights Reserved.
  */
 
-package com.almalence.plugins.export.standard;
+package com.almalence.plugins.export.template;
 
 public class GPSTagsConverter
 {

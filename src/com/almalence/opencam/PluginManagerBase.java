@@ -100,18 +100,18 @@ import android.widget.Toast;
 
 import com.almalence.SwapHeap;
 
-import com.almalence.plugins.capture.burst.BurstCapturePlugin;
-import com.almalence.plugins.capture.standard.CapturePlugin;
-import com.almalence.plugins.export.standard.ExportPlugin;
-import com.almalence.plugins.export.standard.GPSTagsConverter;
+import com.almalence.plugins.capture.template.TemplateCapturePlugin;
+import com.almalence.plugins.capture.templateburst.TemplateBurstCapturePlugin;
 import com.almalence.plugins.export.standard.ExifDriver.ExifDriver;
 import com.almalence.plugins.export.standard.ExifDriver.ExifManager;
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueByteArray;
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueNumber;
 import com.almalence.plugins.export.standard.ExifDriver.Values.ValueRationals;
-import com.almalence.plugins.processing.simple.SimpleProcessingPlugin;
-import com.almalence.plugins.vf.focus.FocusVFPlugin;
-import com.almalence.plugins.vf.grid.GridVFPlugin;
+import com.almalence.plugins.export.template.GPSTagsConverter;
+import com.almalence.plugins.export.template.TemplateExportPlugin;
+import com.almalence.plugins.processing.template.TemplateProcessingPlugin;
+import com.almalence.plugins.vf.templatefocus.TemplateFocusVFPlugin;
+import com.almalence.plugins.vf.templategrid.TemplateGridVFPlugin;
 import com.almalence.util.MLocation;
 import com.almalence.util.exifreader.imaging.jpeg.JpegMetadataReader;
 import com.almalence.util.exifreader.imaging.jpeg.JpegProcessingException;
@@ -1978,7 +1978,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 							break;
 						}
 					}
-					File rawFile = new File(CapturePlugin.CAMERA_IMAGE_BUCKET_NAME);
+					File rawFile = new File(TemplateCapturePlugin.CAMERA_IMAGE_BUCKET_NAME);
 				}
 
 				ApplicationScreen.instance.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);

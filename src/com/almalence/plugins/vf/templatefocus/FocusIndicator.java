@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
-package com.almalence.plugins.vf.focus;
+package com.almalence.plugins.vf.templatefocus;
 
-public interface Rotatable
+public interface FocusIndicator
 {
-	public void setOrientation(int orientation);
+	public void showStart();
+
+	public void showSuccess();
+
+	public void showFail();
+
+	public void clear();
 }

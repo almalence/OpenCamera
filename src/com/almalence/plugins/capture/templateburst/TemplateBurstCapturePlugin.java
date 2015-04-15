@@ -16,7 +16,7 @@ Portions created by Initial Developer are Copyright (C) 2013
 by Almalence Inc. All Rights Reserved.
  */
 
-package com.almalence.plugins.capture.burst;
+package com.almalence.plugins.capture.templateburst;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -56,7 +56,7 @@ import com.almalence.opencam.R;
  * Implements burst capture plugin - captures predefined number of images
  ***/
 
-public class BurstCapturePlugin extends PluginCapture
+public class TemplateBurstCapturePlugin extends PluginCapture
 {
 	// defaul val. value should come from config
 	private int				imageAmount			= 3;
@@ -66,7 +66,7 @@ public class BurstCapturePlugin extends PluginCapture
 	private static String	sImagesAmountPref;
 	private static String	sPauseBetweenShotsPref;
 
-	public BurstCapturePlugin()
+	public TemplateBurstCapturePlugin()
 	{
 		super("com.almalence.plugins.burstcapture", R.xml.preferences_capture_burst, 0,
 				R.drawable.gui_almalence_mode_burst, "Burst images");

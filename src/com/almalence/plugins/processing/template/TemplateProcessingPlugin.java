@@ -16,7 +16,7 @@ Portions created by Initial Developer are Copyright (C) 2013
 by Almalence Inc. All Rights Reserved.
  */
 
-package com.almalence.plugins.processing.simple;
+package com.almalence.plugins.processing.template;
 
 /* <!-- +++
 import com.almalence.opencam_plus.ApplicationScreen;
@@ -37,11 +37,11 @@ import com.almalence.opencam.cameracontroller.CameraController;
  * from captured to result.
  ***/
 
-public class SimpleProcessingPlugin extends PluginProcessing
+public class TemplateProcessingPlugin extends PluginProcessing
 {
 	private long				sessionID					= 0;
 
-	public SimpleProcessingPlugin()
+	public TemplateProcessingPlugin()
 	{
 		super("com.almalence.plugins.simpleprocessing", R.xml.preferences_capture_dro, 0, 0, null);
 	}

@@ -104,7 +104,7 @@ import com.almalence.opencam.ui.GUI;
 @SuppressWarnings("deprecation")
 //public class MainScreen extends Activity implements ApplicationInterface, View.OnClickListener, View.OnTouchListener,
 //		SurfaceHolder.Callback, Handler.Callback, Camera.ShutterCallback
-public class MainScreen extends ApplicationScreen
+public class TemplateScreen extends ApplicationScreen
 {
 	// >>Description
 	// section with different global parameters available for everyone
@@ -117,7 +117,7 @@ public class MainScreen extends ApplicationScreen
 
 	private static final int			MIN_MPIX_PREVIEW				= 600 * 400;
 	
-	public static MainScreen			thiz;
+	public static TemplateScreen			thiz;
 
 	// Interface to HALv3 camera and Old style camera
 
@@ -167,29 +167,29 @@ public class MainScreen extends ApplicationScreen
 				try
 				{
 					forceFilenameUri = this.getIntent().getExtras().getParcelable(MediaStore.EXTRA_OUTPUT);
-					MainScreen.setForceFilename(new File(((Uri) forceFilenameUri).getPath()));
-					if (MainScreen.getForceFilename().getAbsolutePath().equals("/scrapSpace"))
+					TemplateScreen.setForceFilename(new File(((Uri) forceFilenameUri).getPath()));
+					if (TemplateScreen.getForceFilename().getAbsolutePath().equals("/scrapSpace"))
 					{
-						MainScreen.setForceFilename(new File(Environment.getExternalStorageDirectory()
+						TemplateScreen.setForceFilename(new File(Environment.getExternalStorageDirectory()
 								.getAbsolutePath() + "/mms/scrapSpace/.temp.jpg"));
-						new File(MainScreen.getForceFilename().getParent()).mkdirs();
+						new File(TemplateScreen.getForceFilename().getParent()).mkdirs();
 					}
 				} catch (Exception e)
 				{
-					MainScreen.setForceFilename(null);
+					TemplateScreen.setForceFilename(null);
 				}
 			} else
 			{
-				MainScreen.setForceFilename(null);
+				TemplateScreen.setForceFilename(null);
 			}
 		} else
 		{
-			MainScreen.setForceFilename(null);
+			TemplateScreen.setForceFilename(null);
 		}
 	}
 	
 	
-	public static MainScreen getInstance()
+	public static TemplateScreen getInstance()
 	{
 		return thiz;
 	}
@@ -264,17 +264,17 @@ public class MainScreen extends ApplicationScreen
 	
 	public static File getForceFilename()
 	{
-		return MainScreen.getInstance().forceFilename;
+		return TemplateScreen.getInstance().forceFilename;
 	}
 
 	public static void setForceFilename(File fileName)
 	{
-		MainScreen.getInstance().forceFilename = fileName;
+		TemplateScreen.getInstance().forceFilename = fileName;
 	}
 
 	public static Uri getForceFilenameURI()
 	{
-		return MainScreen.getInstance().forceFilenameUri;
+		return TemplateScreen.getInstance().forceFilenameUri;
 	}
 
 	public static void setSurfaceHolderSize(int width, int height)
@@ -327,7 +327,7 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	public String getSaveTo()
 	{
-		return null;
+		return "1";
 	}
 
 	@Override
@@ -353,7 +353,7 @@ public class MainScreen extends ApplicationScreen
 
 		opt1 = sImageSizeRearPref;
 		opt2 = sImageSizeFrontPref;
-		currentIdx = MainScreen.thiz.getImageSizeIndex();
+		currentIdx = TemplateScreen.thiz.getImageSizeIndex();
 
 		if (currentIdx == -1)
 		{
@@ -416,7 +416,7 @@ public class MainScreen extends ApplicationScreen
 	{
 		CheckBoxPreference cp = (CheckBoxPreference) prefActivity.findPreference(getResources().getString(
 				R.string.Preference_UseHALv3Key));
-		final CheckBoxPreference fp = (CheckBoxPreference) prefActivity.findPreference(MainScreen.sCaptureRAWPref);
+		final CheckBoxPreference fp = (CheckBoxPreference) prefActivity.findPreference(TemplateScreen.sCaptureRAWPref);
 
 		if (cp != null)
 		{
@@ -429,8 +429,8 @@ public class MainScreen extends ApplicationScreen
 			{
 				public boolean onPreferenceChange(Preference preference, Object useCamera2)
 				{
-					PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
-							.putBoolean(MainScreen.sInitModeListPref, true).commit();
+					PreferenceManager.getDefaultSharedPreferences(TemplateScreen.getMainContext()).edit()
+							.putBoolean(TemplateScreen.sInitModeListPref, true).commit();
 
 					boolean new_value = Boolean.parseBoolean(useCamera2.toString());
 					if (new_value)
@@ -441,8 +441,8 @@ public class MainScreen extends ApplicationScreen
 							fp.setEnabled(false);
 					} else if (fp != null)
 					{
-						PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
-								.putBoolean(MainScreen.sCaptureRAWPref, false).commit();
+						PreferenceManager.getDefaultSharedPreferences(TemplateScreen.getMainContext()).edit()
+								.putBoolean(TemplateScreen.sCaptureRAWPref, false).commit();
 						fp.setEnabled(false);
 					}
 
@@ -487,7 +487,7 @@ public class MainScreen extends ApplicationScreen
 		mApplicationStarted = false;
 		orientationMain = 0;
 		orientationMainPrevious = 0;
-		MainScreen.getGUIManager().onStop();
+		TemplateScreen.getGUIManager().onStop();
 		ApplicationScreen.getPluginManager().onStop();
 		CameraController.onStop();
 
@@ -539,7 +539,7 @@ public class MainScreen extends ApplicationScreen
 				public void onFinish()
 				{
 					SharedPreferences prefs = PreferenceManager
-							.getDefaultSharedPreferences(MainScreen.getMainContext());
+							.getDefaultSharedPreferences(TemplateScreen.getMainContext());
 
 					updatePreferences();
 
@@ -558,17 +558,17 @@ public class MainScreen extends ApplicationScreen
 					// Log.e("MainScreen",
 					if (CameraController.isUseHALv3())
 					{
-						MainScreen.setSurfaceHolderSize(1, 1);
+						TemplateScreen.setSurfaceHolderSize(1, 1);
 					}
 
-					MainScreen.getGUIManager().onResume();
+					TemplateScreen.getGUIManager().onResume();
 					ApplicationScreen.getPluginManager().onResume();
 					CameraController.onResume();
-					MainScreen.thiz.mPausing = false;
+					TemplateScreen.thiz.mPausing = false;
 
 					if (CameraController.isUseHALv3())
 					{
-						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+						TemplateScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
 						Log.d("MainScreen", "onResume: CameraController.setupCamera(null)");
 						CameraController.setupCamera(null, !switchingMode);
 
@@ -579,9 +579,9 @@ public class MainScreen extends ApplicationScreen
 						}
 					} else if ((surfaceCreated && (!CameraController.isCameraCreated())) ||
 					// this is for change mode without camera restart!
-							(surfaceCreated && MainScreen.getInstance().getSwitchingMode()))
+							(surfaceCreated && TemplateScreen.getInstance().getSwitchingMode()))
 					{
-						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+						TemplateScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
 						CameraController.setupCamera(surfaceHolder, !switchingMode);
 
 						if (glView != null)
@@ -607,10 +607,10 @@ public class MainScreen extends ApplicationScreen
 
 		long memoryFree = getAvailableInternalMemory();
 		if (memoryFree < 30)
-			Toast.makeText(MainScreen.getMainContext(), "Almost no free space left on internal storage.",
+			Toast.makeText(TemplateScreen.getMainContext(), "Almost no free space left on internal storage.",
 					Toast.LENGTH_LONG).show();
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(TemplateScreen.getMainContext());
 		boolean dismissKeyguard = prefs.getBoolean("dismissKeyguard", true);
 		if (dismissKeyguard)
 			getWindow()
@@ -629,10 +629,11 @@ public class MainScreen extends ApplicationScreen
 	
 	private void updatePreferences()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		CameraController.setCameraIndex(!prefs.getBoolean(MainScreen.sUseFrontCameraPref, false) ? 0 : 1);
-		imageSizeIdxPreference = prefs.getInt(CameraController.getCameraIndex() == 0 ? MainScreen.sImageSizeRearPref
-				: MainScreen.sImageSizeFrontPref, -1);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(TemplateScreen.getMainContext());
+		CameraController.setCameraIndex(!prefs.getBoolean(TemplateScreen.sUseFrontCameraPref, false) ? 0 : 1);
+		imageSizeIdxPreference = 0;
+//		imageSizeIdxPreference = prefs.getInt(CameraController.getCameraIndex() == 0 ? TemplateScreen.sImageSizeRearPref
+//				: TemplateScreen.sImageSizeFrontPref, -1);
 
 		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
 	}
@@ -661,9 +662,9 @@ public class MainScreen extends ApplicationScreen
 				{
 					updatePreferences();
 
-					if (!MainScreen.thiz.mPausing && surfaceCreated && (!CameraController.isCameraCreated()))
+					if (!TemplateScreen.thiz.mPausing && surfaceCreated && (!CameraController.isCameraCreated()))
 					{
-						MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+						TemplateScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
 						if (!CameraController.isUseHALv3())
 						{
 							CameraController.setupCamera(holder, !switchingMode);
@@ -758,7 +759,7 @@ public class MainScreen extends ApplicationScreen
 		// shutter/camera button processing
 		if (keyCode == KeyEvent.KEYCODE_CAMERA || keyCode == KeyEvent.KEYCODE_DPAD_CENTER)
 		{
-			MainScreen.getGUIManager().onHardwareShutterButtonPressed();
+			TemplateScreen.getGUIManager().onHardwareShutterButtonPressed();
 			return true;
 		}
 		// focus/half-press button processing
@@ -766,7 +767,7 @@ public class MainScreen extends ApplicationScreen
 		{
 			if (event.getDownTime() == event.getEventTime())
 			{
-				MainScreen.getGUIManager().onHardwareFocusButtonPressed();
+				TemplateScreen.getGUIManager().onHardwareFocusButtonPressed();
 			}
 			return true;
 		}
@@ -774,20 +775,20 @@ public class MainScreen extends ApplicationScreen
 		// check if Headset Hook button has some functions except standard
 		if (keyCode == KeyEvent.KEYCODE_HEADSETHOOK)
 		{
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(TemplateScreen.getMainContext());
 			boolean headsetFunc = prefs.getBoolean("headsetPrefCommon", false);
 			if (headsetFunc)
 			{
-				MainScreen.getGUIManager().onHardwareFocusButtonPressed();
-				MainScreen.getGUIManager().onHardwareShutterButtonPressed();
+				TemplateScreen.getGUIManager().onHardwareFocusButtonPressed();
+				TemplateScreen.getGUIManager().onHardwareShutterButtonPressed();
 				return true;
 			}
 		}
 
 		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP)
 		{
-			MainScreen.getGUIManager().onHardwareFocusButtonPressed();
-			MainScreen.getGUIManager().onHardwareShutterButtonPressed();
+			TemplateScreen.getGUIManager().onHardwareFocusButtonPressed();
+			TemplateScreen.getGUIManager().onHardwareShutterButtonPressed();
 			return true;
 		}
 
@@ -804,23 +805,23 @@ public class MainScreen extends ApplicationScreen
 	public void showCaptureIndication(boolean playShutter)
 	{
 		// play tick sound
-		MainScreen.getGUIManager().showCaptureIndication();
+		TemplateScreen.getGUIManager().showCaptureIndication();
 		if(playShutter)
-			MainScreen.playShutter();
+			TemplateScreen.playShutter();
 	}
 
 	public void playShutter(int sound)
 	{
-		if (!MainScreen.getInstance().isShutterSoundEnabled())
+		if (!TemplateScreen.getInstance().isShutterSoundEnabled())
 		{
-			MediaPlayer mediaPlayer = MediaPlayer.create(MainScreen.thiz, sound);
+			MediaPlayer mediaPlayer = MediaPlayer.create(TemplateScreen.thiz, sound);
 			mediaPlayer.start();
 		}
 	}
 
 	public static void playShutter()
 	{
-		if (!MainScreen.getInstance().isShutterSoundEnabled())
+		if (!TemplateScreen.getInstance().isShutterSoundEnabled())
 		{
 			if (thiz.shutterPlayer != null)
 				thiz.shutterPlayer.play();
