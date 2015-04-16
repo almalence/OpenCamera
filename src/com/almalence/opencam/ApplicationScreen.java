@@ -67,12 +67,14 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.almalence.util.Util;
-
-//<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
+import com.almalence.sony.cameraremote.DeviceListAdapter;
+import com.almalence.sony.cameraremote.SimpleSsdpClient;
+import com.almalence.sony.cameraremote.SimpleStreamSurfaceView;
+import com.almalence.util.Util;
+//<!-- -+-
 
 //-+- -->
 /* <!-- +++
@@ -83,14 +85,14 @@ import com.almalence.opencam.ui.GUI;
  +++ --> */
 
 /***
- * ApplicationScreen - main activity screen with camera functionality
+ * MainScreen - main activity screen with camera functionality
  * 
  * Passes all main events to PluginManager
  ***/
 
 @SuppressWarnings("deprecation")
-abstract public class ApplicationScreen extends Activity implements ApplicationInterface, View.OnClickListener, View.OnTouchListener,
-		SurfaceHolder.Callback, Handler.Callback, Camera.ShutterCallback
+abstract public class ApplicationScreen extends Activity implements ApplicationInterface, View.OnClickListener,
+		View.OnTouchListener, SurfaceHolder.Callback, Handler.Callback, Camera.ShutterCallback
 {
 	// >>Description
 	// section with different global parameters available for everyone
@@ -101,80 +103,80 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	//
 	// Description<<
 
-	protected static final int			MSG_RETURN_CAPTURED				= -1;
-//
-//	protected static final int			MODE_GENERAL					= 0;
-//	protected static final int			MODE_SMART_MULTISHOT_AND_NIGHT	= 1;
-//	protected static final int			MODE_PANORAMA					= 2;
-//	protected static final int			MODE_VIDEO						= 3;
-//
-//	protected static final int			MIN_MPIX_PREVIEW				= 600 * 400;
+	protected static final int			MSG_RETURN_CAPTURED		= -1;
+	//
+	// protected static final int MODE_GENERAL = 0;
+	// protected static final int MODE_SMART_MULTISHOT_AND_NIGHT = 1;
+	// protected static final int MODE_PANORAMA = 2;
+	// protected static final int MODE_VIDEO = 3;
+	//
+	// protected static final int MIN_MPIX_PREVIEW = 600 * 400;
 
 	public static ApplicationScreen		instance;
 	public Context						mainContext;
 	protected Handler					messageHandler;
 
 	// Interface to HALv3 camera and Old style camera
-	protected CameraController			cameraController				= null;
+	protected CameraController			cameraController		= null;
 
-	protected int							captureFormat					= CameraController.JPEG;
+	protected int						captureFormat			= CameraController.JPEG;
 
-	public GUI							guiManager						= null;
+	public GUI							guiManager				= null;
 
 	// OpenGL layer. May be used to allow capture plugins to draw overlaying
 	// preview, such as night vision or panorama frames.
-	protected GLLayer						glView;
+	protected GLLayer					glView;
 
-	protected boolean						mPausing						= false;
+	protected boolean					mPausing				= false;
 
 	protected SurfaceHolder				surfaceHolder;
-	protected SurfaceView					preview;
-	protected Surface						mCameraSurface					= null;
+	protected SurfaceView				preview;
+	protected Surface					mCameraSurface			= null;
 	protected OrientationEventListener	orientListener;
-	protected boolean						landscapeIsNormal				= false;
-	protected boolean						surfaceCreated					= false;
+	protected boolean					landscapeIsNormal		= false;
+	protected boolean					surfaceCreated			= false;
 
-	protected int							surfaceWidth					= 0;
-	protected int							surfaceHeight					= 0;
-//	
-	protected int							surfaceLayoutWidth				= 0;
-	protected int							surfaceLayoutHeight				= 0;
+	protected int						surfaceWidth			= 0;
+	protected int						surfaceHeight			= 0;
+	//
+	protected int						surfaceLayoutWidth		= 0;
+	protected int						surfaceLayoutHeight		= 0;
 
 	// shared between activities
 	// protected int imageWidth, imageHeight;
-	protected int							previewWidth, previewHeight;
+	protected int						previewWidth, previewHeight;
 
-	protected CountDownTimer				screenTimer						= null;
-	protected boolean						isScreenTimerRunning			= false;
+	protected CountDownTimer			screenTimer				= null;
+	protected boolean					isScreenTimerRunning	= false;
 
-	protected static boolean				wantLandscapePhoto				= false;
-	protected int							orientationMain					= 0;
-	protected int							orientationMainPrevious			= 0;
+	protected static boolean			wantLandscapePhoto		= false;
+	protected int						orientationMain			= 0;
+	protected int						orientationMainPrevious	= 0;
 
-	protected SoundPlayer					shutterPlayer					= null;
+	protected SoundPlayer				shutterPlayer			= null;
 
 	// Common preferences
-//	protected String						imageSizeIdxPreference;
-//	protected String						multishotImageSizeIdxPreference;
-//	protected boolean						shutterPreference				= true;
-//	protected int							shotOnTapPreference				= 0;
-//
-//	protected boolean						showHelp						= false;
-//
-	protected boolean						keepScreenOn					= false;
-//
-//	protected String						saveToPath;
-//	protected String						saveToPreference;
-//	protected boolean						sortByDataPreference;
-//
-//	protected boolean						captureRAW;
-//
+	// protected String imageSizeIdxPreference;
+	// protected String multishotImageSizeIdxPreference;
+	// protected boolean shutterPreference = true;
+	// protected int shotOnTapPreference = 0;
+	//
+	// protected boolean showHelp = false;
+	//
+	protected boolean					keepScreenOn			= false;
+	//
+	// protected String saveToPath;
+	// protected String saveToPreference;
+	// protected boolean sortByDataPreference;
+	//
+	// protected boolean captureRAW;
+	//
 	protected List<Surface>				surfaceList;
-//
-	protected static boolean				mAFLocked						= false;
-//
-//	// shows if mode is currently switching
-	protected boolean						switchingMode					= false;
+	//
+	protected static boolean			mAFLocked				= false;
+	//
+	// // shows if mode is currently switching
+	protected boolean					switchingMode			= false;
 
 	// >>Description
 	// section with initialize, resume, start, stop procedures, preferences
@@ -186,22 +188,22 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	//
 	// Description<<
 
-	protected static boolean			isCreating						= false;
-	protected static boolean			mApplicationStarted				= false;
-	protected static boolean			mCameraStarted					= false;
-	protected static boolean			isForceClose					= false;
+	protected static boolean			isCreating				= false;
+	protected static boolean			mApplicationStarted		= false;
+	protected static boolean			mCameraStarted			= false;
+	protected static boolean			isForceClose			= false;
 
-	protected static final int			VOLUME_FUNC_SHUTTER				= 0;
-	protected static final int			VOLUME_FUNC_EXPO				= 2;
-	protected static final int			VOLUME_FUNC_NONE				= 3;
+	protected static final int			VOLUME_FUNC_SHUTTER		= 0;
+	protected static final int			VOLUME_FUNC_EXPO		= 2;
+	protected static final int			VOLUME_FUNC_NONE		= 3;
 
-	protected static List<Area>			mMeteringAreaMatrix5			= new ArrayList<Area>();
-	protected static List<Area>			mMeteringAreaMatrix4			= new ArrayList<Area>();
-	protected static List<Area>			mMeteringAreaMatrix1			= new ArrayList<Area>();
-	protected static List<Area>			mMeteringAreaCenter				= new ArrayList<Area>();
-	protected static List<Area>			mMeteringAreaSpot				= new ArrayList<Area>();
+	protected static List<Area>			mMeteringAreaMatrix5	= new ArrayList<Area>();
+	protected static List<Area>			mMeteringAreaMatrix4	= new ArrayList<Area>();
+	protected static List<Area>			mMeteringAreaMatrix1	= new ArrayList<Area>();
+	protected static List<Area>			mMeteringAreaCenter		= new ArrayList<Area>();
+	protected static List<Area>			mMeteringAreaSpot		= new ArrayList<Area>();
 
-	protected int						currentMeteringMode				= -1;
+	protected int						currentMeteringMode		= -1;
 
 	public static String				sEvPref;
 	public static String				sSceneModePref;
@@ -213,72 +215,76 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public static String				sFlashModePref;
 	public static String				sISOPref;
 	public static String				sMeteringModePref;
+	public static String				sCameraModePref;
 
-//	public static String				sDelayedCapturePref;
-//	public static String				sShowDelayedCapturePref;
-//	public static String				sDelayedSoundPref;
-//	public static String				sDelayedFlashPref;
-//	public static String				sDelayedCaptureIntervalPref;
+	// public static String sDelayedCapturePref;
+	// public static String sShowDelayedCapturePref;
+	// public static String sDelayedSoundPref;
+	// public static String sDelayedFlashPref;
+	// public static String sDelayedCaptureIntervalPref;
 
-//	public static String				sPhotoTimeLapseCaptureIntervalPref;
-//	public static String				sPhotoTimeLapseCaptureIntervalMeasurmentPref;
-//	public static String				sPhotoTimeLapseActivePref;
-//	public static String				sPhotoTimeLapseIsRunningPref;
-//	public static String				sPhotoTimeLapseCount;
+	// public static String sPhotoTimeLapseCaptureIntervalPref;
+	// public static String sPhotoTimeLapseCaptureIntervalMeasurmentPref;
+	// public static String sPhotoTimeLapseActivePref;
+	// public static String sPhotoTimeLapseIsRunningPref;
+	// public static String sPhotoTimeLapseCount;
 
-	public static String				sUseFrontCameraPref;
-//	protected static String				sShutterPref;
-//	protected static String				sShotOnTapPref;
-//	protected static String				sVolumeButtonPref;
+	// protected static String sShutterPref;
+	// protected static String sShotOnTapPref;
+	// protected static String sVolumeButtonPref;
 
 	public static String				sImageSizeRearPref;
 	public static String				sImageSizeFrontPref;
+	public static String				sImageSizeSonyRemotePref;
 
 	public static String				sImageSizeMultishotBackPref;
 	public static String				sImageSizeMultishotFrontPref;
-//
-//	public static String				sImageSizePanoramaBackPref;
-//	public static String				sImageSizePanoramaFrontPref;
-//
+	public static String				sImageSizeMultishotSonyRemotePref;
+
+	public static String				sImageSizePanoramaBackPref;
+	public static String				sImageSizePanoramaFrontPref;
+	//
+	// public static String sImageSizePanoramaBackPref;
+	// public static String sImageSizePanoramaFrontPref;
+	//
 	public static String				sImageSizeVideoBackPref;
 	public static String				sImageSizeVideoFrontPref;
-//
+	//
 	public static String				sCaptureRAWPref;
-//
-//	public static String				sInitModeListPref				= "initModeListPref";
-//
+	//
+	// public static String sInitModeListPref = "initModeListPref";
+	//
 	public static String				sJPEGQualityPref;
-//	
+	//
 	public static String				sAntibandingPref;
-//	
+	//
 	public static String				sAELockPref;
 	public static String				sAWBLockPref;
-//
-//	public static String				sDefaultInfoSetPref;
-//	public static String				sSWCheckedPref;
+	//
+	// public static String sDefaultInfoSetPref;
+	// public static String sSWCheckedPref;
 	public static String				sSavePathPref;
-//	public static String				sExportNamePref;
-//	public static String				sExportNamePrefixPref;
-//	public static String				sExportNamePostfixPref;
+	// public static String sExportNamePref;
+	// public static String sExportNamePrefixPref;
+	// public static String sExportNamePostfixPref;
 	public static String				sSaveToPref;
-//	public static String				sSortByDataPref;
-//	public static String				sEnableExifOrientationTagPref;
-//	public static String				sAdditionalRotationPref;
-//
+	// public static String sSortByDataPref;
+	// public static String sEnableExifOrientationTagPref;
+	// public static String sAdditionalRotationPref;
+	//
 	public static String				sExpoPreviewModePref;
-//
-//	public static String				sDefaultModeName;
-//
-	public static int					sDefaultValue					= CameraParameters.SCENE_MODE_AUTO;
-	public static int					sDefaultFocusValue				= CameraParameters.AF_MODE_CONTINUOUS_PICTURE;
-	public static int					sDefaultFlashValue				= CameraParameters.FLASH_MODE_OFF;
-	public static int					sDefaultMeteringValue			= CameraParameters.meteringModeAuto;
+	//
+	// public static String sDefaultModeName;
+	//
+	public static int					sDefaultValue			= CameraParameters.SCENE_MODE_AUTO;
+	public static int					sDefaultFocusValue		= CameraParameters.AF_MODE_CONTINUOUS_PICTURE;
+	public static int					sDefaultFlashValue		= CameraParameters.FLASH_MODE_OFF;
+	public static int					sDefaultMeteringValue	= CameraParameters.meteringModeAuto;
 
-	
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		
+
 		sEvPref = getResources().getString(R.string.Preference_EvCompensationValue);
 		sSceneModePref = getResources().getString(R.string.Preference_SceneModeValue);
 		sWBModePref = getResources().getString(R.string.Preference_WBModeValue);
@@ -289,29 +295,34 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		sFlashModePref = getResources().getString(R.string.Preference_FlashModeValue);
 		sISOPref = getResources().getString(R.string.Preference_ISOValue);
 		sMeteringModePref = getResources().getString(R.string.Preference_MeteringModeValue);
-
-		sUseFrontCameraPref = getResources().getString(R.string.Preference_UseFrontCameraValue);
+		sCameraModePref = getResources().getString(R.string.Preference_CameraModeValue);
 
 		sImageSizeRearPref = getResources().getString(R.string.Preference_ImageSizeRearValue);
 		sImageSizeFrontPref = getResources().getString(R.string.Preference_ImageSizeFrontValue);
+		sImageSizeSonyRemotePref = getResources().getString(R.string.Preference_ImageSizeSonyRemoteValue);
 
 		sImageSizeMultishotBackPref = getResources()
 				.getString(R.string.Preference_ImageSizePrefSmartMultishotBackValue);
 		sImageSizeMultishotFrontPref = getResources().getString(
 				R.string.Preference_ImageSizePrefSmartMultishotFrontValue);
-		
+		sImageSizeMultishotSonyRemotePref = getResources().getString(
+				R.string.Preference_ImageSizePrefSmartMultishotSonyRemoteValue);
+
+		sImageSizePanoramaBackPref = getResources().getString(R.string.Preference_ImageSizePrefPanoramaBackValue);
+		sImageSizePanoramaFrontPref = getResources().getString(R.string.Preference_ImageSizePrefPanoramaFrontValue);
+
 		sImageSizeVideoBackPref = getResources().getString(R.string.Preference_ImageSizePrefVideoBackValue);
 		sImageSizeVideoFrontPref = getResources().getString(R.string.Preference_ImageSizePrefVideoFrontValue);
-		
+
 		sCaptureRAWPref = getResources().getString(R.string.Preference_CaptureRAWValue);
-		
+
 		sJPEGQualityPref = getResources().getString(R.string.Preference_JPEGQualityCommonValue);
-		
+
 		sAntibandingPref = getResources().getString(R.string.Preference_AntibandingValue);
 
 		sSavePathPref = getResources().getString(R.string.Preference_SavePathValue);
 		sSaveToPref = getResources().getString(R.string.Preference_SaveToValue);
-		
+
 		sAELockPref = getResources().getString(R.string.Preference_AELockValue);
 		sAWBLockPref = getResources().getString(R.string.Preference_AWBLockValue);
 
@@ -320,7 +331,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		mainContext = this.getBaseContext();
 		messageHandler = new Handler(this);
 		instance = this;
-		
+
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		// ensure landscape orientation
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -328,12 +339,12 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		getWindow().addFlags(
 				WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
 						| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-		
+
 		// set some common view here
 		setContentView(R.layout.opencamera_main_layout);
-		
+
 		duringOnCreate();
-		
+
 		try
 		{
 			cameraController = CameraController.getInstance();
@@ -341,12 +352,14 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		{
 			Log.e("ApplicationScreen", exp.getMessage());
 		}
-		CameraController.onCreate(ApplicationScreen.instance, ApplicationScreen.instance, PluginManager.getInstance(), ApplicationScreen.instance.messageHandler);
-		
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		CameraController.onCreate(ApplicationScreen.instance, ApplicationScreen.instance, PluginManager.getInstance(),
+				ApplicationScreen.instance.messageHandler);
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
-		
+
 		// set preview, on click listener and surface buffers
+		findViewById(R.id.SurfaceView02).setVisibility(View.GONE);
 		preview = (SurfaceView) this.findViewById(R.id.SurfaceView01);
 		preview.setOnClickListener(this);
 		preview.setOnTouchListener(this);
@@ -354,7 +367,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 		surfaceHolder = preview.getHolder();
 		surfaceHolder.addCallback(this);
-		
+
 		orientListener = new OrientationEventListener(this)
 		{
 			@Override
@@ -397,7 +410,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 				}
 			}
 		};
-		
+
 		// prevent power drain
 		screenTimer = new CountDownTimer(180000, 180000)
 		{
@@ -408,41 +421,47 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 			public void onFinish()
 			{
-				boolean isVideoRecording = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext())
-						.getBoolean("videorecording", false);
+				boolean isVideoRecording = PreferenceManager.getDefaultSharedPreferences(
+						ApplicationScreen.getMainContext()).getBoolean("videorecording", false);
 				if (isVideoRecording || keepScreenOn)
 				{
 					// restart timer
 					screenTimer.start();
 					isScreenTimerRunning = true;
-					preview.setKeepScreenOn(true);
+					if (preview != null)
+					{
+						preview.setKeepScreenOn(true);
+					}
 					return;
 				}
-				preview.setKeepScreenOn(keepScreenOn);
+				if (preview != null)
+				{
+					preview.setKeepScreenOn(keepScreenOn);
+				}
 				isScreenTimerRunning = false;
 			}
 		};
 		screenTimer.start();
-		isScreenTimerRunning = true;		
-		
+		isScreenTimerRunning = true;
+
 		afterOnCreate();
 	}
-	
-	//At this point CameraController, GUIManager are not created yet.
-	//Use this method to initialize some shared preferences or do any other
-	//logic that isn't depended from OpenCamera core's objects.
+
+	// At this point CameraController, GUIManager are not created yet.
+	// Use this method to initialize some shared preferences or do any other
+	// logic that isn't depended from OpenCamera core's objects.
 	abstract protected void duringOnCreate();
-	
-	//At this point all OpenCamera main objects are created.
+
+	// At this point all OpenCamera main objects are created.
 	abstract protected void afterOnCreate();
 
 	/*
 	 * Get/Set method for protected variables
 	 */
-//	public static ApplicationScreen getInstance()
-//	{
-//		return thiz;
-//	}
+	// public static ApplicationScreen getInstance()
+	// {
+	// return instance;
+	// }
 
 	public static Context getMainContext()
 	{
@@ -466,27 +485,23 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	@TargetApi(21)
 	abstract public void createImageReaders(ImageReader.OnImageAvailableListener imageAvailableListener);
-	
 
 	@TargetApi(19)
 	@Override
 	abstract public Surface getPreviewYUVImageSurface();
-	
 
 	@TargetApi(19)
 	@Override
 	abstract public Surface getYUVImageSurface();
-	
+
 	@TargetApi(19)
 	@Override
 	abstract public Surface getJPEGImageSurface();
-	
 
 	@TargetApi(19)
 	@Override
 	abstract public Surface getRAWImageSurface();
-	
-	
+
 	public static SurfaceHolder getPreviewSurfaceHolder()
 	{
 		return instance.surfaceHolder;
@@ -496,8 +511,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	{
 		return instance.preview;
 	}
-	
-	
+
 	public static int getCaptureFormat()
 	{
 		return instance.captureFormat;
@@ -507,22 +521,22 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	{
 		instance.captureFormat = capture;
 	}
-	
+
 	public static int getPreviewSurfaceLayoutWidth()
 	{
 		return instance.surfaceLayoutWidth;
 	}
-	
+
 	public static int getPreviewSurfaceLayoutHeight()
 	{
 		return instance.surfaceLayoutHeight;
 	}
-	
+
 	public static void setPreviewSurfaceLayoutWidth(int width)
 	{
 		instance.surfaceLayoutWidth = width;
 	}
-	
+
 	public static void setPreviewSurfaceLayoutHeight(int height)
 	{
 		instance.surfaceLayoutHeight = height;
@@ -539,12 +553,17 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	}
 
 	abstract public int getImageSizeIndex();
+
 	abstract public int getMultishotImageSizeIndex();
+
 	abstract public boolean isShutterSoundEnabled();
+
 	abstract public int isShotOnTap();
-	
-	abstract public  String getSaveToPath();
+
+	abstract public String getSaveToPath();
+
 	abstract public String getSaveTo();
+
 	abstract public boolean isSortByData();
 
 	public static int getOrientation()
@@ -558,10 +577,12 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	}
 
 	/*
-	 * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Get/Set method for protected variables
+	 * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Get/Set method for protected
+	 * variables
 	 */
-	
+
 	abstract public void onPreferenceCreate(PreferenceFragment prefActivity);
+
 	abstract public void onAdvancePreferenceCreate(PreferenceFragment prefActivity);
 
 	public void glSetRenderingMode(final int renderMode)
@@ -613,9 +634,17 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		super.onStart();
 		onApplicationStart();
 	}
-	
+
 	protected void onApplicationStart()
 	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		int cameraSelected = prefs.getInt(MainScreen.sCameraModePref, 0);
+		if (cameraSelected == CameraController.getNumberOfCameras() - 1)
+		{
+			prefs.edit().putInt(ApplicationScreen.sCameraModePref, 0).commit();
+			ApplicationScreen.getGUIManager().setCameraModeGUI(0);
+		}
+
 		CameraController.onStart();
 		ApplicationScreen.getGUIManager().onStart();
 		PluginManager.getInstance().onStart();
@@ -627,7 +656,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		super.onStop();
 		onApplicationStop();
 	}
-	
+
 	protected void onApplicationStop()
 	{
 		mApplicationStarted = false;
@@ -637,28 +666,33 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		PluginManager.getInstance().onStop();
 		CameraController.onStop();
 
-		if (CameraController.isUseHALv3())
-			stopImageReaders();		
+		if (!CameraController.isRemoteCamera())
+		{
+			if (CameraController.isUseHALv3())
+				stopImageReaders();
+		}
 	}
 
 	@TargetApi(21)
 	abstract protected void stopImageReaders();
 
+	abstract protected void stopRemotePreview();
+
 	@Override
 	protected void onDestroy()
 	{
 		super.onDestroy();
-		
+
 		onApplicationDestroy();
 	}
-	
+
 	protected void onApplicationDestroy()
 	{
 		ApplicationScreen.getGUIManager().onDestroy();
 		PluginManager.getInstance().onDestroy();
 		CameraController.onDestroy();
 
-		this.hideOpenGLLayer();		
+		this.hideOpenGLLayer();
 	}
 
 	protected CountDownTimer	onResumeTimer	= null;
@@ -670,7 +704,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 		onApplicationResume();
 	}
-	
+
 	protected void onApplicationResume()
 	{
 		isCameraConfiguring = false;
@@ -685,34 +719,59 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 				public void onFinish()
 				{
-					SharedPreferences prefs = PreferenceManager
-							.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen
+							.getMainContext());
 
 					preview.setKeepScreenOn(true);
-					
+
 					captureFormat = CameraController.JPEG;
+
+					String modeId = PluginManager.getInstance().getActiveModeID();
+					if (CameraController.isRemoteCamera() && !(modeId.contains("single") || modeId.contains("video")))
+					{
+						prefs.edit().putInt(MainScreen.sCameraModePref, 0).commit();
+						CameraController.setCameraIndex(0);
+						guiManager.setCameraModeGUI(0);
+					}
 
 					ApplicationScreen.getGUIManager().onResume();
 					PluginManager.getInstance().onResume();
 					CameraController.onResume();
 					ApplicationScreen.instance.mPausing = false;
 
-					if (CameraController.isUseHALv3())
+					if (!CameraController.isRemoteCamera())
 					{
-						ApplicationScreen.instance.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-						CameraController.setupCamera(null, true);
+						// set preview, on click listener and surface buffers
+						findViewById(R.id.SurfaceView02).setVisibility(View.GONE);
+						preview = (SurfaceView) findViewById(R.id.SurfaceView01);
+						preview.setOnClickListener(ApplicationScreen.this);
+						preview.setOnTouchListener(ApplicationScreen.this);
+						preview.setKeepScreenOn(true);
 
-						if (glView != null)
-							glView.onResume();
-					} else if ((surfaceCreated && (!CameraController.isCameraCreated())))
-					{
-						ApplicationScreen.instance.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-						CameraController.setupCamera(surfaceHolder, true);
+						surfaceHolder = preview.getHolder();
+						surfaceHolder.addCallback(ApplicationScreen.this);
 
-						if (glView != null)
+						// One of device camera is selected.
+						if (CameraController.isUseHALv3())
 						{
-							glView.onResume();
+							ApplicationScreen.instance.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+							CameraController.setupCamera(null, true);
+
+							if (glView != null)
+								glView.onResume();
+						} else if ((surfaceCreated && (!CameraController.isCameraCreated())))
+						{
+							ApplicationScreen.instance.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+							CameraController.setupCamera(surfaceHolder, true);
+
+							if (glView != null)
+							{
+								glView.onResume();
+							}
 						}
+					} else
+					{
+						sonyCameraSelected();
 					}
 					orientListener.enable();
 				}
@@ -747,30 +806,38 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 					.clearFlags(
 							WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
 									| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-		}		
+		}
 	}
 
 	@Override
 	public void relaunchCamera()
 	{
-		if (CameraController.isUseHALv3() || PluginManager.getInstance().isRestart())
+		if (!CameraController.isRemoteCamera())
 		{
-			new CountDownTimer(100, 100)
+			if (CameraController.isUseHALv3() || PluginManager.getInstance().isRestart())
 			{
-				public void onTick(long millisUntilFinished)
+				new CountDownTimer(100, 100)
 				{
-					// Not used
-				}
+					public void onTick(long millisUntilFinished)
+					{
+						// Not used
+					}
 
-				public void onFinish()
-				{
-					PluginManager.getInstance().switchMode(
-							ConfigParser.getInstance().getMode(PluginManager.getInstance().getActiveModeID()));
-				}
-			}.start();
-		} else {
-			// Need this for correct exposure control state, after switching DRO-on/DRO-off in single mode.
-			guiManager.onPluginsInitialized();
+					public void onFinish()
+					{
+						PluginManager.getInstance().switchMode(
+								ConfigParser.getInstance().getMode(PluginManager.getInstance().getActiveModeID()));
+					}
+				}.start();
+			} else
+			{
+				// Need this for correct exposure control state, after switching
+				// DRO-on/DRO-off in single mode.
+				guiManager.onPluginsInitialized();
+			}
+		} else
+		{
+			// Sony camera
 		}
 	}
 
@@ -790,7 +857,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 		onApplicationPause();
 	}
-	
+
 	protected void onApplicationPause()
 	{
 		if (onResumeTimer != null)
@@ -820,8 +887,14 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		// switchingMode);
 		CameraController.onPause(true);
 
-		if (CameraController.isUseHALv3())
-			stopImageReaders();
+		if (!CameraController.isRemoteCamera())
+		{
+			if (CameraController.isUseHALv3())
+				stopImageReaders();
+		} else
+		{
+			stopRemotePreview();
+		}
 
 		this.findViewById(R.id.mainLayout2).setVisibility(View.INVISIBLE);
 
@@ -829,7 +902,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		{
 			shutterPlayer.release();
 			shutterPlayer = null;
-		}		
+		}
 	}
 
 	public void pauseMain()
@@ -862,8 +935,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		{
 			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_SURFACE_CONFIGURED, 0);
 			isCameraConfiguring = false;
-		}
-		else if (!isCreating)
+		} else if (!isCreating)
 		{
 			new CountDownTimer(50, 50)
 			{
@@ -877,36 +949,41 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 					if (!ApplicationScreen.instance.mPausing && surfaceCreated && (!CameraController.isCameraCreated()))
 					{
 						ApplicationScreen.instance.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-						if (!CameraController.isUseHALv3())
+						if (!CameraController.isRemoteCamera())
 						{
-							CameraController.setupCamera(holder, true);
+							if (!CameraController.isUseHALv3())
+							{
+								CameraController.setupCamera(holder, true);
+							} else
+								messageHandler.sendEmptyMessage(ApplicationInterface.MSG_SURFACE_READY);
+						} else
+						{
+							// Sony camera
 						}
-						else
-							messageHandler.sendEmptyMessage(ApplicationInterface.MSG_SURFACE_READY);
 					}
 				}
 			}.start();
 		}
 	}
-	
+
 	public void setCameraImageSizeIndex(int captureIndex, boolean init)
 	{
 		CameraController.setCameraImageSizeIndex(captureIndex);
 	}
-	
-	//Used if some modes want to set special image size
+
+	// Used if some modes want to set special image size
 	@Override
 	public void setSpecialImageSizeIndexPref(int iIndex)
 	{
 	}
-	
+
 	@Override
-	public String  getSpecialImageSizeIndexPref()
+	public String getSpecialImageSizeIndexPref()
 	{
 		return "-1";
 	}
 
-	//Method used only in Almalence's multishot modes
+	// Method used only in Almalence's multishot modes
 	public static int selectImageDimensionMultishot()
 	{
 		return 0;
@@ -929,23 +1006,31 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		// full-size image
 		PluginManager.getInstance().setCameraPreviewSize();
 		// prepare list of surfaces to be used in capture requests
-		if (CameraController.isUseHALv3())
-			configureHALv3Camera(captureFormat);
-		else
+		if (!CameraController.isRemoteCamera())
 		{
-			Camera.Size sz = CameraController.getCameraParameters().getPreviewSize();
+			if (CameraController.isUseHALv3())
+				configureHALv3Camera(captureFormat);
+			else
+			{
+				Camera.Size sz = CameraController.getCameraParameters().getPreviewSize();
 
-			Log.e("ApplicationScreen", "Viewfinder preview size: " + sz.width + "x" + sz.height);
-			guiManager.setupViewfinderPreviewSize(new CameraController.Size(sz.width, sz.height));
-			CameraController.allocatePreviewBuffer(sz.width * sz.height
-					* ImageFormat.getBitsPerPixel(CameraController.getCameraParameters().getPreviewFormat()) / 8);
+				Log.e("ApplicationScreen", "Viewfinder preview size: " + sz.width + "x" + sz.height);
+				guiManager.setupViewfinderPreviewSize(new CameraController.Size(sz.width, sz.height));
+				CameraController.allocatePreviewBuffer(sz.width * sz.height
+						* ImageFormat.getBitsPerPixel(CameraController.getCameraParameters().getPreviewFormat()) / 8);
 
-			CameraController.getCamera().setErrorCallback(CameraController.getInstance());
+				CameraController.getCamera().setErrorCallback(CameraController.getInstance());
 
+				onCameraConfigured();
+			}
+		} else
+		{
+			guiManager.setupViewfinderPreviewSize(new CameraController.Size(((SimpleStreamSurfaceView) preview)
+					.getSurfaceWidth(), ((SimpleStreamSurfaceView) preview).getSurfaceHeight()));
 			onCameraConfigured();
 		}
-		
-		if(createGUI)
+
+		if (createGUI)
 		{
 			PluginManager.getInstance().onGUICreate();
 			ApplicationScreen.getGUIManager().onGUICreate();
@@ -955,31 +1040,34 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	protected void onCameraConfigured()
 	{
 		PluginManager.getInstance().setupCameraParameters();
-
 		Camera.Parameters cp = CameraController.getCameraParameters();
 
-		if (!CameraController.isUseHALv3())
+		if (!CameraController.isRemoteCamera())
 		{
-			try
+			if (!CameraController.isUseHALv3())
 			{
-				// Nexus 5 is giving preview which is too dark without this
-				if (Build.MODEL.contains("Nexus 5"))
+				try
 				{
-					cp.setPreviewFpsRange(7000, 30000);
-					CameraController.setCameraParameters(cp);
-					cp = CameraController.getCameraParameters();
+					// Nexus 5 is giving preview which is too dark without this
+					if (Build.MODEL.contains("Nexus 5"))
+					{
+						cp.setPreviewFpsRange(7000, 30000);
+						CameraController.setCameraParameters(cp);
+						cp = CameraController.getCameraParameters();
+					}
+				} catch (RuntimeException e)
+				{
+					Log.d("ApplicationScreen",
+							"ApplicationScreen.onCameraConfigured() unable to setParameters " + e.getMessage());
 				}
-			} catch (RuntimeException e)
-			{
-				Log.d("ApplicationScreen", "ApplicationScreen.onCameraConfigured() unable to setParameters " + e.getMessage());
-			}
-			
-			if (cp != null)
-			{
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-				int antibanding = Integer.parseInt(prefs.getString(ApplicationScreen.sAntibandingPref, "3"));
-				switch(antibanding)
+
+				if (cp != null)
 				{
+					SharedPreferences prefs = PreferenceManager
+							.getDefaultSharedPreferences(MainScreen.getMainContext());
+					int antibanding = Integer.parseInt(prefs.getString(MainScreen.sAntibandingPref, "3"));
+					switch (antibanding)
+					{
 					case 0:
 						cp.setAntibanding("off");
 						break;
@@ -995,26 +1083,32 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 					default:
 						cp.setAntibanding("auto");
 						break;
+					}
+					CameraController.setCameraParameters(cp);
+
+					previewWidth = cp.getPreviewSize().width;
+					previewHeight = cp.getPreviewSize().height;
 				}
-				CameraController.setCameraParameters(cp);
-				
-				previewWidth = cp.getPreviewSize().width;
-				previewHeight = cp.getPreviewSize().height;
 			}
-		}
 
-		try
-		{
-			Util.initialize(mainContext);
-			Util.initializeMeteringMatrix();
-		} catch (Exception e)
-		{
-			Log.e("Main setup camera", "Util.initialize failed!");
-		}
+			try
+			{
+				Util.initialize(mainContext);
+				Util.initializeMeteringMatrix();
+			} catch (Exception e)
+			{
+				Log.e("Main setup camera", "Util.initialize failed!");
+			}
 
-		prepareMeteringAreas();
+			prepareMeteringAreas();
 
-		if (!CameraController.isUseHALv3())
+			if (!CameraController.isUseHALv3())
+			{
+				guiManager.onCameraCreate();
+				PluginManager.getInstance().onCameraParametersSetup();
+				guiManager.onPluginsInitialized();
+			}
+		} else
 		{
 			guiManager.onCameraCreate();
 			PluginManager.getInstance().onCameraParametersSetup();
@@ -1029,23 +1123,32 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 			@Override
 			public void onFinish()
 			{
-				if (!CameraController.isUseHALv3())
+				if (!CameraController.isRemoteCamera())
 				{
-					if (!CameraController.isCameraCreated())
-						return;
-					// exceptions sometimes happen here when resuming after
-					// processing
-					try
+					if (!CameraController.isUseHALv3())
 					{
-						CameraController.startCameraPreview();
-					} catch (RuntimeException e)
-					{
-						Toast.makeText(ApplicationScreen.instance, "Unable to start camera", Toast.LENGTH_LONG).show();
-						return;
-					}
+						if (!CameraController.isCameraCreated())
+							return;
+						// exceptions sometimes happen here when resuming after
+						// processing
+						try
+						{
+							CameraController.startCameraPreview();
+						} catch (RuntimeException e)
+						{
+							Toast.makeText(ApplicationScreen.instance, "Unable to start camera", Toast.LENGTH_LONG)
+									.show();
+							return;
+						}
 
-					CameraController.getCamera().setPreviewCallbackWithBuffer(CameraController.getInstance());
-					CameraController.getCamera().addCallbackBuffer(CameraController.getPreviewBuffer());
+						CameraController.getCamera().setPreviewCallbackWithBuffer(CameraController.getInstance());
+						CameraController.getCamera().addCallbackBuffer(CameraController.getPreviewBuffer());
+					} else
+					{
+						guiManager.onCameraCreate();
+						PluginManager.getInstance().onCameraParametersSetup();
+						guiManager.onPluginsInitialized();
+					}
 				} else
 				{
 					guiManager.onCameraCreate();
@@ -1080,7 +1183,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	}
 
 	@TargetApi(21)
-	abstract public void createCaptureSession();	
+	abstract public void createCaptureSession();
 
 	protected void prepareMeteringAreas()
 	{
@@ -1150,12 +1253,13 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		return mCameraSurface;
 	}
 
-	//Probably used only by Panorama plugin. Added to avoid non direct interface (message/handler)
+	// Probably used only by Panorama plugin. Added to avoid non direct
+	// interface (message/handler)
 	public static void takePicture()
 	{
 		PluginManager.getInstance().takePicture();
 	}
-	
+
 	@Override
 	public void captureFailed()
 	{
@@ -1171,11 +1275,17 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	public CameraController.Size getPreviewSize()
 	{
-		LayoutParams lp = preview.getLayoutParams();
-		if (lp == null)
-			return null;
+		if (SimpleStreamSurfaceView.class.isInstance(preview))
+		{
+			return new CameraController.Size(preview.getWidth(), preview.getHeight());
+		} else
+		{
+			LayoutParams lp = preview.getLayoutParams();
+			if (lp == null)
+				return null;
 
-		return new CameraController.Size(lp.width, lp.height);
+			return new CameraController.Size(lp.width, lp.height);
+		}
 	}
 
 	/*
@@ -1259,12 +1369,12 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	{
 		if (onKeyUpEvent(keyCode, event))
 			return true;
-		
+
 		return super.onKeyUp(keyCode, event);
 	}
-	
+
 	abstract boolean onKeyUpEvent(int keyCode, KeyEvent event);
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
@@ -1273,9 +1383,8 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 		return super.onKeyDown(keyCode, event);
 	}
-	
+
 	abstract boolean onKeyDownEvent(int keyCode, KeyEvent event);
-	
 
 	@Override
 	public void onClick(View v)
@@ -1288,7 +1397,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	@Override
 	public boolean onTouch(View view, MotionEvent event)
 	{
-		Log.e("ApplicationScreen", "onTouch");
 		if (mApplicationStarted)
 			return ApplicationScreen.getGUIManager().onTouch(view, event);
 		return true;
@@ -1353,13 +1461,25 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 				break;
 		case ApplicationInterface.MSG_SURFACE_READY:
 			{
-				// if both surface is created and camera device is opened
-				// - ready to set up preview and other things
-				// if (surfaceCreated && (HALv3.getCamera2() != null))
-				if (surfaceCreated)
+				String modeName = PluginManager.getInstance().getActiveModeID();
+				if (!CameraController.isRemoteCamera())
 				{
-					configureCamera(!CameraController.isUseHALv3());
-					mCameraStarted = true;
+					// if both surface is created and camera device is opened
+					// - ready to set up preview and other things
+					// if (surfaceCreated && (HALv3.getCamera2() != null))
+					if (surfaceCreated)
+					{
+						configureCamera(!CameraController.isUseHALv3() || modeName.contains("video"));
+						mCameraStarted = true;
+					}
+				} else
+				{
+					if (!modeName.contains("video"))
+					{
+						CameraController.populateCameraDimensionsSonyRemote();
+						PluginManager.getInstance().selectImageDimension();
+					}
+					configureCamera(true);
 				}
 			}
 			break;
@@ -1417,16 +1537,15 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 			glView = null;
 		}
 	}
-	
+
 	@Override
 	abstract public void showCaptureIndication(boolean playShutter);
-	
 
 	// set TRUE to mute and FALSE to unmute
 	public void muteShutter(boolean mute)
 	{
-			AudioManager mgr = (AudioManager) ApplicationScreen.instance.getSystemService(ApplicationScreen.AUDIO_SERVICE);
-			mgr.setStreamMute(AudioManager.STREAM_SYSTEM, mute);
+		AudioManager mgr = (AudioManager) ApplicationScreen.instance.getSystemService(ApplicationScreen.AUDIO_SERVICE);
+		mgr.setStreamMute(AudioManager.STREAM_SYSTEM, mute);
 	}
 
 	@Override
@@ -1437,31 +1556,36 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		prefsEditor.putBoolean(ApplicationScreen.sExpoPreviewModePref, previewMode);
 		prefsEditor.commit();
 	}
-	
+
 	@Override
 	public boolean getExpoPreviewPref()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
-		if (true == prefs.contains(ApplicationScreen.sExpoPreviewModePref)) 
-        {
-        	return prefs.getBoolean(ApplicationScreen.sExpoPreviewModePref, true);
-        }
-        else
-        	return true;
+		if (true == prefs.contains(ApplicationScreen.sExpoPreviewModePref))
+		{
+			return prefs.getBoolean(ApplicationScreen.sExpoPreviewModePref, true);
+		} else
+			return true;
 	}
-	
-	
+
 	@Override
 	public void setCameraPreviewSize(int iWidth, int iHeight)
 	{
-		if(CameraController.isUseHALv3())
+		if (!CameraController.isRemoteCamera())
 		{
-			setSurfaceHolderSize(iWidth, iHeight);
+			if (CameraController.isUseHALv3())
+			{
+				setSurfaceHolderSize(iWidth, iHeight);
+				setPreviewWidth(iWidth);
+				setPreviewHeight(iHeight);
+			}
+		} else
+		{
 			setPreviewWidth(iWidth);
 			setPreviewHeight(iHeight);
 		}
-		
-		CameraController.setCameraPreviewSize(new CameraController.Size(iWidth, iHeight));		
+
+		CameraController.setCameraPreviewSize(new CameraController.Size(iWidth, iHeight));
 	}
 
 	public static int getPreviewWidth()
@@ -1525,7 +1649,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		return ApplicationScreen.instance.getResources();
 	}
 
-	abstract protected void resetOrSaveSettings();	
+	abstract protected void resetOrSaveSettings();
 
 	public void switchingMode(boolean isModeSwitching)
 	{
@@ -1536,156 +1660,184 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	{
 		return switchingMode;
 	}
-	
+
 	@Override
 	public Activity getMainActivity()
 	{
 		return instance;
 	}
-	
+
 	@Override
 	public void stopApplication()
 	{
 		finish();
 	}
-	
-	
-	//Set/Get camera parameters preference
-	
-	//EXPOSURE COMPENSATION PREFERENCE
+
+	// Set/Get camera parameters preference
+
+	// EXPOSURE COMPENSATION PREFERENCE
 	@Override
 	public void setEVPref(int iEv)
 	{
-		PreferenceManager.getDefaultSharedPreferences(mainContext).edit()
-		.putInt(ApplicationScreen.sEvPref, iEv).commit();
+		PreferenceManager.getDefaultSharedPreferences(mainContext).edit().putInt(ApplicationScreen.sEvPref, iEv)
+				.commit();
 	}
-	
+
 	@Override
-	public int  getEVPref()
+	public int getEVPref()
 	{
 		return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(ApplicationScreen.sEvPref, 0);
 	}
-	
-	
-	//SCENE MODE PREFERENCE
+
+	// SCENE MODE PREFERENCE
 	@Override
 	public void setSceneModePref(int iSceneMode)
 	{
 		PreferenceManager.getDefaultSharedPreferences(mainContext).edit()
-		.putInt(ApplicationScreen.sSceneModePref, iSceneMode).commit();
+				.putInt(ApplicationScreen.sSceneModePref, iSceneMode).commit();
 	}
-	
+
 	@Override
-	public int  getSceneModePref()
+	public int getSceneModePref()
 	{
-		return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(ApplicationScreen.sSceneModePref, ApplicationScreen.sDefaultValue);
+		return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(ApplicationScreen.sSceneModePref,
+				ApplicationScreen.sDefaultValue);
 	}
-	
-	
-	//WHITE BALANCE MODE PREFERENCE
+
+	// WHITE BALANCE MODE PREFERENCE
 	@Override
 	public void setWBModePref(int iWB)
 	{
-		PreferenceManager.getDefaultSharedPreferences(mainContext).edit()
-		.putInt(ApplicationScreen.sWBModePref, iWB).commit();
+		PreferenceManager.getDefaultSharedPreferences(mainContext).edit().putInt(ApplicationScreen.sWBModePref, iWB)
+				.commit();
 	}
-	
+
 	@Override
-	public int  getWBModePref()
+	public int getWBModePref()
 	{
-		return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(ApplicationScreen.sWBModePref, ApplicationScreen.sDefaultValue);
+		return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(ApplicationScreen.sWBModePref,
+				ApplicationScreen.sDefaultValue);
 	}
-	
-	
-	//FOCUS MODE PREFERENCE
+
+	// FOCUS MODE PREFERENCE
 	@Override
 	public void setFocusModePref(int iFocusMode)
 	{
 		String modeName = PluginManager.getInstance().getActiveModeID();
 		String frontFocusMode = null;
 		String backFocusMode = null;
-		
-		if(modeName.contains("video"))
+
+		if (modeName.contains("video"))
 		{
 			frontFocusMode = ApplicationScreen.sFrontFocusModeVideoPref;
 			backFocusMode = ApplicationScreen.sRearFocusModeVideoPref;
-		}
-		else
+		} else
 		{
 			frontFocusMode = ApplicationScreen.sFrontFocusModePref;
 			backFocusMode = ApplicationScreen.sRearFocusModePref;
 		}
-		
-		PreferenceManager.getDefaultSharedPreferences(mainContext).edit()
-		.putInt(CameraController.isFrontCamera() ? frontFocusMode : backFocusMode, iFocusMode).commit();
+
+		if (!CameraController.isRemoteCamera())
+		{
+			PreferenceManager.getDefaultSharedPreferences(mainContext).edit()
+					.putInt(CameraController.isFrontCamera() ? frontFocusMode : backFocusMode, iFocusMode).commit();
+		} else
+		{
+			// Sony cmaera
+		}
 	}
-	
+
 	@Override
-	public int  getFocusModePref(int defaultMode)
+	public int getFocusModePref(int defaultMode)
 	{
 		String modeName = PluginManager.getInstance().getActiveModeID();
 		String frontFocusMode = null;
 		String backFocusMode = null;
-		
-		if(modeName.contains("video"))
+
+		if (modeName.contains("video"))
 		{
 			frontFocusMode = ApplicationScreen.sFrontFocusModeVideoPref;
 			backFocusMode = ApplicationScreen.sRearFocusModeVideoPref;
-		}
-		else
+		} else
 		{
 			frontFocusMode = ApplicationScreen.sFrontFocusModePref;
 			backFocusMode = ApplicationScreen.sRearFocusModePref;
 		}
-		
-		return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(CameraController.isFrontCamera() ? frontFocusMode : backFocusMode, defaultMode);
+
+		if (!CameraController.isRemoteCamera())
+		{
+			return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(
+					CameraController.isFrontCamera() ? frontFocusMode : backFocusMode, defaultMode);
+		} else
+		{
+			// Sony camera
+			return 0;
+		}
 	}
-	
-	//FLASH MODE PREFERENCE
+
+	// FLASH MODE PREFERENCE
 	@Override
 	public void setFlashModePref(int iFlashMode)
 	{
 		PreferenceManager.getDefaultSharedPreferences(mainContext).edit()
-		.putInt(ApplicationScreen.sFlashModePref, iFlashMode).commit();
+				.putInt(ApplicationScreen.sFlashModePref, iFlashMode).commit();
 	}
-	
+
 	@Override
-	public int  getFlashModePref(int defaultMode)
+	public int getFlashModePref(int defaultMode)
 	{
-		return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(ApplicationScreen.sFlashModePref, defaultMode);
+		return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(ApplicationScreen.sFlashModePref,
+				defaultMode);
 	}
-	
-	
-	//ISO MODE PREFERENCE
+
+	// ISO MODE PREFERENCE
 	@Override
 	public void setISOModePref(int iISOMode)
 	{
-		PreferenceManager.getDefaultSharedPreferences(mainContext).edit().putInt(ApplicationScreen.sISOPref, iISOMode).commit();
+		PreferenceManager.getDefaultSharedPreferences(mainContext).edit().putInt(ApplicationScreen.sISOPref, iISOMode)
+				.commit();
 	}
-	
+
 	@Override
-	public int  getISOModePref(int defaultMode)
+	public int getISOModePref(int defaultMode)
 	{
-		return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(ApplicationScreen.sISOPref, defaultMode);
+		return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(ApplicationScreen.sISOPref,
+				defaultMode);
 	}
-	
-	
+
 	@Override
 	public int getAntibandingModePref()
 	{
-		return Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mainContext).getString(ApplicationScreen.sAntibandingPref,
-				"3"));
+		return Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mainContext).getString(
+				ApplicationScreen.sAntibandingPref, "3"));
 	}
-	
+
 	@Override
 	public boolean getAELockPref()
 	{
-		return PreferenceManager.getDefaultSharedPreferences(mainContext).getBoolean(ApplicationScreen.sAELockPref, false);
+		return PreferenceManager.getDefaultSharedPreferences(mainContext).getBoolean(ApplicationScreen.sAELockPref,
+				false);
 	}
-	
+
 	@Override
 	public boolean getAWBLockPref()
 	{
-		return PreferenceManager.getDefaultSharedPreferences(mainContext).getBoolean(ApplicationScreen.sAWBLockPref, false);
+		return PreferenceManager.getDefaultSharedPreferences(mainContext).getBoolean(ApplicationScreen.sAWBLockPref,
+				false);
+	}
+
+	public void sonyCameraSelected()
+	{
+		findViewById(R.id.SurfaceView01).setVisibility(View.GONE);
+		preview = (SurfaceView) this.findViewById(R.id.SurfaceView02);
+		surfaceHolder = preview.getHolder();
+		surfaceHolder.addCallback(this);
+
+		preview.setVisibility(View.VISIBLE);
+		preview.setOnClickListener(this);
+		preview.setOnTouchListener(this);
+		preview.setKeepScreenOn(true);
+
+		CameraController.setupCamera(preview.getHolder(), !switchingMode);
 	}
 }

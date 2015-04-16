@@ -22,6 +22,8 @@ package com.almalence.opencam_plus;
 //<!-- -+-
 package com.almalence.opencam;
 
+import com.almalence.sony.cameraremote.SimpleStreamSurfaceView;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.media.ImageReader;
@@ -142,6 +144,7 @@ public interface ApplicationInterface
 	@TargetApi(19)
 	public Surface getRAWImageSurface();
 	
+	public SimpleStreamSurfaceView getSimpleStreamSurfaceView();
 	
 	//Surface of camera viewfinder
 	public Surface getCameraSurface();

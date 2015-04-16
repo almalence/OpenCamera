@@ -107,9 +107,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	
 	private boolean	camera2Preference;
 	
-	public static String				sImageSizePanoramaBackPref;
-	public static String				sImageSizePanoramaFrontPref;
-
 	public static List<Point> getResolutionspicturesizeslist()
 	{
 		return ResolutionsPictureSizesList;
@@ -264,8 +261,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.instance);
 
-		final String sizeKey = CameraController.getCameraIndex() == 0 ? sImageSizePanoramaBackPref
-				: sImageSizePanoramaFrontPref;
+		final String sizeKey = CameraController.getCameraIndex() == 0 ? ApplicationScreen.sImageSizePanoramaBackPref
+				: ApplicationScreen.sImageSizePanoramaFrontPref;
 
 		if (!prefs.contains(sizeKey))
 		{
@@ -348,9 +345,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	@Override
 	public void onCreate()
 	{
-		sImageSizePanoramaBackPref = ApplicationScreen.instance.getResources().getString(R.string.Preference_ImageSizePrefPanoramaBackValue);
-		sImageSizePanoramaFrontPref = ApplicationScreen.instance.getResources().getString(R.string.Preference_ImageSizePrefPanoramaFrontValue);
-		
 		getPrefs();
 		sMemoryPref = ApplicationScreen.getAppResources().getString(R.string.Preference_PanoramaMemory);
 		sFrameOverlapPref = ApplicationScreen.getAppResources().getString(R.string.Preference_PanoramaFrameOverlap);
@@ -889,8 +883,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		try
 		{
 			this.prefResolution = Integer
-					.parseInt(prefs.getString(CameraController.getCameraIndex() == 0 ? PanoramaAugmentedCapturePlugin.sImageSizePanoramaBackPref
-							: PanoramaAugmentedCapturePlugin.sImageSizePanoramaFrontPref, "0"));
+					.parseInt(prefs.getString(CameraController.getCameraIndex() == 0 ? ApplicationScreen.sImageSizePanoramaBackPref
+							: ApplicationScreen.sImageSizePanoramaFrontPref, "0"));
 		} catch (final Exception e)
 		{
 			e.printStackTrace();
@@ -899,7 +893,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		}
 		this.prefHardwareGyroscope = prefs.getBoolean(PREFERENCES_KEY_USE_DEVICE_GYRO, this.sensorGyroscope != null);
 
-		this.prefMemoryRelax = prefs.getBoolean(sMemoryPref, false);
+		this.prefMemoryRelax = Boolean.parseBoolean(prefs.getString(sMemoryPref, "false"));
 
 		aewblock = Integer.parseInt(prefs.getString(sAELockPref, "1"));
 	}

@@ -16,6 +16,13 @@
         android:title="@string/Pref_Common_ImageSize_Title" />
     <ListPreference
         android:defaultValue="0"
+        android:entries="@array/dimsArrayCommon"
+        android:entryValues="@array/dimsValuesCommon"
+        android:key="@string/Preference_ImageSizeSonyRemoteValue"
+        android:summary="@string/Pref_Common_ImageSize_Summary"
+        android:title="@string/Pref_Common_ImageSize_Title" />
+    <ListPreference
+        android:defaultValue="0"
         android:entries="@array/dimsArrayNight"
         android:entryValues="@array/dimsValuesNight"
         android:key="@string/Preference_ImageSizePrefSmartMultishotBackValue"

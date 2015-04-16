@@ -42,6 +42,7 @@ import android.widget.RelativeLayout;
 import com.almalence.util.Util;
 
 import com.almalence.opencam.ApplicationInterface;
+import com.almalence.opencam.ApplicationScreen;
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
@@ -273,7 +274,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		preferenceFocusMode = ApplicationScreen.instance.getFocusModePref(ApplicationScreen.sDefaultFocusValue);
 
 		int[] supportedFocusModes = CameraController.getSupportedFocusModes();
-		if (supportedFocusModes != null)
+		if (supportedFocusModes != null && supportedFocusModes.length > 0)
 		{
 			if (!CameraController.isModeAvailable(supportedFocusModes, preferenceFocusMode))
 				if (CameraController.isModeAvailable(supportedFocusModes, CameraParameters.AF_MODE_AUTO))
@@ -383,7 +384,7 @@ public class FocusVFPlugin extends PluginViewfinder
 
 	public void setFocusParameters()
 	{
-		if (mFocusAreaSupported)
+		if (mFocusAreaSupported || CameraController.isRemoteCamera())
 			CameraController.setCameraFocusAreas(getFocusAreas());
 
 		if (mMeteringAreaSupported)
@@ -478,6 +479,13 @@ public class FocusVFPlugin extends PluginViewfinder
 	@Override
 	public boolean onTouch(View view, MotionEvent e)
 	{
+		if (CameraController.isRemoteCamera()) {
+				if (e.getAction() == MotionEvent.ACTION_UP) {
+					onTouchAreas(e);
+				}
+				return true;
+		}
+		
 		// Check if it's double click
 		if (e.getAction() == MotionEvent.ACTION_UP)
 		{
@@ -634,7 +642,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		mFocusIndicatorRotateLayout.requestLayout();
 
 		// Set the focus area and metering area.
-		if (mFocusAreaSupported && needAutoFocusCall() && (e.getAction() == MotionEvent.ACTION_UP))
+		if ((mFocusAreaSupported && needAutoFocusCall() && (e.getAction() == MotionEvent.ACTION_UP)) || CameraController.isRemoteCamera())
 		{
 			CameraController.cancelAutoFocus();
 			if (preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE

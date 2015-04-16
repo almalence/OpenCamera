@@ -306,9 +306,12 @@ public class VideoCapturePlugin extends PluginCapture
 						ApplicationScreen.instance.glSetRenderingMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 					} else
 					{
-						if (displayTakePicture)
-							takePictureButton.setVisibility(View.VISIBLE);
-						timeLapseButton.setVisibility(View.VISIBLE);
+						if (!CameraController.isRemoteCamera())
+						{
+							if (displayTakePicture)
+								takePictureButton.setVisibility(View.VISIBLE);
+							timeLapseButton.setVisibility(View.VISIBLE);
+						}
 
 						droEngine.onPause();
 
@@ -593,7 +596,7 @@ public class VideoCapturePlugin extends PluginCapture
 		// timeLapseButton.invalidate();
 		// timeLapseButton.requestLayout();
 
-		if (this.modeDRO())
+		if (this.modeDRO() || CameraController.isRemoteCamera())
 		{
 			takePictureButton.setVisibility(View.GONE);
 			timeLapseButton.setVisibility(View.GONE);
@@ -880,6 +883,19 @@ public class VideoCapturePlugin extends PluginCapture
 		showLandscapeNotification = prefs.getBoolean("showLandscapeNotification", true);
 
 		frameCnt = 0;
+
+		if (CameraController.isRemoteCamera())
+		{
+			if (timeLapseButton != null) {
+				timeLapseButton.setVisibility(View.GONE);
+			}
+			if (takePictureButton != null) {
+				takePictureButton.setVisibility(View.GONE);
+			}
+			if (modeSwitcher != null) {
+				modeSwitcher.setVisibility(View.GONE);
+			}
+		}
 	}
 
 	@Override
@@ -896,25 +912,34 @@ public class VideoCapturePlugin extends PluginCapture
 				.putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
 						camera2Preference).commit();
 
-		Camera camera = CameraController.getCamera();
-		if (null == camera)
-			return;
-
-		if (this.isRecording)
+		if (!CameraController.isRemoteCamera())
 		{
-			stopRecording();
-		}
+			Camera camera = CameraController.getCamera();
+			if (null == camera)
+				return;
 
-		if (camera != null && !Build.MODEL.contains("GT-I9505") && !Build.MODEL.contains("SM-G900"))
+			if (this.isRecording)
+			{
+				stopRecording();
+			}
+
+			if (camera != null && !Build.MODEL.contains("GT-I9505") && !Build.MODEL.contains("SM-G900"))
+			{
+				try
+				{
+					Camera.Parameters cp = CameraController.getCameraParameters();
+					cp.setRecordingHint(false);
+					CameraController.setCameraParameters(cp);
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+		} else
 		{
-			try
+			if (isRecording)
 			{
-				Camera.Parameters cp = CameraController.getCameraParameters();
-				cp.setRecordingHint(false);
-				CameraController.setCameraParameters(cp);
-			} catch (Exception e)
-			{
-				e.printStackTrace();
+				stopRecordingSonyRemote();
 			}
 		}
 
@@ -1063,7 +1088,7 @@ public class VideoCapturePlugin extends PluginCapture
 		editor.commit();
 
 		Camera.Parameters cp = CameraController.getCameraParameters();
-		if (cp != null  && !Build.MODEL.contains("GT-I9505") && !Build.MODEL.contains("SM-G900"))
+		if (cp != null && !Build.MODEL.contains("GT-I9505") && !Build.MODEL.contains("SM-G900"))
 		{
 			cp.setPreviewFrameRate(30);
 			if (!Build.MODEL.contains("GT-I9505") && !Build.MODEL.contains("SM-G900"))
@@ -1242,25 +1267,72 @@ public class VideoCapturePlugin extends PluginCapture
 	@Override
 	public void onShutterClick()
 	{
-		if (shutterOff)
-			return;
-
-		if (isRecording)
+		if (!CameraController.isRemoteCamera())
 		{
-			long now = SystemClock.uptimeMillis();
-			long delta = now - mRecordingStartTime;
-			Handler handler = new Handler();
-			handler.postDelayed(new Runnable()
+			if (shutterOff)
+				return;
+
+			if (isRecording)
 			{
-				public void run()
+				long now = SystemClock.uptimeMillis();
+				long delta = now - mRecordingStartTime;
+				Handler handler = new Handler();
+				handler.postDelayed(new Runnable()
 				{
-					stopRecording();
-				}
-			}, 1500 - delta);
+					public void run()
+					{
+						stopRecording();
+					}
+				}, 1500 - delta);
+			} else
+			{
+				this.startRecording();
+			}
 		} else
 		{
-			this.startRecording();
+			pauseVideoButton.setVisibility(View.GONE);
+			if (isRecording)
+			{
+				stopRecordingSonyRemote();
+			} else
+			{
+				startRecordingSonyRemote();
+			}
 		}
+	}
+
+	private void startRecordingSonyRemote()
+	{
+		ApplicationScreen.getGUIManager().lockControls = true;
+		CameraController.startVideoRecordingSonyRemote();
+		mRecordingStartTime = SystemClock.uptimeMillis();
+		isRecording = true;
+		showRecordingUI(isRecording);
+		
+		View mainButtonsVideo = (View) ApplicationScreen.instance.guiManager.getMainView().findViewById(
+				R.id.mainButtonsVideo);
+		mainButtonsVideo.setVisibility(View.VISIBLE);
+
+		View mainButtons = (View) ApplicationScreen.instance.guiManager.getMainView().findViewById(R.id.mainButtons);
+		mainButtons.setVisibility(View.INVISIBLE);
+	}
+
+	private void stopRecordingSonyRemote()
+	{
+		CameraController.stopVideoRecordingSonyRemote();
+		isRecording = false;
+		showRecordingUI(isRecording);
+		ApplicationScreen.getGUIManager().lockControls = false;
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST,
+				ApplicationInterface.MSG_CONTROL_UNLOCKED);
+		
+		View mainButtonsVideo = (View) ApplicationScreen.instance.guiManager.getMainView().findViewById(
+				R.id.mainButtonsVideo);
+		mainButtonsVideo.setVisibility(View.GONE);
+
+		View mainButtons = (View) ApplicationScreen.instance.guiManager.getMainView().findViewById(R.id.mainButtons);
+		mainButtons.setVisibility(View.VISIBLE);
+		mainButtons.findViewById(R.id.buttonSelectMode).setVisibility(View.VISIBLE);
 	}
 
 	private void stopRecording()
@@ -1268,8 +1340,11 @@ public class VideoCapturePlugin extends PluginCapture
 		if (shutterOff)
 			return;
 
-		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR2)
-			modeSwitcher.setVisibility(View.VISIBLE);
+		if (!CameraController.isRemoteCamera())
+		{
+			if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR2)
+				modeSwitcher.setVisibility(View.VISIBLE);
+		}
 
 		View mainButtonsVideo = (View) ApplicationScreen.instance.guiManager.getMainView().findViewById(
 				R.id.mainButtonsVideo);
