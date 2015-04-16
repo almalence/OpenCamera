@@ -61,10 +61,10 @@ import com.almalence.opencam.Plugin;
 import com.almalence.opencam.PluginType;
 import com.almalence.opencam.TemplateScreen;
 import com.almalence.opencam.Mode;
-import com.almalence.opencam.R;
 import com.almalence.opencam.Plugin.ViewfinderZone;
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.cameracontroller.CameraController.Size;
+import com.almalence.templatecamera.R;
 import com.almalence.ui.RotateImageView;
 import com.almalence.util.Util;
 
@@ -1163,8 +1163,6 @@ public class TemplateGUI extends GUI
 	
 	private void shutterButtonPressed()
 	{
-//		hideSecondaryMenus();
-		lockControls = true;
 		ApplicationScreen.getPluginManager().onShutterClick();
 	}
 	

@@ -24,16 +24,9 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 
-/* <!-- +++
- import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.PluginExport;
- import com.almalence.opencam_plus.R;
- +++ --> */
-// <!-- -+-
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginExport;
-import com.almalence.opencam.R;
-//-+- -->
+import com.almalence.templatecamera.R;
 
 import com.almalence.ui.RotateImageView;
 import com.almalence.util.MLocation;

@@ -16,12 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* <!-- +++
-package com.almalence.opencam_plus.cameracontroller;
-+++ --> */
-// <!-- -+-
 package com.almalence.opencam.cameracontroller;
-//-+- -->
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -55,18 +50,10 @@ import android.widget.Toast;
 
 import com.almalence.SwapHeap;
 import com.almalence.util.ImageConversion;
-//<!-- -+-
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.PluginManagerInterface;
-import com.almalence.opencam.R;
-//-+- -->
-/* <!-- +++
-import com.almalence.opencam_plus.ApplicationInterface;
-import com.almalence.opencam_plus.CameraParameters;
-import com.almalence.opencam_plus.PluginManagerInterface;
-import com.almalence.opencam_plus.R;
-+++ --> */
+import com.almalence.templatecamera.R;
 
 public class CameraController implements Camera.PictureCallback, Camera.AutoFocusCallback, Camera.ErrorCallback,
 		Camera.PreviewCallback, Camera.ShutterCallback, Handler.Callback

@@ -112,6 +112,7 @@ import com.almalence.plugins.export.template.TemplateExportPlugin;
 import com.almalence.plugins.processing.template.TemplateProcessingPlugin;
 import com.almalence.plugins.vf.templatefocus.TemplateFocusVFPlugin;
 import com.almalence.plugins.vf.templategrid.TemplateGridVFPlugin;
+import com.almalence.templatecamera.R;
 import com.almalence.util.MLocation;
 import com.almalence.util.exifreader.imaging.jpeg.JpegMetadataReader;
 import com.almalence.util.exifreader.imaging.jpeg.JpegProcessingException;

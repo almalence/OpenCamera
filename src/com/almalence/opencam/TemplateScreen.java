@@ -94,6 +94,7 @@ import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.TemplateGUI;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
+import com.almalence.templatecamera.R;
 
 /***
  * MainScreen - main activity screen with camera functionality

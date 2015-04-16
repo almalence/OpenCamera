@@ -16,12 +16,7 @@ Portions created by Initial Developer are Copyright (C) 2013
 by Almalence Inc. All Rights Reserved.
  */
 
-/* <!-- +++
- package com.almalence.opencam_plus;
- +++ --> */
-// <!-- -+-
 package com.almalence.opencam;
-//-+- -->
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -37,11 +32,9 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.hardware.camera2.CaptureResult;
-import android.os.Build;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -53,14 +46,9 @@ import android.widget.ImageView;
 
 import com.almalence.asynctaskmanager.Task;
 
-/* <!-- +++
-import com.almalence.opencam_plus.cameracontroller.CameraController;
-import com.almalence.opencam_plus.cameracontroller.CameraController.Size;
-+++ --> */
-//<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.cameracontroller.CameraController.Size;
-//-+- -->
+import com.almalence.templatecamera.R;
 
 
 /***

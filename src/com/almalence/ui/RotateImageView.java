@@ -16,14 +16,8 @@
 
 package com.almalence.ui;
 
-/* <!-- +++
- import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.R;
- +++ --> */
-// <!-- -+-
 import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.R;
-//-+- -->
+import com.almalence.templatecamera.R;
 
 import android.content.Context;
 import android.graphics.Bitmap;

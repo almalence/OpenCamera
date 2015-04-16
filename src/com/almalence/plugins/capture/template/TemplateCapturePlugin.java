@@ -20,31 +20,13 @@ package com.almalence.plugins.capture.template;
 
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
-import android.hardware.Camera;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.CompoundButton;
-import android.widget.RelativeLayout;
 import android.hardware.camera2.CaptureResult;
 
 import com.almalence.opencam.ApplicationInterface;
-/* <!-- +++
- import com.almalence.opencam_plus.cameracontroller.CameraController;
- import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.MainScreen;
- import com.almalence.opencam_plus.PluginCapture;
- import com.almalence.opencam_plus.PluginManager;
- import com.almalence.opencam_plus.R;
- +++ --> */
-// <!-- -+-
 import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.TemplateScreen;
 import com.almalence.opencam.PluginCapture;
-import com.almalence.opencam.TemplatePluginManager;
-import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 

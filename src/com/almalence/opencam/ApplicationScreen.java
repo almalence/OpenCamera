@@ -67,6 +67,7 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.almalence.templatecamera.R;
 import com.almalence.util.Util;
 
 //<!-- -+-

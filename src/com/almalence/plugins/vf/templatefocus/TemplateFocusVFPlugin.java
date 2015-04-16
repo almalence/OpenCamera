@@ -31,7 +31,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -42,21 +41,10 @@ import android.widget.RelativeLayout;
 import com.almalence.util.Util;
 
 import com.almalence.opencam.ApplicationInterface;
-/* <!-- +++
- import com.almalence.opencam_plus.cameracontroller.CameraController;
- import com.almalence.opencam_plus.CameraParameters;
- import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.PluginManager;
- import com.almalence.opencam_plus.PluginViewfinder;
- import com.almalence.opencam_plus.R;
- import com.almalence.opencam_plus.SoundPlayer;
- +++ --> */
-// <!-- -+-
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.PluginManagerBase;
 import com.almalence.opencam.PluginViewfinder;
-import com.almalence.opencam.R;
+import com.almalence.templatecamera	.R;
 import com.almalence.opencam.SoundPlayer;
 import com.almalence.opencam.cameracontroller.CameraController;
 
@@ -347,27 +335,6 @@ public class TemplateFocusVFPlugin extends PluginViewfinder
 				setFocusParameters();
 				autoFocus();
 			}
-			// else if ((mState == STATE_SUCCESS || mState == STATE_FAIL)
-			// && (preferenceFocusMode ==
-			// CameraParameters.AF_MODE_CONTINUOUS_PICTURE ||
-			// preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
-			// && preferenceFocusMode != CameraController.getFocusMode())
-			// {
-			// // allow driver to choose whatever it wants for focusing /
-			// // metering
-			// // without these two lines Continuous focus is not re-enabled on
-			// // HTC One
-			// int focusMode = getFocusMode();
-			// if ((focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
-			// || focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
-			// || focusMode == CameraParameters.AF_MODE_AUTO || focusMode ==
-			// CameraParameters.AF_MODE_MACRO)
-			// && mFocusAreaSupported)
-			// {
-			// CameraController.setCameraFocusAreas(null);
-			// }
-			// CameraController.setCameraFocusMode(preferenceFocusMode);
-			// }
 			else if (mState == STATE_FAIL)
 				ApplicationScreen.getGUIManager().lockControls = false;
 		}

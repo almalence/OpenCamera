@@ -16,12 +16,7 @@
 
 package com.almalence.plugins.vf.templatefocus;
 
-/* <!-- +++
- import com.almalence.opencam_plus.R;
- +++ --> */
-// <!-- -+-
-import com.almalence.opencam.R;
-//-+- -->
+import com.almalence.templatecamera.R;
 
 import android.content.Context;
 import android.util.AttributeSet;
