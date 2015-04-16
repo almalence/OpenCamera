@@ -985,6 +985,9 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 				}
 			}
 			
+			ApplicationScreen.getGUIManager().lockControls = false;
+			sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
+			
 			break;
 
 		case ApplicationInterface.MSG_EXPORT_FINISHED_IOEXCEPTION:
@@ -1006,6 +1009,9 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 
 			Toast.makeText(ApplicationScreen.getMainContext(), "Can't save data - seems no free space left.",
 					Toast.LENGTH_LONG).show();
+			
+			ApplicationScreen.getGUIManager().lockControls = false;
+			sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
 			
 			break;
 
