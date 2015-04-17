@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	
-	<string name="Pref_VF_AEAWLock_Preference_Title">Блокировка экспозиции и баланса белого</string>
-	
-	<string name="Pref_VF_ShowAEAWLock_Title">Блокировка экспозиции и баланса белого</string>
-	<string name="Pref_VF_ShowAEAFLock_Summary">Может быть недоступно на некоторых устройствах</string>
-	
-</resources>

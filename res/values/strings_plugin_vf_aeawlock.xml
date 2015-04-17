@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	
-	<string name="Pref_VF_AEAWLock_Preference_Title">Auto exposure\\white balance lock</string>
-	
-	<string name="Pref_VF_ShowAEAWLock_Title">Show AE and WB lock controls</string>
-	<string name="Pref_VF_ShowAEAFLock_Summary">May not work on some devices</string>
-	
-</resources>

@@ -1,6 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-    <string name="Pref_TitleGyroVF">المستوى</string>
-	<string name="Pref_ShowGyroVF">عرض المستوى</string>
-	<string name="Pref_GyroTypeVF">استخدام الجيروسكوب الفعلي</string>
-</resources>

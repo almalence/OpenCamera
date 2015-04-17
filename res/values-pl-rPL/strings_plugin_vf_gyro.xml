@@ -1,6 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-    <string name="Pref_TitleGyroVF">Poziom</string>
-	<string name="Pref_ShowGyroVF">Pokaż poziom</string>
-	<string name="Pref_GyroTypeVF">Użyj wbudowanego żyroskopu</string>
-</resources>

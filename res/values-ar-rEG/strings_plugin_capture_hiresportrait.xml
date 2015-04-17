@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	<string name="Pref_HiresPortrait_Category_Title">يستخدم التصوير في الوضع الطولي</string>
-	<string name="Pref_HiresPortrait_Preference_Title">التقاط</string>
-	
-	<string name="HiresPortrait_Not_Available">استخدام الوضع الطولي غير مدعوم في جهازك. لاستخدام هذا الوضع، تحتاج لجهاز بكاميرتين أمامية وخلفية.</string>
-	<string name="HiresPortrait_Capture_Front">التقط صورة لنفسك بالكاميرا الأمامية. حدد التركيب المرغوب.</string>
-	<string name="HiresPortrait_Capture_Rear">التقط صورة ذاتية بالكاميرا الخلفية.</string>
-</resources>

@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_Zoom_Preference_Title">Przybliżanie</string>
-	<string name="Pref_Zoom_Preference_Summary">Przybliżanie</string>
-	
-	<string name="Pref_ShowZoom">Pokaż ustawienie przybliżenia</string>
-	
-</resources>

@@ -1,8 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="pref_plugin_processing_panorama_preference_title">Panoramaverarbeitung</string>
-	<string name="pref_plugin_processing_panorama_preference_summary">Verarbeitung von breiten Panoramabildern</string>	
-	
-	<string name="pref_plugin_processing_panorama_saveoriginalframes_title">Ausgangsbilder speichern</string>
-</resources>

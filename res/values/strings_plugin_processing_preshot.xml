@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	
-	<string name="Pref_PreShotProcessing_Preference_Title">Pre-shot processing</string>
-	<string name="Pref_PreShotProcessing_Preference_Summary">Back In Time</string>
-	<string name="layout_preshot_hint">Swipe to flip photos</string>
-	
-</resources>

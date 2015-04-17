@@ -1,8 +1,0 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="@string/Pref_MultiShot_Preference_Title" >
-		<CheckBoxPreference
-			android:title="@string/Pref_MultiShot_Save"
-			android:defaultValue="false"
-			android:key="saveInputPrefMultiShot" />
-	</PreferenceCategory>
-</PreferenceScreen>

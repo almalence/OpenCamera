@@ -1,5 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-    <string name="MultiShot_Help_Header">Rafale intelligente</string>
-    <string name="MultiShot_Help">1. Maintenez l\'appareil photo immobile\n2. Appuyez sur l\'obturateur pour démarrer\n3. Attendez que la rafale ait été effectuée et les images traitées\n\nSuppression d\'objet\nAppuyez sur les objets en déplacement pour les supprimer\n\nSéquence\nSélectionnez quelles photos utiliser pour le résultat final\n\nPhoto de groupe\nChoisissez l\'image de base parmi les miniatures (Appuyez sur l\'image pour voir toutes les miniatures)\nPuis sélectionnez les meilleurs visages d\'une simple pression</string>
-</resources>

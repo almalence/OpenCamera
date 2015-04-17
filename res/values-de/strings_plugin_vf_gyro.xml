@@ -1,6 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-    <string name="Pref_TitleGyroVF">Ausrichten</string>
-	<string name="Pref_ShowGyroVF">Ausrichthilfe anzeigen</string>
-	<string name="Pref_GyroTypeVF">Hardware-Gyroskop nutzen</string>
-</resources>

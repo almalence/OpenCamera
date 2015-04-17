@@ -1,5 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-    <string name="MultiShot_Help_Header">스마트 연속촬영</string>
-    <string name="MultiShot_Help">1. 장치를 가만히 들고 움직이지 마세요\n2. 셔터를 눌러 시작하세요\n3. 여러 이미지가 촬영 및 처리될 때까지 기다리세요\n\n객체 제거\n감지된 움직이는 객체를 탭하여 삭제하세요\n\n시퀀스\n결과에 사용할 사진을 선택하세요\n\n단체 촬영\n썸네일에서 기본 이미지를 선택하세요(이미지를 터치하여 모든 이미지를 보세요)\n가장 잘 나온 얼굴을 터치하여 선택하세요</string>
-</resources>

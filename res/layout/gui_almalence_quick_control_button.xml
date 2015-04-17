@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<com.almalence.ui.RotateImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    				android:id="@+id/qcButton"
-					android:background="@android:color/transparent"
-					android:layout_height="fill_parent"
-					android:layout_width="0dip"
-					android:layout_weight="1"
-					android:layout_margin="7dip"					
-			   		android:layout_gravity="center"/>

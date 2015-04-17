@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<resources>
-    <dimen name="nightmodeswitcher_width">44dp</dimen>
-    <dimen name="nightmodeswitcher_height">20dp</dimen>
-    <dimen name="nightmodeswitcher_textsize">14sp</dimen>
-</resources>

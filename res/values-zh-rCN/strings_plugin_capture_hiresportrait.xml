@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	<string name="Pref_HiresPortrait_Category_Title">应用纵向拍摄</string>
-	<string name="Pref_HiresPortrait_Preference_Title">拍摄</string>
-	
-	<string name="HiresPortrait_Not_Available">您的设备不支持应用纵向模式使用该模式需要带有前后摄像头的设备。</string>
-	<string name="HiresPortrait_Capture_Front">用前置摄像头拍摄自拍照。选择所需构图。</string>
-	<string name="HiresPortrait_Capture_Rear">用后置摄像头拍摄自拍照。</string>
-</resources>

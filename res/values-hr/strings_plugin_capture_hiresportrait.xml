@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	<string name="Pref_HiresPortrait_Category_Title">Hires portrait capture</string>
-	<string name="Pref_HiresPortrait_Preference_Title">Capture</string>
-	
-	<string name="HiresPortrait_Not_Available">Hires portrait mode not supported by your device. To use this mode you need device with front and rear cameras.</string>
-	<string name="HiresPortrait_Capture_Front">Capture self portrait with front camera. Select desired composition.</string>
-	<string name="HiresPortrait_Capture_Rear">Capture self portrait with rear camera.</string>
-</resources>

@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	<string name="Pref_HiresPortrait_Category_Title">Hochauflösende Portraitaufnahme</string>
-	<string name="Pref_HiresPortrait_Preference_Title">Aufnahme</string>
-	
-	<string name="HiresPortrait_Not_Available">Der hochauflösende Portraitmodus wird auf Ihrem Gerät nicht unterstützt. Für diesen Modus benötigen Sie ein Gerät mit Vorder- und Rückseitenkamera.</string>
-	<string name="HiresPortrait_Capture_Front">Nehmen Sie ein Selbstportrait mit der Vorderseitenkamera auf. Wählen Sie die gewünschte Bildeigenschaft.</string>
-	<string name="HiresPortrait_Capture_Rear">Nehmen Sie ein Selbstportrait mit der Rückseitenkamera auf.</string>
-</resources>

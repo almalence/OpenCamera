@@ -1,8 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_PreShotProcessing_Preference_Title">Processamento de pré-fotos</string>
-	<string name="Pref_PreShotProcessing_Preference_Summary">Voltar no Tempo</string>
-	<string name="layout_preshot_hint">Deslize para passar as fotos</string>
-	
-</resources>

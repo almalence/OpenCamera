@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	
-	<string name="pref_plugin_processing_panorama_preference_title">Panorama - zpracování</string>
-	<string name="pref_plugin_processing_panorama_preference_summary">Zpracovat fotky panoramy</string>	
-	
-	<string name="pref_plugin_processing_panorama_saveoriginalframes_title">Uložit originální snímky</string>
-</resources>

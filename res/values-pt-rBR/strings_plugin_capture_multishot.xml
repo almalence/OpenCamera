@@ -1,5 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-    <string name="MultiShot_Help_Header">Multidisparo inteligente</string>
-    <string name="MultiShot_Help">1. Segure firme o dispositivo e não se mexa\n2. Aperte o obturador para iniciar\n3. Aguarde até a série de imagens ser tirada e processada\n\nRemoção de objetos\nToque nos objetos em movimento detectados para excluir\n\nSequência\nSelecione quais fotos usar no resultado\n\nFoto de grupo\n\nSelecione a imagem de base em miniaturas (toque na imagem para ver todas as miniaturas)\nSelecione os melhores rostos tocando neles</string>
-</resources>

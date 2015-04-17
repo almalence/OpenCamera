@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<resources>
-    <dimen name="postprocessing_savebutton_size">70dp</dimen>
-    <dimen name="postprocessing_imagecounter_size">100dp</dimen>
-</resources>

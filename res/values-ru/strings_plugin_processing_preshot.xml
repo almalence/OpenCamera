@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	
-	<string name="Pref_PreShotProcessing_Preference_Title">Обработка pre-shot</string>
-	<string name="Pref_PreShotProcessing_Preference_Summary"></string>
-	<string name="layout_preshot_hint">Листайте для выбора кадра</string>
-	
-</resources>

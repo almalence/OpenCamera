@@ -1,8 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_PreShotProcessing_Preference_Title">Elaborazione prescatto</string>
-	<string name="Pref_PreShotProcessing_Preference_Summary">Indietro nel tempo</string>
-	<string name="layout_preshot_hint">Scorri per ruotare le foto</string>
-	
-</resources>

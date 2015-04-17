@@ -1,5 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-    <string name="MultiShot_Help_Header">智慧連拍</string>
-    <string name="MultiShot_Help">1. 穩持裝置不動\n2. 按快門啟動\n3. 等待一系列照片拍攝和處理\n\n刪除對象\n按檢測到的移動對象刪除\n\n順序\n在結果中選擇要使用的照片\n\n群攝\n在縮圖中選擇基底圖像 (觸按圖像檢視所有縮圖)\n觸按選擇最佳臉部</string>
-</resources>

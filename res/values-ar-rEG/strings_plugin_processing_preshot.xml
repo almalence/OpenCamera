@@ -1,8 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_PreShotProcessing_Preference_Title">معالجة قبل التقاط الصورة</string>
-	<string name="Pref_PreShotProcessing_Preference_Summary">العودة في الزمن</string>
-	<string name="layout_preshot_hint">امسح لقلب الصور</string>
-	
-</resources>

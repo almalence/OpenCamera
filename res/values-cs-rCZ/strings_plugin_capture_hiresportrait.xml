@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	<string name="Pref_HiresPortrait_Category_Title">Portrét - focení</string>
-	<string name="Pref_HiresPortrait_Preference_Title">Snímání</string>
-	
-	<string name="HiresPortrait_Not_Available">Režim Portrét není podporován na vašem zařízení. Pro použití tohoto režimu potřebujete zařízení s předním a zadním fotoaparátem.</string>
-	<string name="HiresPortrait_Capture_Front">Zachytťe svůj portrét s předním fotoaparátem. Vyberte požadovanou kompozici.</string>
-	<string name="HiresPortrait_Capture_Rear">Zachytťe svůj portrét se zadním fotoaparátem.</string>
-</resources>

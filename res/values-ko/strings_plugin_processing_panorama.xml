@@ -1,8 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="pref_plugin_processing_panorama_preference_title">파노라마 처리 중</string>
-	<string name="pref_plugin_processing_panorama_preference_summary">파노라마 폭 이미지 처리 중</string>	
-	
-	<string name="pref_plugin_processing_panorama_saveoriginalframes_title">원본 프레임 저장</string>
-</resources>

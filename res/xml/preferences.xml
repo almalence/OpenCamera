@@ -1,5 +1,4 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-	    <!-- -+-  -->
     <PreferenceScreen android:title="@string/Pref_Common_ImageSize_Title"
         	android:fragment="com.almalence.opencam.Fragment" 
            >
@@ -7,16 +6,6 @@
 		     android:name="type" 
 		     android:value="general_image_size" />
 	</PreferenceScreen>
-	<!--  -+- -->
-	<!-- +++
-	<PreferenceScreen android:title="@string/Pref_Common_ImageSize_Title"
-        	android:fragment="com.almalence.opencam_plus.Fragment" 
-           >
-		 <extra 
-		     android:name="type" 
-		     android:value="general_image_size" />
-	</PreferenceScreen>
-	+++ -->
 	
 	<ListPreference
 		android:title="@string/Pref_Common_VolumeButton_Title"
@@ -30,7 +19,6 @@
 		android:defaultValue="true" 
 		android:key="showHelpPrefCommon" />
     
-    <!-- -+-  -->
     <PreferenceScreen android:title="@string/moreText"
         	android:fragment="com.almalence.opencam.Fragment" 
            >
@@ -38,14 +26,4 @@
 		     android:name="type" 
 		     android:value="general_more" />
 	</PreferenceScreen>
-	<!--  -+- -->
-	<!-- +++
-	<PreferenceScreen android:title="@string/moreText"
-        	android:fragment="com.almalence.opencam_plus.Fragment" 
-           >
-		 <extra 
-		     android:name="type" 
-		     android:value="general_more" />
-	</PreferenceScreen>
-	+++ -->
 </PreferenceScreen>
