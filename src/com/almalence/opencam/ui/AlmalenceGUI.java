@@ -1501,7 +1501,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 
-		if (prefs.getBoolean(prefName, false))
+		if (Boolean.parseBoolean(prefs.getString(prefName, "false")))
 			store.HideUnlockControl();
 		else
 			store.ShowUnlockControl();

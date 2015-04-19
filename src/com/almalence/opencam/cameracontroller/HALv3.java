@@ -99,6 +99,8 @@ public class HALv3
 	private static int[]				evCompensation				= null;
 	private static int[]				sensorGain					= null;
 	private static long[]				exposureTime				= null;
+	private static long 				currentExposure 			= 0;
+	private static int 					currentSensitivity 			= 0;
 
 	protected static boolean			resultInHeap				= false;
 
@@ -107,6 +109,7 @@ public class HALv3
 	protected static int				captureFormat				= CameraController.JPEG;
 	
 	protected static boolean			playShutterSound			= false;
+	protected static boolean			captureAllowed 				= false;
 
 	public static HALv3 getInstance()
 	{
@@ -900,6 +903,14 @@ public class HALv3
 		return new int[0];
 	}
 
+	public static long getCameraCurrentExposureHALv3() {
+		return currentExposure;
+	}
+	
+	public static int getCameraCurrentSensitivityHALv3() {
+		return currentSensitivity;
+	}
+	
 	public static boolean isISOModeSupportedHALv3()
 	{
 		// CLOSED until manual exposure metering will be researched
@@ -1672,13 +1683,11 @@ public class HALv3
 
 	}
 	
-	public static int captureImageWithParamsHALv3(final int nFrames, final int format, final int[] pause,
-			final int[] evRequested, final int[] gain, final long[] exposure, final boolean resInHeap, final boolean playShutter)
-	{
-		int requestID = -1;
-
+	public static void captureImageWithParamsHALv3Allowed (final int nFrames, final int format, final int[] pause,
+			final int[] evRequested, final int[] gain, final long[] exposure, final boolean resInHeap, final boolean playShutter) {
 		try
 		{
+			int requestID = -1;
 			CreateRequests(format);
 			
 			// Nexus 5 fix flash in dark conditions and exposure set to 0.
@@ -1721,6 +1730,46 @@ public class HALv3
 			throw new RuntimeException();
 		}
 
+	}
+	
+	public static int captureImageWithParamsHALv3(final int nFrames, final int format, final int[] pause,
+			final int[] evRequested, final int[] gain, final long[] exposure, final boolean resInHeap, final boolean playShutter)
+	{
+		int requestID = -1;
+
+		if (CameraController.getFocusMode() == CameraParameters.AF_MODE_CONTINUOUS_PICTURE) {
+			captureAllowed = false;
+			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
+					CameraCharacteristics.CONTROL_AF_TRIGGER_START);
+			try
+			{
+				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
+						HALv3.previewRequestBuilder.build(), captureCallback, null);
+			} catch (CameraAccessException e)
+			{
+				e.printStackTrace();
+			}
+		} else {
+			captureAllowed = true;
+		}
+		
+		if (!captureAllowed) {
+			new CountDownTimer(2000, 10) {
+				public void onTick(long millisUntilFinished) {
+					if (captureAllowed) {
+						this.cancel();
+						captureImageWithParamsHALv3Allowed(nFrames, format, pause, evRequested, gain, exposure, resInHeap, playShutter);
+					}
+				}
+
+				public void onFinish() {
+					captureImageWithParamsHALv3Allowed(nFrames, format, pause, evRequested, gain, exposure, resInHeap, playShutter);
+				}
+			}.start();
+		} else
+			captureImageWithParamsHALv3Allowed(nFrames, format, pause, evRequested, gain, exposure, resInHeap, playShutter);
+		
+		
 		return requestID;
 	}
 
@@ -2323,12 +2372,15 @@ public class HALv3
 			// good place to extract sensor gain and other parameters
 	
 			// Note: not sure which units are used for exposure time (ms?)
-			// currentExposure
-			// =
-			// result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
-			// currentSensitivity
-			// =
-			// result.get(CaptureResult.SENSOR_SENSITIVITY);
+			 currentExposure = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
+			 currentSensitivity = result.get(CaptureResult.SENSOR_SENSITIVITY);
+			 
+			int focusState = result.get(CaptureResult.CONTROL_AF_STATE);
+			if (focusState == CaptureResult.CONTROL_AF_STATE_PASSIVE_SCAN
+					|| focusState == CaptureResult.CONTROL_AF_STATE_PASSIVE_UNFOCUSED)
+				captureAllowed = false;
+			else
+				captureAllowed = true;
 	
 			// dumpCaptureResult(result);
 		}
@@ -2545,7 +2597,9 @@ public class HALv3
 				else
 				{
 					PluginManager.getInstance().onImageTaken(frame,	frameData, frame_len, isYUV ? CameraController.YUV : CameraController.JPEG);
-					HALv3.cancelAutoFocusHALv3();
+					if (CameraController.getFocusMode() != CameraParameters.AF_MODE_CONTINUOUS_PICTURE) {
+						HALv3.cancelAutoFocusHALv3();
+					}
 				}
 
 				currentFrameIndex++;

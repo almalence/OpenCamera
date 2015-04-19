@@ -24,10 +24,7 @@ package com.almalence.opencam.cameracontroller;
 
 //-+- -->
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -45,6 +42,7 @@ import android.content.SharedPreferences.Editor;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
+import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.camera2.CameraCharacteristics;
 import android.media.Image;
 import android.os.AsyncTask;
@@ -60,14 +58,14 @@ import android.view.SurfaceHolder;
 import android.widget.Toast;
 
 import com.almalence.SwapHeap;
-import com.almalence.util.ImageConversion;
-//<!-- -+-
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginManagerInterface;
 import com.almalence.opencam.R;
+import com.almalence.util.ImageConversion;
+//<!-- -+-
 
 //-+- -->
 /* <!-- +++
@@ -213,8 +211,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	protected static boolean						isRAWCaptureSupported			= false;
 	protected static boolean						isManualSensorSupported			= false;
 
-//	protected static boolean						isManualFocus					= false;
-//	protected static boolean						isManualExposure				= false;
+	// protected static boolean isManualFocus = false;
+	// protected static boolean isManualExposure = false;
 
 	protected static String[]						cameraIdList					= { "" };
 
@@ -637,17 +635,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		isHALv3 = prefs.getBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), false);
 		String modeID = PluginManager.getInstance().getActiveModeID();
-		
+
 		// Temp fix HDR modes for LG G Flex 2.
-		boolean isLgGFlex2 = Build.MODEL.toLowerCase(Locale.US)
-				.replace(" ", "").contains("lg-h959")
-				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
-						.contains("lg-h510")
-				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
-						.contains("lg-f510k");
-		
+		boolean isLgGFlex2 = Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h959")
+				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h510")
+				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-f510k");
+
 		if (modeID.equals("video")
-				|| (Build.MODEL.contains("Nexus 6") && (modeID.equals("pixfix") || modeID.equals("panorama_augmented"))) 
+				|| (Build.MODEL.contains("Nexus 6") && (modeID.equals("pixfix") || modeID.equals("panorama_augmented")))
 				|| (isLgGFlex2 && (modeID.equals("hdrmode") || modeID.equals("expobracketing"))))
 			isHALv3 = false;
 		// Boolean isNexus = (Build.MODEL.contains("Nexus 5") ||
@@ -1782,8 +1777,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			return camera.getParameters().getAutoExposureLock();
 		} else
-			return PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).
-					getBoolean(MainScreen.sAELockPref, false);
+			return PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getBoolean(
+					MainScreen.sAELockPref, false);
 	}
 
 	public static void setAutoExposureLock(boolean lock)
@@ -1794,12 +1789,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				if (camera == null || (camera != null && camera.getParameters() == null))
 					return;
-	
+
 				Camera.Parameters params = camera.getParameters();
 				params.setAutoExposureLock(lock);
 				camera.setParameters(params);
-			}
-			catch(Exception e)
+			} catch (Exception e)
 			{
 				e.printStackTrace();
 				return;
@@ -1816,10 +1810,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				if (camera == null || (camera != null && camera.getParameters() == null))
 					return false;
-	
+
 				return camera.getParameters().isAutoWhiteBalanceLockSupported();
-			}
-			catch(Exception e)
+			} catch (Exception e)
 			{
 				e.printStackTrace();
 				return false;
@@ -1837,8 +1830,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			return camera.getParameters().getAutoWhiteBalanceLock();
 		} else
-			return PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).
-					getBoolean(MainScreen.sAWBLockPref, false);
+			return PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getBoolean(
+					MainScreen.sAWBLockPref, false);
 	}
 
 	public static void setAutoWhiteBalanceLock(boolean lock)
@@ -2641,6 +2634,17 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return -1;
 	}
 
+	public static int getCurrentSensitivity()
+	{
+		if (!CameraController.isHALv3)
+		{
+			return -1;
+		} else
+		{
+			return HALv3.getCameraCurrentSensitivityHALv3();
+		}
+	}
+
 	public static void setCameraSceneMode(int mode)
 	{
 		if (!CameraController.isHALv3)
@@ -2846,8 +2850,17 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (CameraController.isHALv3)
 		{
-//			isManualExposure = true;
+			// isManualExposure = true;
 			HALv3.setCameraExposureTimeHALv3(iTime);
+		}
+	}
+	
+	public static long getCameraExposureTime()
+	{
+		if (!CameraController.isHALv3) {
+			return -1;
+		} else {
+			return HALv3.getCameraCurrentExposureHALv3();
 		}
 	}
 
@@ -2855,7 +2868,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (CameraController.isHALv3)
 		{
-//			isManualExposure = false;
+			// isManualExposure = false;
 			HALv3.resetCameraAEModeHALv3();
 		}
 	}
@@ -2864,16 +2877,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (CameraController.isHALv3)
 		{
-//			isManualFocus = true;
+			// isManualFocus = true;
 			HALv3.setCameraFocusDistanceHALv3(fDistance);
 		}
 	}
 
-//	public static void resetCameraFocusDistance()
-//	{
-////		if (CameraController.isHALv3)
-////			isManualFocus = false;
-//	}
+	// public static void resetCameraFocusDistance()
+	// {
+	// // if (CameraController.isHALv3)
+	// // isManualFocus = false;
+	// }
 
 	public static void setCameraFocusAreas(List<Area> focusAreas)
 	{
@@ -2947,9 +2960,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
 						|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
 						|| focusMode == CameraParameters.AF_MODE_INFINITY
-						|| focusMode == CameraParameters.AF_MODE_FIXED || focusMode == CameraParameters.AF_MODE_EDOF
-						|| focusMode == CameraParameters.MF_MODE)
-				&& !MainScreen.getAutoFocusLock()/* && !isManualFocus && !isManualExposure*/)
+						|| focusMode == CameraParameters.AF_MODE_FIXED || focusMode == CameraParameters.AF_MODE_EDOF || focusMode == CameraParameters.MF_MODE)
+				&& !MainScreen.getAutoFocusLock()/*
+												 * && !isManualFocus &&
+												 * !isManualExposure
+												 */)
 			return true;
 		else
 			return false;
@@ -3026,7 +3041,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				return 47.50866f;
 			}
-					
+
 			if (camera != null)
 				return camera.getParameters().getVerticalViewAngle();
 		} else
@@ -3098,8 +3113,20 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			takeYUVFrame = (format == CameraController.YUV) || (format == CameraController.YUV_RAW);
 			if (evRequested != null && evRequested.length >= total_frames)
 				CameraController.setExposure();
-			else
-				CameraController.takeImage();
+			else {
+				if (CameraController.getFocusMode() == CameraParameters.AF_MODE_CONTINUOUS_PICTURE) {
+					camera.autoFocus(new AutoFocusCallback()
+					{
+						@Override
+						public void onAutoFocus(boolean success, Camera camera)
+						{
+							CameraController.takeImage();
+						}
+					});
+				} else {
+					CameraController.takeImage();
+				}
+			}
 			return 0;
 		} else
 			return HALv3.captureImageWithParamsHALv3(nFrames, format, pause, evRequested, gain, exposure, resultInHeap,
@@ -3513,9 +3540,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			lastCaptureStarted = SystemClock.uptimeMillis();
 			if (imageWidth == previewWidth && imageHeight == previewHeight
-					&& ((frameFormat == CameraController.YUV) || (frameFormat == CameraController.YUV_RAW))) 
+					&& ((frameFormat == CameraController.YUV) || (frameFormat == CameraController.YUV_RAW)))
 			{
-				if (CameraController.getFlashMode() == CameraParameters.FLASH_MODE_SINGLE) {
+				if (CameraController.getFlashMode() == CameraParameters.FLASH_MODE_SINGLE)
+				{
 					// Turn on torch to emulate flash for preview images.
 					CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_TORCH);
 					Handler handler = new Handler();
@@ -3525,17 +3553,17 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						public void run()
 						{
 							takePreviewFrame = true;
-							
+
 						}
 					}, 500);
-				} else {
+				} else
+				{
 					takePreviewFrame = true; // Temporary make capture by
 					// preview frames only for YUV
 					// requests to avoid slow YUV to
 					// JPEG conversion
 				}
-			}
-			else if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING)
+			} else if (camera != null && CameraController.getFocusState() != CameraController.FOCUS_STATE_FOCUSING)
 			{
 				try
 				{

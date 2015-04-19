@@ -1598,6 +1598,10 @@ public class PluginManager implements PluginManagerInterface
 		case MSG_CAPTURE_FINISHED:
 			shutterRelease = true;
 
+			if (CameraController.getFocusMode() == CameraParameters.AF_MODE_CONTINUOUS_PICTURE) {
+				CameraController.cancelAutoFocus();
+			}
+			
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onCaptureFinished();
 
@@ -1639,6 +1643,10 @@ public class PluginManager implements PluginManagerInterface
 		case MSG_CAPTURE_FINISHED_NORESULT:
 			shutterRelease = true;
 
+			if (CameraController.getFocusMode() == CameraParameters.AF_MODE_CONTINUOUS_PICTURE) {
+				CameraController.cancelAutoFocus();
+			}
+			
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onCaptureFinished();
 

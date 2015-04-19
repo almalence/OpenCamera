@@ -52,6 +52,7 @@ import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.plugins.vf.histogram.Histogram;
 //-+- -->
 
 import com.almalence.util.Util;
@@ -74,6 +75,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 
 	private TextView					memoryInfoText				= null;
 	private TextView					evInfoText					= null;
+	private TextView					currentSensitivityText		= null;
+	private TextView					currentExposureTimeText		= null;
 
 	private static int					mDeviceOrientation;
 	private OrientationEventListener	orientListener;
@@ -81,6 +84,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 	private boolean						useBatteryMonitor;
 	private boolean						usePictureCount;
 	private boolean						useEVMonitor;
+	private boolean						useCurrentSensitivityMonitor;
+	private boolean						useCurrentExposureTimeMonitor;
 	private boolean						useSceneMonitor;
 	private boolean						useWBMonitor;
 	private boolean						useFocusMonitor;
@@ -92,53 +97,100 @@ public class InfosetVFPlugin extends PluginViewfinder
 	private float						currentBatteryLevel			= -1;
 	private int							currentBatteryStatus		= -1;
 
-	private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver()
-	{
-		@Override
-		public void onReceive(Context arg0, Intent batteryStatus)
-		{
-			if (batteryInfoImage == null)
-				return;
+	private BroadcastReceiver			mBatInfoReceiver			= new BroadcastReceiver()
+																	{
+																		@Override
+																		public void onReceive(Context arg0,
+																				Intent batteryStatus)
+																		{
+																			if (batteryInfoImage == null)
+																				return;
 
-			int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-			int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+																			int level = batteryStatus.getIntExtra(
+																					BatteryManager.EXTRA_LEVEL, -1);
+																			int scale = batteryStatus.getIntExtra(
+																					BatteryManager.EXTRA_SCALE, -1);
 
-			float batteryPct = level / (float) scale;
+																			float batteryPct = level / (float) scale;
 
-			int status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
-			boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL;
+																			int status = batteryStatus.getIntExtra(
+																					BatteryManager.EXTRA_STATUS, -1);
+																			boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING
+																					|| status == BatteryManager.BATTERY_STATUS_FULL;
 
-			if (status != currentBatteryStatus && isCharging)
-			{
-				batteryInfoImage.setImageDrawable(MainScreen.getMainContext().getResources().getDrawable(R.drawable.battery_charging));
-				currentBatteryStatus = status;
-			} else if (status == BatteryManager.BATTERY_STATUS_DISCHARGING || status == BatteryManager.BATTERY_STATUS_NOT_CHARGING)
-			{
-				if (currentBatteryLevel != batteryPct || currentBatteryStatus != status)
-				{
-					currentBatteryLevel = batteryPct;
+																			if (status != currentBatteryStatus
+																					&& isCharging)
+																			{
+																				batteryInfoImage
+																						.setImageDrawable(MainScreen
+																								.getMainContext()
+																								.getResources()
+																								.getDrawable(
+																										R.drawable.battery_charging));
+																				currentBatteryStatus = status;
+																			} else if (status == BatteryManager.BATTERY_STATUS_DISCHARGING
+																					|| status == BatteryManager.BATTERY_STATUS_NOT_CHARGING)
+																			{
+																				if (currentBatteryLevel != batteryPct
+																						|| currentBatteryStatus != status)
+																				{
+																					currentBatteryLevel = batteryPct;
 
-					if (currentBatteryLevel > 0.8f)
-						batteryInfoImage.setImageDrawable(MainScreen.getMainContext().getResources().getDrawable(R.drawable.battery_full));
-					else if (currentBatteryLevel <= 0.8f && currentBatteryLevel > 0.6f)
-						batteryInfoImage.setImageDrawable(MainScreen.getMainContext().getResources().getDrawable(R.drawable.battery_75));
-					else if (currentBatteryLevel <= 0.6f && currentBatteryLevel > 0.4f)
-						batteryInfoImage .setImageDrawable(MainScreen.getMainContext().getResources().getDrawable(R.drawable.battery_50));
-					else if (currentBatteryLevel <= 0.4f && currentBatteryLevel > 0.15f)
-						batteryInfoImage.setImageDrawable(MainScreen.getMainContext().getResources().getDrawable(R.drawable.battery_25));
-					else if (currentBatteryLevel <= 0.15f && currentBatteryLevel > 0.05f)
-						batteryInfoImage.setImageDrawable(MainScreen.getMainContext().getResources().getDrawable(R.drawable.battery_10));
-					else if (currentBatteryLevel <= 0.05f)
-						batteryInfoImage.setImageDrawable(MainScreen.getMainContext().getResources().getDrawable(R.drawable.battery_empty));
-				}
+																					if (currentBatteryLevel > 0.8f)
+																						batteryInfoImage
+																								.setImageDrawable(MainScreen
+																										.getMainContext()
+																										.getResources()
+																										.getDrawable(
+																												R.drawable.battery_full));
+																					else if (currentBatteryLevel <= 0.8f
+																							&& currentBatteryLevel > 0.6f)
+																						batteryInfoImage
+																								.setImageDrawable(MainScreen
+																										.getMainContext()
+																										.getResources()
+																										.getDrawable(
+																												R.drawable.battery_75));
+																					else if (currentBatteryLevel <= 0.6f
+																							&& currentBatteryLevel > 0.4f)
+																						batteryInfoImage
+																								.setImageDrawable(MainScreen
+																										.getMainContext()
+																										.getResources()
+																										.getDrawable(
+																												R.drawable.battery_50));
+																					else if (currentBatteryLevel <= 0.4f
+																							&& currentBatteryLevel > 0.15f)
+																						batteryInfoImage
+																								.setImageDrawable(MainScreen
+																										.getMainContext()
+																										.getResources()
+																										.getDrawable(
+																												R.drawable.battery_25));
+																					else if (currentBatteryLevel <= 0.15f
+																							&& currentBatteryLevel > 0.05f)
+																						batteryInfoImage
+																								.setImageDrawable(MainScreen
+																										.getMainContext()
+																										.getResources()
+																										.getDrawable(
+																												R.drawable.battery_10));
+																					else if (currentBatteryLevel <= 0.05f)
+																						batteryInfoImage
+																								.setImageDrawable(MainScreen
+																										.getMainContext()
+																										.getResources()
+																										.getDrawable(
+																												R.drawable.battery_empty));
+																				}
 
-				if (currentBatteryStatus != status)
-				{
-					currentBatteryStatus = status;
-				}
-			}
-		}
-	};
+																				if (currentBatteryStatus != status)
+																				{
+																					currentBatteryStatus = status;
+																				}
+																			}
+																		}
+																	};
 
 	public InfosetVFPlugin()
 	{
@@ -153,6 +205,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 		useBatteryMonitor = prefs.getBoolean("useBatteryMonitorPrefInfoset", false);
 		usePictureCount = prefs.getBoolean("availablePictureCountPrefInfoset", false);
 		useEVMonitor = prefs.getBoolean("useEVMonitorPrefInfoset", false);
+		useCurrentSensitivityMonitor = prefs.getBoolean("useCurrentSensitivityMonitorPrefInfoset", false);
+		useCurrentExposureTimeMonitor = prefs.getBoolean("useCurrentExposureTimeMonitorPrefInfoset", false);
 		useSceneMonitor = prefs.getBoolean("useSceneMonitorPrefInfoset", false);
 		useWBMonitor = prefs.getBoolean("useWBMonitorPrefInfoset", false);
 		useFocusMonitor = prefs.getBoolean("useFocusMonitorPrefInfoset", false);
@@ -164,6 +218,10 @@ public class InfosetVFPlugin extends PluginViewfinder
 	public void onPreferenceCreate(PreferenceFragment preferenceFragment)
 	{
 		Preference evPref = preferenceFragment.findPreference("useEVMonitorPrefInfoset");
+		Preference useCurrentSensitivityPref = preferenceFragment
+				.findPreference("useCurrentSensitivityMonitorPrefInfoset");
+		Preference useCurrentExposureTimePref = preferenceFragment
+				.findPreference("useCurrentExposureTimeMonitorPrefInfoset");
 		Preference scenePref = preferenceFragment.findPreference("useSceneMonitorPrefInfoset");
 		Preference wbPref = preferenceFragment.findPreference("useWBMonitorPrefInfoset");
 		Preference focusPref = preferenceFragment.findPreference("useFocusMonitorPrefInfoset");
@@ -174,6 +232,16 @@ public class InfosetVFPlugin extends PluginViewfinder
 			evPref.setEnabled(true);
 		else
 			evPref.setEnabled(false);
+
+		if (CameraController.isUseHALv3())
+		{
+			useCurrentSensitivityPref.setEnabled(true);
+			useCurrentExposureTimePref.setEnabled(true);
+		} else
+		{
+			useCurrentSensitivityPref.setEnabled(false);
+			useCurrentExposureTimePref.setEnabled(false);
+		}
 
 		if (MainScreen.getCameraController().isSceneModeSupported())
 			scenePref.setEnabled(true);
@@ -248,6 +316,10 @@ public class InfosetVFPlugin extends PluginViewfinder
 					memoryInfoText.setRotation(-mDeviceOrientation);
 				if (evInfoText != null)
 					evInfoText.setRotation(-mDeviceOrientation);
+				if (currentSensitivityText != null)
+					currentSensitivityText.setRotation(-mDeviceOrientation);
+				if (currentExposureTimeText != null)
+					currentExposureTimeText.setRotation(-mDeviceOrientation);
 			}
 		};
 	}
@@ -350,6 +422,24 @@ public class InfosetVFPlugin extends PluginViewfinder
 			addInfoView(evInfoText);
 		}
 
+		if (useCurrentSensitivityMonitor)
+		{
+			View v = LayoutInflater.from(MainScreen.getMainContext()).inflate(R.layout.plugin_vf_infoset_text, null);
+			currentSensitivityText = (TextView) v.findViewById(R.id.infoText);
+			currentSensitivityText.setRotation(-mDeviceOrientation);
+
+			addInfoView(currentSensitivityText);
+		}
+
+		if (useCurrentExposureTimeMonitor)
+		{
+			View v = LayoutInflater.from(MainScreen.getMainContext()).inflate(R.layout.plugin_vf_infoset_text, null);
+			currentExposureTimeText = (TextView) v.findViewById(R.id.infoText);
+			currentExposureTimeText.setRotation(-mDeviceOrientation);
+
+			addInfoView(currentExposureTimeText);
+		}
+
 		initInfoIndicators();
 	}
 
@@ -381,7 +471,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 
 		this.orientListener.disable();
 	}
-	
+
 	@Override
 	public void onCameraParametersSetup()
 	{
@@ -416,6 +506,37 @@ public class InfosetVFPlugin extends PluginViewfinder
 				evInfoText.setVisibility(View.VISIBLE);
 			else
 				evInfoText.setVisibility(View.GONE);
+		}
+
+		if (useCurrentSensitivityMonitor && currentSensitivityText != null)
+		{
+			int currentSensetivity = CameraController.getCurrentSensitivity();
+			String currentSensetivityString = "ISO " + currentSensetivity;
+			currentSensitivityText.setText(currentSensetivityString);
+			if (currentSensetivity != -1 && currentSensetivity != 0)
+				currentSensitivityText.setVisibility(View.VISIBLE);
+			else
+				currentSensitivityText.setVisibility(View.GONE);
+		}
+
+		if (useCurrentExposureTimeMonitor && currentExposureTimeText != null)
+		{
+			long currentExposureTime = CameraController.getCameraExposureTime();
+			if (currentExposureTime != -1 && currentExposureTime != 0)
+			{
+				currentExposureTime = 1000000000 / currentExposureTime;
+				// Fix calculations.
+				if (currentExposureTime % 10 == 9)
+				{
+					currentExposureTime = currentExposureTime + 1;
+				}
+				String currentExposureTimeString = "1/" + currentExposureTime + " s";
+				currentExposureTimeText.setVisibility(View.VISIBLE);
+				currentExposureTimeText.setText(currentExposureTimeString);
+			} else
+			{
+				currentExposureTimeText.setVisibility(View.GONE);
+			}
 		}
 
 		if (useSceneMonitor && sceneInfoImage != null)
@@ -593,5 +714,40 @@ public class InfosetVFPlugin extends PluginViewfinder
 		}
 
 		return false;
+	}
+
+	@Override
+	public void onPreviewFrame(byte[] data)
+	{
+		if (useCurrentSensitivityMonitor && currentSensitivityText != null)
+		{
+			int currentSensetivity = CameraController.getCurrentSensitivity();
+			String currentSensetivityString = "ISO " + currentSensetivity;
+			currentSensitivityText.setText(currentSensetivityString);
+			if (currentSensetivity != -1 && currentSensetivity != 0)
+				currentSensitivityText.setVisibility(View.VISIBLE);
+			else
+				currentSensitivityText.setVisibility(View.GONE);
+		}
+
+		if (useCurrentExposureTimeMonitor && currentExposureTimeText != null)
+		{
+			long currentExposureTime = CameraController.getCameraExposureTime();
+			if (currentExposureTime != -1 && currentExposureTime != 0)
+			{
+				currentExposureTime = 1000000000 / currentExposureTime;
+				// Fix calculations.
+				if (currentExposureTime % 10 == 9)
+				{
+					currentExposureTime = currentExposureTime + 1;
+				}
+				String currentExposureTimeString = "1/" + currentExposureTime + " s";
+				currentExposureTimeText.setText(currentExposureTimeString);
+				currentExposureTimeText.setVisibility(View.VISIBLE);
+			} else
+			{
+				currentExposureTimeText.setVisibility(View.GONE);
+			}
+		}
 	}
 }
