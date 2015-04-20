@@ -3868,7 +3868,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 		isSaving = prefs.getBoolean("SaveConfiguration_TimelapseCapture", false);
 		if (!isSaving && !prefs.getBoolean(sPhotoTimeLapseIsRunningPref, false))
 		{
-			prefsEditor.putInt(MainScreen.sPhotoTimeLapseCaptureIntervalPref, 0);
+			prefsEditor.putInt(MainScreen.sPhotoTimeLapseCaptureIntervalPref, 5);
 			prefsEditor.putInt(MainScreen.sPhotoTimeLapseCaptureIntervalMeasurmentPref, 0);
 			prefsEditor.putBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false);
 			prefsEditor.putBoolean(MainScreen.sPhotoTimeLapseActivePref, false);

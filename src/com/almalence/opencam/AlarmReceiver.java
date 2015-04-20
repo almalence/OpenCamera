@@ -119,26 +119,29 @@ public class AlarmReceiver extends BroadcastReceiver
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 
-		pauseBetweenShotsVal = prefs.getInt(MainScreen.sPhotoTimeLapseCaptureIntervalPref, -1);
-		if (pauseBetweenShotsVal == -1)
+		pauseBetweenShotsVal = prefs.getInt(MainScreen.sPhotoTimeLapseCaptureIntervalPref, 5);
+		if (pauseBetweenShotsVal == 0)
 		{
 			return;
 		}
 
-		pauseBetweenShots = Long.parseLong(SelfTimerAndPhotoTimeLapse.stringTimelapseInterval[pauseBetweenShotsVal]);
+		pauseBetweenShots = pauseBetweenShotsVal;
 
 		pauseBetweenShotsMeasurment = prefs.getInt(MainScreen.sPhotoTimeLapseCaptureIntervalMeasurmentPref, 0);
 
 		switch (pauseBetweenShotsMeasurment)
 		{
-		case 0:
+		case 0://secs
 			pauseBetweenShots = pauseBetweenShots * 1000;
 			break;
-		case 1:
+		case 1://mins
 			pauseBetweenShots = pauseBetweenShots * 60000;
 			break;
-		case 2:
+		case 2://hours
 			pauseBetweenShots = pauseBetweenShots * 60000 * 60;
+			break;
+		case 3://days
+			pauseBetweenShots = pauseBetweenShots * 60000 * 60 * 24;
 			break;
 		default:
 			break;
