@@ -1854,6 +1854,7 @@ public class MainScreen extends Activity implements ApplicationInterface, View.O
 					cp.setAntibanding("auto");
 					break;
 				}
+				
 				CameraController.setCameraParameters(cp);
 
 				previewWidth = cp.getPreviewSize().width;

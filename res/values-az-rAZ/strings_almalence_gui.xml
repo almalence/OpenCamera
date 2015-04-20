@@ -25,7 +25,7 @@
     <string name="Pref_Common_Gallery_Summary">Əgər quraşdırılıbsa A Better Editor&amp;Effects susmaya görə baxış proqramı kimi istifadə etməyin</string>
     <string name="Pref_Common_CaptureRAW_Title">RAW Çəkilişi</string>
     <string name="Pref_Common_CaptureRAW_Summary">RAW - DNG formatıdır. Məhdud sayda cihazlarda işləyəcək</string>
-    <string name="Pref_Common_CaptureRAW_Description">RAW capture only works in Single, Burst and Expo-bracketing modes. Also, histogram can not be shown in this mode.</string>
+    <string name="Pref_Common_CaptureRAW_Description">RAW çəkiliş yalnız Tək çəkiliş, Burst və Expo-bracketing rejimlərində işləyir. Bundan əlavə, histogramı bu rejimdə göstərmək olmur.</string>
     <string name="Pref_Common_JPEGQuality_Title">Təsvir keyfiyyəti</string>
     <string name="Pref_Common_VolumeButton_Title">Səs düyməsi</string>
     <string name="Pref_SaveConfiguration_Title">Parametrləri saxla</string>
@@ -44,16 +44,16 @@
     <string name="Pref_Common_DelayedCapture_Title">Çəkiliş avtotaymeri</string>
     <string name="Pref_Common_DelayedCapture_Summary">Avtotaymer/şəkil çəkiliş arası fasilə nəzarətini göstər</string>
     <string name="Pref_ShowHelp_Title">Kömək göstər</string>
-    <string name="Pref_WhowHelp_Summary">Rejim başlayanda kömək göstər (Panorama, Smart multishot)</string>
-    <string name="Pref_Common_HeadsetTap_Title">Qulaqlıq çəkilişi</string>
-    <string name="Pref_Common_HeadsetTap_Summary">Çekiliş üçün qulaqlıq düymələrindən istifadə edin</string>
+    <string name="Pref_WhowHelp_Summary">Rejim başlayanda kömək göstər (Panorama, Ağıllı multi çəkiliş)</string>
+    <string name="Pref_Common_HeadsetTap_Title">Qulaqlıqla çəkiliş</string>
+    <string name="Pref_Common_HeadsetTap_Summary">Çəkiliş üçün qulaqlıq düymələrindən istifadə edin</string>
     
     
     <string name="helpTextDontShow">Göstərmə</string>
     
     <string name="ev_zero">0</string>    
     <string name="blockingText">Lütfən gözləyin, işlənilir...</string>
-    <string name="almalence_gui_selected">seçilmiş</string>
+    <string name="almalence_gui_selected">seçildi</string>
         
     <string name="settings_mode_scene">Səhnə rejimi</string>
     <string name="settings_mode_wb">Ağ rəng balansı</string>
@@ -90,7 +90,7 @@
 	
 	<string name="layout_hint_bottom">Kamera rejimi seçin</string>
 	<string name="layout_hint_center">Daha çox/az məlumat üçün sürüşdürün</string>
-	<string name="layout_hint_top_left">Basıb saxlayın\nizamlayın</string>
+	<string name="layout_hint_top_left">Basıb saxlayın\nNizamlayın</string>
 	<string name="layout_hint_top_center">Daha çox seçim üçün çıxarın</string>
 
 	<string name="Dro_Help_Header">Dro</string>
