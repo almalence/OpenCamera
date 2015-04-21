@@ -51,7 +51,7 @@ public class TemplateBurstCapturePlugin extends PluginCapture
 
 	public TemplateBurstCapturePlugin()
 	{
-		super("com.almalence.plugins.burstcapture", R.xml.preferences_capture_burst, 0,
+		super("com.almalence.plugins.templateburst", R.xml.preferences_capture_burst, 0,
 				R.drawable.gui_almalence_mode_burst, "Burst images");
 	}
 

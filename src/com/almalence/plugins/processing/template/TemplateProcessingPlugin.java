@@ -34,7 +34,7 @@ public class TemplateProcessingPlugin extends PluginProcessing
 
 	public TemplateProcessingPlugin()
 	{
-		super("com.almalence.plugins.simpleprocessing", R.xml.preferences_capture_dro, 0, 0, null);
+		super("com.almalence.plugins.templateprocessing", 0, 0, 0, null);
 	}
 
 	@Override

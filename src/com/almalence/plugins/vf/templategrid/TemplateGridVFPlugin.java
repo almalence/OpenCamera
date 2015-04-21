@@ -44,7 +44,7 @@ public class TemplateGridVFPlugin extends PluginViewfinder
 
 	public TemplateGridVFPlugin()
 	{
-		super("com.almalence.plugins.gridvf", R.xml.preferences_vf_grid, 0, R.drawable.plugin_vf_grid_none, "Grid type");
+		super("com.almalence.plugins.templategridvf", R.xml.preferences_vf_grid, 0, R.drawable.plugin_vf_grid_none, "Grid type");
 	}
 
 	@Override

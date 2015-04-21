@@ -30,11 +30,11 @@
 	
 	    <capture 	id="com.almalence.plugins.templatecapture" />    
 	
-	    <processing	id="com.almalence.plugins.templatetamplate" />    
+	    <processing	id="com.almalence.plugins.templateprocessing" />    
 	
 	    <filter/>    
 	
-	    <export 	id="com.almalence.plugins.template"/>
+	    <export 	id="com.almalence.plugins.templateexport"/>
 	
 		<sku/>
 		
@@ -51,11 +51,11 @@
 	
 	    <capture 	id="com.almalence.plugins.templateburst" />    
 	
-	    <processing	id="com.almalence.plugins.template" />    
+	    <processing	id="com.almalence.plugins.templateprocessing" />    
 	
 	    <filter/>    
 	
-	    <export 	id="com.almalence.plugins.template"/>
+	    <export 	id="com.almalence.plugins.templateexport"/>
 	
 		<sku/>
 		

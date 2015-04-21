@@ -51,7 +51,7 @@ public class TemplateExportPlugin extends PluginExport
 
 	public TemplateExportPlugin()
 	{
-		super("com.almalence.plugins.export", R.xml.preferences_export_export, 0, 0, null);
+		super("com.almalence.plugins.templateexport", R.xml.preferences_export_export, 0, 0, null);
 	}
 
 	@Override

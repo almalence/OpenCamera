@@ -42,7 +42,7 @@ public class TemplateCapturePlugin extends PluginCapture
 
 	public TemplateCapturePlugin()
 	{
-		super("com.almalence.plugins.capture", 0, 0, 0, null);
+		super("com.almalence.plugins.templatecapture", 0, 0, 0, null);
 	}
 
 	@Override

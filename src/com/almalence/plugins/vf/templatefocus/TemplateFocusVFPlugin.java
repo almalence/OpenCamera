@@ -143,7 +143,7 @@ public class TemplateFocusVFPlugin extends PluginViewfinder
 
 	public TemplateFocusVFPlugin()
 	{
-		super("com.almalence.plugins.focusvf", 0, 0, 0, null);
+		super("com.almalence.plugins.templatefocusvf", 0, 0, 0, null);
 
 		mHandler = new MainHandler();
 		mMatrix = new Matrix();
