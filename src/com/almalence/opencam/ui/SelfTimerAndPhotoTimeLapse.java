@@ -125,6 +125,9 @@ public class SelfTimerAndPhotoTimeLapse
 					flashCheckbox.setEnabled(true);
 					soundCheckbox.setEnabled(true);
 					swTimerChecked = true;
+					
+					Switch swTimelapse = (Switch) dialog.findViewById(R.id.photoTimeLapseTitle_switcher);
+					swTimelapse.setChecked(false);
 				}
 			}
 		});
@@ -194,9 +197,15 @@ public class SelfTimerAndPhotoTimeLapse
 				if (!sw.isChecked())
 				{
 					swTimeLapseChecked = false;
+					sw.setChecked(false);
+					
 				} else
 				{
 					swTimeLapseChecked = true;
+					sw.setChecked(true);
+					
+					Switch sw = (Switch) dialog.findViewById(R.id.selftimer_switcher);
+					sw.setChecked(false);
 				}
 			}
 		});
