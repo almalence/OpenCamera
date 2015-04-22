@@ -32,6 +32,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.hardware.camera2.CaptureResult;
+import android.os.Environment;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -80,6 +81,9 @@ public abstract class Plugin
 	private View					quickControlView	= null;
 
 	protected static final String	TIME_STAMP_NAME		= "'IMG'_yyyyMMdd_HHmmss";
+	
+	public static final String	CAMERA_IMAGE_BUCKET_NAME	= Environment.getExternalStorageDirectory().toString()
+																+ "/DCIM/Camera/tmp_raw_img";
 
 	protected long					SessionID			= 0;
 

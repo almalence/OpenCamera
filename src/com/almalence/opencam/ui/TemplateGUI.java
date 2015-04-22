@@ -82,6 +82,8 @@ public class TemplateGUI extends GUI
 	private ViewGroup							activeMode					= null;
 	private boolean								modeSelectorVisible			= false;
 	
+	private SonyCameraDeviceExplorer			sonyCameraDeviceExplorer;
+	
 	// Assoc list for storing association between mode button and mode ID
 	private Map<View, String>					buttonModeViewAssoc;
 
@@ -126,6 +128,9 @@ public class TemplateGUI extends GUI
 				TemplateGUI.mPreviousDeviceOrientation = TemplateGUI.mDeviceOrientation;
 
 				ApplicationScreen.getPluginManager().onOrientationChanged(getDisplayOrientation());
+				
+				if (sonyCameraDeviceExplorer != null)
+					sonyCameraDeviceExplorer.setOrientation();
 			}
 		};
 
@@ -153,6 +158,18 @@ public class TemplateGUI extends GUI
 		guiView.findViewById(R.id.buttonShutter).setEnabled(true);
 		guiView.findViewById(R.id.buttonSelectMode).setEnabled(true);
 		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
+	}
+	
+	@Override
+	public void showSonyCameraDeviceExplorer()
+	{
+		sonyCameraDeviceExplorer.showExplorer();
+	}
+
+	@Override
+	public void hideSonyCameraDeviceExplorer()
+	{
+		sonyCameraDeviceExplorer.hideExplorer();
 	}
 
 	@Override
@@ -198,6 +215,10 @@ public class TemplateGUI extends GUI
 		((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.mainLayout1)).setOnTouchListener(ApplicationScreen.instance);
 		
 		shutterButton = ((RotateImageView) guiView.findViewById(R.id.buttonShutter));
+		
+		// Sony remote camera
+		sonyCameraDeviceExplorer = new SonyCameraDeviceExplorer(guiView);
+		// -- Sony remote camera
 	}
 
 	@Override
@@ -1266,5 +1287,19 @@ public class TemplateGUI extends GUI
 		}
 
 		return currParams;
+	}
+
+	@Override
+	public void showHelp(String modeName, String text, int imageID, String Prefs)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setCameraModeGUI(int mode)
+	{
+		// TODO Auto-generated method stub
+		
 	}
 }

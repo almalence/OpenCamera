@@ -16,7 +16,7 @@ import android.util.Log;
 @SuppressLint("NewApi")
 public class AudioRecorder
 {
-	public static final String		TAG					= "Almalence";
+	public static final String		TAG					= "AudioRecorder";
 
 	public static final String		MIME_TYPE_AUDIO		= "audio/mp4a-latm";
 	public static final int			SAMPLE_RATE			= 44100;

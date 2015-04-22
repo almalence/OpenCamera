@@ -1,6 +1,6 @@
-package com.almalence.plugins.export.standard.ExifDriver.Values;
+package com.almalence.plugins.export.ExifDriver.Values;
 
-import com.almalence.plugins.export.standard.ExifDriver.ExifDriver;
+import com.almalence.plugins.export.ExifDriver.ExifDriver;
 
 /**
  * Parent class of all EXIF datatypes.

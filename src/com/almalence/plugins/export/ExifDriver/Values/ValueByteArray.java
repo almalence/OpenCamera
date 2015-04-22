@@ -1,4 +1,4 @@
-package com.almalence.plugins.export.standard.ExifDriver.Values;
+package com.almalence.plugins.export.ExifDriver.Values;
 
 /**
  * Common abstract superclass for ValueAscii and ValueUndefined, which are

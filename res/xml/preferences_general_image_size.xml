@@ -4,15 +4,7 @@
         android:defaultValue="0"
         android:entries="@array/dimsArrayCommon"
         android:entryValues="@array/dimsValuesCommon"
-        android:key="@string/Preference_ImageSizeFrontValue"
+        android:key="@string/Preference_ImageSizeSonyRemoteValue"
         android:summary="@string/Pref_Common_ImageSize_Summary"
         android:title="@string/Pref_Common_ImageSize_Title" />
-    <ListPreference
-        android:defaultValue="0"
-        android:entries="@array/dimsArrayCommon"
-        android:entryValues="@array/dimsValuesCommon"
-        android:key="@string/Preference_ImageSizeRearValue"
-        android:summary="@string/Pref_Common_ImageSize_Summary"
-        android:title="@string/Pref_Common_ImageSize_Title" />
-
 </PreferenceScreen>

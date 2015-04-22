@@ -30,15 +30,16 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
 
+import com.almalence.opencam.ApplicationScreen;
 /* <!-- +++
- import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.PluginManagerBase;
+ import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.TemplatePluginManager;
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
+
 
 import android.content.Context;
 import android.graphics.PixelFormat;

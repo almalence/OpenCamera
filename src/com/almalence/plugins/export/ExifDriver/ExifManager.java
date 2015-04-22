@@ -1,14 +1,14 @@
-package com.almalence.plugins.export.standard.ExifDriver;
+package com.almalence.plugins.export.ExifDriver;
 
 import java.util.Arrays;
 
 import android.content.Context;
 
-import com.almalence.plugins.export.standard.ExifDriver.Values.ExifValue;
-import com.almalence.plugins.export.standard.ExifDriver.Values.UndefinedValueAccessException;
-import com.almalence.plugins.export.standard.ExifDriver.Values.ValueByteArray;
-import com.almalence.plugins.export.standard.ExifDriver.Values.ValueNumber;
-import com.almalence.plugins.export.standard.ExifDriver.Values.ValueRationals;
+import com.almalence.plugins.export.ExifDriver.Values.ExifValue;
+import com.almalence.plugins.export.ExifDriver.Values.UndefinedValueAccessException;
+import com.almalence.plugins.export.ExifDriver.Values.ValueByteArray;
+import com.almalence.plugins.export.ExifDriver.Values.ValueNumber;
+import com.almalence.plugins.export.ExifDriver.Values.ValueRationals;
 
 public class ExifManager
 {

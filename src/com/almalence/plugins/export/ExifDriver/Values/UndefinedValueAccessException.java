@@ -1,4 +1,4 @@
-package com.almalence.plugins.export.standard.ExifDriver.Values;
+package com.almalence.plugins.export.ExifDriver.Values;
 
 public class UndefinedValueAccessException extends Exception{
   /**

@@ -94,6 +94,7 @@ import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.TemplateGUI;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
+import com.almalence.sony.cameraremote.SimpleStreamSurfaceView;
 import com.almalence.templatecamera.R;
 
 /***
@@ -829,5 +830,26 @@ public class TemplateScreen extends ApplicationScreen
 			if (thiz.shutterPlayer != null)
 				thiz.shutterPlayer.play();
 		}
+	}
+
+	@Override
+	public SimpleStreamSurfaceView getSimpleStreamSurfaceView()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected void stopRemotePreview()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void resetOrSaveSettings()
+	{
+		// TODO Auto-generated method stub
+		
 	}
 }

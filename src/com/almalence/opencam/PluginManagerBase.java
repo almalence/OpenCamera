@@ -56,7 +56,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -69,51 +68,32 @@ import android.graphics.Rect;
 import android.hardware.Camera;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.DngCreator;
-import android.location.Location;
 import android.media.ExifInterface;
 import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.CountDownTimer;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.Message;
-import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.PreferenceScreen;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
-import android.util.Log;
 import android.util.Size;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.almalence.SwapHeap;
 
-import com.almalence.plugins.capture.template.TemplateCapturePlugin;
-import com.almalence.plugins.capture.templateburst.TemplateBurstCapturePlugin;
-import com.almalence.plugins.export.standard.ExifDriver.ExifDriver;
-import com.almalence.plugins.export.standard.ExifDriver.ExifManager;
-import com.almalence.plugins.export.standard.ExifDriver.Values.ValueByteArray;
-import com.almalence.plugins.export.standard.ExifDriver.Values.ValueNumber;
-import com.almalence.plugins.export.standard.ExifDriver.Values.ValueRationals;
-import com.almalence.plugins.export.template.GPSTagsConverter;
-import com.almalence.plugins.export.template.TemplateExportPlugin;
-import com.almalence.plugins.processing.template.TemplateProcessingPlugin;
-import com.almalence.plugins.vf.templatefocus.TemplateFocusVFPlugin;
-import com.almalence.plugins.vf.templategrid.TemplateGridVFPlugin;
+import com.almalence.plugins.export.ExifDriver.ExifDriver;
+import com.almalence.plugins.export.ExifDriver.ExifManager;
+import com.almalence.plugins.export.ExifDriver.Values.ValueByteArray;
+import com.almalence.plugins.export.ExifDriver.Values.ValueNumber;
+import com.almalence.plugins.export.ExifDriver.Values.ValueRationals;
 import com.almalence.templatecamera.R;
-import com.almalence.util.MLocation;
 import com.almalence.util.exifreader.imaging.jpeg.JpegMetadataReader;
 import com.almalence.util.exifreader.imaging.jpeg.JpegProcessingException;
 import com.almalence.util.exifreader.metadata.Directory;
@@ -1985,7 +1965,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 							break;
 						}
 					}
-					File rawFile = new File(TemplateCapturePlugin.CAMERA_IMAGE_BUCKET_NAME);
+					File rawFile = new File(Plugin.CAMERA_IMAGE_BUCKET_NAME);
 				}
 
 				ApplicationScreen.instance.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
