@@ -183,6 +183,7 @@ public class NightCapturePlugin extends PluginCapture
 			CameraCharacteristics camCharacter = CameraController.getCameraCharacteristics();
 			minExposure = camCharacter.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE).getLower();
 			minSensitivity = camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE).getLower();
+			int max = camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE).getUpper();
 			if (minExposure < 1000) minExposure = 1000; // not expecting minimum exposure to be below 1usec
 			if (minSensitivity < 25) minSensitivity = 25; // not expecting minimum sensitivity to be below ISO25
 			//Log.i("NightCapturePlugin", "minSensitivity: "+minSensitivity+" minExposure: "+minExposure+"ns");
@@ -645,19 +646,36 @@ public class NightCapturePlugin extends PluginCapture
 			}
 			else
 				burstExposure = minExposure;
+			
+			int[] burstGainArray = new int[total_frames];
+			long[] burstExposureArray = new long[total_frames];
+			Arrays.fill(burstGainArray, burstGain);
+			Arrays.fill(burstExposureArray, burstExposure);
+			
+			resultCompleted = 0; //Reset to get right capture result indexes in burst capturing.
+			// capture the burst
+			CameraController.captureImagesWithParams(
+					total_frames, CameraController.YUV_RAW, null, null, burstGainArray, burstExposureArray, true, true);
+		}
+		else
+		{
+			resultCompleted = 0; //Reset to get right capture result indexes in burst capturing.
+			// capture the burst
+			CameraController.captureImagesWithParams(
+					total_frames, CameraController.YUV_RAW, null, null, null, null, true, true);
 		}
 
 		Log.i("NightCapturePlugin", "After adjusting: gain: "+burstGain+" expoTime: "+burstExposure+"ns");
 		
-		int[] burstGainArray = new int[total_frames];
-		long[] burstExposureArray = new long[total_frames];
-		Arrays.fill(burstGainArray, burstGain);
-		Arrays.fill(burstExposureArray, burstExposure);
-		
-		resultCompleted = 0; //Reset to get right capture result indexes in burst capturing.
-		// capture the burst
-		CameraController.captureImagesWithParams(
-				total_frames, CameraController.YUV_RAW, null, null, burstGainArray, burstExposureArray, true, true);
+//		int[] burstGainArray = new int[total_frames];
+//		long[] burstExposureArray = new long[total_frames];
+//		Arrays.fill(burstGainArray, burstGain);
+//		Arrays.fill(burstExposureArray, burstExposure);
+//		
+//		resultCompleted = 0; //Reset to get right capture result indexes in burst capturing.
+//		// capture the burst
+//		CameraController.captureImagesWithParams(
+//				total_frames, CameraController.YUV_RAW, null, null, burstGainArray, burstExposureArray, true, true);
 	}
 	
 	
