@@ -19,7 +19,6 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.sony.cameraremote.utils.SimpleLiveviewSlicer;
 import com.almalence.sony.cameraremote.utils.SimpleLiveviewSlicer.Payload;
 

@@ -58,18 +58,19 @@ import com.almalence.sony.cameraremote.PictureCallbackSonyRemote;
 import com.almalence.sony.cameraremote.ServerDevice;
 import com.almalence.sony.cameraremote.ZoomCallbackSonyRemote;
 import com.almalence.util.ImageConversion;
-import com.almalence.opencam.ApplicationInterface;
-import com.almalence.opencam.CameraParameters;
-import com.almalence.opencam.PluginManagerInterface;
-import com.almalence.opencam.R;
 
-//-+- -->
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationInterface;
  import com.almalence.opencam_plus.CameraParameters;
  import com.almalence.opencam_plus.PluginManagerInterface;
  import com.almalence.opencam_plus.R;
  +++ --> */
+//<!-- -+-
+import com.almalence.opencam.ApplicationInterface;
+import com.almalence.opencam.CameraParameters;
+import com.almalence.opencam.PluginManagerInterface;
+import com.almalence.opencam.R;
+//-+- -->
 
 public class CameraController implements Camera.PictureCallback, Camera.AutoFocusCallback, Camera.ErrorCallback,
 		Camera.PreviewCallback, Camera.ShutterCallback, Handler.Callback, PictureCallbackSonyRemote

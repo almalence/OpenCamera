@@ -16,7 +16,12 @@ Portions created by Initial Developer are Copyright (C) 2013
 by Almalence Inc. All Rights Reserved.
  */
 
+/* <!-- +++
+ package com.almalence.opencam_plus;
+ +++ --> */
+// <!-- -+-
 package com.almalence.opencam;
+//-+- -->
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -47,9 +52,16 @@ import android.widget.ImageView;
 
 import com.almalence.asynctaskmanager.Task;
 
+/* <!-- +++
+import com.almalence.opencam_plus.cameracontroller.CameraController;
+import com.almalence.opencam_plus.cameracontroller.CameraController.Size;
+import com.almalence.opencam_plus.R;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.cameracontroller.CameraController.Size;
 import com.almalence.opencam.R;
+//-+- -->
 
 
 /***

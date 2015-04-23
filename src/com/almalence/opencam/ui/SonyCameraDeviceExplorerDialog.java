@@ -1,9 +1,20 @@
+/* <!-- +++
+package com.almalence.opencam_plus.ui;
++++ --> */
+//<!-- -+-
 package com.almalence.opencam.ui;
+//-+- -->
+
 
 import android.content.Context;
 import android.view.Window;
 
+/* <!-- +++
+import com.almalence.opencam_plus.R;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.R;
+//-+- -->
 import com.almalence.ui.RotateDialog;
 import com.almalence.ui.RotateLayout;
 

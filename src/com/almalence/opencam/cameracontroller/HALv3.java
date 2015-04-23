@@ -17,7 +17,7 @@
  */
 
 /* <!-- +++
- package com.almalence.opencam_plus.cameracontroller;
+package com.almalence.opencam_plus.cameracontroller;
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam.cameracontroller;
@@ -67,13 +67,14 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.widget.Toast;
 
-import com.almalence.opencam.ApplicationInterface;
-import com.almalence.opencam.PluginManagerInterface;
-
 /* <!-- +++
- import com.almalence.opencam_plus.CameraParameters;
+import com.almalence.opencam_plus.ApplicationInterface;
+import com.almalence.opencam_plus.PluginManagerInterface;
+import com.almalence.opencam_plus.CameraParameters;
  +++ --> */
 //<!-- -+-
+import com.almalence.opencam.ApplicationInterface;
+import com.almalence.opencam.PluginManagerInterface;
 import com.almalence.opencam.CameraParameters;
 //-+- -->
 

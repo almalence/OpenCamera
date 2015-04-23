@@ -93,7 +93,7 @@ import com.almalence.plugins.export.ExifDriver.ExifManager;
 import com.almalence.plugins.export.ExifDriver.Values.ValueByteArray;
 import com.almalence.plugins.export.ExifDriver.Values.ValueNumber;
 import com.almalence.plugins.export.ExifDriver.Values.ValueRationals;
-import com.almalence.opencam.R;
+
 import com.almalence.util.exifreader.imaging.jpeg.JpegMetadataReader;
 import com.almalence.util.exifreader.imaging.jpeg.JpegProcessingException;
 import com.almalence.util.exifreader.metadata.Directory;
@@ -103,10 +103,12 @@ import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
 /* <!-- +++
 import com.almalence.opencam_plus.cameracontroller.CameraController;
 import com.almalence.opencam_plus.ui.GUI.ShutterButton;
+import com.almalence.opencam_plus.R;
  +++ --> */
 //<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.GUI.ShutterButton;
+import com.almalence.opencam.R;
 //-+- -->
 
 /***

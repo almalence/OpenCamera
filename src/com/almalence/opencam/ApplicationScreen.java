@@ -67,13 +67,19 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.almalence.opencam.R;
-
+/* <!-- +++
+import com.almalence.opencam_plus.cameracontroller.CameraController;
+import com.almalence.opencam_plus.ui.GLLayer;
+import com.almalence.opencam_plus.ui.GUI;
+import com.almalence.opencam_plus.R;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
-import com.almalence.sony.cameraremote.DeviceListAdapter;
-import com.almalence.sony.cameraremote.SimpleSsdpClient;
+import com.almalence.opencam.R;
+//-+- -->
+
 import com.almalence.sony.cameraremote.SimpleStreamSurfaceView;
 import com.almalence.util.Util;
 

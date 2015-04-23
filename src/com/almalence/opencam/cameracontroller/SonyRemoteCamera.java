@@ -1,4 +1,9 @@
+/* <!-- +++
+package com.almalence.opencam_plus.cameracontroller;
++++ --> */
+//<!-- -+-
 package com.almalence.opencam.cameracontroller;
+//-+- -->
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -26,10 +31,20 @@ import android.util.Log;
 import android.view.View;
 
 import com.almalence.SwapHeap;
+
+/* <!-- +++
+import com.almalence.opencam_plus.ApplicationInterface;
+import com.almalence.opencam_plus.ApplicationScreen;
+import com.almalence.opencam_plus.PluginManagerInterface;
+import com.almalence.opencam_plus.R;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginManagerInterface;
 import com.almalence.opencam.R;
+//-+- -->
+
 import com.almalence.sony.cameraremote.PictureCallbackSonyRemote;
 import com.almalence.sony.cameraremote.ServerDevice;
 import com.almalence.sony.cameraremote.SimpleCameraEventObserver;

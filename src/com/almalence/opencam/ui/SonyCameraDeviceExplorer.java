@@ -1,4 +1,9 @@
+/* <!-- +++
+package com.almalence.opencam_plus.ui;
++++ --> */
+//<!-- -+-
 package com.almalence.opencam.ui;
+//-+- -->
 
 import android.content.SharedPreferences;
 import android.net.wifi.WifiInfo;
@@ -11,9 +16,17 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+/* <!-- +++
+import com.almalence.opencam_plus.ApplicationScreen;
+import com.almalence.opencam_plus.R;
+import com.almalence.opencam_plus.cameracontroller.CameraController;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
+//-+- -->
+
 import com.almalence.sony.cameraremote.DeviceListAdapter;
 import com.almalence.sony.cameraremote.ServerDevice;
 import com.almalence.sony.cameraremote.SimpleSsdpClient;

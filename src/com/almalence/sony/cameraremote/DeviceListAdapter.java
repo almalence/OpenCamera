@@ -11,7 +11,12 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+/* <!-- +++
+import com.almalence.opencam_plus.R;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.R;
+//-+- -->
 import com.almalence.sony.cameraremote.ServerDevice.ApiService;
 
 public class DeviceListAdapter extends BaseAdapter {
