@@ -33,7 +33,7 @@ import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginCapture;
-import com.almalence.templatecamera.R;
+import com.almalence.opencam.R;
 
 /***
  * Implements burst capture plugin - captures predefined number of images

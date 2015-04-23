@@ -20,7 +20,7 @@ package com.almalence.plugins.processing.template;
 
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginProcessing;
-import com.almalence.templatecamera.R;
+import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 
 /***

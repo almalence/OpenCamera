@@ -29,7 +29,7 @@ import com.almalence.SwapHeap;
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginManagerInterface;
-import com.almalence.templatecamera.R;
+import com.almalence.opencam.R;
 import com.almalence.sony.cameraremote.PictureCallbackSonyRemote;
 import com.almalence.sony.cameraremote.ServerDevice;
 import com.almalence.sony.cameraremote.SimpleCameraEventObserver;

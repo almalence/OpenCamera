@@ -61,7 +61,7 @@ import com.almalence.util.ImageConversion;
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.PluginManagerInterface;
-import com.almalence.templatecamera.R;
+import com.almalence.opencam.R;
 
 //-+- -->
 /* <!-- +++

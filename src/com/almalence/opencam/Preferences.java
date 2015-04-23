@@ -26,7 +26,7 @@ package com.almalence.opencam;
 
 import java.util.List;
 
-import com.almalence.templatecamera.R;
+import com.almalence.opencam.R;
 
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;

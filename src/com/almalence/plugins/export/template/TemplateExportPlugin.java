@@ -26,7 +26,7 @@ import android.view.View;
 
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginExport;
-import com.almalence.templatecamera.R;
+import com.almalence.opencam.R;
 
 import com.almalence.ui.RotateImageView;
 import com.almalence.util.MLocation;

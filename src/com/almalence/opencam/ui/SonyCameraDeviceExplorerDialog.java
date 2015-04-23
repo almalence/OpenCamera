@@ -3,7 +3,7 @@ package com.almalence.opencam.ui;
 import android.content.Context;
 import android.view.Window;
 
-import com.almalence.templatecamera.R;
+import com.almalence.opencam.R;
 import com.almalence.ui.RotateDialog;
 import com.almalence.ui.RotateLayout;
 

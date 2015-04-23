@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
-import com.almalence.templatecamera.R;
+import com.almalence.opencam.R;
 
 public class RotateLayout extends ViewGroup
 {

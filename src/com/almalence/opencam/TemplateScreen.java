@@ -95,7 +95,7 @@ import com.almalence.opencam.ui.TemplateGUI;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
 import com.almalence.sony.cameraremote.SimpleStreamSurfaceView;
-import com.almalence.templatecamera.R;
+import com.almalence.opencam.R;
 
 /***
  * MainScreen - main activity screen with camera functionality

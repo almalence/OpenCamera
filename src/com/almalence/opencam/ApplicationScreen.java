@@ -67,7 +67,7 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.almalence.templatecamera.R;
+import com.almalence.opencam.R;
 
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.GLLayer;

@@ -12,7 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.almalence.opencam.ApplicationScreen;
-import com.almalence.templatecamera.R;
+import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.sony.cameraremote.DeviceListAdapter;
 import com.almalence.sony.cameraremote.ServerDevice;

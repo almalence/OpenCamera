@@ -93,7 +93,7 @@ import com.almalence.plugins.export.ExifDriver.ExifManager;
 import com.almalence.plugins.export.ExifDriver.Values.ValueByteArray;
 import com.almalence.plugins.export.ExifDriver.Values.ValueNumber;
 import com.almalence.plugins.export.ExifDriver.Values.ValueRationals;
-import com.almalence.templatecamera.R;
+import com.almalence.opencam.R;
 import com.almalence.util.exifreader.imaging.jpeg.JpegMetadataReader;
 import com.almalence.util.exifreader.imaging.jpeg.JpegProcessingException;
 import com.almalence.util.exifreader.metadata.Directory;

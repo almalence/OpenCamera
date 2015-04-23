@@ -49,7 +49,7 @@ import com.almalence.asynctaskmanager.Task;
 
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.cameracontroller.CameraController.Size;
-import com.almalence.templatecamera.R;
+import com.almalence.opencam.R;
 
 
 /***

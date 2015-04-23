@@ -29,7 +29,7 @@ import android.widget.ImageView.ScaleType;
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.Plugin;
 import com.almalence.opencam.PluginViewfinder;
-import com.almalence.templatecamera.R;
+import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 
 /***

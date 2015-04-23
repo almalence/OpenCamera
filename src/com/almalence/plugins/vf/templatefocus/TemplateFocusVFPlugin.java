@@ -44,7 +44,7 @@ import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginViewfinder;
-import com.almalence.templatecamera	.R;
+import com.almalence.opencam.R;
 import com.almalence.opencam.SoundPlayer;
 import com.almalence.opencam.cameracontroller.CameraController;
 
