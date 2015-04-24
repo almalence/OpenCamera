@@ -1,4 +1,9 @@
+/* <!-- +++
+package com.almalence.opencam_plus.ui;
++++ --> */
+//<!-- -+-
 package com.almalence.opencam.ui;
+//-+- -->
 
 import android.content.SharedPreferences;
 import android.net.wifi.WifiInfo;
@@ -9,19 +14,22 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.almalence.opencam.ApplicationInterface;
+/* <!-- +++
+import com.almalence.opencam_plus.ApplicationScreen;
+import com.almalence.opencam_plus.R;
+import com.almalence.opencam_plus.cameracontroller.CameraController;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
+//-+- -->
+
 import com.almalence.sony.cameraremote.DeviceListAdapter;
 import com.almalence.sony.cameraremote.ServerDevice;
 import com.almalence.sony.cameraremote.SimpleSsdpClient;
-import com.almalence.ui.RotateDialog;
 
 public class SonyCameraDeviceExplorer
 {
@@ -73,7 +81,7 @@ public class SonyCameraDeviceExplorer
 
 		// Show Wi-Fi SSID.
 		TextView textWifiSsid = (TextView) dialog.findViewById(R.id.text_wifi_ssid);
-		WifiManager wifiManager = (WifiManager) MainScreen.getInstance().getSystemService(MainScreen.WIFI_SERVICE);
+		WifiManager wifiManager = (WifiManager) ApplicationScreen.instance.getSystemService(ApplicationScreen.WIFI_SERVICE);
 		if (wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLED)
 		{
 			WifiInfo wifiInfo = wifiManager.getConnectionInfo();
@@ -133,7 +141,7 @@ public class SonyCameraDeviceExplorer
 						mListAdapter.addDevice(device);
 						mListAdapter.notifyDataSetChanged();
 						if (dialog != null) {
-							dialog.setRotate(AlmalenceGUI.mDeviceOrientation);
+							dialog.setRotate(GUI.mDeviceOrientation);
 						}
 					}
 				});
@@ -172,7 +180,7 @@ public class SonyCameraDeviceExplorer
 	public void setOrientation()
 	{
 		if (dialog != null) {
-			dialog.setRotate(AlmalenceGUI.mDeviceOrientation);
+			dialog.setRotate(GUI.mDeviceOrientation);
 		}
 	}
 }

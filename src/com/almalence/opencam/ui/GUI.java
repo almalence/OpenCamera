@@ -15,13 +15,13 @@ The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
  */
-
 /* <!-- +++
- package com.almalence.opencam_plus.ui;
- +++ --> */
-// <!-- -+-
+package com.almalence.opencam_plus.ui;
++++ --> */
+//<!-- -+-
 package com.almalence.opencam.ui;
 //-+- -->
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,15 +35,13 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 /* <!-- +++
- import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.Plugin;
- import com.almalence.opencam_plus.R;
- import com.almalence.opencam_plus.cameracontroller.CameraController;
- +++ --> */
-// <!-- -+-
+import com.almalence.opencam_plus.ApplicationScreen;
+import com.almalence.opencam_plus.Plugin;
+import com.almalence.opencam_plus.cameracontroller.CameraController;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.Plugin;
-import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 

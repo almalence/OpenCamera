@@ -33,8 +33,6 @@ import com.almalence.opencam_plus.ApplicationScreen;
 import com.almalence.opencam.ApplicationScreen;
 //-+- -->
 
-import com.almalence.plugins.processing.groupshot.AlmaShotSeamless;
-
 public class ImageConversion
 {
 	public static native int JpegConvert(byte[] in, int sx, int sy, boolean rotate, boolean mirrored, int rotationDegree);
@@ -53,6 +51,8 @@ public class ImageConversion
 			int outHeight);
 	
 	public static native void addCornersRGBA8888(byte[] rgb_out, int outWidth, int outHeight);
+	
+	public static synchronized native int[] NV21toARGB(int inptr, Size src, Rect rect, Size dst);
 
 	
 	static
@@ -162,7 +162,7 @@ public class ImageConversion
 //		Log.e("ImageConversion", "decodeYUVfromBuffer. width = " + width + " height = " + height);
 //		Log.e("ImageConversion", "decode to width = " + scaledWidth + " height = " + scaledHeight);
 		Rect rect = new Rect(0, 0, width, height);		
-		Bitmap bitmap = Bitmap.createBitmap(AlmaShotSeamless.NV21toARGB(yuv, mInputFrameSize, rect, mOutputFrameSize), scaledWidth, scaledHeight, Config.ARGB_8888);
+		Bitmap bitmap = Bitmap.createBitmap(NV21toARGB(yuv, mInputFrameSize, rect, mOutputFrameSize), scaledWidth, scaledHeight, Config.ARGB_8888);
 		
 //		File saveDir = PluginManager.getSaveDir(false);
 //		Calendar d = Calendar.getInstance();

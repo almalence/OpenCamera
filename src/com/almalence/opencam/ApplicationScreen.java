@@ -67,25 +67,24 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+/* <!-- +++
+import com.almalence.opencam_plus.cameracontroller.CameraController;
+import com.almalence.opencam_plus.ui.GLLayer;
+import com.almalence.opencam_plus.ui.GUI;
+import com.almalence.opencam_plus.R;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
-import com.almalence.sony.cameraremote.DeviceListAdapter;
-import com.almalence.sony.cameraremote.SimpleSsdpClient;
+import com.almalence.opencam.R;
+//-+- -->
+
 import com.almalence.sony.cameraremote.SimpleStreamSurfaceView;
 import com.almalence.util.Util;
-//<!-- -+-
-
-//-+- -->
-/* <!-- +++
- import com.almalence.opencam_plus.cameracontroller.CameraController;
- //import com.almalence.opencam_plus.cameracontroller.HALv3;
- import com.almalence.opencam_plus.ui.GLLayer;
- import com.almalence.opencam_plus.ui.GUI;
- +++ --> */
 
 /***
- * MainScreen - main activity screen with camera functionality
+ * ApplicationScreen - main activity screen with camera functionality
  * 
  * Passes all main events to PluginManager
  ***/
@@ -122,6 +121,8 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	protected int						captureFormat			= CameraController.JPEG;
 
 	public GUI							guiManager				= null;
+	
+	protected PluginManagerBase			pluginManager			= null;	
 
 	// OpenGL layer. May be used to allow capture plugins to draw overlaying
 	// preview, such as night vision or panorama frames.
@@ -229,6 +230,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	// public static String sPhotoTimeLapseIsRunningPref;
 	// public static String sPhotoTimeLapseCount;
 
+	public static String				sUseFrontCameraPref;
 	// protected static String sShutterPref;
 	// protected static String sShotOnTapPref;
 	// protected static String sVolumeButtonPref;
@@ -264,15 +266,25 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	// public static String sDefaultInfoSetPref;
 	// public static String sSWCheckedPref;
 	public static String				sSavePathPref;
-	// public static String sExportNamePref;
-	// public static String sExportNamePrefixPref;
-	// public static String sExportNamePostfixPref;
+	public static String 				sExportNamePref;
+	public static String 				sExportNamePrefixPref;
+	public static String 				sExportNamePostfixPref;
 	public static String				sSaveToPref;
 	// public static String sSortByDataPref;
 	// public static String sEnableExifOrientationTagPref;
 	// public static String sAdditionalRotationPref;
+	
+	public static String				sTimestampDate;
+	public static String				sTimestampAbbreviation;
+	public static String				sTimestampTime;
+	public static String				sTimestampSeparator;
+	public static String				sTimestampCustomText;
+	public static String				sTimestampColor;
+	public static String				sTimestampFontSize;
 	//
 	public static String				sExpoPreviewModePref;
+	
+	public static String				sDefaultModeName;
 	//
 	// public static String sDefaultModeName;
 	//
@@ -297,6 +309,8 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		sMeteringModePref = getResources().getString(R.string.Preference_MeteringModeValue);
 		sCameraModePref = getResources().getString(R.string.Preference_CameraModeValue);
 
+		sUseFrontCameraPref = getResources().getString(R.string.Preference_UseFrontCameraValue);
+		
 		sImageSizeRearPref = getResources().getString(R.string.Preference_ImageSizeRearValue);
 		sImageSizeFrontPref = getResources().getString(R.string.Preference_ImageSizeFrontValue);
 		sImageSizeSonyRemotePref = getResources().getString(R.string.Preference_ImageSizeSonyRemoteValue);
@@ -320,13 +334,26 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 		sAntibandingPref = getResources().getString(R.string.Preference_AntibandingValue);
 
+		sExportNamePref = getResources().getString(R.string.Preference_ExportNameValue);
+		sExportNamePrefixPref = getResources().getString(R.string.Preference_SavePathPrefixValue);
+		sExportNamePostfixPref = getResources().getString(R.string.Preference_SavePathPostfixValue);
 		sSavePathPref = getResources().getString(R.string.Preference_SavePathValue);
 		sSaveToPref = getResources().getString(R.string.Preference_SaveToValue);
+		
+		sTimestampDate = getResources().getString(R.string.Preference_TimestampDateValue);
+		sTimestampAbbreviation = getResources().getString(R.string.Preference_TimestampAbbreviationValue);
+		sTimestampTime = getResources().getString(R.string.Preference_TimestampTimeValue);
+		sTimestampSeparator = getResources().getString(R.string.Preference_TimestampSeparatorValue);
+		sTimestampCustomText = getResources().getString(R.string.Preference_TimestampCustomTextValue);
+		sTimestampColor = getResources().getString(R.string.Preference_TimestampColorValue);
+		sTimestampFontSize = getResources().getString(R.string.Preference_TimestampFontSizeValue);
 
 		sAELockPref = getResources().getString(R.string.Preference_AELockValue);
 		sAWBLockPref = getResources().getString(R.string.Preference_AWBLockValue);
 
 		sExpoPreviewModePref = getResources().getString(R.string.Preference_ExpoBracketingPreviewModePref);
+		
+		sDefaultModeName = getResources().getString(R.string.Preference_DefaultModeName);
 
 		mainContext = this.getBaseContext();
 		messageHandler = new Handler(this);
@@ -343,6 +370,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		// set some common view here
 		setContentView(R.layout.opencamera_main_layout);
 
+		createPluginManager();
 		duringOnCreate();
 
 		try
@@ -352,10 +380,10 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		{
 			Log.e("ApplicationScreen", exp.getMessage());
 		}
-		CameraController.onCreate(ApplicationScreen.instance, ApplicationScreen.instance, PluginManager.getInstance(),
+		CameraController.onCreate(ApplicationScreen.instance, ApplicationScreen.instance, pluginManager,
 				ApplicationScreen.instance.messageHandler);
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
 
 		// set preview, on click listener and surface buffers
@@ -447,6 +475,14 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		afterOnCreate();
 	}
 
+	
+	abstract protected void createPluginManager();
+	
+	public static PluginManagerBase getPluginManager()
+	{
+		return ApplicationScreen.instance.pluginManager;
+	}
+	
 	// At this point CameraController, GUIManager are not created yet.
 	// Use this method to initialize some shared preferences or do any other
 	// logic that isn't depended from OpenCamera core's objects.
@@ -638,7 +674,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	protected void onApplicationStart()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		int cameraSelected = prefs.getInt(MainScreen.sCameraModePref, 0);
+		int cameraSelected = prefs.getInt(ApplicationScreen.sCameraModePref, 0);
 		if (cameraSelected == CameraController.getNumberOfCameras() - 1)
 		{
 			prefs.edit().putInt(ApplicationScreen.sCameraModePref, 0).commit();
@@ -647,7 +683,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 		CameraController.onStart();
 		ApplicationScreen.getGUIManager().onStart();
-		PluginManager.getInstance().onStart();
+		ApplicationScreen.getPluginManager().onStart();
 	}
 
 	@Override
@@ -663,7 +699,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		orientationMain = 0;
 		orientationMainPrevious = 0;
 		ApplicationScreen.getGUIManager().onStop();
-		PluginManager.getInstance().onStop();
+		ApplicationScreen.getPluginManager().onStop();
 		CameraController.onStop();
 
 		if (!CameraController.isRemoteCamera())
@@ -688,8 +724,13 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	protected void onApplicationDestroy()
 	{
+//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+//
+//		prefs.edit().putBoolean(ApplicationScreen.sPhotoTimeLapseIsRunningPref, false);
+//		prefs.edit().putBoolean(ApplicationScreen.sPhotoTimeLapseActivePref, false);
+		
 		ApplicationScreen.getGUIManager().onDestroy();
-		PluginManager.getInstance().onDestroy();
+		ApplicationScreen.getPluginManager().onDestroy();
 		CameraController.onDestroy();
 
 		this.hideOpenGLLayer();
@@ -726,16 +767,16 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 					captureFormat = CameraController.JPEG;
 
-					String modeId = PluginManager.getInstance().getActiveModeID();
+					String modeId = ApplicationScreen.getPluginManager().getActiveModeID();
 					if (CameraController.isRemoteCamera() && !(modeId.contains("single") || modeId.contains("video")))
 					{
-						prefs.edit().putInt(MainScreen.sCameraModePref, 0).commit();
+						prefs.edit().putInt(ApplicationScreen.sCameraModePref, 0).commit();
 						CameraController.setCameraIndex(0);
 						guiManager.setCameraModeGUI(0);
 					}
 
 					ApplicationScreen.getGUIManager().onResume();
-					PluginManager.getInstance().onResume();
+					ApplicationScreen.getPluginManager().onResume();
 					CameraController.onResume();
 					ApplicationScreen.instance.mPausing = false;
 
@@ -814,7 +855,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	{
 		if (!CameraController.isRemoteCamera())
 		{
-			if (CameraController.isUseHALv3() || PluginManager.getInstance().isRestart())
+			if (CameraController.isUseHALv3() || ApplicationScreen.getPluginManager().isRestart())
 			{
 				new CountDownTimer(100, 100)
 				{
@@ -825,8 +866,8 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 					public void onFinish()
 					{
-						PluginManager.getInstance().switchMode(
-								ConfigParser.getInstance().getMode(PluginManager.getInstance().getActiveModeID()));
+						ApplicationScreen.getPluginManager().switchMode(
+								ConfigParser.getInstance().getMode(ApplicationScreen.getPluginManager().getActiveModeID()));
 					}
 				}.start();
 			} else
@@ -868,7 +909,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		mApplicationStarted = false;
 
 		ApplicationScreen.getGUIManager().onPause();
-		PluginManager.getInstance().onPause(true);
+		ApplicationScreen.getPluginManager().onPause(true);
 
 		orientListener.disable();
 
@@ -933,7 +974,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 		if (isCameraConfiguring)
 		{
-			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_SURFACE_CONFIGURED, 0);
+			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_SURFACE_CONFIGURED, 0);
 			isCameraConfiguring = false;
 		} else if (!isCreating)
 		{
@@ -1004,7 +1045,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 		// ----- Select preview dimensions with ratio correspondent to
 		// full-size image
-		PluginManager.getInstance().setCameraPreviewSize();
+		ApplicationScreen.getPluginManager().setCameraPreviewSize();
 		// prepare list of surfaces to be used in capture requests
 		if (!CameraController.isRemoteCamera())
 		{
@@ -1032,14 +1073,14 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 		if (createGUI)
 		{
-			PluginManager.getInstance().onGUICreate();
+			ApplicationScreen.getPluginManager().onGUICreate();
 			ApplicationScreen.getGUIManager().onGUICreate();
 		}
 	}
 
 	protected void onCameraConfigured()
 	{
-		PluginManager.getInstance().setupCameraParameters();
+		ApplicationScreen.getPluginManager().setupCameraParameters();
 		Camera.Parameters cp = CameraController.getCameraParameters();
 
 		if (!CameraController.isRemoteCamera())
@@ -1064,8 +1105,8 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 				if (cp != null)
 				{
 					SharedPreferences prefs = PreferenceManager
-							.getDefaultSharedPreferences(MainScreen.getMainContext());
-					int antibanding = Integer.parseInt(prefs.getString(MainScreen.sAntibandingPref, "3"));
+							.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+					int antibanding = Integer.parseInt(prefs.getString(ApplicationScreen.sAntibandingPref, "3"));
 					switch (antibanding)
 					{
 					case 0:
@@ -1105,13 +1146,13 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 			if (!CameraController.isUseHALv3())
 			{
 				guiManager.onCameraCreate();
-				PluginManager.getInstance().onCameraParametersSetup();
+				ApplicationScreen.getPluginManager().onCameraParametersSetup();
 				guiManager.onPluginsInitialized();
 			}
 		} else
 		{
 			guiManager.onCameraCreate();
-			PluginManager.getInstance().onCameraParametersSetup();
+			ApplicationScreen.getPluginManager().onCameraParametersSetup();
 			guiManager.onPluginsInitialized();
 		}
 
@@ -1146,22 +1187,22 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 					} else
 					{
 						guiManager.onCameraCreate();
-						PluginManager.getInstance().onCameraParametersSetup();
+						ApplicationScreen.getPluginManager().onCameraParametersSetup();
 						guiManager.onPluginsInitialized();
 					}
 				} else
 				{
 					guiManager.onCameraCreate();
-					PluginManager.getInstance().onCameraParametersSetup();
+					ApplicationScreen.getPluginManager().onCameraParametersSetup();
 					guiManager.onPluginsInitialized();
 				}
 
-				PluginManager.getInstance().onCameraSetup();
+				ApplicationScreen.getPluginManager().onCameraSetup();
 				guiManager.onCameraSetup();
 				ApplicationScreen.mApplicationStarted = true;
 
 				if (ApplicationScreen.isForceClose)
-					PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_APPLICATION_STOP, 0);
+					ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_APPLICATION_STOP, 0);
 			}
 
 			@Override
@@ -1257,7 +1298,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	// interface (message/handler)
 	public static void takePicture()
 	{
-		PluginManager.getInstance().takePicture();
+		ApplicationScreen.getPluginManager().takePicture();
 	}
 
 	@Override
@@ -1418,7 +1459,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public void onShutter()
 	{
 		Log.e("ApplicationScreen", "onShutter");
-		PluginManager.getInstance().onShutter();
+		ApplicationScreen.getPluginManager().onShutter();
 	}
 
 	public static boolean isForceClose()
@@ -1461,7 +1502,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 				break;
 		case ApplicationInterface.MSG_SURFACE_READY:
 			{
-				String modeName = PluginManager.getInstance().getActiveModeID();
+				String modeName = ApplicationScreen.getPluginManager().getActiveModeID();
 				if (!CameraController.isRemoteCamera())
 				{
 					// if both surface is created and camera device is opened
@@ -1477,7 +1518,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 					if (!modeName.contains("video"))
 					{
 						CameraController.populateCameraDimensionsSonyRemote();
-						PluginManager.getInstance().selectImageDimension();
+						ApplicationScreen.getPluginManager().selectImageDimension();
 					}
 					configureCamera(true);
 				}
@@ -1486,7 +1527,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		case ApplicationInterface.MSG_SURFACE_CONFIGURED:
 			{
 				createCaptureSession();
-				PluginManager.getInstance().onGUICreate();
+				ApplicationScreen.getPluginManager().onGUICreate();
 				ApplicationScreen.getGUIManager().onGUICreate();
 				mCameraStarted = true;
 			}
@@ -1495,7 +1536,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 			mCameraStarted = false;
 			break;
 		default:
-			PluginManager.getInstance().handleMessage(msg);
+			ApplicationScreen.getPluginManager().handleMessage(msg);
 			break;
 		}
 
@@ -1504,7 +1545,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	public void menuButtonPressed()
 	{
-		PluginManager.getInstance().menuButtonPressed();
+		ApplicationScreen.getPluginManager().menuButtonPressed();
 	}
 
 	public void disableCameraParameter(GUI.CameraParameter iParam, boolean bDisable, boolean bInitMenu)
@@ -1723,7 +1764,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	@Override
 	public void setFocusModePref(int iFocusMode)
 	{
-		String modeName = PluginManager.getInstance().getActiveModeID();
+		String modeName = ApplicationScreen.getPluginManager().getActiveModeID();
 		String frontFocusMode = null;
 		String backFocusMode = null;
 
@@ -1750,7 +1791,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	@Override
 	public int getFocusModePref(int defaultMode)
 	{
-		String modeName = PluginManager.getInstance().getActiveModeID();
+		String modeName = ApplicationScreen.getPluginManager().getActiveModeID();
 		String frontFocusMode = null;
 		String backFocusMode = null;
 

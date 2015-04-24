@@ -313,6 +313,11 @@ public class MainScreen extends ApplicationScreen
 	// public static int sDefaultFlashValue = CameraParameters.FLASH_MODE_OFF;
 	// public static int sDefaultMeteringValue =
 	// CameraParameters.meteringModeAuto;
+	
+	protected void createPluginManager()
+	{
+		pluginManager = PluginManager.getInstance();
+	}
 
 	@Override
 	protected void duringOnCreate()

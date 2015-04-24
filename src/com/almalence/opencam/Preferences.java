@@ -21,10 +21,16 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
-
 //-+- -->
 
 import java.util.List;
+
+/* <!-- +++
+import com.almalence.opencam_plus.R;
++++ --> */
+//<!-- -+-
+import com.almalence.opencam.R;
+//-+- -->
 
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
