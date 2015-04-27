@@ -491,6 +491,22 @@
 					android:layout_weight="1"
 			   		android:layout_gravity="center"
 			   		android:layout_margin="7dip"
+			   		android:onClick="onButtonClick"/>
+			<com.almalence.ui.RotateImageView android:id="@+id/imageSizeButton"
+					android:background="@android:color/transparent"					
+					android:layout_height="match_parent"
+					android:layout_width="0dip"
+					android:layout_weight="1"
+			   		android:layout_gravity="center"
+			   		android:layout_margin="7dip"
+			   		android:onClick="onButtonClick"/>
+			<com.almalence.ui.RotateImageView android:id="@+id/colorEffectButton"
+					android:background="@android:color/transparent"					
+					android:layout_height="match_parent"
+					android:layout_width="0dip"
+					android:layout_weight="1"
+			   		android:layout_gravity="center"
+			   		android:layout_margin="7dip"
 			   		android:onClick="onButtonClick"/>			
 			<com.almalence.ui.RotateImageView android:id="@+id/camerachangeButton"
 					android:background="@android:color/transparent"					
@@ -584,7 +600,7 @@
 	<com.almalence.ui.Panel
 	    xmlns:my="http://schemas.android.com/apk/res/com.almalence.opencam"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="500dp"
 		android:id="@+id/topPanel"
 		android:gravity="top"
 		my:position="top"
@@ -619,7 +635,7 @@
 	<com.almalence.ui.Panel
 	    xmlns:my="http://schemas.android.com/apk/res/com.almalence.opencam_plus"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="500dp"
 		android:id="@+id/topPanel"
 		android:gravity="top"
 		my:position="top"
@@ -657,10 +673,9 @@
 	<RelativeLayout
 		android:id="@+id/buttonsLayout"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"	 
+		android:layout_height="match_parent"	 
 		android:layout_marginTop="@dimen/buttonsLayoutMarginTop"
-		android:layout_above="@+id/mainButtons"
-		android:layout_below="@+id/topPanel">
+		android:layout_above="@+id/mainButtons">
 			<LinearLayout
 		 	 	android:id="@+id/evLayout"
 		 	 	android:background="@drawable/ev_background"

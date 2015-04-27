@@ -164,6 +164,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static String							meteringCenter;
 	private static String							meteringSpot;
 
+	private static String							colorEffectOffSystem;
+	private static String							colorEffectAquaSystem;
+	private static String							colorEffectBlackboardSystem;
+	private static String							colorEffectMonoSystem;
+	private static String							colorEffectNegativeSystem;
+	private static String							colorEffectPosterizeSystem;
+	private static String							colorEffectSepiaSystem;
+	private static String							colorEffectSolarizeSystem;
+	private static String							colorEffectWhiteboardSystem;
+
 	// List of localized names for camera parameters values
 	private static Map<Integer, String>				mode_scene;
 	private static Map<String, Integer>				key_scene;
@@ -176,6 +186,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	private static Map<Integer, String>				mode_flash;
 	private static Map<String, Integer>				key_flash;
+
+	private static Map<Integer, String>				mode_color_effect;
+	private static Map<String, Integer>				key_color_effect;
 
 	private static List<Integer>					iso_values;
 	private static List<String>						iso_default;
@@ -223,6 +236,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static boolean							mFocusModeSupported				= false;
 	private static boolean							mFlashModeSupported				= false;
 	private static boolean							mISOSupported					= false;
+	private static boolean							mCollorEffectSupported			= false;
 
 	private static int								minExpoCompensation				= 0;
 	private static int								maxExpoCompensation				= 0;
@@ -234,6 +248,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static int[]							supportedWBModes;
 	private static int[]							supportedFocusModes;
 	private static int[]							supportedFlashModes;
+	private static int[]							supportedCollorEffects;
 	private static int[]							supportedISOModes;
 
 	private static int								maxFocusRegionsSupported;
@@ -261,6 +276,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static List<CameraController.Size>		MultishotResolutionsSizeList;
 	public static List<String>						MultishotResolutionsIdxesList;
 	public static List<String>						MultishotResolutionsNamesList;
+
+	public static List<String>						CollorEffectsNamesList;
 
 	public static List<Integer>						FastIdxelist;
 
@@ -388,6 +405,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		meteringCenter = mainContext.getResources().getString(R.string.meteringCenterSystem);
 		meteringSpot = mainContext.getResources().getString(R.string.meteringSpotSystem);
 
+		colorEffectOffSystem = mainContext.getResources().getString(R.string.colorEffectOffSystem);
+		colorEffectAquaSystem = mainContext.getResources().getString(R.string.colorEffectAquaSystem);
+		colorEffectBlackboardSystem = mainContext.getResources().getString(R.string.colorEffectBlackboardSystem);
+		colorEffectMonoSystem = mainContext.getResources().getString(R.string.colorEffectMonoSystem);
+		colorEffectNegativeSystem = mainContext.getResources().getString(R.string.colorEffectNegativeSystem);
+		colorEffectPosterizeSystem = mainContext.getResources().getString(R.string.colorEffectPosterizeSystem);
+		colorEffectSepiaSystem = mainContext.getResources().getString(R.string.colorEffectSepiaSystem);
+		colorEffectSolarizeSystem = mainContext.getResources().getString(R.string.colorEffectSolarizeSystem);
+		colorEffectWhiteboardSystem = mainContext.getResources().getString(R.string.colorEffectWhiteboardSystem);
+
 		// List of localized names for camera parameters values
 		mode_scene = new HashMap<Integer, String>()
 		{
@@ -508,6 +535,36 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				put(flashOn, CameraParameters.FLASH_MODE_SINGLE);
 				put(flashRedEye, CameraParameters.FLASH_MODE_REDEYE);
 				put(flashTorch, CameraParameters.FLASH_MODE_TORCH);
+			}
+		};
+
+		mode_color_effect = new HashMap<Integer, String>()
+		{
+			{
+				put(CameraParameters.COLOR_EFFECT_MODE_OFF, colorEffectOffSystem);
+				put(CameraParameters.COLOR_EFFECT_MODE_AQUA, colorEffectAquaSystem);
+				put(CameraParameters.COLOR_EFFECT_MODE_BLACKBOARD, colorEffectBlackboardSystem);
+				put(CameraParameters.COLOR_EFFECT_MODE_MONO, colorEffectMonoSystem);
+				put(CameraParameters.COLOR_EFFECT_MODE_NEGATIVE, colorEffectNegativeSystem);
+				put(CameraParameters.COLOR_EFFECT_MODE_POSTERIZE, colorEffectPosterizeSystem);
+				put(CameraParameters.COLOR_EFFECT_MODE_SEPIA, colorEffectSepiaSystem);
+				put(CameraParameters.COLOR_EFFECT_MODE_SOLARIZE, colorEffectSolarizeSystem);
+				put(CameraParameters.COLOR_EFFECT_MODE_WHITEBOARD, colorEffectWhiteboardSystem);
+			}
+		};
+
+		key_color_effect = new HashMap<String, Integer>()
+		{
+			{
+				put(colorEffectOffSystem, CameraParameters.COLOR_EFFECT_MODE_OFF);
+				put(colorEffectAquaSystem, CameraParameters.COLOR_EFFECT_MODE_AQUA);
+				put(colorEffectBlackboardSystem, CameraParameters.COLOR_EFFECT_MODE_BLACKBOARD);
+				put(colorEffectMonoSystem, CameraParameters.COLOR_EFFECT_MODE_MONO);
+				put(colorEffectNegativeSystem, CameraParameters.COLOR_EFFECT_MODE_NEGATIVE);
+				put(colorEffectPosterizeSystem, CameraParameters.COLOR_EFFECT_MODE_POSTERIZE);
+				put(colorEffectSepiaSystem, CameraParameters.COLOR_EFFECT_MODE_SEPIA);
+				put(colorEffectSolarizeSystem, CameraParameters.COLOR_EFFECT_MODE_SOLARIZE);
+				put(colorEffectWhiteboardSystem, CameraParameters.COLOR_EFFECT_MODE_WHITEBOARD);
 			}
 		};
 
@@ -1559,6 +1616,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			mSceneModeSupported = getSceneModeSupported();
 			mWBSupported = getWhiteBalanceSupported();
 			mFocusModeSupported = getFocusModeSupported();
+			mCollorEffectSupported = getCollorEffectSupported();
 			mFlashModeSupported = getFlashModeSupported();
 			mISOSupported = getISOSupported();
 
@@ -1581,6 +1639,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			supportedWBModes = getSupportedWhiteBalanceInternal();
 			supportedFocusModes = getSupportedFocusModesInternal();
 			supportedFlashModes = getSupportedFlashModesInternal();
+			supportedCollorEffects = getSupportedCollorEffectsInternal();
+			fillCollorEffectNames();
+
 			supportedISOModes = getSupportedISOInternal();
 
 			maxFocusRegionsSupported = CameraController.getMaxNumFocusAreas();
@@ -2262,6 +2323,104 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return flashModes;
 	}
 
+	private static int[] getSupportedCollorEffectsInternal()
+	{
+		if (!CameraController.isHALv3)
+		{
+			List<String> collorEffects;
+			if (cameraParameters != null)
+			{
+				collorEffects = cameraParameters.getSupportedColorEffects();
+			} else
+			{
+				collorEffects = camera.getParameters().getSupportedColorEffects();
+			}
+
+			if (camera != null && collorEffects != null)
+			{
+				Set<String> known_collor_effects = CameraController.key_color_effect.keySet();
+				collorEffects.retainAll(known_collor_effects);
+				int[] collorEffect = new int[collorEffects.size()];
+				for (int i = 0; i < collorEffects.size(); i++)
+				{
+					String mode = collorEffects.get(i);
+					if (CameraController.key_color_effect.containsKey(mode))
+						collorEffect[i] = CameraController.key_color_effect.get(mode).byteValue();
+				}
+
+				return collorEffect;
+			}
+
+			return new int[0];
+		} else
+			return HALv3.getSupportedCollorEffectsHALv3();
+	}
+
+	private static void fillCollorEffectNames()
+	{
+		CollorEffectsNamesList = new ArrayList<String>();
+		for (int mode : supportedCollorEffects)
+		{
+			switch (mode)
+			{
+			case CameraParameters.COLOR_EFFECT_MODE_OFF:
+				CollorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectOff));
+				break;
+			case CameraParameters.COLOR_EFFECT_MODE_AQUA:
+				CollorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectAqua));
+				break;
+			case CameraParameters.COLOR_EFFECT_MODE_BLACKBOARD:
+				CollorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectBlackboard));
+				break;
+			case CameraParameters.COLOR_EFFECT_MODE_MONO:
+				CollorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectMono));
+				break;
+			case CameraParameters.COLOR_EFFECT_MODE_NEGATIVE:
+				CollorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectNegative));
+				break;
+			case CameraParameters.COLOR_EFFECT_MODE_POSTERIZE:
+				CollorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectPosterize));
+				break;
+			case CameraParameters.COLOR_EFFECT_MODE_SEPIA:
+				CollorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectSepia));
+				break;
+			case CameraParameters.COLOR_EFFECT_MODE_SOLARIZE:
+				CollorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectSolarize));
+				break;
+			case CameraParameters.COLOR_EFFECT_MODE_WHITEBOARD:
+				CollorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectWhiteboard));
+				break;
+			}
+		}
+	}
+
+	private static boolean getCollorEffectSupported()
+	{
+		int[] supported_collor_effect = getSupportedCollorEffectsInternal();
+		return (supported_collor_effect != null && supported_collor_effect.length > 0);
+	}
+
+	public static boolean isCollorEffectSupported()
+	{
+		return mCollorEffectSupported;
+	}
+
+	public static int[] getSupportedColorEffects()
+	{
+		return supportedCollorEffects;
+	}
+
+	public static List<String> getSupportedColorEffectsNames()
+	{
+		ArrayList<String> collorEffects = new ArrayList<String>();
+		int[] modes = supportedCollorEffects;
+		for (int i : modes)
+		{
+			collorEffects.add(mode_color_effect.get(i));
+		}
+		return collorEffects;
+	}
+
 	private static boolean getISOSupported()
 	{
 		if (!CameraController.isHALv3)
@@ -2854,12 +3013,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			HALv3.setCameraExposureTimeHALv3(iTime);
 		}
 	}
-	
+
 	public static long getCameraExposureTime()
 	{
-		if (!CameraController.isHALv3) {
+		if (!CameraController.isHALv3)
+		{
 			return -1;
-		} else {
+		} else
+		{
 			return HALv3.getCameraCurrentExposureHALv3();
 		}
 	}
@@ -2943,6 +3104,30 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		mFocusState = state;
 
 		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_FOCUS_STATE_CHANGED);
+	}
+
+	public static void setCameraCollorEffect(int effect)
+	{
+		if (!CameraController.isHALv3)
+		{
+			if (camera != null)
+			{
+				try
+				{
+					Camera.Parameters params = camera.getParameters();
+					if (params != null)
+					{
+						String collorEffect = CameraController.mode_color_effect.get(effect);
+						params.setColorEffect(collorEffect);
+						setCameraParameters(params);
+					}
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+		} else
+			HALv3.setCameraCollorEffectHALv3(effect);
 	}
 
 	public static int getFocusState()
@@ -3113,8 +3298,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			takeYUVFrame = (format == CameraController.YUV) || (format == CameraController.YUV_RAW);
 			if (evRequested != null && evRequested.length >= total_frames)
 				CameraController.setExposure();
-			else {
-				if (CameraController.getFocusMode() == CameraParameters.AF_MODE_CONTINUOUS_PICTURE) {
+			else
+			{
+				if (CameraController.getFocusMode() == CameraParameters.AF_MODE_CONTINUOUS_PICTURE)
+				{
 					camera.autoFocus(new AutoFocusCallback()
 					{
 						@Override
@@ -3123,7 +3310,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 							CameraController.takeImage();
 						}
 					});
-				} else {
+				} else
+				{
 					CameraController.takeImage();
 				}
 			}

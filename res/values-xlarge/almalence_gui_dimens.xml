@@ -38,7 +38,7 @@
    
    <dimen name="paramsLayoutVideoHeight">150dp</dimen>
    
-   <dimen name="buttonsLayoutMarginTop">25dp</dimen>
+   <dimen name="buttonsLayoutMarginTop">70dp</dimen>
    
    <dimen name="exposureButtonSize">50dp</dimen>
    <dimen name="exposureSeekBarWidth">330dp</dimen>

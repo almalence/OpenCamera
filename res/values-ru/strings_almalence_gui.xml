@@ -7,6 +7,7 @@
     <string name="Pref_Common_UseFrontCamera_Title">Фронтальная камера</string>
     <string name="Pref_Common_UseFrontCamera_Summary">Использовать фронтальную камеру</string>
     <string name="Pref_Common_ImageSize_Title">Размер снимка</string>
+    <string name="Pref_Common_ColorEffect_Title">Цветовой эффект</string>
     <string name="Pref_Comon_SmartMultishot_And_Night_ImageSize_Title">Размер снимка (Multishot, Ночь)</string>
     <string name="Pref_Comon_SmartMultishot_And_Super_ImageSize_Title">Размер снимка (Multishot)</string>
     <string name="Pref_Common_ImageSize_Summary">\nВнимание: некоторые режимы имеют индивидуальные настройки размера снимка</string>
@@ -96,6 +97,16 @@
     
     <string name="isoAuto">авто</string> 
     
+    <string name="colorEffectOff">Нет</string>
+    <string name="colorEffectAqua">Вода</string>
+    <string name="colorEffectBlackboard">Классная доска</string>
+    <string name="colorEffectMono">Моно</string>
+    <string name="colorEffectNegative">Негатив</string>
+    <string name="colorEffectPosterize">Постеризация</string>
+    <string name="colorEffectSepia">Сепия</string>
+    <string name="colorEffectSolarize">Засвет</string>
+    <string name="colorEffectWhiteboard">Доска</string>
+    
     <string name="settings_mode_scene">Сцена</string>
     <string name="settings_mode_wb">Баланс белого</string>
     <string name="settings_mode_focus">Фокусировка</string>
@@ -105,6 +116,8 @@
     <string name="settings_mode_front">Фронтальная</string>
     <string name="settings_mode_exposure">Выдержка</string>
     <string name="settings_mode_self_timer">Таймер</string>
+    <string name="settings_mode_image_size">Размер снимка</string>
+    <string name="settings_mode_color_effect">Цветовой эффект</string>
     <string name="settings_mode_moresettings">Настройки</string>
     
     <string name="settings_not_available">Недоступно в выбранном режиме</string>

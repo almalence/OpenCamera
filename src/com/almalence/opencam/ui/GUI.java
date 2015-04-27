@@ -65,6 +65,7 @@ public abstract class GUI
 	public boolean			mFlashModeSupported				= false;
 	public boolean			mISOSupported					= false;
 	public boolean			mCameraChangeSupported			= false;
+	public boolean			mCollorEffectsSupported			= false;
 
 	public boolean			mEVLockSupported				= false;
 	public boolean			mWBLockSupported				= false;
