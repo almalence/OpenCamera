@@ -482,6 +482,8 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		{
 			e.printStackTrace();
 		}
+		about_string.append("\nApplication name: ");
+		about_string.append(MainScreen.getInstance().getResources().getString(R.string.Pref_About));
 		about_string.append("\nAndroid API version: ");
 		about_string.append(Build.VERSION.SDK_INT);
 		about_string.append("\nDevice manufacturer: ");

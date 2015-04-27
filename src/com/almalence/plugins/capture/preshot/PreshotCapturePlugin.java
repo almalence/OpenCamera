@@ -275,7 +275,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	public void onExportFinished()
 	{
 		inCapture = false;
-		if (modeSwitcher != null)
+		if (modeSwitcher != null && isBuffering == false)
 			modeSwitcher.setEnabled(true);
 		if (AutostartPreference)
 			StartBuffering();

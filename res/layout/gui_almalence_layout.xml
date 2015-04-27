@@ -302,7 +302,7 @@
 						  android:textSize="@dimen/exposureTimeTitleSize"
 						  android:paddingLeft="10dp"							  
 						  android:textStyle="bold"
-						  android:text="EV"
+						  android:text="S"
 						  android:textColor="@android:color/white"							  
 						  android:gravity="center"
 						  android:layout_gravity="center_vertical"/>

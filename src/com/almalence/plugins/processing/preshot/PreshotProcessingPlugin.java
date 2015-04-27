@@ -42,6 +42,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
@@ -86,10 +87,14 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	private static int		imgCnt							= 0;
 
 	private Bitmap[]		mini_frames;
-	// private AtomicBoolean miniframesReady = new AtomicBoolean(false);
-
+	
+	private boolean[]		selected_frames;
+	private int				iNumSelected 					= 0; 
+	
 	private Button			mSaveButton;
 	private Button			mSaveAllButton;
+	
+	private CheckBox			mCheckBox;
 
 	private boolean			isSaveAll						= false;
 
@@ -138,18 +143,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
 				PluginManager.getInstance().getActiveMode().modeSaveName);
 
-		// if (0 == PreShot.MakeCopy())
-		// {
-		// Log.v("Preshot processing", "Preshot processing make copy failed.");
-		// return;
-		// }
-		// PreShot.FreeBuffer();
-
-		// isSlowMode = Boolean
-		// .parseBoolean(PluginManager.getInstance().getFromSharedMem("isslowmodeenabled"
-		// + sessionID));
-		// processing only in fast mode.
-
 		ProcessingImages();
 
 		imgCnt = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("amountofcapturedframes" + sessionID));
@@ -188,51 +181,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 
 		for (int i = 0; i < imagesAmount; i++)
 		{
-			// if (!isSlowMode)
-			// {
-			// byte[] data = null;
-			//
-			// if (mCameraMirrored)
-			// {
-			// data = PreShot.GetFromBufferNV21(i, 0, 0, 1);
-			// } else
-			// data = PreShot.GetFromBufferNV21(i, 0, 0, 0);
-			//
-			// if (data.length == 0)
-			// {
-			// return null;
-			// }
-			//
-			// int frame = SwapHeap.SwapToHeap(data);
-			//
-			// PluginManager.getInstance().addToSharedMem("resultframe" + (i +
-			// 1) + sessionID, String.valueOf(frame));
-			// PluginManager.getInstance().addToSharedMem("resultframelen" + (i
-			// + 1) + sessionID,
-			// String.valueOf(data.length));
-			//
-			// } else if (isSlowMode)
-			// {
-			// byte[] data = PreShot.GetFromBufferSimpleNV21(i,
-			// MainScreen.getImageHeight(),
-			// MainScreen.getImageWidth());
-			//
-			// if (data.length == 0)
-			// {
-			// return null;
-			// }
-			//
-			// int frame = SwapHeap.SwapToHeap(data);
-			//
-			// PluginManager.getInstance().addToSharedMem("resultframe" + (i +
-			// 1) + sessionID, String.valueOf(frame));
-			// PluginManager.getInstance().addToSharedMem("resultframelen" + (i
-			// + 1) + sessionID,
-			// String.valueOf(data.length));
-			// PluginManager.getInstance().addToSharedMem("resultframeformat" +
-			// (i + 1) + sessionID, "jpeg");
-			// }
-
 			int iOrientation = PreShot.getOrientation(i);
 			if (isSlowMode)
 				PluginManager.getInstance().addToSharedMem("resultframeorientation" + (i + 1) + sessionID,
@@ -333,7 +281,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 
 	public void setupSaveButton()
 	{
-		// put save button on screen
+		// put save this button on screen
 		mSaveButton = new Button(MainScreen.getInstance());
 		mSaveButton.setBackgroundResource(R.drawable.plugin_processing_preshot_savethis_background);
 		mSaveButton.setOnClickListener(this);
@@ -349,7 +297,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		mSaveButton.setRotation(mLayoutOrientationCurrent);
 		mSaveButton.invalidate();
 
-		// put save button on screen
+		// put save all button on screen
 		mSaveAllButton = new Button(MainScreen.getInstance());
 		mSaveAllButton.setBackgroundResource(R.drawable.plugin_processing_preshot_saveall_background);
 		mSaveAllButton.setOnClickListener(this);
@@ -363,6 +311,22 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 				saveLayoutParams2);
 		mSaveAllButton.setRotation(mLayoutOrientationCurrent);
 		mSaveAllButton.invalidate();
+		
+		// put save all button on screen
+		mCheckBox = new CheckBox(MainScreen.getInstance());
+		mCheckBox.setOnClickListener(this);
+		LayoutParams saveLayoutParams3 = new LayoutParams(
+				RelativeLayout.LayoutParams.WRAP_CONTENT,
+				RelativeLayout.LayoutParams.WRAP_CONTENT);
+		saveLayoutParams3.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+		saveLayoutParams3.addRule(RelativeLayout.CENTER_HORIZONTAL);
+		saveLayoutParams3.setMargins(0, (int) (density * 8), 0, 0);
+		((RelativeLayout) postProcessingView.findViewById(R.id.preshot_processingLayout2)).addView(mCheckBox,
+				saveLayoutParams3);
+		mCheckBox.setScaleX(1.5f);
+		mCheckBox.setScaleY(1.5f);
+		mCheckBox.setRotation(mLayoutOrientationCurrent);
+		mCheckBox.invalidate();
 	}
 
 	public void saveTask()
@@ -397,6 +361,15 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 			isSaveAll = true;
 			saveTask();
 		}
+		else if (v == mCheckBox)
+		{
+			//mark image checked/unchecked for saving
+			selected_frames[idx]=mCheckBox.isChecked();
+			if (mCheckBox.isChecked())
+				iNumSelected++;
+			else
+				iNumSelected--;
+		}
 	}
 
 	@Override
@@ -424,7 +397,9 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 
 	private void prepareMiniFrames()
 	{
-		this.mini_frames = new Bitmap[imgCnt];
+		mini_frames = new Bitmap[imgCnt];
+		selected_frames = new boolean[imgCnt];
+		iNumSelected = 0;
 
 		for (int i = 0; i < imgCnt; i++)
 		{
@@ -458,6 +433,8 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 			idx = imgCnt - 1;
 		if (imgCnt == 1 || mini_frames.length == 1)
 			idx = 0;
+		
+		mCheckBox.setChecked(selected_frames[idx]);
 
 		Bitmap photo = mini_frames[idx];
 		if (photo != null)
@@ -888,9 +865,17 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		if (imagesAmount == 0)
 			imagesAmount = 1;
 
+		int j=0;
 		for (int i = 0; i < imagesAmount; i++)
 		{
-			pushToExport(i);
+			if (iNumSelected == 0)
+				pushToExport(i, i);
+			else if (selected_frames[i])
+			{
+				pushToExport(i, j);
+				PluginManager.getInstance().addToSharedMem("amountofresultframes" + sessionID, String.valueOf(iNumSelected));
+				j++;
+			}
 		}
 
 		PluginManager.getInstance().addToSharedMem("sessionID", String.valueOf(sessionID));
@@ -898,7 +883,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 
 	private void saveThis()
 	{
-		pushToExport(idx);
+		pushToExport(idx, idx);
 
 		int index = idx + 1;
 
@@ -906,7 +891,10 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		PluginManager.getInstance().addToSharedMem("resultframeindex" + sessionID, String.valueOf(index));
 	}
 
-	private void pushToExport(int i)
+	//i and j should be the same in common case
+	//but if we need to save not all images, but some, than i is real position of original image, j is position of result image
+	//i - position in captured buffer, j position in buffer to save
+	private void pushToExport(int i, int j)
 	{
 		if (!isSlowMode)
 		{
@@ -922,8 +910,8 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 
 			int frame = SwapHeap.SwapToHeap(data);
 
-			PluginManager.getInstance().addToSharedMem("resultframe" + (i + 1) + sessionID, String.valueOf(frame));
-			PluginManager.getInstance().addToSharedMem("resultframelen" + (i + 1) + sessionID,
+			PluginManager.getInstance().addToSharedMem("resultframe" + (j + 1) + sessionID, String.valueOf(frame));
+			PluginManager.getInstance().addToSharedMem("resultframelen" + (j + 1) + sessionID,
 					String.valueOf(data.length));
 
 		} else if (isSlowMode)
@@ -936,10 +924,10 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 
 			int frame = SwapHeap.SwapToHeap(data);
 
-			PluginManager.getInstance().addToSharedMem("resultframe" + (i + 1) + sessionID, String.valueOf(frame));
-			PluginManager.getInstance().addToSharedMem("resultframelen" + (i + 1) + sessionID,
+			PluginManager.getInstance().addToSharedMem("resultframe" + (j + 1) + sessionID, String.valueOf(frame));
+			PluginManager.getInstance().addToSharedMem("resultframelen" + (j + 1) + sessionID,
 					String.valueOf(data.length));
-			PluginManager.getInstance().addToSharedMem("resultframeformat" + (i + 1) + sessionID, "jpeg");
+			PluginManager.getInstance().addToSharedMem("resultframeformat" + (j + 1) + sessionID, "jpeg");
 		}
 	}
 }

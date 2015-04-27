@@ -771,22 +771,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 																							}
 																						};
 
-	private static final Map<String, String>				UNLOCK_MODE_PREFERENCES		= new HashMap<String, String>()
-																						{
-																							{
-																								put("hdrmode",
-																										"plugin_almalence_hdr");
-																								put("movingobjects",
-																										"plugin_almalence_moving_burst");
-																								put("sequence",
-																										"plugin_almalence_hdr");
-																								put("groupshot",
-																										"plugin_almalence_groupshot");
-																								put("panorama_augmented",
-																										"plugin_almalence_panorama");
-																							}
-																						};
-
 	protected static final LinkedHashMap<Integer, Long>		EXPOSURE_TIME_VALUES		= new LinkedHashMap<Integer, Long>()
 																						{
 																							{
@@ -1516,19 +1500,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			store.HideUnlockControl();
 		else
 		{
-			String modeID = PluginManager.getInstance().getActiveMode().modeID;
-			visibilityUnlockControl(UNLOCK_MODE_PREFERENCES.get(modeID));
-		}
-	}
-
-	private void visibilityUnlockControl(String prefName)
-	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-
-		if (Boolean.parseBoolean(prefs.getString(prefName, "false")))
-			store.HideUnlockControl();
-		else
 			store.ShowUnlockControl();
+		}
 	}
 
 	// -+- -->
