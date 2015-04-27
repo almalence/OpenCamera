@@ -103,7 +103,7 @@
     <string name="settings_mode_iso">ISO</string>
     <string name="settings_mode_rear">Основная</string>
     <string name="settings_mode_front">Фронтальная</string>
-    <string name="settings_mode_exposure">Выдержка</string>
+    <string name="settings_mode_exposure">"Экспокоррекция"</string>
     <string name="settings_mode_self_timer">Таймер</string>
     <string name="settings_mode_moresettings">Настройки</string>
     

@@ -240,7 +240,7 @@
     <string name="meteringMatrixSystem">Matrix</string>
     <string name="meteringCenterSystem">Center-weighted</string>
     <string name="meteringSpotSystem">Spot</string>
-    <string name="meteringManualSystem">Manual exposure</string>
+    <string name="meteringManualSystem">Shutter speed</string>
     
     <string name="settings_mode_scene">Scene mode</string>
     <string name="settings_mode_wb">White balance</string>
@@ -250,7 +250,7 @@
     <string name="settings_mode_metering">Exposure metering mode</string>
     <string name="settings_mode_rear">Rear camera</string>
     <string name="settings_mode_front">Front camera</string>
-    <string name="settings_mode_exposure">Exposure</string>
+    <string name="settings_mode_exposure">Exposure compensation</string>
     <string name="settings_mode_exposuretime">Exposure time</string>
     <string name="settings_mode_focusdistance">Focus distance</string>
     <string name="settings_mode_moresettings">More settings</string>
