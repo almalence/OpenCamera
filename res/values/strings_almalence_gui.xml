@@ -160,6 +160,13 @@
     <string name="wbTwilightSystem">twilight</string>
     <string name="wbShadeSystem">shade</string>
     
+    <string name="wbAutoSonyRemote">Auto WB</string>
+    <string name="wbIncandescentSonyRemote">Incandescent</string>
+    <string name="wbWarmFluorescentSonyRemote">Fluorescent: Warm White </string>
+    <string name="wbDaylightSonyRemote">Daylight</string>
+    <string name="wbCloudyDaylightSonyRemote">Cloudy</string>
+    <string name="wbShadeSonyRemote">Shade</string>
+    
     <string name="wbAutoKey">00_auto</string>
     <string name="wbCloudyDaylightKey">01_cloudy-daylight</string>
     <string name="wbDaylightKey">02_daylight</string>
@@ -262,6 +269,10 @@
     <string name="meteringCenterSystem">Center-weighted</string>
     <string name="meteringSpotSystem">Spot</string>
     <string name="meteringManualSystem">Shutter speed</string>
+    
+    <string name="cameraBack">Back</string>
+    <string name="cameraFront">Front</string>
+    <string name="cameraSony">Sony</string>
     
     <string name="settings_mode_scene">Scene mode</string>
     <string name="settings_mode_wb">White balance</string>

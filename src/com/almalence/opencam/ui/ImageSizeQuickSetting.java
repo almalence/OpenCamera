@@ -33,18 +33,20 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.R;
-import com.almalence.opencam.cameracontroller.CameraController;
+
 import com.almalence.plugins.capture.panoramaaugmented.PanoramaAugmentedCapturePlugin;
 import com.almalence.plugins.capture.video.VideoCapturePlugin;
 import com.almalence.ui.ListPreferenceAdapter;
 import com.almalence.ui.RotateDialog;
 //<!-- -+-
+import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 /* <!-- +++
+ import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.R;
  +++ --> */
 
@@ -69,14 +71,14 @@ public class ImageSizeQuickSetting
 	{
 		int currentIdx = -1;
 
-		String opt1 = MainScreen.sImageSizeRearPref;
-		String opt2 = MainScreen.sImageSizeFrontPref;
+		String opt1 = ApplicationScreen.sImageSizeRearPref;
+		String opt2 = ApplicationScreen.sImageSizeFrontPref;
 
-		final String modeId = PluginManager.getInstance().getActiveModeID();
+		final String modeId = ApplicationScreen.getPluginManager().getActiveModeID();
 		if (modeId.equals("panorama_augmented"))
 		{
-			opt1 = MainScreen.sImageSizePanoramaBackPref;
-			opt2 = MainScreen.sImageSizePanoramaFrontPref;
+			opt1 = ApplicationScreen.sImageSizePanoramaBackPref;
+			opt2 = ApplicationScreen.sImageSizePanoramaFrontPref;
 			PanoramaAugmentedCapturePlugin.onDefaultSelectResolutons();
 			currentIdx = PanoramaAugmentedCapturePlugin.prefResolution;
 			mEntries = PanoramaAugmentedCapturePlugin.getResolutionspicturenameslist().toArray(
@@ -85,9 +87,9 @@ public class ImageSizeQuickSetting
 					new String[PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().size()]);
 		} else if (modeId.equals("nightmode") || modeId.equals("multishot"))
 		{
-			opt1 = MainScreen.sImageSizeMultishotBackPref;
-			opt2 = MainScreen.sImageSizeMultishotFrontPref;
-			currentIdx = Integer.parseInt(CameraController.MultishotResolutionsIdxesList.get(MainScreen
+			opt1 = ApplicationScreen.sImageSizeMultishotBackPref;
+			opt2 = ApplicationScreen.sImageSizeMultishotFrontPref;
+			currentIdx = Integer.parseInt(CameraController.MultishotResolutionsIdxesList.get(ApplicationScreen
 					.selectImageDimensionMultishot()));
 			mEntries = CameraController.MultishotResolutionsNamesList
 					.toArray(new String[CameraController.MultishotResolutionsNamesList.size()]);
@@ -95,11 +97,11 @@ public class ImageSizeQuickSetting
 					.toArray(new String[CameraController.MultishotResolutionsIdxesList.size()]);
 		} else if (modeId.equals("video"))
 		{
-			opt1 = MainScreen.sImageSizeVideoBackPref;
-			opt2 = MainScreen.sImageSizeVideoFrontPref;
+			opt1 = ApplicationScreen.sImageSizeVideoBackPref;
+			opt2 = ApplicationScreen.sImageSizeVideoFrontPref;
 
 			int idx = 0;
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 			currentIdx = Integer.parseInt(prefs.getString(CameraController.getCameraIndex() == 0 ? opt1 : opt2, "2"));
 
 			CharSequence[] entriesTmp = new CharSequence[6];
@@ -157,9 +159,9 @@ public class ImageSizeQuickSetting
 			}
 		} else
 		{
-			opt1 = MainScreen.sImageSizeRearPref;
-			opt2 = MainScreen.sImageSizeFrontPref;
-			currentIdx = Integer.parseInt(MainScreen.getImageSizeIndex());
+			opt1 = ApplicationScreen.sImageSizeRearPref;
+			opt2 = ApplicationScreen.sImageSizeFrontPref;
+			currentIdx = ApplicationScreen.instance.getImageSizeIndex();
 
 			if (currentIdx == -1)
 			{
@@ -209,13 +211,13 @@ public class ImageSizeQuickSetting
 					mClickedDialogEntryIndex = position;
 					Object newValue = mEntryValues[mClickedDialogEntryIndex];
 
-					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 					prefs.edit()
 							.putString(CameraController.getCameraIndex() == 0 ? pref1 : pref2,
 									String.valueOf(newValue.toString())).commit();
 
-					MainScreen.getInstance().pauseMain();
-					MainScreen.getInstance().resumeMain();
+					ApplicationScreen.instance.pauseMain();
+					ApplicationScreen.instance.resumeMain();
 				}
 				dialog.dismiss();
 			}

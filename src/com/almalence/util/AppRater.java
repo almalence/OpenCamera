@@ -38,6 +38,7 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.R;
 
@@ -182,27 +183,27 @@ public class AppRater
 
 	private static void contactSupport()
 	{
-		final float density = MainScreen.getAppResources().getDisplayMetrics().density;
+		final float density = ApplicationScreen.getAppResources().getDisplayMetrics().density;
 
-		LinearLayout ll = new LinearLayout(MainScreen.getInstance());
+		LinearLayout ll = new LinearLayout(ApplicationScreen.instance);
 		ll.setOrientation(LinearLayout.VERTICAL);
 		ll.setPadding((int) (10 * density), (int) (10 * density), (int) (10 * density), (int) (10 * density));
 
-		TextView tv = new TextView(MainScreen.getInstance());
-		tv.setText(MainScreen.getAppResources().getString(R.string.raterSendReview));
+		TextView tv = new TextView(ApplicationScreen.instance);
+		tv.setText(ApplicationScreen.getAppResources().getString(R.string.raterSendReview));
 		tv.setWidth((int) (250 * density));
 		tv.setPadding((int) (4 * density), 0, (int) (4 * density), (int) (24 * density));
 		ll.addView(tv);
 
-		Button b1 = new Button(MainScreen.getInstance());
-		b1.setText(MainScreen.getAppResources().getString(R.string.raterSend));
+		Button b1 = new Button(ApplicationScreen.instance);
+		b1.setText(ApplicationScreen.getAppResources().getString(R.string.raterSend));
 		ll.addView(b1);
 
-		Button b2 = new Button(MainScreen.getInstance());
-		b2.setText(MainScreen.getAppResources().getString(R.string.raterNo));
+		Button b2 = new Button(ApplicationScreen.instance);
+		b2.setText(ApplicationScreen.getAppResources().getString(R.string.raterNo));
 		ll.addView(b2);
 
-		final AlertDialog.Builder builder = new AlertDialog.Builder(MainScreen.getInstance());
+		final AlertDialog.Builder builder = new AlertDialog.Builder(ApplicationScreen.instance);
 		builder.setView(ll);
 		final AlertDialog dialog = builder.create();
 		dialog.setOnCancelListener(new OnCancelListener()
@@ -210,7 +211,7 @@ public class AppRater
 			@Override
 			public void onCancel(DialogInterface dialog)
 			{
-				MainScreen.getInstance().finish();
+				ApplicationScreen.instance.finish();
 			}
 		});
 
@@ -223,9 +224,9 @@ public class AppRater
 				intent.putExtra(Intent.EXTRA_SUBJECT, "A Better Camera inapp review");
 				intent.setData(Uri.parse("mailto:support@abc.almalence.com"));
 				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				MainScreen.getInstance().startActivity(intent);
+				ApplicationScreen.instance.startActivity(intent);
 				dialog.dismiss();
-				MainScreen.getInstance().finish();
+				ApplicationScreen.instance.finish();
 			}
 		});
 		b2.setOnClickListener(new OnClickListener()
@@ -233,7 +234,7 @@ public class AppRater
 			public void onClick(View v)
 			{
 				dialog.dismiss();
-				MainScreen.getInstance().finish();
+				ApplicationScreen.instance.finish();
 			}
 		});
 		dialog.show();

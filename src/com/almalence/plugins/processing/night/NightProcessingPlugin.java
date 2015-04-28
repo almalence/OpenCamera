@@ -29,14 +29,14 @@ import com.almalence.SwapHeap;
 import com.almalence.asynctaskmanager.OnTaskCompleteListener;
 
 /* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginProcessing;
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
@@ -209,7 +209,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 	private void getPrefs()
 	{
 		// Get the xml/preferences.xml preferences
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getInstance()
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.instance
 				.getBaseContext());
 		NoisePreference = prefs.getString("noisePrefNight", "0");
 		GhostPreference = prefs.getString("ghostPrefNight", "1");

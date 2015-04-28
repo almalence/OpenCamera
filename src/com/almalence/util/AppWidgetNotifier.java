@@ -31,11 +31,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 //<!-- -+-
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.R;
 
 //-+- -->
 /* <!-- +++
+ import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.R;
  +++ --> */
@@ -86,7 +88,7 @@ public class AppWidgetNotifier
 	public static boolean showNotifierDialogIfNeeded(final Activity mContext)
 	{
 		// check if installed
-		if (isABCWidgetInstalled(MainScreen.getInstance()))
+		if (isABCWidgetInstalled(ApplicationScreen.instance))
 		{
 			return false;
 		}
@@ -126,17 +128,17 @@ public class AppWidgetNotifier
 		ll.addView(img);
 
 		TextView tv = new TextView(mContext);
-		tv.setText(MainScreen.getAppResources().getString(R.string.widgetAdvText));
+		tv.setText(ApplicationScreen.getAppResources().getString(R.string.widgetAdvText));
 		tv.setWidth((int) (250 * density));
 		tv.setPadding((int) (4 * density), 0, (int) (4 * density), (int) (24 * density));
 		ll.addView(tv);
 
 		Button b1 = new Button(mContext);
-		b1.setText(MainScreen.getAppResources().getString(R.string.widgetInstallText));
+		b1.setText(ApplicationScreen.getAppResources().getString(R.string.widgetInstallText));
 		ll.addView(b1);
 
 		Button b3 = new Button(mContext);
-		b3.setText(MainScreen.getAppResources().getString(R.string.widgetNoText));
+		b3.setText(ApplicationScreen.getAppResources().getString(R.string.widgetNoText));
 		ll.addView(b3);
 
 		final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);

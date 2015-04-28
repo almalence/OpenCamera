@@ -35,10 +35,10 @@ import com.almalence.SwapHeap;
 import com.almalence.util.Size;
 
 /* <!-- +++
-import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.ApplicationScreen;
 +++ --> */
 //<!-- -+-
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationScreen;
 //-+- -->
 
 public class Seamless
@@ -258,8 +258,8 @@ public class Seamless
 
 			Rect r = new Rect(mCrop[0], mCrop[1], mCrop[0] + mCrop[2], mCrop[1] + mCrop[3]);
 
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-			int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+			int jpegQuality = Integer.parseInt(prefs.getString(ApplicationScreen.sJPEGQualityPref, "95"));
 			if (!out.compressToJpeg(r, jpegQuality, os))
 			{
 				Log.d(TAG, "the compression is not successful");

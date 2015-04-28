@@ -60,11 +60,11 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
 /* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
@@ -758,8 +758,8 @@ public final class Util
 	public static void initializeMeteringMatrix()
 	{
 		Matrix matrix = new Matrix();
-		Util.prepareMatrix(matrix, CameraController.isFrontCamera(), 0, MainScreen.getPreviewWidth(),
-				MainScreen.getPreviewHeight());
+		Util.prepareMatrix(matrix, CameraController.isFrontCamera(), 0, ApplicationScreen.getPreviewWidth(),
+				ApplicationScreen.getPreviewHeight());
 		matrix.invert(mMeteringMatrix);
 	}
 

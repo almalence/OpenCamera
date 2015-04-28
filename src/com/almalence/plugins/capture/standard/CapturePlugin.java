@@ -30,6 +30,7 @@ import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.hardware.camera2.CaptureResult;
 
+import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.MainScreen;
@@ -43,6 +44,7 @@ import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam.cameracontroller.CameraController.Size;
 //-+- -->
 import com.almalence.ui.Switch.Switch;
 
@@ -89,8 +91,7 @@ public class CapturePlugin extends PluginCapture
 		{
 			//Log.d("Capture", "UpdateEv. isDRO = " + isDro + " EV = " + ev);
 			CameraController.setCameraExposureCompensation(ev);
-			PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
-			.putInt(MainScreen.sEvPref, ev).commit();
+			MainScreen.getInstance().setEVPref(ev);
 		}
 	}
 
@@ -103,7 +104,7 @@ public class CapturePlugin extends PluginCapture
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		ModePreference = prefs.getString("modeStandardPref", "1");
-		singleModeEV = prefs.getInt(MainScreen.sEvPref, 0);
+		singleModeEV = MainScreen.getInstance().getEVPref();
 		modeSwitcher.setTextOn("DRO On");
 		modeSwitcher.setTextOff("DRO Off");
 		modeSwitcher.setChecked(ModePreference.compareTo("0") == 0 ? true : false);
@@ -117,7 +118,7 @@ public class CapturePlugin extends PluginCapture
 
 				if (isDro)
 				{
-					singleModeEV = prefs.getInt(MainScreen.sEvPref, 0);
+					singleModeEV = MainScreen.getInstance().getEVPref();
 					//Log.d("Capture", "onCheckedChanged. isDro = true singleModeEV = " + singleModeEV);
 
 					ModePreference = "0";
@@ -161,6 +162,11 @@ public class CapturePlugin extends PluginCapture
 		{
 			// FixMe: why not setting exposure if we are in dro-off mode?
 			UpdateEv(true, singleModeEV);
+		}
+		
+		if (CameraController.isRemoteCamera()) {
+			Size imageSize = CameraController.getCameraImageSize();
+			CameraController.setPictureSize(imageSize.getWidth(), imageSize.getHeight());
 		}
 	}
 
@@ -212,8 +218,10 @@ public class CapturePlugin extends PluginCapture
 		params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 
-		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout3)).addView(this.modeSwitcher,
-				params);
+		if (!CameraController.isRemoteCamera()) {
+			((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout3)).addView(this.modeSwitcher,
+					params);
+		}
 
 		this.modeSwitcher.setLayoutParams(params);
 		// this.modeSwitcher.requestLayout();
@@ -230,7 +238,9 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void onStop()
 	{
-		MainScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
+		if (!CameraController.isRemoteCamera()) {
+			MainScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
+		}
 	}
 
 	@Override
@@ -255,6 +265,7 @@ public class CapturePlugin extends PluginCapture
 //		Log.d("CapturePlugin", "takePicture");
 		framesCaptured = 0;
 		resultCompleted = 0;
+		createRequestIDList(captureRAW? 2 : 1);
 		if (ModePreference.compareTo("0") == 0)
 			CameraController.captureImagesWithParams(1, CameraController.YUV, null, null, null, null, true, true);
 		else if(captureRAW)
@@ -288,7 +299,7 @@ public class CapturePlugin extends PluginCapture
 
 		if((captureRAW && framesCaptured == 2) || !captureRAW || ModePreference.compareTo("0") == 0)
 		{
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 			inCapture = false;
 			framesCaptured = 0;
 			resultCompleted = 0;
