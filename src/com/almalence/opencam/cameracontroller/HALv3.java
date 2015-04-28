@@ -1983,6 +1983,18 @@ public class HALv3
 				e.printStackTrace();
 			}
 			
+			// Force set IDLE to prevent canceling all the time.
+			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
+					CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE);
+			try
+			{
+				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
+						HALv3.previewRequestBuilder.build(), captureCallback, null);
+			} catch (CameraAccessException e)
+			{
+				e.printStackTrace();
+			}
+			
 			try
 			{
 				HALv3.getInstance().configurePreviewRequest(true);
@@ -2436,6 +2448,20 @@ public class HALv3
 			{
 				Log.e(TAG,
 						"resetCaptureCallback. CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL");
+				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
+						HALv3.previewRequestBuilder.build(), captureCallback, null);
+			} catch (CameraAccessException e)
+			{
+				e.printStackTrace();
+			}
+			
+			// Force set IDLE to prevent canceling all the time.
+			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
+					CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE);
+			try
+			{
+				Log.e(TAG,
+						"resetCaptureCallback. CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE");
 				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
 						HALv3.previewRequestBuilder.build(), captureCallback, null);
 			} catch (CameraAccessException e)
