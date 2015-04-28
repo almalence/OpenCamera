@@ -185,7 +185,7 @@ public class Panel extends LinearLayout
 	{
 		if (isOpen() ^ open)
 		{
-			mIsShrinking = !open;
+			mIsShrinking = open ? false : true;
 			if (animate)
 			{
 				mState = State.ABOUT_TO_ANIMATE;
@@ -299,7 +299,7 @@ public class Panel extends LinearLayout
 				canvas.translate(delta, 0);
 			}
 		}
-		if (mState == State.TRACKING || mState == State.FLYING)
+		if (mState == State.FLYING)
 		{
 			canvas.translate(mTrackX, mTrackY);
 			mContent.getBackground().setAlpha((int) (255 - 255 * Math.abs(mTrackY / mContentHeight)));
@@ -448,14 +448,14 @@ public class Panel extends LinearLayout
 																}
 																if (!mGestureDetector.onTouchEvent(event))
 																{
-																	if (action == MotionEvent.ACTION_UP)
-																	{
-																		// tup
-																		// up
-																		// after
-																		// scrolling
-																		post(startAnimation);
-																	}
+//																	if (action == MotionEvent.ACTION_UP)
+//																	{
+//																		// tup
+//																		// up
+//																		// after
+//																		// scrolling
+//																		post(startAnimation);
+//																	}
 																}
 																return false;
 															}
@@ -701,10 +701,14 @@ public class Panel extends LinearLayout
 
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
 		{
-			mState = State.FLYING;
-			mVelocity = mOrientation == VERTICAL ? velocityY : velocityX;
-			post(startAnimation);
-			return true;
+			if (!mIsShrinking) {
+				mState = State.FLYING;
+				mVelocity = mOrientation == VERTICAL ? velocityY : velocityX;
+				post(startAnimation);
+				return true;
+			} else {
+				return false;
+			}
 		}
 
 		public void onLongPress(MotionEvent e)

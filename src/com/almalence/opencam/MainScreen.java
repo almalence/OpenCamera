@@ -652,6 +652,41 @@ public class MainScreen extends ApplicationScreen
 		setImageSizeOptions(prefActivity, MODE_VIDEO);
 	}
 
+	private void setColorEffectOptions(PreferenceFragment prefActivity)
+	{
+		CharSequence[] entries = null;
+		CharSequence[] entryValues = null;
+
+		int[] colorEfects = CameraController.getSupportedColorEffects();
+		
+		
+		String opt1 = sRearColorEffectPref;
+		String opt2 = sFrontColorEffectPref;
+
+		entries = CameraController.CollorEffectsNamesList.toArray(
+				new CharSequence[CameraController.CollorEffectsNamesList.size()]);
+		entryValues = new CharSequence[colorEfects.length];
+		for (int i = 0; i < colorEfects.length; i++) {
+			entryValues[i] = Integer.toString(colorEfects[i]);
+		}
+
+		ListPreference lp = (ListPreference) prefActivity.findPreference(opt1);
+		ListPreference lp2 = (ListPreference) prefActivity.findPreference(opt2);
+
+		if (CameraController.isFrontCamera() && lp2 != null)
+			prefActivity.getPreferenceScreen().removePreference(lp2);
+		else if (lp != null && lp2 != null)
+		{
+			prefActivity.getPreferenceScreen().removePreference(lp);
+			lp = lp2;
+		}
+		if (lp != null)
+		{
+			lp.setEntries(entries);
+			lp.setEntryValues(entryValues);
+		}
+	}
+
 	private void setImageSizeOptions(PreferenceFragment prefActivity, int mode)
 	{
 		CharSequence[] entries = null;
@@ -943,6 +978,8 @@ public class MainScreen extends ApplicationScreen
 			else
 				fp.setEnabled(false);
 		}
+		
+		setColorEffectOptions(prefActivity);
 	}
 
 	@Override
@@ -952,18 +989,23 @@ public class MainScreen extends ApplicationScreen
 
 		boolean isHALv3 = prefs.getBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
 				(CameraController.isNexus() || CameraController.isFlex2()) ? true : false);
-//		String modeID = PluginManager.getInstance().getActiveModeID();
-//
-//		// Temp fix HDR modes for LG G Flex 2.
-//		boolean isLgGFlex2 = Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h959")
-//				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h510")
-//				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-f510k");
-//
-//		if (modeID.equals("video")
-//				|| (Build.MODEL.contains("Nexus 6") && (modeID.equals("pixfix") || modeID.equals("panorama_augmented")))
-//				|| (isLgGFlex2 && (modeID.equals("hdrmode") || modeID.equals("expobracketing"))))
-//			isHALv3 = false;
-//
+		// String modeID = PluginManager.getInstance().getActiveModeID();
+		//
+		// // Temp fix HDR modes for LG G Flex 2.
+		// boolean isLgGFlex2 = Build.MODEL.toLowerCase(Locale.US).replace(" ",
+		// "").contains("lg-h959")
+		// || Build.MODEL.toLowerCase(Locale.US).replace(" ",
+		// "").contains("lg-h510")
+		// || Build.MODEL.toLowerCase(Locale.US).replace(" ",
+		// "").contains("lg-f510k");
+		//
+		// if (modeID.equals("video")
+		// || (Build.MODEL.contains("Nexus 6") && (modeID.equals("pixfix") ||
+		// modeID.equals("panorama_augmented")))
+		// || (isLgGFlex2 && (modeID.equals("hdrmode") ||
+		// modeID.equals("expobracketing"))))
+		// isHALv3 = false;
+		//
 		CameraController.useHALv3(isHALv3);
 		prefs.edit()
 				.putBoolean(getResources().getString(R.string.Preference_UseHALv3Key), CameraController.isUseHALv3())
@@ -1902,7 +1944,8 @@ public class MainScreen extends ApplicationScreen
 		PluginManager.getInstance().menuButtonPressed();
 	}
 
-	public void disableCameraParameter(GUI.CameraParameter iParam, boolean bDisable, boolean bInitMenu, boolean bModeInit)
+	public void disableCameraParameter(GUI.CameraParameter iParam, boolean bDisable, boolean bInitMenu,
+			boolean bModeInit)
 	{
 		guiManager.disableCameraParameter(iParam, bDisable, bInitMenu, bModeInit);
 	}
@@ -2071,7 +2114,6 @@ public class MainScreen extends ApplicationScreen
 		return MainScreen.thiz.getResources();
 	}
 
-	
 	/*******************************************************/
 	/************************ Billing ************************/
 
@@ -3001,7 +3043,7 @@ public class MainScreen extends ApplicationScreen
 		// if all unlocked
 		if (unlockAllPurchased)
 			return true;
-		
+
 		// if mode free
 		if (mode.SKU == null)
 			return true;
@@ -3009,7 +3051,7 @@ public class MainScreen extends ApplicationScreen
 		{
 			int launchesLeft = MainScreen.thiz.getLeftLaunches(mode.modeID);
 
-			if ((1 == launchesLeft) || (3== launchesLeft))
+			if ((1 == launchesLeft) || (3 == launchesLeft))
 			{
 				// show internal store
 				launchPurchase(100);
@@ -3070,8 +3112,8 @@ public class MainScreen extends ApplicationScreen
 			Toast toast = Toast.makeText(thiz, left, Toast.LENGTH_LONG);
 			toast.setGravity(Gravity.CENTER, 0, 0);
 			toast.show();
-			
-			if ((1 == launchesLeft) || (2 == launchesLeft) || (3== launchesLeft))
+
+			if ((1 == launchesLeft) || (2 == launchesLeft) || (3 == launchesLeft))
 				// show internal store
 				launchPurchase(100);
 		}

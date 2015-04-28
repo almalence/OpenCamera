@@ -219,6 +219,8 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public static String				sFrontFocusModeVideoPref;
 	public static String				sRearFocusModePref;
 	public static String				sRearFocusModeVideoPref;
+	public static String				sFrontColorEffectPref;
+	public static String				sRearColorEffectPref;
 	public static String				sFlashModePref;
 	public static String				sISOPref;
 	public static String				sMeteringModePref;
@@ -299,6 +301,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public static int					sDefaultFlashValue		= CameraParameters.FLASH_MODE_OFF;
 	public static int					sDefaultMeteringValue	= CameraParameters.meteringModeAuto;
 	public static Long					lDefaultExposureTimeValue		= 33333333l;
+	public static int					sDefaultCollorEffectValue		= CameraParameters.COLOR_EFFECT_MODE_OFF;
 
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -311,6 +314,8 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		sFrontFocusModeVideoPref = getResources().getString(R.string.Preference_FrontFocusModeVideoValue);
 		sRearFocusModePref = getResources().getString(R.string.Preference_RearFocusModeValue);
 		sRearFocusModeVideoPref = getResources().getString(R.string.Preference_RearFocusModeVideoValue);
+		sFrontColorEffectPref = getResources().getString(R.string.Preference_FrontColorEffectValue);
+		sRearColorEffectPref = getResources().getString(R.string.Preference_RearColorEffectValue);
 		sFlashModePref = getResources().getString(R.string.Preference_FlashModeValue);
 		sISOPref = getResources().getString(R.string.Preference_ISOValue);
 		sMeteringModePref = getResources().getString(R.string.Preference_MeteringModeValue);

@@ -808,6 +808,19 @@ public class HALv3
 		return false;
 	}
 
+	public static int[] getSupportedCollorEffectsHALv3()
+	{
+		if (HALv3.getInstance().camCharacter != null
+				&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AVAILABLE_EFFECTS) != null)
+		{
+			int[] collorEffect = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AVAILABLE_EFFECTS);
+			if (collorEffect.length > 0)
+				return collorEffect;
+		}
+
+		return new int[0];
+	}
+	
 	public static int[] getSupportedISOModesHALv3()
 	{
 		//Temprorary disable ISO in camera2 mode, because SENSOR_SENSITIVITY parameter is ignored by the camera.
@@ -1090,6 +1103,15 @@ public class HALv3
 
 		PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).edit()
 				.putLong(ApplicationScreen.sExposureTimePref, iTime).commit();
+	}
+	
+	public static void setCameraCollorEffectHALv3(int mode)
+	{
+		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
+		{
+			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, mode);
+			HALv3.setRepeatingRequest();
+		}
 	}
 	
 	public static void resetCameraAEModeHALv3()
@@ -1393,6 +1415,17 @@ public class HALv3
 				rawRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
 		}
 
+		int collorEffect = CameraParameters.COLOR_EFFECT_MODE_OFF;
+		try {
+			collorEffect = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getString(
+					CameraController.isFrontCamera() ? ApplicationScreen.sRearColorEffectPref : ApplicationScreen.sFrontColorEffectPref, String.valueOf(ApplicationScreen.sDefaultCollorEffectValue)));
+		} catch (Exception e) {
+			collorEffect = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getInt(
+					CameraController.isFrontCamera() ? ApplicationScreen.sRearColorEffectPref : ApplicationScreen.sFrontColorEffectPref, ApplicationScreen.sDefaultCollorEffectValue);
+		}
+		stillRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, collorEffect);
+		precaptureRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, collorEffect);
+		
 		if (format == CameraController.JPEG)
 		{
 			stillRequestBuilder.addTarget(appInterface.getJPEGImageSurface());
@@ -1961,6 +1994,16 @@ public class HALv3
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
 			previewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, exTime);
 		}
+
+		int collorEffect = CameraParameters.COLOR_EFFECT_MODE_OFF;
+		try {
+			collorEffect = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getString(
+					CameraController.isFrontCamera() ? ApplicationScreen.sRearColorEffectPref : ApplicationScreen.sFrontColorEffectPref, String.valueOf(ApplicationScreen.sDefaultCollorEffectValue)));
+		} catch (Exception e) {
+			collorEffect = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getInt(
+					CameraController.isFrontCamera() ? ApplicationScreen.sRearColorEffectPref : ApplicationScreen.sFrontColorEffectPref, ApplicationScreen.sDefaultCollorEffectValue);
+		}
+		previewRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, collorEffect);
 		
 		previewRequestBuilder.addTarget(appInterface.getCameraSurface());
 		

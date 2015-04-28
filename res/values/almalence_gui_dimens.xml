@@ -35,7 +35,7 @@
    <dimen name="paramsLayoutHeight">60dp</dimen>
    <dimen name="paramsLayoutHeightScanner">62dp</dimen>
    
-   <dimen name="buttonsLayoutMarginTop">25dp</dimen>   
+   <dimen name="buttonsLayoutMarginTop">70dp</dimen>   
    
    <dimen name="exposureButtonSize">30dp</dimen>
    <dimen name="exposureSeekBarWidth">210dp</dimen>
