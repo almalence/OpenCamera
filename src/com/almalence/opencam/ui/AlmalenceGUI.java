@@ -3313,8 +3313,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 				}
 				icon_id = ICON_IMAGE_SIZE;
-				icon_text = MainScreen.getAppResources().getString(R.string.settings_mode_image_size) + "\n"
-						+ selectedSize;
+				icon_text = selectedSize;
 			}
 			break;
 		case COLLOR_EFFECT:
