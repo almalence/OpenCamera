@@ -2,9 +2,11 @@
 <resources>
     <string name="Preference_ImageSizeFrontValue">imageSizePrefCommonFront</string>
     <string name="Preference_ImageSizeRearValue">imageSizePrefCommonBack</string>
+    <string name="Preference_ImageSizeSonyRemoteValue">Preference_ImageSizeSonyRemoteValue</string>
     
     <string name="Preference_ImageSizePrefSmartMultishotBackValue">imageSizePrefSmartMultishotBack</string>
     <string name="Preference_ImageSizePrefSmartMultishotFrontValue">imageSizePrefSmartMultishotFront</string>
+    <string name="Preference_ImageSizePrefSmartMultishotSonyRemoteValue">Preference_ImageSizePrefSmartMultishotSonyRemoteValue</string>
     
     <string name="Preference_ImageSizePrefPanoramaBackValue">imageSizePrefPanoramaBack</string>
     <string name="Preference_ImageSizePrefPanoramaFrontValue">imageSizePrefPanoramaFront</string>
@@ -30,6 +32,7 @@
     <string name="Preference_ExposureTimeModeValue">Preference_ExposureTimeModeValue</string>
     <string name="Preference_FocusDistanceValue">Preference_FocusDistanceValue</string>
     <string name="Preference_FocusDistanceModeValue">Preference_FocusDistanceModeValue</string>
+    <string name="Preference_CameraModeValue">Preference_CameraModeValue</string>
     
     <string name="Preference_DelayedCaptureValue">Preference_DelayedCaptureValue</string>
     <string name="Preference_ShowDelayedCaptureValue">Preference_ShowDelayedCaptureValue</string>
@@ -76,5 +79,7 @@
     
     <string name="Preference_UseHALv3Key">useHALv3Pref</string>
     <string name="Preference_allowExternalGalleries">allowExternalGalleries</string>
+    
+    <string name="Preference_ExpoBracketingPreviewModePref">expo_previewMode</string>
     
 </resources>

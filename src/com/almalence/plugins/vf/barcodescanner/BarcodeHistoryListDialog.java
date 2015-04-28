@@ -18,11 +18,11 @@ import android.widget.TextView;
 
 
 /* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.R;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.R;
 //-+- -->
 import com.almalence.ui.RotateLayout;
@@ -42,7 +42,7 @@ public class BarcodeHistoryListDialog extends RotateDialog implements android.vi
 
 		// Set dialog size
 		Rect displayRectangle = new Rect();
-		Window window = MainScreen.getInstance().getWindow();
+		Window window = ApplicationScreen.instance.getWindow();
 		window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
 		layoutView.setMinimumWidth((int) (displayRectangle.width() * 0.7f));
 		layoutView.setMinimumHeight((int) (displayRectangle.height() * 0.7f));
@@ -50,7 +50,7 @@ public class BarcodeHistoryListDialog extends RotateDialog implements android.vi
 		setContentView(layoutView);
 
 		list = (ListView) findViewById(R.id.barcodesHistoryList);
-		BarcodeArrayAdapter adapter = new BarcodeArrayAdapter(MainScreen.getInstance(),
+		BarcodeArrayAdapter adapter = new BarcodeArrayAdapter(ApplicationScreen.instance,
 				BarcodeStorageHelper.getBarcodesList());
 		list.setAdapter(adapter);
 

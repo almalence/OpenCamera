@@ -19,11 +19,11 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.ui;
 
 /* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.R;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.R;
 //-+- -->
 
@@ -325,16 +325,16 @@ public class Panel extends LinearLayout
 																// if controls
 																// locked - skip
 																// any events
-																if (MainScreen.getGUIManager().lockControls)
+																if (ApplicationScreen.getGUIManager().lockControls)
 																	return false;
 
 																int action = event.getAction();
 
-																if (v == MainScreen.getPreviewSurfaceView()
-																		|| v == ((View) MainScreen.getInstance()
+																if (v == ApplicationScreen.getPreviewSurfaceView()
+																		|| v == ((View) ApplicationScreen.instance
 																				.findViewById(R.id.mainLayout1))
-																		|| v.getParent() == (View) MainScreen
-																				.getInstance().findViewById(
+																		|| v.getParent() == (View) ApplicationScreen
+																				.instance.findViewById(
 																						R.id.paramsLayout))
 																{
 																	if (!mOpened)
@@ -343,7 +343,7 @@ public class Panel extends LinearLayout
 																		if (action == MotionEvent.ACTION_DOWN)
 																		{
 																			if (event.getRawY() > ((20 + (toTheTop ? 0
-																					: 65)) * MainScreen
+																					: 65)) * ApplicationScreen
 																					.getMainContext().getResources()
 																					.getDisplayMetrics().density))
 																				return false;
@@ -355,7 +355,7 @@ public class Panel extends LinearLayout
 																		{
 																			if (!startScrolling)
 																				return false;
-																			if (event.getY() < ((toTheTop ? 0 : 65) * MainScreen
+																			if (event.getY() < ((toTheTop ? 0 : 65) * ApplicationScreen
 																					.getMainContext().getResources()
 																					.getDisplayMetrics().density))
 																				return false;
@@ -778,7 +778,7 @@ public class Panel extends LinearLayout
 		toTheTop = toTop;
 		LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) this.findViewById(R.id.panelHandle)
 				.getLayoutParams();
-		float d = MainScreen.getMainContext().getResources().getDisplayMetrics().density;
+		float d = ApplicationScreen.getMainContext().getResources().getDisplayMetrics().density;
 		if (toTheTop)
 		{
 			if (!isFromGUI && (moving != 0) && !locationTop && handle)

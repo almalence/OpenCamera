@@ -70,15 +70,16 @@ import android.widget.TextView;
 
 import com.almalence.SwapHeap;
 
+import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginProcessing;
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
@@ -135,13 +136,13 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		if (AutoAdjustments)
 		{
 			Message msg = new Message();
-			msg.what = PluginManager.MSG_PROCESSING_BLOCK_UI;
-			MainScreen.getMessageHandler().sendMessage(msg);
+			msg.what = ApplicationInterface.MSG_PROCESSING_BLOCK_UI;
+			ApplicationScreen.getMessageHandler().sendMessage(msg);
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_CONTROL_LOCKED);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, 
+					ApplicationInterface.MSG_CONTROL_LOCKED);
 
-			MainScreen.getGUIManager().lockControls = true;
+			ApplicationScreen.getGUIManager().lockControls = true;
 		}
 
 		sessionID = SessionID;
@@ -149,9 +150,9 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
 				PluginManager.getInstance().getActiveMode().modeSaveName);
 
-		mDisplayOrientationOnStartProcessing = MainScreen.getGUIManager().getDisplayOrientation();
-		mDisplayOrientationCurrent = MainScreen.getGUIManager().getDisplayOrientation();
-		int orientation = MainScreen.getGUIManager().getLayoutOrientation();
+		mDisplayOrientationOnStartProcessing = ApplicationScreen.getGUIManager().getDisplayOrientation();
+		mDisplayOrientationCurrent = ApplicationScreen.getGUIManager().getDisplayOrientation();
+		int orientation = ApplicationScreen.getGUIManager().getLayoutOrientation();
 //		Log.d("PreShot", "onStartProcessing layout orientation: " + orientation);
 		mLayoutOrientationCurrent = orientation == 0 || orientation == 180 ? orientation : (orientation + 180) % 360;
 		mCameraMirrored = CameraController.isFrontCamera();
@@ -264,8 +265,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			
 					if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
 					{
-						int imageWidth = MainScreen.getPreviewWidth();
-						int imageHeight = MainScreen.getPreviewHeight();
+						int imageWidth = ApplicationScreen.getPreviewWidth();
+						int imageHeight = ApplicationScreen.getPreviewHeight();
 						ImageConversion.TransformNV21N(yuvBuffer,
 								yuvBuffer,
 								imageWidth,
@@ -278,7 +279,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			} catch (IOException e)
 			{
 				e.printStackTrace();
-				MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+				ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED_IOEXCEPTION);
 			} catch (Exception e)
 			{
 				e.printStackTrace();
@@ -489,7 +490,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	private void getPrefs()
 	{
 		// Get the xml/preferences.xml preferences
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getInstance()
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.instance
 				.getBaseContext());
 		ContrastPreference = prefs.getString("contrastPrefHDR", "1");
 		mContrastPreference = prefs.getString("mcontrastPrefHDR", "1");
@@ -639,9 +640,9 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 
 		public PresetsAdapter()
 		{
-			this.inflater = LayoutInflater.from(MainScreen.getInstance());
+			this.inflater = LayoutInflater.from(ApplicationScreen.instance);
 
-			final float density = MainScreen.getAppResources().getDisplayMetrics().density;
+			final float density = ApplicationScreen.getAppResources().getDisplayMetrics().density;
 
 			final int radius = (int) (PRESET_ICONS_ROUND_RADIUS * PRESET_ICONS_SIZE * density);
 
@@ -748,10 +749,10 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		@Override
 		public View getView(final int position, View convertView, ViewGroup parent)
 		{
-			float density = MainScreen.getAppResources().getDisplayMetrics().density;
+			float density = ApplicationScreen.getAppResources().getDisplayMetrics().density;
 			if (convertView == null)
 			{
-				convertView = new ImageView(MainScreen.getInstance());
+				convertView = new ImageView(ApplicationScreen.instance);
 
 				
 				GridView.LayoutParams layoutParams = new GridView.LayoutParams((int) (density * 48), (int) (density * 54));
@@ -828,7 +829,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		SYP = (mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? imageSize.getWidth() / 4
 				: imageSize.getHeight() / 4;
 
-		postProcessingView = LayoutInflater.from(MainScreen.getMainContext()).inflate(
+		postProcessingView = LayoutInflater.from(ApplicationScreen.getMainContext()).inflate(
 				R.layout.plugin_processing_hdr_adjustments, null);
 
 		this.imageView = ((ImageView) postProcessingView.findViewById(R.id.adjustments_previewHolder));
@@ -840,7 +841,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 
 		saveButtonPressed = false;
 
-		Object obj = MainScreen.getInstance().getLastNonConfigurationInstance();
+		Object obj = ApplicationScreen.instance.getLastNonConfigurationInstance();
 		if (obj != null)
 		{
 			try
@@ -873,7 +874,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			return;
 		}
 
-		DisplayMetrics dm = MainScreen.getAppResources().getDisplayMetrics();
+		DisplayMetrics dm = ApplicationScreen.getAppResources().getDisplayMetrics();
 
 		this.pview = new int[this.SXP * this.SYP];
 		this.bitmap = Bitmap.createBitmap(this.SYP, this.SXP, Bitmap.Config.ARGB_8888);
@@ -894,8 +895,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 
 		this.adjustmentsSeekBar.setOnSeekBarChangeListener(this);
 
-		if (((mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)) == (MainScreen
-				.getInstance().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+		if (((mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)) == (ApplicationScreen
+				.instance.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
 				&& (((mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)) == (((float) dm.widthPixels / this.SYP) < ((float) dm.heightPixels / this.SXP))))
 		{
 			this.imageView.setScaleType(ScaleType.FIT_START);
@@ -906,7 +907,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 
 		// Add bottom padding to adjustments icons if orientation is portrait
 		if (((mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270))
-				&& (MainScreen.getAppResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT))
+				&& (ApplicationScreen.getAppResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT))
 		{
 			postProcessingView.findViewById(R.id.adjustmentsRelative).setPadding(
 					0,
@@ -938,7 +939,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	public boolean onKeyDown(int keyCode, KeyEvent event)
 	{
 		if (keyCode == KeyEvent.KEYCODE_BACK
-				&& MainScreen.getInstance().findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
+				&& ApplicationScreen.instance.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
 		{
 			if (this.selection != -1)
 			{
@@ -948,14 +949,14 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 				AlmaShotHDR.HDRFreeInstance();
 				AlmaShotHDR.Release();
 
-				PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-						PluginManager.MSG_CONTROL_UNLOCKED);
+				PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, 
+						ApplicationInterface.MSG_CONTROL_UNLOCKED);
 
-				MainScreen.getGUIManager().lockControls = false;
+				ApplicationScreen.getGUIManager().lockControls = false;
 
 				postProcessingRun = false;
 
-				MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
+				ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_POSTPROCESSING_FINISHED);
 			}
 
 			return true;
@@ -966,7 +967,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 
 	private Bitmap createThumbnail()
 	{
-		int small = (int) (MainScreen.getAppResources().getDisplayMetrics().density * PRESET_ICONS_SIZE * (1.0f / PRESET_ICONS_CROP_PART));
+		int small = (int) (ApplicationScreen.getAppResources().getDisplayMetrics().density * PRESET_ICONS_SIZE * (1.0f / PRESET_ICONS_CROP_PART));
 		int radius = (int) (small * PRESET_ICONS_ROUND_RADIUS * PRESET_ICONS_CROP_PART);
 
 		if (this.SXP > this.SYP)
@@ -984,42 +985,42 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 
 	private void setupAdjustments()
 	{
-		this.adjustments.add(new Adjustment(ADJUSTMENT_CODE_EXPOSURE, MainScreen.getAppResources()
-				.getString(R.string.adjustments_exposure), getExposure(false), -1, -100, MainScreen.getInstance()
+		this.adjustments.add(new Adjustment(ADJUSTMENT_CODE_EXPOSURE, ApplicationScreen.getAppResources()
+				.getString(R.string.adjustments_exposure), getExposure(false), -1, -100, ApplicationScreen.instance
 				.getResources().getDrawable(R.drawable.adjustments_expo)));
 
-		this.adjustments.add(new Adjustment(ADJUSTMENT_CODE_VIVIDNESS, MainScreen.getAppResources()
-				.getString(R.string.adjustments_vividness), getVividness(false), -1, -100, MainScreen.getInstance()
+		this.adjustments.add(new Adjustment(ADJUSTMENT_CODE_VIVIDNESS, ApplicationScreen.getAppResources()
+				.getString(R.string.adjustments_vividness), getVividness(false), -1, -100, ApplicationScreen.instance
 				.getResources().getDrawable(R.drawable.adjustments_vividness)));
 
-		this.adjustments.add(new Adjustment(ADJUSTMENT_CODE_CONTRAST, MainScreen.getAppResources()
-				.getString(R.string.adjustments_contrast), getContrast(false), -1, -100, MainScreen.getInstance()
+		this.adjustments.add(new Adjustment(ADJUSTMENT_CODE_CONTRAST, ApplicationScreen.getAppResources()
+				.getString(R.string.adjustments_contrast), getContrast(false), -1, -100, ApplicationScreen.instance
 				.getResources().getDrawable(R.drawable.adjustments_contrast)));
 
-		this.adjustments.add(new Adjustment(ADJUSTMENT_CODE_MICROCONTRAST, MainScreen.getAppResources()
-				.getString(R.string.adjustments_microcontrast), getMicrocontrast(false), -1, -100, MainScreen
-				.getInstance().getResources().getDrawable(R.drawable.adjustments_microcontrast)));
+		this.adjustments.add(new Adjustment(ADJUSTMENT_CODE_MICROCONTRAST, ApplicationScreen.getAppResources()
+				.getString(R.string.adjustments_microcontrast), getMicrocontrast(false), -1, -100, ApplicationScreen
+				.instance.getResources().getDrawable(R.drawable.adjustments_microcontrast)));
 	}
 
 	private void setupPresets()
 	{
 		this.presets.clear();
 		this.presets.add(this.createAdjustmentPresetWithThumbnail(
-				MainScreen.getAppResources().getString(R.string.adjustments_preset_artistic), 0, -25, 1,
+				ApplicationScreen.getAppResources().getString(R.string.adjustments_preset_artistic), 0, -25, 1,
 				-100, 2, -100, 3, -75));
 		this.presets.add(this.createAdjustmentPresetWithThumbnail(
-				MainScreen.getAppResources().getString(R.string.adjustments_preset_bnw), 0, -25, 1, -0, 2,
+				ApplicationScreen.getAppResources().getString(R.string.adjustments_preset_bnw), 0, -25, 1, -0, 2,
 				-50, 3, -50));
 		this.presets.add(this.createAdjustmentPresetWithThumbnail(
-				MainScreen.getAppResources().getString(R.string.adjustments_preset_natural), 0, -25, 1, -50,
+				ApplicationScreen.getAppResources().getString(R.string.adjustments_preset_natural), 0, -25, 1, -50,
 				2, -75, 3, -25));
 		this.presets.add(this.createAdjustmentPresetWithThumbnail(
-				MainScreen.getAppResources().getString(R.string.adjustments_preset_candy), 0, -25, 1, -63,
+				ApplicationScreen.getAppResources().getString(R.string.adjustments_preset_candy), 0, -25, 1, -63,
 				2, -75, 3, -75));
 
 		if (this.preset_custom == null)
 		{
-			this.presets.add(new AdjustmentsPreset(MainScreen.getAppResources()
+			this.presets.add(new AdjustmentsPreset(ApplicationScreen.getAppResources()
 					.getString(R.string.adjustments_preset_custom), null, 0, getExposure(false), 1,
 					getVividness(false), 2, getContrast(false), 3, getMicrocontrast(false)));
 		} else
@@ -1028,13 +1029,13 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		}
 
 		this.presets.add(this.createAdjustmentPresetWithThumbnail(
-				MainScreen.getAppResources().getString(R.string.adjustments_preset_vanilla), 0, -25, 1, -25,
+				ApplicationScreen.getAppResources().getString(R.string.adjustments_preset_vanilla), 0, -25, 1, -25,
 				2, -15, 3, -75));
 		this.presets.add(this.createAdjustmentPresetWithThumbnail(
-				MainScreen.getAppResources().getString(R.string.adjustments_preset_xerox), 0, -100, 1, -0,
+				ApplicationScreen.getAppResources().getString(R.string.adjustments_preset_xerox), 0, -100, 1, -0,
 				2, -50, 3, -50));
 		this.presets.add(this.createAdjustmentPresetWithThumbnail(
-				MainScreen.getAppResources().getString(R.string.adjustments_preset_neon), 0, -66, 1, -100,
+				ApplicationScreen.getAppResources().getString(R.string.adjustments_preset_neon), 0, -66, 1, -100,
 				2, -100, 3, -0));
 	}
 
@@ -1081,7 +1082,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		{
 			this.fillSeekBar();
 
-			((RelativeLayout) MainScreen.getInstance().findViewById(R.id.adjustments_seekbar_holder))
+			((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.adjustments_seekbar_holder))
 					.setVisibility(View.VISIBLE);
 		}
 	}
@@ -1092,7 +1093,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 
 		this.adapter.notifyDataSetChanged();
 
-		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.adjustments_seekbar_holder))
+		((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.adjustments_seekbar_holder))
 				.setVisibility(View.GONE);
 	}
 
@@ -1153,19 +1154,19 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			AlmaShotHDR.HDRFreeInstance();
 			AlmaShotHDR.Release();
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_CONTROL_UNLOCKED);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, 
+					ApplicationInterface.MSG_CONTROL_UNLOCKED);
 
-			MainScreen.getGUIManager().lockControls = false;
+			ApplicationScreen.getGUIManager().lockControls = false;
 
 			postProcessingRun = false;
 
-			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
+			ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_POSTPROCESSING_FINISHED);
 		} else if (v == this.buttonSave)
 		{
 			cancelAllTasks();
 			saveButtonPressed = true;
-			new SaveTask(MainScreen.getInstance()).execute();
+			new SaveTask(ApplicationScreen.instance).execute();
 			this.buttonTrash.setVisibility(View.GONE);
 			this.buttonSave.setVisibility(View.GONE);
 		} else if (v == this.imageView)
@@ -1258,7 +1259,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		{
 			this.previewTaskCurrent = null;
 			this.previewTaskPending = null;
-			new SaveTask(MainScreen.getInstance()).execute();
+			new SaveTask(ApplicationScreen.instance).execute();
 		} else
 		{
 			this.imageView.invalidate();
@@ -1292,8 +1293,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 				this.imageView.setImageBitmap(this.bitmap);
 			}
 
-			MainScreen.getInstance().findViewById(R.id.adjustments_trashButton).setVisibility(View.VISIBLE);
-			MainScreen.getInstance().findViewById(R.id.adjustments_saveButton).setVisibility(View.VISIBLE);
+			ApplicationScreen.instance.findViewById(R.id.adjustments_trashButton).setVisibility(View.VISIBLE);
+			ApplicationScreen.instance.findViewById(R.id.adjustments_saveButton).setVisibility(View.VISIBLE);
 		}
 	}
 
@@ -1354,12 +1355,12 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			AlmaShotHDR.HDRFreeInstance();
 			AlmaShotHDR.Release();
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-					PluginManager.MSG_CONTROL_UNLOCKED);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, 
+					ApplicationInterface.MSG_CONTROL_UNLOCKED);
 
-			MainScreen.getGUIManager().lockControls = false;
+			ApplicationScreen.getGUIManager().lockControls = false;
 
-			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
+			ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_POSTPROCESSING_FINISHED);
 		}
 	}
 }

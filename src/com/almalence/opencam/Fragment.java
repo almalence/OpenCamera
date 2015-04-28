@@ -87,7 +87,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 
 		String settings = getArguments().getString("type");
 
-		PluginManager.getInstance().loadHeaderContent(settings, this);
+		ApplicationScreen.getPluginManager().loadHeaderContent(settings, this);
 
 		if (null == getPreferenceScreen())
 			return;
@@ -466,6 +466,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		}
 	}
 
+	@TargetApi(13)
 	private void showCameraParameters()
 	{
 		AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
@@ -645,7 +646,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 			about_string.append("None");
 		}
 
-		String save_location = MainScreen.getSaveToPath();
+		String save_location = ApplicationScreen.instance.getSaveToPath();
 		about_string.append("\nSave Location: " + save_location);
 
 		if (MainScreen.getInstance().flattenParamteters != null

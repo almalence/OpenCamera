@@ -30,10 +30,10 @@ import android.content.Context;
 import android.util.Log;
 
 /* <!-- +++
-import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.ApplicationScreen;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationScreen;
 //-+- -->
 
 import com.almalence.util.ImageConversion;
@@ -140,10 +140,10 @@ public class GLCameraPreview
 		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_REPEAT);
 		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_REPEAT);
 
-		previewWidth = MainScreen.getPreviewWidth();
-		previewHeight = MainScreen.getPreviewHeight();
+		previewWidth = ApplicationScreen.getPreviewWidth();
+		previewHeight = ApplicationScreen.getPreviewHeight();
 		
-//		Log.d("GLCameraPreview", "Preview size from MainScreen = " + previewWidth + " x " + previewHeight);
+//		Log.d("GLCameraPreview", "Preview size from ApplicationScreen = " + previewWidth + " x " + previewHeight);
 		
 		textureWidth = 512;
 		textureHeight = 512;

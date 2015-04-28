@@ -34,17 +34,18 @@ import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
- import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.PluginCapture;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.R;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.CameraParameters;
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
@@ -94,12 +95,12 @@ public class PreshotCapturePlugin extends PluginCapture
 	{
 		getPrefs();
 		
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		camera2Preference = prefs.getBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), false);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		camera2Preference = prefs.getBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), false);
 		
 		if(Build.MODEL.equals("Nexus 6") && camera2Preference)
 		{
-			prefs.edit().putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), false).commit();
+			prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), false).commit();
 			CameraController.useHALv3(false);
 			
 			CameraController.isOldCameraOneModeLaunched = true;
@@ -110,10 +111,10 @@ public class PreshotCapturePlugin extends PluginCapture
 	@Override
 	public void onResume()
 	{
-		preferenceFocusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
-				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref,
+		preferenceFocusMode = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getInt(
+				CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref : ApplicationScreen.sFrontFocusModePref,
 				CameraParameters.AF_MODE_AUTO);
-		MainScreen.getInstance().muteShutter(false);
+		ApplicationScreen.instance.muteShutter(false);
 		captureStarted = false;
 	}
 
@@ -123,19 +124,19 @@ public class PreshotCapturePlugin extends PluginCapture
 		StopBuffering();
 		inCapture = false;
 		
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		
-		prefs.edit().putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-						: MainScreen.sFrontFocusModePref, preferenceFocusMode).commit();
+		prefs.edit().putInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
+						: ApplicationScreen.sFrontFocusModePref, preferenceFocusMode).commit();
 		
-		prefs.edit().putBoolean(MainScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), camera2Preference).commit();
+		prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), camera2Preference).commit();
 
 	}
 
 	@Override
 	public void onStop()
 	{
-		MainScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
+		ApplicationScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
 		
 		if(Build.MODEL.equals("Nexus 6") && camera2Preference)
 		{
@@ -155,7 +156,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	{
 		getPrefs();
 
-		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
+		LayoutInflater inflator = ApplicationScreen.instance.getLayoutInflater();
 		modeSwitcher = (Switch) inflator.inflate(R.layout.plugin_capture_preshot_modeswitcher, null, false);
 
 		modeSwitcher.setTextOn("Hi-Res");
@@ -166,7 +167,7 @@ public class PreshotCapturePlugin extends PluginCapture
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
 			{
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 
 				SharedPreferences.Editor editor = prefs.edit();
 				editor.putString("modePrefPreShot", isChecked ? "1" : "0");
@@ -181,14 +182,14 @@ public class PreshotCapturePlugin extends PluginCapture
 		else
 			modeSwitcher.setEnabled(false);
 
-		MainScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
+		ApplicationScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
 				LayoutParams.WRAP_CONTENT);
 
 		params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 
-		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout3)).addView(this.modeSwitcher,
+		((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout3)).addView(this.modeSwitcher,
 				params);
 
 		this.modeSwitcher.setLayoutParams(params);
@@ -197,7 +198,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	private void getPrefs()
 	{
 		// Get the xml/preferences.xml preferences
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		RefocusPreference = prefs.getBoolean("refocusPrefPreShot", false);
 		AutostartPreference = prefs.getBoolean("autostartPrefPreShot", false);
 		PauseBetweenShots = prefs.getString("pauseBetweenShotsPrefPreShot", "500");
@@ -234,10 +235,10 @@ public class PreshotCapturePlugin extends PluginCapture
 				{
 					CameraController.setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
 					PreferenceManager
-							.getDefaultSharedPreferences(MainScreen.getMainContext())
+							.getDefaultSharedPreferences(ApplicationScreen.getMainContext())
 							.edit()
-							.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-									: MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
+							.putInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
+									: ApplicationScreen.sFrontFocusModePref, CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
 							.commit();
 				}
 			} catch (Exception e)
@@ -254,10 +255,10 @@ public class PreshotCapturePlugin extends PluginCapture
 				{
 					CameraController.setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_PICTURE);
 					PreferenceManager
-							.getDefaultSharedPreferences(MainScreen.getMainContext())
+							.getDefaultSharedPreferences(ApplicationScreen.getMainContext())
 							.edit()
-							.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-									: MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_CONTINUOUS_PICTURE)
+							.putInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
+									: ApplicationScreen.sFrontFocusModePref, CameraParameters.AF_MODE_CONTINUOUS_PICTURE)
 							.commit();
 				}
 			} catch (Exception e)
@@ -267,8 +268,8 @@ public class PreshotCapturePlugin extends PluginCapture
 			}
 		}
 
-		PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, 
-				PluginManager.MSG_FOCUS_CHANGED);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, 
+				ApplicationInterface.MSG_FOCUS_CHANGED);
 	}
 
 	@Override
@@ -288,13 +289,13 @@ public class PreshotCapturePlugin extends PluginCapture
 		{
 			if (0 == PreShot.GetImageCount())
 			{
-				Toast.makeText(MainScreen.getInstance(), "No images yet", Toast.LENGTH_SHORT).show();
+				Toast.makeText(ApplicationScreen.instance, "No images yet", Toast.LENGTH_SHORT).show();
 				return;
 			}
 			captureStarted = false;
 			StopBuffering();
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, 
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, 
 					String.valueOf(SessionID));
 		} else if (!inCapture)
 		{
@@ -322,7 +323,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		Date curDate = new Date();
 		SessionID = curDate.getTime();
 
-		MainScreen.getInstance().muteShutter(true);
+		ApplicationScreen.instance.muteShutter(true);
 		
 		resultCompleted = 0;
 		
@@ -330,13 +331,13 @@ public class PreshotCapturePlugin extends PluginCapture
 		if (!isSlowMode)
 		{
 			PreShot.FreeBuffer();
-			MainScreen.getGUIManager().startContinuousCaptureIndication();
+			ApplicationScreen.getGUIManager().startContinuousCaptureIndication();
 			preview_fps = CameraController.getPreviewFrameRate();
 			if (Build.MODEL.contains("HTC One"))
 				preview_fps = 30;
 
-			imW = MainScreen.getPreviewWidth();
-			imH = MainScreen.getPreviewHeight();
+			imW = ApplicationScreen.getPreviewWidth();
+			imH = ApplicationScreen.getPreviewHeight();
 
 			Log.i("Preshot capture", "StartBuffering trying to allocate!");
 
@@ -376,9 +377,9 @@ public class PreshotCapturePlugin extends PluginCapture
 
 	void StopBuffering()
 	{
-		MainScreen.getGUIManager().stopCaptureIndication();
+		ApplicationScreen.getGUIManager().stopCaptureIndication();
 
-		MainScreen.getInstance().muteShutter(false);
+		ApplicationScreen.instance.muteShutter(false);
 
 		if (modeSwitcher != null)
 			modeSwitcher.setEnabled(false);
@@ -418,7 +419,7 @@ public class PreshotCapturePlugin extends PluginCapture
 			if (frmCnt == 1)
 				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
 
-			PreShot.InsertToBuffer(data, MainScreen.getGUIManager().getDisplayOrientation());
+			PreShot.InsertToBuffer(data, ApplicationScreen.getGUIManager().getDisplayOrientation());
 		}
 		frmCnt++;
 	}
@@ -457,7 +458,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	{
 //		inCapture = false;
 
-		PreShot.InsertToBuffer(frameData, MainScreen.getGUIManager().getDisplayOrientation());
+		PreShot.InsertToBuffer(frameData, ApplicationScreen.getGUIManager().getDisplayOrientation());
 
 		try
 		{
@@ -500,16 +501,14 @@ public class PreshotCapturePlugin extends PluginCapture
 	{
 		if (isBuffering)
 		{
-			int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
-					CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref,
-					-1);
+			int focusMode = ApplicationScreen.instance.getFocusModePref(-1);
 			if (RefocusPreference
 					|| (counter >= REFOCUS_INTERVAL)
 					&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
 							|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
 							|| focusMode == CameraParameters.AF_MODE_INFINITY
 							|| focusMode == CameraParameters.AF_MODE_FIXED || focusMode == CameraParameters.AF_MODE_EDOF)
-					&& !MainScreen.getAutoFocusLock())
+					&& !ApplicationScreen.instance.getAutoFocusLock())
 			{
 				counter = 0;
 				aboutToTakePicture = true;
@@ -533,6 +532,7 @@ public class PreshotCapturePlugin extends PluginCapture
 				return;
 	//				inCapture = true;
 	
+			createRequestIDList(1);
 			CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, false, true);
 			counter++;
 		}
@@ -569,11 +569,11 @@ public class PreshotCapturePlugin extends PluginCapture
 	@Override
 	public boolean onBroadcast(int arg1, int arg2)
 	{
-		if (arg1 == PluginManager.MSG_STOP_CAPTURE)
+		if (arg1 == ApplicationInterface.MSG_STOP_CAPTURE)
 		{
 			StopBuffering();
 			return true;
-		} else if (arg1 == PluginManager.MSG_START_CAPTURE)
+		} else if (arg1 == ApplicationInterface.MSG_START_CAPTURE)
 		{
 			if (PluginManager.getInstance().getProcessingCounter() == 0)
 				StartBuffering();
