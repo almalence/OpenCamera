@@ -1810,6 +1810,23 @@ public class HALv3
 		return requestID;
 	}
 	
+	public static void forceFocusHALv3()
+	{
+		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
+		{
+			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
+					CameraCharacteristics.CONTROL_AF_TRIGGER_START);
+			try
+			{
+				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
+						HALv3.previewRequestBuilder.build(), captureCallback, null);
+			} catch (CameraAccessException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public static boolean autoFocusHALv3()
 	{
 		Log.e(TAG, "HALv3.autoFocusHALv3");
@@ -2207,13 +2224,17 @@ public class HALv3
 			// Note: not sure which units are used for exposure time (ms?)
 			 currentExposure = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
 			 currentSensitivity = result.get(CaptureResult.SENSOR_SENSITIVITY);
-			 
-			int focusState = result.get(CaptureResult.CONTROL_AF_STATE);
-			if (focusState == CaptureResult.CONTROL_AF_STATE_PASSIVE_SCAN
-					|| focusState == CaptureResult.CONTROL_AF_STATE_PASSIVE_UNFOCUSED)
-				captureAllowed = false;
-			else
-				captureAllowed = true;
+			
+			try {
+				int focusState = result.get(CaptureResult.CONTROL_AF_STATE);
+				if (focusState == CaptureResult.CONTROL_AF_STATE_PASSIVE_SCAN
+						|| focusState == CaptureResult.CONTROL_AF_STATE_PASSIVE_UNFOCUSED)
+					captureAllowed = false;
+				else
+					captureAllowed = true;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 	
 			// dumpCaptureResult(result);
 		}

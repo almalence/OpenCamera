@@ -2662,6 +2662,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				{
 					guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.GONE);
 
+					// Trigger focus to lock AF, before CONTROL_AE_MODE will be set to OFF
+					CameraController.forceFocus();
 					preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, true).commit();
 					CameraController.resetCameraAEMode();
 				}
@@ -5743,6 +5745,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 		}
 
+		// Trigger focus to lock AF, before CONTROL_AE_MODE will be set to OFF
+		CameraController.forceFocus();
 		preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, true).commit();
 
 		if (isEVInitEnabled)

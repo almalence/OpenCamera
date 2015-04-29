@@ -3562,6 +3562,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 
+	public static void forceFocus() {
+		if (CameraController.isHALv3) {
+			HALv3.forceFocusHALv3();
+		}
+	}
+	
 	public static boolean autoFocus(Camera.AutoFocusCallback listener)
 	{
 		synchronized (SYNC_OBJECT)
