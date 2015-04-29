@@ -1270,11 +1270,15 @@ public class SonyRemoteCamera
 		if (isCameraApiAvailable("getAvailableLiveviewSize"))
 		{
 			fillPreviewSizeList();
+		} else {
+			mPreviewSizes.add(new CameraController.Size(640, 480));
 		}
 
 		if (isCameraApiAvailable("getAvailableStillSize"))
 		{
 			fillPictureSizeList();
+		} else {
+			mPictureSizes.add(new CameraController.Size(1920, 1080));
 		}
 
 		if (isCameraApiAvailable("getAvailableExposureCompensation"))
