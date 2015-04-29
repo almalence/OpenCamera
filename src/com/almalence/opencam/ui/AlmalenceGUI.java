@@ -5415,6 +5415,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					hideSecondaryMenus();
 				}
 			}
+			break;
 		case R.id.imageSizeButton:
 			{
 				if (changeQuickControlIfVisible(button))
