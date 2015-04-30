@@ -185,9 +185,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private ImageSizeQuickSetting							imageSizeQuickSetting;
 	private CollorEffectQuickSetting						collorEffectQuickSetting;
 
-	private SonyCameraDeviceExplorer			sonyCameraDeviceExplorer;
+	private SonyCameraDeviceExplorer						sonyCameraDeviceExplorer;
 
-	private SelfTimerAndPhotoTimeLapse			selfTimer;
+	private SelfTimerAndPhotoTimeLapse						selfTimer;
 
 	// Assoc list for storing association between mode button and mode ID
 	private Map<View, String>								buttonModeViewAssoc;
@@ -427,17 +427,17 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 																							}
 																						};
 
-	private static final Map<Integer, Integer>	ICONS_CAMS					= new HashMap<Integer, Integer>()
-																			{
-																				{
-																					put(0,
-																							R.drawable.gui_almalence_settings_changecamera_back);
-																					put(1,
-																							R.drawable.gui_almalence_settings_changecamera_front);
-																					put(2,
-																							R.drawable.gui_almalence_settings_changecamera_sony);
-																				}
-																			};
+	private static final Map<Integer, Integer>				ICONS_CAMS					= new HashMap<Integer, Integer>()
+																						{
+																							{
+																								put(0,
+																										R.drawable.gui_almalence_settings_changecamera_back);
+																								put(1,
+																										R.drawable.gui_almalence_settings_changecamera_front);
+																								put(2,
+																										R.drawable.gui_almalence_settings_changecamera_sony);
+																							}
+																						};
 
 	// List of localized names for camera parameters values
 	private static final Map<Integer, String>				NAMES_SCENE					= new HashMap<Integer, String>()
@@ -776,27 +776,27 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 																														R.string.meteringSpotSystem));
 																							}
 																						};
-																						
-	private static final Map<Integer, String>	NAMES_CAMS					= new HashMap<Integer, String>()
-																			{
-																				{
-																					put(0,
-																							ApplicationScreen.instance
-																									.getResources()
-																									.getString(
-																											R.string.cameraBack));
-																					put(1,
-																							ApplicationScreen.instance
-																									.getResources()
-																									.getString(
-																											R.string.cameraFront));
-																					put(2,
-																							ApplicationScreen.instance
-																									.getResources()
-																									.getString(
-																											R.string.cameraSony));
-																				}
-																			};
+
+	private static final Map<Integer, String>				NAMES_CAMS					= new HashMap<Integer, String>()
+																						{
+																							{
+																								put(0,
+																										ApplicationScreen.instance
+																												.getResources()
+																												.getString(
+																														R.string.cameraBack));
+																								put(1,
+																										ApplicationScreen.instance
+																												.getResources()
+																												.getString(
+																														R.string.cameraFront));
+																								put(2,
+																										ApplicationScreen.instance
+																												.getResources()
+																												.getString(
+																														R.string.cameraSony));
+																							}
+																						};
 
 	protected static final LinkedHashMap<Integer, Long>		EXPOSURE_TIME_VALUES		= new LinkedHashMap<Integer, Long>()
 																						{
@@ -911,38 +911,38 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private View											quickControl3				= null;
 	private View											quickControl4				= null;
 
-	private ElementAdapter						scenemodeAdapter;
-	private ElementAdapter						wbmodeAdapter;
-	private ElementAdapter						focusmodeAdapter;
-	private ElementAdapter						flashmodeAdapter;
-	private ElementAdapter						isoAdapter;
-	private ElementAdapter						meteringmodeAdapter;
-	private ElementAdapter						cameramodeAdapter;
+	private ElementAdapter									scenemodeAdapter;
+	private ElementAdapter									wbmodeAdapter;
+	private ElementAdapter									focusmodeAdapter;
+	private ElementAdapter									flashmodeAdapter;
+	private ElementAdapter									isoAdapter;
+	private ElementAdapter									meteringmodeAdapter;
+	private ElementAdapter									cameramodeAdapter;
 
-	private Map<Integer, View>					sceneModeButtons;
-	private Map<Integer, View>					wbModeButtons;
-	private Map<Integer, View>					focusModeButtons;
-	private Map<Integer, View>					flashModeButtons;
-	private Map<Integer, View>					isoButtons;
-	private Map<Integer, View>					meteringModeButtons;
-	private Map<Integer, View>					cameraModeButtons;
+	private Map<Integer, View>								sceneModeButtons;
+	private Map<Integer, View>								wbModeButtons;
+	private Map<Integer, View>								focusModeButtons;
+	private Map<Integer, View>								flashModeButtons;
+	private Map<Integer, View>								isoButtons;
+	private Map<Integer, View>								meteringModeButtons;
+	private Map<Integer, View>								cameraModeButtons;
 
 	// Camera settings values which is exist at current device
-	private List<View>							activeScene;
-	private List<View>							activeWB;
-	private List<View>							activeFocus;
-	private List<View>							activeFlash;
-	private List<View>							activeISO;
-	private List<View>							activeMetering;
-	private List<View>							activeCams;
+	private List<View>										activeScene;
+	private List<View>										activeWB;
+	private List<View>										activeFocus;
+	private List<View>										activeFlash;
+	private List<View>										activeISO;
+	private List<View>										activeMetering;
+	private List<View>										activeCams;
 
-	private List<Integer>						activeSceneNames;
-	private List<Integer>						activeWBNames;
-	private List<Integer>						activeFocusNames;
-	private List<Integer>						activeFlashNames;
-	private List<Integer>						activeISONames;
-	private List<Integer>						activeMeteringNames;
-	private List<Integer>						activeCamNames;
+	private List<Integer>									activeSceneNames;
+	private List<Integer>									activeWBNames;
+	private List<Integer>									activeFocusNames;
+	private List<Integer>									activeFlashNames;
+	private List<Integer>									activeISONames;
+	private List<Integer>									activeMeteringNames;
+	private List<Integer>									activeCamNames;
 
 	private boolean											isEVEnabled					= true;
 	private boolean											isSceneEnabled				= true;
@@ -966,14 +966,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private View											guiView;
 
 	// Current camera parameters
-	private int									mEV							= 0;
-	private int									mSceneMode					= -1;
-	private int									mFlashMode					= -1;
-	private int									mFocusMode					= -1;
-	private int									mWB							= -1;
-	private int									mISO						= -1;
-	private int									mMeteringMode				= -1;
-	private int									mCameraMode					= -1;
+	private int												mEV							= 0;
+	private int												mSceneMode					= -1;
+	private int												mFlashMode					= -1;
+	private int												mFocusMode					= -1;
+	private int												mWB							= -1;
+	private int												mISO						= -1;
+	private int												mMeteringMode				= -1;
+	private int												mCameraMode					= -1;
 
 	private long											mExposureTime				= -1;
 	private float											mFocusDistance				= -1;
@@ -1281,7 +1281,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 				if (selfTimer != null)
 					selfTimer.setOrientation();
-				
+
 				if (sonyCameraDeviceExplorer != null)
 					sonyCameraDeviceExplorer.setOrientation();
 
@@ -2220,9 +2220,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 									CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 											: MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
 							CameraController.setCameraFocusDistance(fDistValue);
-							ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_FOCUS_LOCKED);
-							
-							ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_FOCUS_CHANGED);
+							ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
+									ApplicationInterface.MSG_FOCUS_LOCKED);
+
+							ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
+									ApplicationInterface.MSG_FOCUS_CHANGED);
 
 							initSettingsMenu(true);
 							hideSecondaryMenus();
@@ -2341,10 +2343,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					CameraController.setCameraFocusMode(afMode);
 				} else if (mFocusMode == FOCUS_MF)
 				{
-						CameraController.setCameraFocusDistance(mFocusDistance);
-						ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_FOCUS_LOCKED);
-				}
-				else
+					CameraController.setCameraFocusDistance(mFocusDistance);
+					ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
+							ApplicationInterface.MSG_FOCUS_LOCKED);
+				} else
 					CameraController.setCameraFocusMode(mFocusMode);
 			} else
 			{
@@ -2501,7 +2503,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 			// Add manual exposure time
 			String modeID = ApplicationScreen.getPluginManager().getActiveModeID();
-			if (CameraController.isManualExposureTimeSupported() && !(modeID.equals("hdrmode") || modeID.equals("expobracketing") || modeID.equals("nightmode")))
+			if (CameraController.isManualExposureTimeSupported()
+					&& !(modeID.equals("hdrmode") || modeID.equals("expobracketing") || modeID.equals("nightmode")))
 			{
 				mManualExposureTimeSupported = true;
 
@@ -2538,12 +2541,15 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 						mMeteringMode = CameraParameters.meteringModeManual;
 
+						// Trigger focus to lock AF, before CONTROL_AE_MODE will
+						// be set to OFF
+						CameraController.forceFocus();
 						preferences.edit().putInt(MainScreen.sMeteringModePref, CameraParameters.meteringModeManual)
 								.commit();
 						preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, false).commit();
 
 						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, true, true, false);
-						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true, false);
+						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, false, true, false);
 						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, true, true, false);
 						// disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FOCUS,
 						// true, true);
@@ -2648,9 +2654,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 					manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 
+					// Trigger focus to lock AF, before CONTROL_AE_MODE will be
+					// set to OFF
+					CameraController.forceFocus();
 					preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, false).commit();
 					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, true, true, false);
-					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true, false);
+					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, false, true, false);
 					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, true, true, false);
 					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, true, false);
 
@@ -2662,8 +2671,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				{
 					guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.GONE);
 
-					// Trigger focus to lock AF, before CONTROL_AE_MODE will be set to OFF
-					CameraController.forceFocus();
+					if (CameraController.isUseHALv3())
+					{
+						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true, false);
+					}
+
 					preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, true).commit();
 					CameraController.resetCameraAEMode();
 				}
@@ -2728,8 +2740,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
 			guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
 		}
-		
-		
+
 		int iCameraChangeSupported = 1;
 		if (iCameraChangeSupported > 0)
 		{
@@ -3679,7 +3690,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						RotateImageView pluginButton = (RotateImageView) topMenuPluginButtons.get(plugin.getID());
 						pluginButton.setImageDrawable(icon);
 
-//						initSettingsMenu(true);
+						// initSettingsMenu(true);
 					} catch (Exception e)
 					{
 						e.printStackTrace();
@@ -3805,7 +3816,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			public void onClick(View v)
 			{
 				quickControlOnClick(MODE_MET,
-				ApplicationScreen.getMainContext().getResources().getDrawable(ICONS_METERING.get(mMeteringMode)));
+						ApplicationScreen.getMainContext().getResources()
+								.getDrawable(ICONS_METERING.get(mMeteringMode)));
 			}
 
 		});
@@ -5630,8 +5642,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		hideSecondaryMenus();
 		unselectPrimaryTopMenuButtons(-1);
 
-		ApplicationScreen.getPluginManager()
-				.sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_WB_CHANGED);
+		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
+				ApplicationInterface.MSG_WB_CHANGED);
 	}
 
 	private void setFocusMode(int newMode)
@@ -5675,8 +5687,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 		}
 
-		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_FOCUS_UNLOCKED);
-		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_FOCUS_CHANGED);
+		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
+				ApplicationInterface.MSG_FOCUS_UNLOCKED);
+		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
+				ApplicationInterface.MSG_FOCUS_CHANGED);
 
 		initSettingsMenu(false);
 		hideSecondaryMenus();
@@ -5745,19 +5759,22 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 		}
 
-		// Trigger focus to lock AF, before CONTROL_AE_MODE will be set to OFF
-		CameraController.forceFocus();
 		preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, true).commit();
 
 		if (isEVInitEnabled)
 			disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, false, true, false);
-		if (isIsoInitEnabled)
+		
+		if (isIsoInitEnabled && !CameraController.isUseHALv3())
 			disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, false, true, false);
+		else
+			disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true, false);
+		
 		if (isWBInitEnabled)
 			disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, false, true, false);
 		if (isFlashInitEnabled)
 			disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, false, true, false);
-		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_FOCUS_UNLOCKED);
+		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
+				ApplicationInterface.MSG_FOCUS_UNLOCKED);
 		CameraController.resetCameraAEMode();
 
 		if (newMode != -1 && mMeteringMode != newMode)
@@ -5790,22 +5807,23 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			setButtonSelected(cameraModeButtons, mCameraMode);
 
-			if (newMode == CameraController.getNumberOfCameras() - 1) {
+			if (newMode == CameraController.getNumberOfCameras() - 1)
+			{
 				showSonyCameraDeviceExplorer();
-			} else {
+			} else
+			{
 				preferences.edit().putInt(ApplicationScreen.sCameraModePref, newMode).commit();
 
 				if (ApplicationScreen.getPluginManager().getProcessingCounter() != 0)
 					return;
-				
+
 				ApplicationScreen.instance.pauseMain();
-				
+
 				mCameraMode = newMode;
 				CameraController.setCameraIndex(newMode);
 				ApplicationScreen.instance.switchingMode(false);
-				
+
 				ApplicationScreen.instance.resumeMain();
-				
 
 				RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_CAM);
 				int icon_id = ICONS_CAMS.get(mCameraMode);
@@ -7288,7 +7306,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			preferences.edit().putInt(MainScreen.sEvPref, iEv).commit();
 			mEV = iEv;
 
-			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_EV_CHANGED);
+			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
+					ApplicationInterface.MSG_EV_CHANGED);
 		} else if (seekBar == (SeekBar) guiView.findViewById(R.id.exposureTimeSeekBar))
 		{
 			if (mMeteringMode == CameraParameters.meteringModeManual)

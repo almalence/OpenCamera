@@ -1404,9 +1404,7 @@ public class HALv3
 		}
 
 		//Focus mode. Event in case of manual exposure switch off auto focusing.
-		int focusMode = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getInt(
-				CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref : ApplicationScreen.sFrontFocusModePref, -1);
-//		if(focusMode != CameraParameters.MF_MODE && !isManualExposure)
+		int focusMode = appInterface.getFocusModePref(-1);
 		if(focusMode != CameraParameters.MF_MODE)
 		{
 			stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
@@ -1578,7 +1576,7 @@ public class HALv3
 			exposureTime = exposure;
 			captureNextImageWithParams(format, 0,
 					pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
-					evCompensation == null ? selectedEvCompensation : evCompensation[currentFrameIndex], sensorGain == null ? 0
+					evCompensation == null ? selectedEvCompensation : evCompensation[currentFrameIndex], sensorGain == null ? currentSensitivity
 							: sensorGain[currentFrameIndex], exposureTime == null ? 0
 							: exposureTime[currentFrameIndex]);
 		} else
@@ -1588,7 +1586,7 @@ public class HALv3
 
 			for (int n = 0; n < nFrames; ++n)
 			{
-				SetupPerFrameParameters(evRequested == null ? selectedEvCompensation : evRequested[n], gain == null ? 0 : gain[n],
+				SetupPerFrameParameters(evRequested == null ? selectedEvCompensation : evRequested[n], gain == null ? currentSensitivity : gain[n],
 						exposure == null ? 0 : exposure[n], isRAWCapture);
 
 				try
@@ -1940,6 +1938,7 @@ public class HALv3
 		int wbMode	  = appInterface.getWBModePref();
 		int sceneMode = appInterface.getSceneModePref();
 		int ev 		  = appInterface.getEVPref();
+		int iso 	  = CameraController.getIsoModeHALv3().get(appInterface.getISOModePref(1));
 		
 		int antibanding = appInterface.getAntibandingModePref();
 		
@@ -2022,6 +2021,7 @@ public class HALv3
 			previewRequestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF);
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
 			previewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, exTime);
+			previewRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, iso);
 		}
 
 		int collorEffect = CameraParameters.COLOR_EFFECT_MODE_OFF;
@@ -2154,8 +2154,8 @@ public class HALv3
 		{
 			try
 			{
-//				if(HALv3.autoFocusTriggered)
-//					Log.e(TAG, "CAPTURE_AF_STATE = " + result.get(CaptureResult.CONTROL_AF_STATE));
+				if(HALv3.autoFocusTriggered)
+					Log.e(TAG, "CAPTURE_AF_STATE = " + result.get(CaptureResult.CONTROL_AF_STATE));
 				// HALv3.exposureTime = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
 				// Log.e(TAG, "EXPOSURE TIME = " + HALv3.exposureTime);
 				if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED
@@ -2475,7 +2475,7 @@ public class HALv3
 							CameraController.frameFormat, currentFrameIndex,
 							pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
 							evCompensation == null ? 0 : evCompensation[currentFrameIndex],
-							sensorGain == null ? 0 : sensorGain[currentFrameIndex],
+							sensorGain == null ? currentSensitivity : sensorGain[currentFrameIndex],
 							exposureTime == null ? 0 : exposureTime[currentFrameIndex]);
 			}
 
