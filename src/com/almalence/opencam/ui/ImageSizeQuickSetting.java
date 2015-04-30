@@ -40,12 +40,14 @@ import com.almalence.ui.ListPreferenceAdapter;
 import com.almalence.ui.RotateDialog;
 //<!-- -+-
 import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.R;
  +++ --> */
@@ -89,7 +91,7 @@ public class ImageSizeQuickSetting
 		{
 			opt1 = ApplicationScreen.sImageSizeMultishotBackPref;
 			opt2 = ApplicationScreen.sImageSizeMultishotFrontPref;
-			currentIdx = Integer.parseInt(CameraController.MultishotResolutionsIdxesList.get(ApplicationScreen
+			currentIdx = Integer.parseInt(CameraController.MultishotResolutionsIdxesList.get(MainScreen
 					.selectImageDimensionMultishot()));
 			mEntries = CameraController.MultishotResolutionsNamesList
 					.toArray(new String[CameraController.MultishotResolutionsNamesList.size()]);
