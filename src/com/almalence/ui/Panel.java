@@ -23,15 +23,12 @@ package com.almalence.ui;
  import com.almalence.opencam_plus.R;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.R;
-//-+- -->
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
@@ -44,6 +41,10 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+
+import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.R;
+//-+- -->
 
 /***
  * Panel - implements sliding panel
@@ -68,6 +69,7 @@ public class Panel extends LinearLayout
 	}
 
 	private boolean				mIsShrinking;
+	private boolean				mIsOpened;
 	private final int			mPosition;
 	private final int			mDuration;
 	private final float			downSpace;
@@ -299,7 +301,7 @@ public class Panel extends LinearLayout
 				canvas.translate(delta, 0);
 			}
 		}
-		if (mState == State.FLYING)
+		if ((mState == State.TRACKING || mState == State.FLYING) && !mIsOpened)
 		{
 			canvas.translate(mTrackX, mTrackY);
 			mContent.getBackground().setAlpha((int) (255 - 255 * Math.abs(mTrackY / mContentHeight)));
@@ -621,10 +623,12 @@ public class Panel extends LinearLayout
 														{
 															public void onAnimationEnd(Animation animation)
 															{
+																mIsOpened = true;
 																mState = State.READY;
 																if (mIsShrinking)
 																{
 																	mContent.setVisibility(GONE);
+																	mIsOpened = false;
 																}
 																postProcess();
 															}
@@ -701,7 +705,7 @@ public class Panel extends LinearLayout
 
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
 		{
-			if (!mIsShrinking) {
+			if (!mIsOpened) {
 				mState = State.FLYING;
 				mVelocity = mOrientation == VERTICAL ? velocityY : velocityX;
 				post(startAnimation);
@@ -769,8 +773,12 @@ public class Panel extends LinearLayout
 		public boolean onSingleTapUp(MotionEvent e)
 		{
 			// simple tap: click
-			post(startAnimation);
-			return true;
+			if (!mOpened) {
+				post(startAnimation);
+				return true;
+			}
+			
+			return false;
 		}
 	}
 
