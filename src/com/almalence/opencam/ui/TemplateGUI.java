@@ -709,10 +709,10 @@ public class TemplateGUI extends GUI
 
 	@Override
 	public void disableCameraParameter(CameraParameter iParam,
-			boolean bDisable, boolean bInitMenu)
+			boolean bDisable, boolean bInitMenu, boolean bModeInit)
 	{
 		// TODO Auto-generated method stub
-
+		
 	}
 
 

@@ -4,4 +4,6 @@
 	<string name="Pref_Focus_Preference_Title">Focus</string>
 	<string name="Pref_Focus_Preference_Summary">Focus</string>
 	
+	<string name="manual_exposure_unsupported">Device supports exposure metering only in center. Exposure point can\'t be moved.</string>
+	
 </resources>

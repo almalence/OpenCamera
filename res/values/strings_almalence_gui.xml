@@ -7,6 +7,7 @@
     <string name="Pref_Common_UseFrontCamera_Title">Front camera</string>
     <string name="Pref_Common_UseFrontCamera_Summary">Use front camera</string>
     <string name="Pref_Common_ImageSize_Title">Image size</string>
+    <string name="Pref_Common_ColorEffect_Title">Color effect</string>
     <string name="Pref_Comon_SmartMultishot_And_Night_ImageSize_Title">Image size (Multishot, Night)</string>
     <string name="Pref_Comon_SmartMultishot_And_Super_ImageSize_Title">Image size Multishot</string>
     <string name="Pref_Common_ImageSize_Summary">\nNote: some modes have individual setting for image size</string>
@@ -92,6 +93,7 @@
     <string name="focusContinuousVideo">Continuous video</string>
     <string name="focusContinuousPicture">Continuous picture</string>
     <string name="focusAFLock">AF lock</string>
+    <string name="focusMF">Manual</string>
     
     <string name="flashAuto">Auto</string>
     <string name="flashOn">On</string>
@@ -184,6 +186,7 @@
     <string name="focusContinuousVideoSystem">continuous-video</string>
     <string name="focusContinuousPictureSystem">continuous-picture</string>
     <string name="focusAfLockSystem">af-lock</string>
+    <string name="focusMFSystem">manual-focus</string>
     
     <string name="focusAutoKey">00_auto</string>
     <string name="focusContinuousVideoKey">01_continuous-video</string>
@@ -194,6 +197,7 @@
     <string name="focusInfinityKey">06_infinity</string>    
     <string name="focusEdofKey">07_edof</string>    
     <string name="focusAfLockKey">08_af-lock</string>
+    <string name="focusMFKey">09_manual-focus</string>
     
     <string name="flashAutoSystem">auto</string>
     <string name="flashOnSystem">on</string>
@@ -240,10 +244,31 @@
     <string name="iso6400DefaultSystem">6400</string>
     <string name="iso10000DefaultSystem">10000</string>
     
+    <string name="colorEffectOffSystem">none</string>
+    <string name="colorEffectAquaSystem">aqua</string>
+    <string name="colorEffectBlackboardSystem">blackboard</string>
+    <string name="colorEffectMonoSystem">mono</string>
+    <string name="colorEffectNegativeSystem">negative</string>
+    <string name="colorEffectPosterizeSystem">posterize</string>
+    <string name="colorEffectSepiaSystem">sepia</string>
+    <string name="colorEffectSolarizeSystem">solarize</string>
+    <string name="colorEffectWhiteboardSystem">whiteboard</string>
+    
+    <string name="colorEffectOff">Off</string>
+    <string name="colorEffectAqua">Aqua</string>
+    <string name="colorEffectBlackboard">Blackboard</string>
+    <string name="colorEffectMono">Mono</string>
+    <string name="colorEffectNegative">Negative</string>
+    <string name="colorEffectPosterize">Posterize</string>
+    <string name="colorEffectSepia">Sepia</string>
+    <string name="colorEffectSolarize">Solarize</string>
+    <string name="colorEffectWhiteboard">Whiteboard</string>
+    
     <string name="meteringAutoSystem">Auto</string>
     <string name="meteringMatrixSystem">Matrix</string>
     <string name="meteringCenterSystem">Center-weighted</string>
     <string name="meteringSpotSystem">Spot</string>
+    <string name="meteringManualSystem">Shutter speed</string>
     
     <string name="cameraBack">Back</string>
     <string name="cameraFront">Front</string>
@@ -257,8 +282,13 @@
     <string name="settings_mode_metering">Exposure metering mode</string>
     <string name="settings_mode_rear">Rear camera</string>
     <string name="settings_mode_front">Front camera</string>
-    <string name="settings_mode_exposure">Exposure</string>
+    <string name="settings_mode_exposure">Exposure compensation</string>
+    <string name="settings_mode_exposuretime">Exposure time</string>
+    <string name="settings_mode_focusdistance">Focus distance</string>
+    <string name="settings_mode_image_size">Image size</string>
+    <string name="settings_mode_color_effect">Color effect</string>
     <string name="settings_mode_moresettings">More settings</string>
+    <string name="settings_mode_self_timer">Self-timer</string>
     <string name="settings_mode_aeaflock">AE\\AF Locked</string>
     <string name="settings_mode_aeafunlock">AE\\AF UnLocked</string>
     
@@ -278,6 +308,7 @@
 	<string name="Pref_Advanced_Preference_Summary">Settings for expert users</string>
 	<string name="Pref_Unlock_Preference_Title">Unlock</string>
 	<string name="Pref_Unlock_Preference_Summary">Unlock premium features</string>
+	<string name="Pref_Help_Preference_Title">Help</string>
 	
 	<string name="layout_hint_bottom">Select camera mode</string>
 	<string name="layout_hint_center">Swipe for more/less info</string>

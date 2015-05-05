@@ -1,9 +1,4 @@
-/* <!-- +++
-package com.almalence.opencam_plus.cameracontroller;
-+++ --> */
-//<!-- -+-
 package com.almalence.opencam.cameracontroller;
-//-+- -->
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -24,27 +19,22 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Matrix;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.hardware.Camera.Area;
+import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.params.MeteringRectangle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 
 import com.almalence.SwapHeap;
-
-/* <!-- +++
-import com.almalence.opencam_plus.ApplicationInterface;
-import com.almalence.opencam_plus.ApplicationScreen;
-import com.almalence.opencam_plus.PluginManagerInterface;
-import com.almalence.opencam_plus.R;
-+++ --> */
-//<!-- -+-
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginManagerInterface;
 import com.almalence.opencam.R;
-//-+- -->
-
 import com.almalence.sony.cameraremote.PictureCallbackSonyRemote;
 import com.almalence.sony.cameraremote.ServerDevice;
 import com.almalence.sony.cameraremote.SimpleCameraEventObserver;
@@ -52,6 +42,7 @@ import com.almalence.sony.cameraremote.SimpleRemoteApi;
 import com.almalence.sony.cameraremote.SimpleStreamSurfaceView;
 import com.almalence.sony.cameraremote.ZoomCallbackSonyRemote;
 import com.almalence.util.ImageConversion;
+import com.almalence.util.Util;
 
 public class SonyRemoteCamera
 {

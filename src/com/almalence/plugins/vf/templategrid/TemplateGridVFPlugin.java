@@ -58,23 +58,7 @@ public class TemplateGridVFPlugin extends PluginViewfinder
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		gridType = Integer.parseInt(prefs.getString("typePrefGrid", "1"));
 
-		switch (gridType)
-		{
-		case 0:
-			quickControlIconID = R.drawable.plugin_vf_grid_golden_icon;
-			break;
-		case 1:
-			quickControlIconID = R.drawable.plugin_vf_grid_thirds_icon;
-			break;
-		case 2:
-			quickControlIconID = R.drawable.plugin_vf_grid_trisec_icon;
-			break;
-		case 3:
-			quickControlIconID = R.drawable.plugin_vf_grid_none;
-			break;
-		default:
-			break;
-		}
+		quickControlIconID = R.drawable.plugin_vf_grid_thirds_icon;
 	}
 
 	@Override
@@ -92,56 +76,6 @@ public class TemplateGridVFPlugin extends PluginViewfinder
 		addView(grid, Plugin.ViewfinderZone.VIEWFINDER_ZONE_FULLSCREEN);
 
 		grid.setVisibility(View.VISIBLE);
-	}
-
-	@Override
-	public void onQuickControlClick()
-	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		gridType = Integer.parseInt(prefs.getString("typePrefGrid", "1"));
-
-		if (gridType == 4)
-			return;
-
-		gridType = (gridType + 1) % 4;
-
-		Editor editor = prefs.edit();
-		switch (gridType)
-		{
-		case 0:
-			quickControlIconID = R.drawable.plugin_vf_grid_golden_icon;
-			editor.putString("typePrefGrid", "0");
-			break;
-		case 1:
-			quickControlIconID = R.drawable.plugin_vf_grid_thirds_icon;
-			editor.putString("typePrefGrid", "1");
-			break;
-		case 2:
-			quickControlIconID = R.drawable.plugin_vf_grid_trisec_icon;
-			editor.putString("typePrefGrid", "2");
-			break;
-		case 3:
-			quickControlIconID = R.drawable.plugin_vf_grid_none;
-			editor.putString("typePrefGrid", "3");
-			break;
-		default:
-			break;
-		}
-		editor.commit();
-
-		ApplicationScreen.getGUIManager().removeViewQuick(grid);
-
-		try
-		{
-			setProperGrid();
-			grid.setScaleType(ScaleType.FIT_XY);
-			clearViews();
-			ApplicationScreen.getGUIManager().addViewQuick(grid, Plugin.ViewfinderZone.VIEWFINDER_ZONE_FULLSCREEN);
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			Log.e("Histogram", "onQuickControlClick exception: " + e.getMessage());
-		}
 	}
 
 	private void setProperGrid()
@@ -235,7 +169,5 @@ public class TemplateGridVFPlugin extends PluginViewfinder
 			}
 			grid.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(resID));
 		}
-
-//		grid.requestLayout();
 	}
 }

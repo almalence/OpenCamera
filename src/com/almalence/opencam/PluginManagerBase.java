@@ -459,7 +459,6 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	// base onPause stage
 	public void onPause(boolean isFromMain)
 	{
-
 		for (int i = 0; i < activeVF.size(); i++)
 			pluginList.get(activeVF.get(i)).onPause();
 		if (null != pluginList.get(activeCapture))
@@ -475,7 +474,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	public void menuButtonPressed()
 	{
 		onShowPreferences();
-		Intent settingsActivity = new Intent(ApplicationScreen.getMainContext(), Preferences.class);
+		Intent settingsActivity = new Intent(ApplicationScreen.getMainContext(), TemplatePreferences.class);
 		ApplicationScreen.instance.startActivity(settingsActivity);
 	}
 

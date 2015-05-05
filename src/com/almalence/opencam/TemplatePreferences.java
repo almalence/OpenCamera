@@ -32,21 +32,42 @@ import com.almalence.opencam_plus.R;
 import com.almalence.opencam.R;
 //-+- -->
 
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
-import android.view.Window;
-import android.view.WindowManager;
+/* <!-- +++
+import com.almalence.opencam_plus.R;
++++ --> */
+//<!-- -+-
+import com.almalence.opencam.R;
+//-+- -->
+
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Point;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.view.Display;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ImageView;
 
 /***
  * Preference activity class - manages preferences
  ***/
 
-public class Preferences extends PreferenceActivity
+public class TemplatePreferences extends PreferenceActivity
 {
 	public static PreferenceActivity	thiz;
 
@@ -65,7 +86,7 @@ public class Preferences extends PreferenceActivity
 			finish();
 		}
 	}
-	
+
 	// Called only on Honeycomb and later
 	// loading headers for common and plugins
 	@Override
@@ -118,5 +139,11 @@ public class Preferences extends PreferenceActivity
 	protected boolean isValidFragment(String fragmentName)
 	{
 		return true;
+	}
+
+	@Override
+	public void onHeaderClick(Header header, int position)
+	{
+		super.onHeaderClick(header, position);
 	}
 }

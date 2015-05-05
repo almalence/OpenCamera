@@ -16,7 +16,13 @@ Portions created by Initial Developer are Copyright (C) 2013
 by Almalence Inc. All Rights Reserved.
  */
 
+/* <!-- +++
+ package com.almalence.opencam_plus;
+ +++ --> */
+// <!-- -+-
 package com.almalence.opencam;
+
+//-+- -->
 
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
@@ -27,13 +33,16 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
+import android.view.Window;
+import android.view.WindowManager;
 
 /***
  * New interface for preferences. Loads sections for Common preferences.
  ***/
 
 @TargetApi(11)
-public class Fragment extends PreferenceFragment implements OnSharedPreferenceChangeListener
+public class TemplateFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener
 {
 	public static PreferenceFragment	thiz;
 
@@ -53,6 +62,32 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		for (int i = 0; i < getPreferenceScreen().getPreferenceCount(); i++)
 		{
 			initSummary(getPreferenceScreen().getPreference(i));
+		}
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+		boolean MaxScreenBrightnessPreference = prefs.getBoolean("maxScreenBrightnessPref", false);
+		setScreenBrightness(MaxScreenBrightnessPreference);
+	}
+
+	public static void setScreenBrightness(boolean setMax)
+	{
+		try
+		{
+			Window window = thiz.getActivity().getWindow();
+
+			WindowManager.LayoutParams layoutpars = window.getAttributes();
+
+			// Set the brightness of this window
+			if (setMax)
+				layoutpars.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL;
+			else
+				layoutpars.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
+
+			// Apply attribute changes to this window
+			window.setAttributes(layoutpars);
+		} catch (Exception e)
+		{
+
 		}
 	}
 
@@ -101,7 +136,6 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		}
 	}
 
-	
 	private void updatePrefSummary(Preference p)
 	{
 		if (p instanceof ListPreference)

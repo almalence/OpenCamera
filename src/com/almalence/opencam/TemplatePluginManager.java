@@ -119,4 +119,11 @@ public class TemplatePluginManager extends PluginManagerBase
 	{
 		return true;
 	}
+
+	@Override
+	public void onAutoFocusMoving(boolean start)
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

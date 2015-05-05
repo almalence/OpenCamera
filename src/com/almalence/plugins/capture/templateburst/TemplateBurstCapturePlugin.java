@@ -94,7 +94,7 @@ public class TemplateBurstCapturePlugin extends PluginCapture
 	{
 		if (CameraController.isUseHALv3() && CameraController.isNexus())
 		{
-			ApplicationScreen.instance.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false);
+			ApplicationScreen.instance.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false, true);
 		}
 	}
 

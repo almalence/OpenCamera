@@ -54,18 +54,24 @@ import com.almalence.opencam.cameracontroller.CameraController;
 public abstract class GUI
 {
 	// Flags to know which camera feature supported at current device
-	public boolean			mEVSupported				= false;
-	public boolean			mSceneModeSupported			= false;
-	public boolean			mWBSupported				= false;
-	public boolean			mFocusModeSupported			= false;
-	public boolean			mFlashModeSupported			= false;
-	public boolean			mISOSupported				= false;
-	public boolean			mCameraChangeSupported		= false;
+	public boolean			mEVSupported					= false;
+	public boolean			mSceneModeSupported				= false;
+	public boolean			mWBSupported					= false;
+	public boolean			mFocusModeSupported				= false;
+	public boolean			mFlashModeSupported				= false;
+	public boolean			mISOSupported					= false;
+	public boolean			mCameraChangeSupported			= false;
+	public boolean			mCollorEffectsSupported			= false;
 
-	public boolean			mEVLockSupported			= false;
-	public boolean			mWBLockSupported			= false;
+	public boolean			mEVLockSupported				= false;
+	public boolean			mWBLockSupported				= false;
 
-	public boolean			mMeteringAreasSupported		= false;
+	public boolean			mMeteringAreasSupported			= false;
+	
+	public boolean			mManualExposureTimeSupported  	= false;
+	public boolean			mManualFocusDistanceSupported	= false;
+	
+	public boolean			isAutoFocusDistance				= true;
 
 	// Lists of added plugin's controls
 	List<View>				VFViews;
@@ -91,7 +97,16 @@ public abstract class GUI
 
 	public enum CameraParameter
 	{
-		CAMERA_PARAMETER_EV, CAMERA_PARAMETER_SCENE, CAMERA_PARAMETER_WB, CAMERA_PARAMETER_FOCUS, CAMERA_PARAMETER_FLASH, CAMERA_PARAMETER_ISO, CAMERA_PARAMETER_METERING, CAMERA_PARAMETER_CAMERACHANGE
+		CAMERA_PARAMETER_EV,
+		CAMERA_PARAMETER_SCENE,
+		CAMERA_PARAMETER_WB,
+		CAMERA_PARAMETER_FOCUS,
+		CAMERA_PARAMETER_FLASH,
+		CAMERA_PARAMETER_ISO,
+		CAMERA_PARAMETER_METERING,
+		CAMERA_PARAMETER_EXPTIME,
+		CAMERA_PARAMETER_FDISTANCE,
+		CAMERA_PARAMETER_CAMERACHANGE
 	}
 
 	public GUI()
@@ -261,7 +276,7 @@ public abstract class GUI
 
 	abstract public boolean onKeyDown(boolean isFromMain, int keyCode, KeyEvent event);
 
-	abstract public void disableCameraParameter(CameraParameter iParam, boolean bDisable, boolean bInitMenu);
+	abstract public void disableCameraParameter(CameraParameter iParam, boolean bDisable, boolean bInitMenu, boolean bModeInit);
 
 	abstract public void startProcessingAnimation();
 

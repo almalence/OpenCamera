@@ -205,14 +205,22 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	protected static List<Area>			mMeteringAreaSpot		= new ArrayList<Area>();
 
 	protected int						currentMeteringMode		= -1;
+	
+	public static String				sInitModeListPref		= "initModeListPref";
 
 	public static String				sEvPref;
+	public static String				sExposureTimeModePref;
+	public static String				sExposureTimePref;
+	public static String				sFocusDistanceModePref;
+	public static String				sFocusDistancePref;
 	public static String				sSceneModePref;
 	public static String				sWBModePref;
 	public static String				sFrontFocusModePref;
 	public static String				sFrontFocusModeVideoPref;
 	public static String				sRearFocusModePref;
 	public static String				sRearFocusModeVideoPref;
+	public static String				sFrontColorEffectPref;
+	public static String				sRearColorEffectPref;
 	public static String				sFlashModePref;
 	public static String				sISOPref;
 	public static String				sMeteringModePref;
@@ -292,6 +300,8 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public static int					sDefaultFocusValue		= CameraParameters.AF_MODE_CONTINUOUS_PICTURE;
 	public static int					sDefaultFlashValue		= CameraParameters.FLASH_MODE_OFF;
 	public static int					sDefaultMeteringValue	= CameraParameters.meteringModeAuto;
+	public static Long					lDefaultExposureTimeValue		= 33333333l;
+	public static int					sDefaultCollorEffectValue		= CameraParameters.COLOR_EFFECT_MODE_OFF;
 
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -304,9 +314,15 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		sFrontFocusModeVideoPref = getResources().getString(R.string.Preference_FrontFocusModeVideoValue);
 		sRearFocusModePref = getResources().getString(R.string.Preference_RearFocusModeValue);
 		sRearFocusModeVideoPref = getResources().getString(R.string.Preference_RearFocusModeVideoValue);
+		sFrontColorEffectPref = getResources().getString(R.string.Preference_FrontColorEffectValue);
+		sRearColorEffectPref = getResources().getString(R.string.Preference_RearColorEffectValue);
 		sFlashModePref = getResources().getString(R.string.Preference_FlashModeValue);
 		sISOPref = getResources().getString(R.string.Preference_ISOValue);
 		sMeteringModePref = getResources().getString(R.string.Preference_MeteringModeValue);
+		sExposureTimePref = getResources().getString(R.string.Preference_ExposureTimeValue);
+		sExposureTimeModePref = getResources().getString(R.string.Preference_ExposureTimeModeValue);
+		sFocusDistancePref = getResources().getString(R.string.Preference_FocusDistanceValue);
+		sFocusDistanceModePref = getResources().getString(R.string.Preference_FocusDistanceModeValue);
 		sCameraModePref = getResources().getString(R.string.Preference_CameraModeValue);
 
 		sUseFrontCameraPref = getResources().getString(R.string.Preference_UseFrontCameraValue);
@@ -695,6 +711,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	protected void onApplicationStop()
 	{
+		switchingMode = false;
 		mApplicationStarted = false;
 		orientationMain = 0;
 		orientationMainPrevious = 0;
@@ -1016,11 +1033,8 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	@Override
 	public void setSpecialImageSizeIndexPref(int iIndex)
 	{
-		SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(mainContext).edit();
-		prefEditor.putString(ApplicationScreen.sImageSizeMultishotBackPref, String.valueOf(iIndex));
-		prefEditor.commit();		
 	}
-	
+
 	@Override
 	public String getSpecialImageSizeIndexPref()
 	{
@@ -1551,9 +1565,9 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		ApplicationScreen.getPluginManager().menuButtonPressed();
 	}
 
-	public void disableCameraParameter(GUI.CameraParameter iParam, boolean bDisable, boolean bInitMenu)
+	public void disableCameraParameter(GUI.CameraParameter iParam, boolean bDisable, boolean bInitMenu, boolean bModeInit)
 	{
-		guiManager.disableCameraParameter(iParam, bDisable, bInitMenu);
+		guiManager.disableCameraParameter(iParam, bDisable, bInitMenu, bModeInit);
 	}
 
 	public void showOpenGLLayer(final int version)

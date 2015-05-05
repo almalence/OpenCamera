@@ -94,6 +94,9 @@ public interface ApplicationInterface
 	public static final int				MSG_FLASH_CHANGED						= 64;
 	public static final int				MSG_ISO_CHANGED							= 65;
 	public static final int				MSG_AEWB_CHANGED						= 66;
+	
+	public static final int				MSG_FOCUS_LOCKED						= 663;
+	public static final int				MSG_FOCUS_UNLOCKED						= 664;
 
 	// OpenGL layer messages
 	public static final int				MSG_OPENGL_LAYER_SHOW					= 70;

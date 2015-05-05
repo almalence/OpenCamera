@@ -45,6 +45,20 @@
         android:entryValues="@array/shotOnTapValuesCommon"
         android:key="@string/Preference_ShotOnTapValue"
         android:title="@string/Pref_Common_ShotOnTap_Title" />
+    <ListPreference
+        android:defaultValue="0"
+        android:entries="@array/dimsArrayCommon"
+        android:entryValues="@array/dimsValuesCommon"
+        android:key="@string/Preference_FrontColorEffectValue"
+        android:summary=""
+        android:title="@string/Pref_Common_ColorEffect_Title" />
+    <ListPreference
+        android:defaultValue="0"
+        android:entries="@array/dimsArrayCommon"
+        android:entryValues="@array/dimsValuesCommon"
+        android:key="@string/Preference_RearColorEffectValue"
+        android:summary=""
+        android:title="@string/Pref_Common_ColorEffect_Title" />
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="headsetPrefCommon"
@@ -73,8 +87,7 @@
         android:title="@string/Pref_Common_Antibanding_Title" />
     
     <Preference
-        android:key="about"
-        android:summary="@string/Pref_About_Summary"
-        android:title="@string/Pref_About_Title" />
-
+        android:id="@+id/camera_parameters"
+        android:key="camera_parameters"
+        android:title="@string/Pref_CameraParameters_Title" />
 </PreferenceScreen>

@@ -38,6 +38,8 @@ public interface PluginManagerInterface
 
 	//Callback of auto focus
 	public void onAutoFocus(boolean focused);
+	
+	public void onAutoFocusMoving(boolean start);
 
 	//Callback for camera's preview frames
 	public void onPreviewFrame(byte[] data);

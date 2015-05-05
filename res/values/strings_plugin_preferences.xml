@@ -12,5 +12,10 @@
     <string name="Pref_About_Title">About</string>
     <string name="Pref_About_Summary">Version, license, contacts</string>
     
+    <string name="Pref_CameraParameters_Title">Camera parameters</string>
+    <string name="Pref_CameraParameters_Ok">OK</string>
+    <string name="Pref_CameraParameters_CopyToClipboard">Copy to clipboard</string>
+    
     <string name="Pref_Only_Advanced">Only advanced preferences available.</string>
+    
 </resources>

@@ -298,9 +298,9 @@ public class TemplateFocusVFPlugin extends PluginViewfinder
 	// This has to be initialized before initialize().
 	public void initializeParameters()
 	{
-		mFocusAreaSupported = (CameraController.getMaxAreasSupported() > 0 && isSupported(
+		mFocusAreaSupported = (CameraController.getMaxFocusAreasSupported() > 0 && isSupported(
 				CameraParameters.AF_MODE_AUTO, CameraController.getSupportedFocusModes()));
-		mMeteringAreaSupported = CameraController.getMaxAreasSupported() > 0;
+		mMeteringAreaSupported = CameraController.getMaxMeteringAreasSupported() > 0;
 	}
 
 	public void initialize(boolean mirror, int displayOrientation)
