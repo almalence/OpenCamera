@@ -840,13 +840,13 @@ public class HALv3
 				if (max_iso >= iso_value && min_iso <= iso_value)
 					++iso_count;
 			}
-			int[] iso_values = new int[iso_count + 1];
+			int[] iso_values = new int[iso_count];
 			// for (int i = 0; i < index; i++)
 			// iso_values[i] =
 			// CameraController.getIsoValuesList().get(i).byteValue();
 
-			iso_values[0] = CameraController.getIsoValuesList().get(0).byteValue();
-			int iso_index = 1;
+//			iso_values[0] = CameraController.getIsoValuesList().get(0).byteValue();
+			int iso_index = 0;
 			for (index = 0; index < CameraController.getIsoModeHALv3().size(); index++)
 			{
 				int iso_value = CameraController.getIsoModeHALv3().get(index);

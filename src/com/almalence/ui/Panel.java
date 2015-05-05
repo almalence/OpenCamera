@@ -69,7 +69,6 @@ public class Panel extends LinearLayout
 	}
 
 	private boolean				mIsShrinking;
-	private boolean				mIsOpened;
 	private final int			mPosition;
 	private final int			mDuration;
 	private final float			downSpace;
@@ -88,6 +87,7 @@ public class Panel extends LinearLayout
 	private float				mTrackX;
 	private float				mTrackY;
 	private float				mVelocity;
+	private boolean				handleTouched;
 
 	private boolean				outsideControl	= false;
 
@@ -269,7 +269,7 @@ public class Panel extends LinearLayout
 
 		if (mClosedHandle != null)
 		{
-			mHandle.setBackgroundDrawable(mClosedHandle);
+			mHandle.setBackground(mClosedHandle);
 			mOpened = false;
 		}
 		mContent.setVisibility(GONE);
@@ -301,7 +301,7 @@ public class Panel extends LinearLayout
 				canvas.translate(delta, 0);
 			}
 		}
-		if ((mState == State.TRACKING || mState == State.FLYING) && !mIsOpened)
+		if ((mState == State.TRACKING || mState == State.FLYING) && (!mOpened || handleTouched))
 		{
 			canvas.translate(mTrackX, mTrackY);
 			mContent.getBackground().setAlpha((int) (255 - 255 * Math.abs(mTrackY / mContentHeight)));
@@ -361,7 +361,7 @@ public class Panel extends LinearLayout
 																					.getMainContext().getResources()
 																					.getDisplayMetrics().density))
 																				return false;
-																			reorder(true, false);
+																			reorder(true, false, true);
 																		}
 																		if ((action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP)
 																				&& !startScrolling)
@@ -376,13 +376,19 @@ public class Panel extends LinearLayout
 																		outsideControl = true;
 																	}
 
-																} else
+																} else 
 																{
 																	handle = true;
 																	outsideControl = false;
 																}
 																if (action == MotionEvent.ACTION_DOWN)
 																{
+																	if (Math.abs(mHandle.getTop() - event.getRawY()) < 30) {
+																		handleTouched = true;
+																	} else {
+																		handleTouched = false;
+																	}
+																	
 																	initX = 0;
 																	initY = 0;
 																	if (mContent.getVisibility() == GONE)
@@ -450,14 +456,15 @@ public class Panel extends LinearLayout
 																}
 																if (!mGestureDetector.onTouchEvent(event))
 																{
-//																	if (action == MotionEvent.ACTION_UP)
-//																	{
-//																		// tup
-//																		// up
-//																		// after
-//																		// scrolling
-//																		post(startAnimation);
-//																	}
+																	if ((!mOpened || handleTouched) && action == MotionEvent.ACTION_UP)
+																	{
+																		handleTouched = false;
+																		// tup
+																		// up
+																		// after
+																		// scrolling
+																		post(startAnimation);
+																	}
 																}
 																return false;
 															}
@@ -623,12 +630,10 @@ public class Panel extends LinearLayout
 														{
 															public void onAnimationEnd(Animation animation)
 															{
-																mIsOpened = true;
 																mState = State.READY;
 																if (mIsShrinking)
 																{
 																	mContent.setVisibility(GONE);
-																	mIsOpened = false;
 																}
 																postProcess();
 															}
@@ -648,8 +653,8 @@ public class Panel extends LinearLayout
 		if (mIsShrinking && mClosedHandle != null)
 		{
 			moving = 0;
-			reorder(locationTop, false);
-			mHandle.setBackgroundDrawable(mClosedHandle);
+			reorder(locationTop, false, false);
+			mHandle.setBackground(mClosedHandle);
 			mOpened = false;
 			startScrolling = false;
 		} else if (!mIsShrinking && mOpenedHandle != null)
@@ -658,7 +663,8 @@ public class Panel extends LinearLayout
 			startScrolling = false;
 			firstTime = true;
 			mContent.getBackground().setAlpha(255);
-			mHandle.setBackgroundDrawable(mOpenedHandle);
+			mHandle.setBackground(mOpenedHandle);
+			reorder(false, false, true);
 		}
 		// invoke listener if any
 		if (panelListener != null)
@@ -705,12 +711,20 @@ public class Panel extends LinearLayout
 
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
 		{
-			if (!mIsOpened) {
+			if (!mOpened) {
 				mState = State.FLYING;
 				mVelocity = mOrientation == VERTICAL ? velocityY : velocityX;
 				post(startAnimation);
 				return true;
 			} else {
+				if (handleTouched) {
+					mState = State.FLYING;
+					mVelocity = mOrientation == VERTICAL ? velocityY : velocityX;
+					post(startAnimation);
+					
+					handleTouched = false;
+					return true;
+				}
 				return false;
 			}
 		}
@@ -731,8 +745,8 @@ public class Panel extends LinearLayout
 			if (outsideControl && e2.getY() > (mContentHeight))
 				return true;
 
-			if (scrollY > -450)
-				reorder(true, false);
+			reorder(true, false, true);
+			
 			if (mOrientation == VERTICAL)
 			{
 
@@ -775,15 +789,16 @@ public class Panel extends LinearLayout
 			// simple tap: click
 			if (!mOpened) {
 				post(startAnimation);
-				return true;
+			} else {
+				setOpen(false, true);
 			}
 			
-			return false;
+			return true;
 		}
 	}
 
 	// corrects margin between content and handler
-	public void reorder(boolean toTop, boolean isFromGUI)
+	public void reorder(boolean toTop, boolean isFromGUI, boolean forceNull)
 	{
 		if (isFromGUI)
 			locationTop = toTop;
@@ -805,6 +820,10 @@ public class Panel extends LinearLayout
 		} else
 		{
 			lp.topMargin = (int) (downSpace);
+		}
+		
+		if (forceNull) {
+			lp.topMargin = 0;
 		}
 		mHandle.setLayoutParams(lp);
 	}
