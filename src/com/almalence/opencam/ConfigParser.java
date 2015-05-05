@@ -175,7 +175,15 @@ public class ConfigParser
 		    Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h510") ||
 		    Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-f510k")
 		    )
-				modeID = "nightmode";
+		{
+			Iterator<Mode> it = modes.iterator();
+			while(it.hasNext())
+			{
+				Mode mode = it.next();
+				if(mode.modeID == "nightmode")
+					modeID = "nightmode";
+			}
+		}
 		
 		parser.nextTag();
 		return modeID;

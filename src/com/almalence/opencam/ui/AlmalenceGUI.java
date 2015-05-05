@@ -1995,7 +1995,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_EV);
 			but.setImageResource(ICON_EV);
 		} else
+		{
+			defaultQuickControl1 = String.valueOf(MODE_EV);
+			RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_EV);
+			but.setImageResource(ICON_EV);
 			mEVSupported = false;
+			disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, true, false, true);
+		}
 
 		// Create Scene mode button and adding supported scene modes
 		int[] supported_scene = CameraController.getSupportedSceneModes();
@@ -2956,7 +2962,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_EV);
 			but.setImageResource(ICON_EV);
 		} else
+		{
 			mEVSupported = false;
+			RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_EV);
+			but.setImageResource(ICON_EV);
+			disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, true, false, true);
+		}
 
 	}
 
@@ -2970,7 +2981,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			switch (cameraParameter)
 			{
 			case MODE_EV:
-				return mEVSupported;
+				return true;//mEVSupported;
 			case MODE_SCENE:
 				return mSceneModeSupported;
 			case MODE_WB:
