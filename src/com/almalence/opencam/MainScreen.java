@@ -1433,6 +1433,11 @@ public class MainScreen extends ApplicationScreen
 
 	public static int selectImageDimensionMultishot()
 	{
+		String modeName = PluginManager.getInstance().getActiveModeID();
+		if (CameraController.isUseHALv3() && modeName.contains("night")) {
+			return 0;
+		}
+		
 		long maxMem = Runtime.getRuntime().maxMemory() - Debug.getNativeHeapAllocatedSize();
 		long maxMpix = (maxMem - 1000000) / 3; // 2 x Mpix - result, 1/4 x Mpix
 												// x 4 - compressed input jpegs,
