@@ -221,10 +221,15 @@ public class InfosetVFPlugin extends PluginViewfinder
 		else
 			flashPref.setEnabled(false);
 
-		if (ApplicationScreen.getCameraController().isISOSupported())
-			isoPref.setEnabled(true);
-		else
+		if (CameraController.isUseHALv3())
 			isoPref.setEnabled(false);
+		else
+		{
+			if (ApplicationScreen.getCameraController().isISOSupported())
+				isoPref.setEnabled(true);
+			else
+				isoPref.setEnabled(false);
+		}
 	}
 
 	@Override
