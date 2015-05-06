@@ -383,7 +383,7 @@ public class Panel extends LinearLayout
 																}
 																if (action == MotionEvent.ACTION_DOWN)
 																{
-																	if (Math.abs(mHandle.getTop() - event.getRawY()) < 30) {
+																	if (Math.abs(mHandle.getTop() - event.getRawY()) < 30 && mOpened) {
 																		handleTouched = true;
 																	} else {
 																		handleTouched = false;

@@ -2680,6 +2680,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					if (CameraController.isUseHALv3())
 					{
 						mISO = CameraParameters.ISO_AUTO;
+						setISO(mISO);
 						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true, false);
 					}
 
@@ -5758,6 +5759,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			setButtonSelected(isoButtons, mISO);
 
 			preferences.edit().putInt(ApplicationScreen.sISOPref, newMode).commit();
+			
+			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
+					ApplicationInterface.MSG_ISO_CHANGED);
 		}
 
 		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_ISO);
@@ -5788,6 +5792,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, false, true, false);
 		else {
 			mISO = CameraParameters.ISO_AUTO;
+			setISO(mISO);
 			disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true, false);
 		}
 		
