@@ -79,7 +79,7 @@ public class AlarmReceiver extends BroadcastReceiver
 		{
 			if (ApplicationScreen.getCameraController().getCamera() == null)
 			{
-				Intent dialogIntent = new Intent(context, ApplicationScreen.class);
+				Intent dialogIntent = new Intent(context, MainScreen.class);
 				dialogIntent.addFlags(Intent.FLAG_FROM_BACKGROUND | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
 						| Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 				context.startActivity(dialogIntent);
