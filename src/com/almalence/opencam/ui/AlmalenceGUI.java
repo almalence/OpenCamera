@@ -7646,7 +7646,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			// if installed - run ABC Editor
 			if (AppEditorNotifier.isABCEditorInstalled(ApplicationScreen.instance))
 			{
-				ApplicationScreen.instance.startActivity(new Intent("com.almalence.opencameditor.action.REVIEW", uri));// com.almalence.opencameditor
+				Intent intent = new Intent("com.almalence.opencameditor.action.REVIEW", uri);
+				intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+				ApplicationScreen.instance.startActivity(intent);// com.almalence.opencameditor
 			}
 			// if not installed - show that we have editor and let user install
 			// it of run standard dialog
@@ -7663,12 +7665,16 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	{
 		try
 		{
-			ApplicationScreen.instance.startActivity(new Intent("com.android.camera.action.REVIEW", uri));
+			Intent intent = new Intent("com.android.camera.action.REVIEW", uri);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+			ApplicationScreen.instance.startActivity(intent);
 		} catch (ActivityNotFoundException ex)
 		{
 			try
 			{
-				ApplicationScreen.instance.startActivity(new Intent(Intent.ACTION_VIEW, uri));
+				Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+				intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+				ApplicationScreen.instance.startActivity(intent);
 			} catch (ActivityNotFoundException e)
 			{
 				Log.e("AlmalenceGUI", "review image fail. uri=" + uri, e);
