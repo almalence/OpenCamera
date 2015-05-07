@@ -185,6 +185,42 @@ public class HALv3
 			return false;
 		}
 	}
+	
+	public static boolean isLimitedHardwareLevel()
+	{
+		if(CameraController.cameraIdList == null || CameraController.cameraIdList.length == 0)
+			return false;
+		try
+		{
+			HALv3.getInstance().camCharacter = HALv3.getInstance().manager
+					.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
+			
+			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED;
+		} catch (CameraAccessException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public static boolean isFullHardwareLevel()
+	{
+		if(CameraController.cameraIdList == null || CameraController.cameraIdList.length == 0)
+			return false;
+		try
+		{
+			HALv3.getInstance().camCharacter = HALv3.getInstance().manager
+					.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
+			
+			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL;
+		} catch (CameraAccessException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	}
 
 	public static void onResumeHALv3()
 	{
@@ -2146,6 +2182,10 @@ public class HALv3
 	
 	public final static CameraCaptureSession.CaptureCallback captureCallback	= new CameraCaptureSession.CaptureCallback()
 	{
+		boolean resetInProgress = false;
+		int resetRequestId = 0;
+		
+		
 		@Override
 		public void onCaptureCompleted(
 				CameraCaptureSession session,
@@ -2225,6 +2265,10 @@ public class HALv3
 			 currentExposure = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
 			 currentSensitivity = result.get(CaptureResult.SENSOR_SENSITIVITY);
 			
+			 if (request.get(CaptureRequest.SENSOR_SENSITIVITY) >= 50 && currentSensitivity != request.get(CaptureRequest.SENSOR_SENSITIVITY) && request.get(CaptureRequest.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_OFF && !resetInProgress) {
+				 resetCaptureCallback();
+			 }
+			 
 			try {
 				int focusState = result.get(CaptureResult.CONTROL_AF_STATE);
 				if (focusState == CaptureResult.CONTROL_AF_STATE_PASSIVE_SCAN
@@ -2239,8 +2283,16 @@ public class HALv3
 			// dumpCaptureResult(result);
 		}
 	
+		public void onCaptureSequenceCompleted(CameraCaptureSession session, int sequenceId, long frameNumber) {
+			if (sequenceId == resetRequestId) {
+				resetInProgress = false;
+			}
+		};
+		
 		private void resetCaptureCallback()
 		{
+			resetInProgress = true;
+			
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
 					CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
 			try
@@ -2261,12 +2313,14 @@ public class HALv3
 			{
 				Log.e(TAG,
 						"resetCaptureCallback. CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE");
-				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
+				resetRequestId = HALv3.getInstance().mCaptureSession.capture(
 						HALv3.previewRequestBuilder.build(), captureCallback, null);
+				CameraController.iCaptureID = resetRequestId;
 			} catch (CameraAccessException e)
 			{
 				e.printStackTrace();
 			}
+			
 			// if
 			// (HALv3.getInstance().previewRequestBuilder
 			// !=

@@ -180,7 +180,7 @@ public class ConfigParser
 			while(it.hasNext())
 			{
 				Mode mode = it.next();
-				if(mode.modeID == "nightmode")
+				if(mode.modeID.contains("nightmode"))
 					modeID = "nightmode";
 			}
 		}
