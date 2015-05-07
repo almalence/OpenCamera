@@ -185,6 +185,42 @@ public class HALv3
 			return false;
 		}
 	}
+	
+	public static boolean isLimitedHardwareLevel()
+	{
+		if(CameraController.cameraIdList == null || CameraController.cameraIdList.length == 0)
+			return false;
+		try
+		{
+			HALv3.getInstance().camCharacter = HALv3.getInstance().manager
+					.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
+			
+			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED;
+		} catch (CameraAccessException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public static boolean isFullHardwareLevel()
+	{
+		if(CameraController.cameraIdList == null || CameraController.cameraIdList.length == 0)
+			return false;
+		try
+		{
+			HALv3.getInstance().camCharacter = HALv3.getInstance().manager
+					.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
+			
+			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL;
+		} catch (CameraAccessException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	}
 
 	public static void onResumeHALv3()
 	{

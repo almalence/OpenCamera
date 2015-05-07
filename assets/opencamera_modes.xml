@@ -19,9 +19,6 @@
     plugin id - real unique plugin id which is set in plugin ctor
      -->
 
-	<!--  Default plugin for initial start -->     
-    <defaultmode id="single"/>
-     
 	<mode id="single" name="single_mode_name" savename="">
 		<icon		id="gui_almalence_mode_single"/>
 
@@ -324,5 +321,8 @@
 		<howtotext  id=""/>
 		
 	</mode>
+	
+	<!--  Default plugin for initial start -->     
+    <defaultmode id="single"/>
 
 </config>	
