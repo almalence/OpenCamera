@@ -881,7 +881,6 @@ public class HALv3
 			// iso_values[i] =
 			// CameraController.getIsoValuesList().get(i).byteValue();
 
-//			iso_values[0] = CameraController.getIsoValuesList().get(0).byteValue();
 			int iso_index = 0;
 			for (index = 0; index < CameraController.getIsoModeHALv3().size(); index++)
 			{
@@ -1095,7 +1094,7 @@ public class HALv3
 	{
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 		{
-			if (mode != 1)
+			if (mode > 0)
 			{
 				int iso = CameraController.getIsoModeHALv3().get(mode);
 				HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
