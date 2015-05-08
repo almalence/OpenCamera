@@ -552,6 +552,11 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 
 	protected void AddModeSettings(String modeName, PreferenceFragment pf)
 	{
+		if (modeName.equals("super")) {
+			pf.addPreferencesFromResource(R.xml.preferences_processing_super);
+			return;
+		}
+		
 		Mode mode = ConfigParser.getInstance().getMode(modeName);
 		for (int j = 0; j < listCapture.size(); j++)
 		{
