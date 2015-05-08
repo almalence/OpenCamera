@@ -563,7 +563,11 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		}
 		for (int j = 0; j < listProcessing.size(); j++)
 		{
-			if (modeName.equals("video"))
+			//all modes below use simple processing and we should avoid duplicating DRO settings here.
+			if (modeName.equals("video")||
+				modeName.equals("burstmode")||
+				modeName.equals("expobracketing")||
+				modeName.equals("burstmode"))
 				return;
 			Plugin pg = listProcessing.get(j);
 			if (mode.Processing.equals(pg.getID()))
