@@ -1143,6 +1143,56 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		else
 			return -1;
 	}
+	
+	//Methods to get readable camera parameters names
+	public String getSceneName(int sceneMode)
+	{
+		if (NAMES_SCENE.containsKey(sceneMode))
+			return NAMES_SCENE.get(sceneMode);
+		else
+			return "";
+	}
+
+	public String getWBName(int wb)
+	{
+		if (NAMES_WB.containsKey(wb))
+			return NAMES_WB.get(wb);
+		else
+			return "";
+	}
+
+	public String getFocusName(int focusMode)
+	{
+		if (NAMES_FOCUS.containsKey(focusMode))
+		{
+			try
+			{
+				return NAMES_FOCUS.get(focusMode);
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+				Log.e("getFocusIcon", "icons_focus.get exception: " + e.getMessage());
+				return "";
+			}
+		} else
+			return "";
+	}
+
+	public String getFlashName(int flashMode)
+	{
+		if (NAMES_FLASH.containsKey(flashMode))
+			return NAMES_FLASH.get(flashMode);
+		else
+			return "";
+	}
+
+	public String getISOName(int isoMode)
+	{
+		if (NAMES_ISO.containsKey(isoMode))
+			return NAMES_ISO.get(isoMode);
+		else
+			return "";
+	}
 
 	@Override
 	public float getScreenDensity()

@@ -249,6 +249,17 @@ public abstract class GUI
 	abstract public int getFlashIcon(int flashMode);
 
 	abstract public int getISOIcon(int isoMode);
+	
+	// Methods returns readable camera parameters name
+	abstract public String getSceneName(int sceneMode);
+
+	abstract public String getWBName(int wb);
+
+	abstract public String getFocusName(int focusMode);
+
+	abstract public String getFlashName(int flashMode);
+
+	abstract public String getISOName(int isoMode);
 
 	/* FOCUS MANAGER SECTION */
 	/*
