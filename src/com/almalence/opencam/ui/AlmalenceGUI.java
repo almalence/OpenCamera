@@ -1341,7 +1341,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		if (modeSelectorVisible)
 			hideModeList();
 		if (settingsControlsVisible)
-			((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
+			((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false);
 
 		if (((RelativeLayout) guiView.findViewById(R.id.viewPagerLayoutMain)).getVisibility() == View.VISIBLE)
 			hideStore();
@@ -2936,7 +2936,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 				ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
 						ApplicationInterface.MSG_CONTROL_UNLOCKED);
-				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
+				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false);
 			}
 		};
 
@@ -4129,7 +4129,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				if (supported_scene.length > 0)
 				{
 					if (iScreenType == 0)
-						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
+						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false);
 
 					if (guiView.findViewById(R.id.scenemodeLayout).getVisibility() != View.VISIBLE)
 					{
@@ -4160,7 +4160,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				if (supported_wb.length > 0)
 				{
 					if (iScreenType == 0)
-						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
+						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false);
 
 					if (guiView.findViewById(R.id.wbLayout).getVisibility() != View.VISIBLE)
 					{
@@ -4193,7 +4193,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				if (supported_focus.length > 0)
 				{
 					if (iScreenType == 0)
-						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
+						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false);
 
 					if (guiView.findViewById(R.id.focusmodeLayout).getVisibility() != View.VISIBLE)
 					{
@@ -4224,7 +4224,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				if (supported_flash.length > 0)
 				{
 					if (iScreenType == 0)
-						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
+						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false);
 
 					if (guiView.findViewById(R.id.flashmodeLayout).getVisibility() != View.VISIBLE)
 					{
@@ -4253,7 +4253,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				if ((supported_iso != null && supported_iso.length > 0) || CameraController.isISOSupported())
 				{
 					if (iScreenType == 0)
-						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
+						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false);
 
 					if (guiView.findViewById(R.id.isoLayout).getVisibility() != View.VISIBLE)
 					{
@@ -4282,7 +4282,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				if (iMeteringAreasSupported > 0)
 				{
 					if (iScreenType == 0)
-						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
+						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false);
 
 					if (guiView.findViewById(R.id.meteringLayout).getVisibility() != View.VISIBLE)
 					{
@@ -4310,7 +4310,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				int iCamerasSupported = CameraController.getNumberOfCameras();
 				if (iCamerasSupported > 0)
 				{
-					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
+					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false);
 
 					if (guiView.findViewById(R.id.cameraLayout).getVisibility() != View.VISIBLE)
 					{
@@ -4336,7 +4336,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					return;
 				}
 				if (iScreenType == 0)
-					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
+					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false);
 
 				if (guiView.findViewById(R.id.evLayout).getVisibility() != View.VISIBLE)
 				{
@@ -4365,7 +4365,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	// if(CameraController.isManualExposureTimeSupported())
 	// {
 	// if (iScreenType == 0)
-	// ((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
+	// ((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
 	//
 	// if (guiView.findViewById(R.id.evLayout).getVisibility() != View.VISIBLE)
 	// {
@@ -4395,7 +4395,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	// if(CameraController.isManualFocusDistanceSupported())
 	// {
 	// if (iScreenType == 0)
-	// ((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
+	// ((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
 	//
 	// if (guiView.findViewById(R.id.evLayout).getVisibility() != View.VISIBLE)
 	// {
@@ -4454,7 +4454,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			{
 				unselectPrimaryTopMenuButtons(-1);
 				hideSecondaryMenus();
-				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
+				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false);
 				imageSizeQuickSetting.showDialog();
 			}
 		});
@@ -4468,7 +4468,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			{
 				unselectPrimaryTopMenuButtons(-1);
 				hideSecondaryMenus();
-				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
+				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false);
 				collorEffectQuickSetting.showDialog();
 			}
 		});
@@ -4487,12 +4487,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	private void openMoreSettings()
 	{
+		((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false);
 		MainScreen.getInstance().getCameraParametersBundle();
 
 		ApplicationScreen.getPluginManager().onShowPreferences();
 		Intent settingsActivity = new Intent(MainScreen.getMainContext(), Preferences.class);
 		MainScreen.getInstance().startActivity(settingsActivity);
-		((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, false);
 	}
 
 	/***************************************************************************************
@@ -5088,7 +5088,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			}
 			if (settingsControlsVisible)
 			{
-				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
+				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false);
 				return;
 			}
 			if (modeSelectorVisible)
@@ -5457,7 +5457,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 				unselectPrimaryTopMenuButtons(-1);
 				hideSecondaryMenus();
-				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
+				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false);
 
 				imageSizeQuickSetting.showDialog();
 				break;
@@ -5469,7 +5469,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 				unselectPrimaryTopMenuButtons(-1);
 				hideSecondaryMenus();
-				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
+				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false);
 
 				collorEffectQuickSetting.showDialog();
 				break;
@@ -7547,7 +7547,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				guiView.findViewById(R.id.topPanel).setVisibility(View.VISIBLE);
 			} else if (settingsControlsVisible)
 			{
-				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
+				((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false);
 				// guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 				res++;
 			} else if (modeSelectorVisible)
@@ -7585,7 +7585,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					closeQuickControlsSettings();
 				if (settingsControlsVisible)
 				{
-					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
+					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false);
 					// guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 					return false;
 				}
