@@ -55,6 +55,8 @@ import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Surface;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
@@ -65,6 +67,7 @@ import android.hardware.camera2.CaptureResult;
 
 import com.almalence.SwapHeap;
 import com.almalence.plugins.capture.panoramaaugmented.AugmentedPanoramaEngine.AugmentedFrameTaken;
+import com.almalence.ui.RotateImageView;
 import com.almalence.ui.Switch.Switch;
 import com.almalence.util.HeapUtil;
 import com.almalence.util.ImageConversion;
@@ -170,6 +173,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	private Switch						modeSwitcher;
 	private boolean						modeSweep;
 	private boolean						focused						= false;
+	
+	private RotateImageView				stopPanoramaButton;
 
 	public PanoramaAugmentedCapturePlugin()
 	{
@@ -603,9 +608,16 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout3)).addView(this.modeSwitcher,
 				params);
 		this.modeSwitcher.setLayoutParams(params);
-		// this.modeSwitcher.requestLayout();
-		// ((RelativeLayout)
-		// ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout3)).requestLayout();
+		
+		stopPanoramaButton = (RotateImageView) ApplicationScreen.instance.findViewById(R.id.buttonPanoramaStop);
+		stopPanoramaButton.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				onShutterClick();
+			}
+		});
 	}
 
 	@Override
@@ -1093,6 +1105,14 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		SessionID = curDate.getTime();
 
 		this.inCapture = true;
+		
+		
+		//show stop button and hide standard bottom gui
+		View mainButtonsPanorama = (View) ApplicationScreen.instance.guiManager.getMainView().findViewById(R.id.mainButtonsPanorama);
+		mainButtonsPanorama.setVisibility(View.VISIBLE);
+
+		View mainButtons = (View) ApplicationScreen.instance.guiManager.getMainView().findViewById(R.id.mainButtons);
+		mainButtons.setVisibility(View.INVISIBLE);
 	}
 
 	private void takePictureUnimode(final int image)
@@ -1429,6 +1449,13 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	@SuppressLint("FloatMath")
 	private void stopCapture()
 	{
+		//show standard bottom gui and hide stop button  
+		View mainButtonsPanorama = (View) ApplicationScreen.instance.guiManager.getMainView().findViewById(R.id.mainButtonsPanorama);
+		mainButtonsPanorama.setVisibility(View.GONE);
+		View mainButtons = (View) ApplicationScreen.instance.guiManager.getMainView().findViewById(R.id.mainButtons);
+		mainButtons.setVisibility(View.VISIBLE);
+		mainButtons.findViewById(R.id.buttonSelectMode).setVisibility(View.VISIBLE);
+		
 		this.inCapture = false;
 		this.focused = false;
 

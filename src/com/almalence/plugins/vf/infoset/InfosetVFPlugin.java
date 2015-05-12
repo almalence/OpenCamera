@@ -186,7 +186,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 		Preference flashPref = preferenceFragment.findPreference("useFlashMonitorPrefInfoset");
 		Preference isoPref = preferenceFragment.findPreference("useISOMonitorPrefInfoset");
 
-		if (ApplicationScreen.getCameraController().isExposureCompensationSupported())
+		if (CameraController.isExposureCompensationSupported())
 			evPref.setEnabled(true);
 		else
 			evPref.setEnabled(false);
@@ -201,22 +201,22 @@ public class InfosetVFPlugin extends PluginViewfinder
 			useCurrentExposureTimePref.setEnabled(false);
 		}
 
-		if (ApplicationScreen.getCameraController().isSceneModeSupported())
+		if (CameraController.isSceneModeSupported())
 			scenePref.setEnabled(true);
 		else
 			scenePref.setEnabled(false);
 
-		if (ApplicationScreen.getCameraController().isWhiteBalanceSupported())
+		if (CameraController.isWhiteBalanceSupported())
 			wbPref.setEnabled(true);
 		else
 			wbPref.setEnabled(false);
 
-		if (ApplicationScreen.getCameraController().isFocusModeSupported())
+		if (CameraController.isFocusModeSupported())
 			focusPref.setEnabled(true);
 		else
 			focusPref.setEnabled(false);
 
-		if (ApplicationScreen.getCameraController().isFlashModeSupported())
+		if (CameraController.isFlashModeSupported())
 			flashPref.setEnabled(true);
 		else
 			flashPref.setEnabled(false);
@@ -225,7 +225,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 			isoPref.setEnabled(false);
 		else
 		{
-			if (ApplicationScreen.getCameraController().isISOSupported())
+			if (CameraController.isISOSupported())
 				isoPref.setEnabled(true);
 			else
 				isoPref.setEnabled(false);
@@ -474,12 +474,20 @@ public class InfosetVFPlugin extends PluginViewfinder
 		if (useCurrentSensitivityMonitor && currentSensitivityText != null)
 		{
 			int currentSensetivity = CameraController.getCurrentSensitivity();
-			String currentSensetivityString = "ISO " + currentSensetivity;
-			currentSensitivityText.setText(currentSensetivityString);
 			if (currentSensetivity != -1 && currentSensetivity != 0)
-				currentSensitivityText.setVisibility(View.VISIBLE);
+			{
+				String currentSensetivityString = "ISO " + currentSensetivity;
+				currentSensitivityText.setText(currentSensetivityString);
+			}
 			else
-				currentSensitivityText.setVisibility(View.GONE);
+			{
+				String currentSensetivityString = "ISO Auto";
+				currentSensitivityText.setText(currentSensetivityString);
+			}
+				
+				currentSensitivityText.setVisibility(View.VISIBLE);
+//			else
+//				currentSensitivityText.setVisibility(View.GONE);
 		}
 
 		if (useCurrentExposureTimeMonitor && currentExposureTimeText != null)
@@ -581,6 +589,14 @@ public class InfosetVFPlugin extends PluginViewfinder
 			} else
 				isoInfoImage.setVisibility(View.GONE);
 		}
+		
+		if (useCurrentSensitivityMonitor && currentSensitivityText != null)
+		{
+			int iso = CameraController.getISOMode();
+			if (iso != -1 && CameraController.isISOSupported())
+				currentSensitivityText.setText(ApplicationScreen.getGUIManager().getISOName(iso));
+			currentSensitivityText.setVisibility(View.VISIBLE);
+		}
 	}
 
 	@Override
@@ -664,15 +680,23 @@ public class InfosetVFPlugin extends PluginViewfinder
 			}
 		} else if (arg1 == ApplicationInterface.MSG_ISO_CHANGED)
 		{
+			int iso = CameraController.getISOMode();
 			if (this.useISOMonitor && isoInfoImage != null)
 			{
-				int iso = CameraController.getISOMode();
 				if (iso != -1 && isoInfoImage != null)
 				{
 					int iso_id = ApplicationScreen.instance.getISOIcon(iso);
 					if (iso_id != -1)
 						isoInfoImage.setImageDrawable(ApplicationScreen.getMainContext().getResources().getDrawable(iso_id));
 				}
+			}
+			
+			if (useCurrentSensitivityMonitor && currentSensitivityText != null)
+			{
+				if (iso != -1)
+					currentSensitivityText.setText(ApplicationScreen.getGUIManager().getISOName(iso));
+				
+				currentSensitivityText.setVisibility(View.VISIBLE);
 			}
 		}
 
@@ -685,12 +709,17 @@ public class InfosetVFPlugin extends PluginViewfinder
 		if (useCurrentSensitivityMonitor && currentSensitivityText != null)
 		{
 			int currentSensetivity = CameraController.getCurrentSensitivity();
-			String currentSensetivityString = "ISO " + currentSensetivity;
-			currentSensitivityText.setText(currentSensetivityString);
 			if (currentSensetivity != -1 && currentSensetivity != 0)
-				currentSensitivityText.setVisibility(View.VISIBLE);
+			{
+				String currentSensetivityString = "ISO " + currentSensetivity;
+				currentSensitivityText.setText(currentSensetivityString);
+			}
 			else
-				currentSensitivityText.setVisibility(View.GONE);
+			{
+				String currentSensetivityString = "ISO Auto";
+				currentSensitivityText.setText(currentSensetivityString);
+			}
+			currentSensitivityText.setVisibility(View.VISIBLE);
 		}
 
 		if (useCurrentExposureTimeMonitor && currentExposureTimeText != null)

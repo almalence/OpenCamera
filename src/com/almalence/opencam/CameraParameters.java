@@ -83,8 +83,8 @@ public final class CameraParameters
 	public static final int		FLASH_MODE_TORCH				= 2;
 
 	// ISO
-	public static final int		ISO_50							= 0;
-	public static final int		ISO_AUTO						= 1;
+	public static final int		ISO_AUTO						= 0;
+	public static final int		ISO_50							= 1;
 	public static final int		ISO_100							= 2;
 	public static final int		ISO_200							= 3;
 	public static final int		ISO_400							= 4;
