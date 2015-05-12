@@ -200,6 +200,28 @@
 		   		>
 			</com.almalence.ui.RotateImageView>
 	</RelativeLayout>
+	
+    <RelativeLayout 
+		android:id="@+id/mainButtonsPanorama"
+       	android:background="@drawable/blacktransparentlayerbottom"
+       	android:layout_weight="1"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:gravity="bottom|center"	    
+	   	android:layout_alignParentBottom="true"
+		android:visibility="gone">
+          	<com.almalence.ui.RotateImageView
+				android:id="@+id/buttonPanoramaStop"
+				android:src="@drawable/plugin_capture_video_stop_square"
+				android:background="@android:color/transparent"
+				android:layout_height="@dimen/paramsLayoutHeight"
+				android:layout_width="@dimen/paramsLayoutHeight"
+				android:scaleType="fitCenter"
+				android:layout_centerInParent="true"
+				android:layout_marginBottom="15dip"
+		   		>
+			</com.almalence.ui.RotateImageView>
+	</RelativeLayout>
 	 	      
     <RelativeLayout
        android:id="@+id/fullscreenLayout"
