@@ -285,7 +285,7 @@ public class SonyCameraDeviceExplorer implements WifiListener
 					progress.dismiss();
 				}
 				progress = ProgressDialog.show(ApplicationScreen.instance, ApplicationScreen.instance.getResources().getString(R.string.title_connecting),
-						ApplicationScreen.instance.getResources().getString(R.string.msg_connecting), true);
+						ApplicationScreen.instance.getResources().getString(R.string.msg_connecting), true, true);
 			}
 		});
 		searchForCameraAndOpenLoop();
