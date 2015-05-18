@@ -29,7 +29,6 @@ public class WifiHandler {
 
 		this.mContext = context;
 		mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE); 
-		mWifiManager.setWifiEnabled(true);
 		listeners = new ArrayList<WifiListener>();
 
 		cameraWifiState = State.UNKNOWN;
@@ -60,6 +59,8 @@ public class WifiHandler {
 
 
 	public void createIfNeededThenConnectToWifi(String networkSSID, String networkPassword) {
+		mWifiManager.setWifiEnabled(true);
+		
 		int netId = -1;
 
 		List<WifiConfiguration> list = mWifiManager.getConfiguredNetworks();

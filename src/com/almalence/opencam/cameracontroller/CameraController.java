@@ -3631,7 +3631,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				} else
 					return HALv3.autoFocusHALv3();
 			} else {
-				if (CameraController.getFocusState() == CameraController.FOCUS_STATE_IDLE) {
+				if (CameraController.getFocusState() == CameraController.FOCUS_STATE_IDLE || CameraController.getFocusState() == CameraController.FOCUS_STATE_FOCUSED || CameraController.getFocusState() == CameraController.FOCUS_STATE_FAIL) {
 					CameraController.setFocusState(CameraController.FOCUS_STATE_FOCUSING);
 					return SonyRemoteCamera.autoFocusSonyRemote();
 				}

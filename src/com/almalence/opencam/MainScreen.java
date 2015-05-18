@@ -1132,8 +1132,10 @@ public class MainScreen extends ApplicationScreen
 		isCameraConfiguring = false;
 
 		mWifiHandler.register();
-		mNfcAdapter.enableForegroundDispatch(this, NFCHandler.getPendingIntent(this),
-				NFCHandler.getIntentFilterArray(), NFCHandler.getTechListArray());
+		if (mNfcAdapter != null) {
+			mNfcAdapter.enableForegroundDispatch(this, NFCHandler.getPendingIntent(this),
+					NFCHandler.getIntentFilterArray(), NFCHandler.getTechListArray());
+		}
 
 		if (!isCreating)
 			onResumeTimer = new CountDownTimer(50, 50)
@@ -1314,7 +1316,9 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	protected void onApplicationPause()
 	{
-		mNfcAdapter.disableForegroundDispatch(this);
+		if (mNfcAdapter != null) {
+			mNfcAdapter.disableForegroundDispatch(this);
+		}
 
 		if (onResumeTimer != null)
 		{
