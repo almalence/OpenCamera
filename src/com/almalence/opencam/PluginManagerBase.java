@@ -552,7 +552,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 
 	protected void AddModeSettings(String modeName, PreferenceFragment pf)
 	{
-		if (modeName.equals("super")) {
+		if (modeName.equals("super") && CameraController.isUseHALv3()) {
 			pf.addPreferencesFromResource(R.xml.preferences_processing_super);
 			return;
 		}
