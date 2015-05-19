@@ -3445,8 +3445,20 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					{
 						currentIdx = 0;
 					}
-					selectedSize = CameraController.getResolutionsNamesList().get(currentIdx);
-
+					
+					List<CameraController.Size> cs = CameraController.getResolutionsSizeList();
+					int ii = 0;
+					for (CameraController.Size s : cs)
+					{
+						if (Integer.parseInt(CameraController.getResolutionsIdxesList().get(ii)) == currentIdx)
+						{
+							selectedSize = CameraController.getResolutionsNamesList().get(ii);
+							break;
+						}
+						else
+							selectedSize = CameraController.getResolutionsNamesList().get(0);
+						ii++;
+					}
 				}
 				icon_id = ICON_IMAGE_SIZE;
 				icon_text = selectedSize;
