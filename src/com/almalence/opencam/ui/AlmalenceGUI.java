@@ -3446,6 +3446,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						currentIdx = 0;
 					}
 					
+					selectedSize = CameraController.getResolutionsNamesList().get(0);
+					
 					List<CameraController.Size> cs = CameraController.getResolutionsSizeList();
 					int ii = 0;
 					for (CameraController.Size s : cs)
@@ -3455,8 +3457,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							selectedSize = CameraController.getResolutionsNamesList().get(ii);
 							break;
 						}
-						else
-							selectedSize = CameraController.getResolutionsNamesList().get(0);
 						ii++;
 					}
 				}
