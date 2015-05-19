@@ -910,7 +910,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		}
 		this.prefHardwareGyroscope = prefs.getBoolean(PREFERENCES_KEY_USE_DEVICE_GYRO, this.sensorGyroscope != null);
 
-		this.prefMemoryRelax = Boolean.parseBoolean(prefs.getString(sMemoryPref, "false"));
+		this.prefMemoryRelax = prefs.getBoolean(sMemoryPref, false);
 
 		aewblock = Integer.parseInt(prefs.getString(sAELockPref, "1"));
 	}

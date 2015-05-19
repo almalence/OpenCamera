@@ -49,6 +49,7 @@ import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -3432,12 +3433,39 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				{
 					PanoramaAugmentedCapturePlugin.onDefaultSelectResolutons();
 					int currentIdx = PanoramaAugmentedCapturePlugin.prefResolution;
-					selectedSize = PanoramaAugmentedCapturePlugin.getResolutionspicturenameslist().get(currentIdx);
+					
+					selectedSize = PanoramaAugmentedCapturePlugin.getResolutionspicturenameslist().get(0);
+					
+					List<Point> cs = PanoramaAugmentedCapturePlugin.getResolutionspicturesizeslist();
+					int ii = 0;
+					for (Point s : cs)
+					{
+						if (Integer.parseInt(PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().get(ii)) == currentIdx)
+						{
+							selectedSize = PanoramaAugmentedCapturePlugin.getResolutionspicturenameslist().get(ii);
+							break;
+						}
+						ii++;
+					}
+					
 				} else if (modeId.equals("nightmode") || modeId.equals("multishot"))
 				{
 					int currentIdx = Integer.parseInt(CameraController.MultishotResolutionsIdxesList.get(MainScreen
 							.selectImageDimensionMultishot()));
-					selectedSize = CameraController.MultishotResolutionsNamesList.get(currentIdx);
+					
+					selectedSize = CameraController.MultishotResolutionsNamesList.get(0);
+					
+					List<CameraController.Size> cs = CameraController.getMultishotResolutionsSizeList();
+					int ii = 0;
+					for (CameraController.Size s : cs)
+					{
+						if (Integer.parseInt(CameraController.getMultishotResolutionsIdxesList().get(ii)) == currentIdx)
+						{
+							selectedSize = CameraController.getMultishotResolutionsNamesList().get(ii);
+							break;
+						}
+						ii++;
+					}
 				} else
 				{
 					int currentIdx = ApplicationScreen.instance.getImageSizeIndex();
