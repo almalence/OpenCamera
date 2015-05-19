@@ -3453,19 +3453,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					int currentIdx = Integer.parseInt(CameraController.MultishotResolutionsIdxesList.get(MainScreen
 							.selectImageDimensionMultishot()));
 					
-					selectedSize = CameraController.MultishotResolutionsNamesList.get(0);
-					
-					List<CameraController.Size> cs = CameraController.getMultishotResolutionsSizeList();
-					int ii = 0;
-					for (CameraController.Size s : cs)
-					{
-						if (Integer.parseInt(CameraController.getMultishotResolutionsIdxesList().get(ii)) == currentIdx)
-						{
-							selectedSize = CameraController.getMultishotResolutionsNamesList().get(ii);
-							break;
-						}
-						ii++;
-					}
+					selectedSize = CameraController.MultishotResolutionsNamesList.get(currentIdx);
+
 				} else
 				{
 					int currentIdx = ApplicationScreen.instance.getImageSizeIndex();
