@@ -111,17 +111,17 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	
 	private boolean	camera2Preference;
 	
-	public static List<Point> getResolutionspicturesizeslist()
+	public static List<Point> getResolutionsPictureSizeslist()
 	{
 		return ResolutionsPictureSizesList;
 	}
 
-	public static List<String> getResolutionspictureidxeslist()
+	public static List<String> getResolutionsPictureIndexesList()
 	{
 		return ResolutionsPictureIdxesList;
 	}
 
-	public static List<String> getResolutionspicturenameslist()
+	public static List<String> getResolutionsPictureNamesList()
 	{
 		return ResolutionsPictureNamesList;
 	}

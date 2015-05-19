@@ -752,10 +752,10 @@ public class MainScreen extends ApplicationScreen
 			{
 				PanoramaAugmentedCapturePlugin.onDefaultSelectResolutons();
 				currentIdx = PanoramaAugmentedCapturePlugin.prefResolution;
-				entries = PanoramaAugmentedCapturePlugin.getResolutionspicturenameslist().toArray(
-						new CharSequence[PanoramaAugmentedCapturePlugin.getResolutionspicturenameslist().size()]);
-				entryValues = PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().toArray(
-						new CharSequence[PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().size()]);
+				entries = PanoramaAugmentedCapturePlugin.getResolutionsPictureNamesList().toArray(
+						new CharSequence[PanoramaAugmentedCapturePlugin.getResolutionsPictureNamesList().size()]);
+				entryValues = PanoramaAugmentedCapturePlugin.getResolutionsPictureIndexesList().toArray(
+						new CharSequence[PanoramaAugmentedCapturePlugin.getResolutionsPictureIndexesList().size()]);
 			}
 		} else if (mode == MODE_VIDEO)
 		{
@@ -890,13 +890,13 @@ public class MainScreen extends ApplicationScreen
 							int value = Integer.parseInt(newValue.toString());
 							PanoramaAugmentedCapturePlugin.prefResolution = value;
 
-							for (int i = 0; i < PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().size(); i++)
+							for (int i = 0; i < PanoramaAugmentedCapturePlugin.getResolutionsPictureIndexesList().size(); i++)
 							{
-								if (PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().get(i)
+								if (PanoramaAugmentedCapturePlugin.getResolutionsPictureIndexesList().get(i)
 										.equals(newValue))
 								{
 									final int idx = i;
-									final Point point = PanoramaAugmentedCapturePlugin.getResolutionspicturesizeslist()
+									final Point point = PanoramaAugmentedCapturePlugin.getResolutionsPictureSizeslist()
 											.get(idx);
 
 									// frames_fit_count may decrease when

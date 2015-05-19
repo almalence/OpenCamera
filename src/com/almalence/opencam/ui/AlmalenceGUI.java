@@ -3434,15 +3434,15 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					PanoramaAugmentedCapturePlugin.onDefaultSelectResolutons();
 					int currentIdx = PanoramaAugmentedCapturePlugin.prefResolution;
 					
-					selectedSize = PanoramaAugmentedCapturePlugin.getResolutionspicturenameslist().get(0);
+					selectedSize = PanoramaAugmentedCapturePlugin.getResolutionsPictureNamesList().get(0);
 					
-					List<Point> cs = PanoramaAugmentedCapturePlugin.getResolutionspicturesizeslist();
+					List<String> cs = PanoramaAugmentedCapturePlugin.getResolutionsPictureIndexesList();
 					int ii = 0;
-					for (Point s : cs)
+					for (String s : cs)
 					{
-						if (Integer.parseInt(PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().get(ii)) == currentIdx)
+						if (Integer.parseInt(PanoramaAugmentedCapturePlugin.getResolutionsPictureIndexesList().get(ii)) == currentIdx)
 						{
-							selectedSize = PanoramaAugmentedCapturePlugin.getResolutionspicturenameslist().get(ii);
+							selectedSize = PanoramaAugmentedCapturePlugin.getResolutionsPictureNamesList().get(ii);
 							break;
 						}
 						ii++;
