@@ -1557,6 +1557,7 @@ public class VideoCapturePlugin extends PluginCapture
 			e.printStackTrace();
 		}
 		ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED);
+		
 	}
 
 	private void startRecording()
@@ -2414,10 +2415,13 @@ public class VideoCapturePlugin extends PluginCapture
 			File targetFile = new File(mainFileName);
 			File anotherFile = new File(anotherFileName);
 			if (targetFile.exists() && targetFile.length() > 0)
-			{
-				String tmpFileName = mainFileName + ".tmp";
+			{ 
+//				String tmpFileName = mainFileName + ".tmp";
+				String tmpFileName = "/storage/emulated/0/DCIM/Camera/temporary_video.mp4";
 
+				Log.e(TAG, "append start");
 				append(mainFileName, anotherFileName, tmpFileName);
+				Log.e(TAG, "append finish");
 				anotherFile.delete();
 				targetFile.delete();
 				new File(tmpFileName).renameTo(targetFile);
@@ -2456,25 +2460,26 @@ public class VideoCapturePlugin extends PluginCapture
 	public static void append(final String firstFile, final String secondFile, final String newFile) throws IOException
 	{
 
-		final FileOutputStream fos = new FileOutputStream(new File(String.format(newFile)));
-		final FileChannel fc = fos.getChannel();
-
-		final Movie movieOne = MovieCreator.build(firstFile);
-		final Movie movieTwo = MovieCreator.build(secondFile);
-		final Movie finalMovie = new Movie();
-
-		final List<Track> movieOneTracks = movieOne.getTracks();
-		final List<Track> movieTwoTracks = movieTwo.getTracks();
-
-		for (int i = 0; i < movieOneTracks.size() || i < movieTwoTracks.size(); ++i)
-		{
-			finalMovie.addTrack(new AppendTrack(movieOneTracks.get(i), movieTwoTracks.get(i)));
-		}
-
-		final Container container = new DefaultMp4Builder().build(finalMovie);
-		container.writeContainer(fc);
-		fc.close();
-		fos.close();
+		Mp4Editor.append(firstFile, secondFile, newFile);
+//		final FileOutputStream fos = new FileOutputStream(new File(String.format(newFile)));
+//		final FileChannel fc = fos.getChannel();
+//
+//		final Movie movieOne = MovieCreator.build(firstFile);
+//		final Movie movieTwo = MovieCreator.build(secondFile);
+//		final Movie finalMovie = new Movie();
+//
+//		final List<Track> movieOneTracks = movieOne.getTracks();
+//		final List<Track> movieTwoTracks = movieTwo.getTracks();
+//
+//		for (int i = 0; i < movieOneTracks.size() || i < movieTwoTracks.size(); ++i)
+//		{
+//			finalMovie.addTrack(new AppendTrack(movieOneTracks.get(i), movieTwoTracks.get(i)));
+//		}
+//
+//		final Container container = new DefaultMp4Builder().build(finalMovie);
+//		container.writeContainer(fc);
+//		fc.close();
+//		fos.close();
 	}
 
 	// append video

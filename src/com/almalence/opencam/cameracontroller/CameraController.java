@@ -748,7 +748,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		try
 		{
-			if (!(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService("camera") != null))
+			if (!(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService("camera") != null) || (!isFlex2() && !isNexus()))
 			{
 				isHALv3 = false;
 				isHALv3Supported = false;
@@ -1697,6 +1697,21 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static List<String> getResolutionsNamesList()
 	{
 		return CameraController.ResolutionsNamesList;
+	}
+	
+	public static List<CameraController.Size> getMultishotResolutionsSizeList()
+	{
+		return CameraController.MultishotResolutionsSizeList;
+	}
+
+	public static List<String> getMultishotResolutionsIdxesList()
+	{
+		return CameraController.MultishotResolutionsIdxesList;
+	}
+
+	public static List<String> getMultishotResolutionsNamesList()
+	{
+		return CameraController.MultishotResolutionsNamesList;
 	}
 
 	public static int getNumberOfCameras()
@@ -3631,7 +3646,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				} else
 					return HALv3.autoFocusHALv3();
 			} else {
-				if (CameraController.getFocusState() == CameraController.FOCUS_STATE_IDLE) {
+				if (CameraController.getFocusState() == CameraController.FOCUS_STATE_IDLE || CameraController.getFocusState() == CameraController.FOCUS_STATE_FOCUSED || CameraController.getFocusState() == CameraController.FOCUS_STATE_FAIL) {
 					CameraController.setFocusState(CameraController.FOCUS_STATE_FOCUSING);
 					return SonyRemoteCamera.autoFocusSonyRemote();
 				}
@@ -3774,7 +3789,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		nextFrame();
 
-		if (pluginManager.isPreviewDependentMode())
+		if (pluginManager.isPreviewDependentMode()/* && (frame_num < total_frames)*/)
 		{
 			// if preview not working
 			if (previewMode == false)
