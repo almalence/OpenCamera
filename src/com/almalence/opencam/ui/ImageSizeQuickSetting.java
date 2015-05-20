@@ -83,10 +83,10 @@ public class ImageSizeQuickSetting
 			opt2 = ApplicationScreen.sImageSizePanoramaFrontPref;
 			PanoramaAugmentedCapturePlugin.onDefaultSelectResolutons();
 			currentIdx = PanoramaAugmentedCapturePlugin.prefResolution;
-			mEntries = PanoramaAugmentedCapturePlugin.getResolutionspicturenameslist().toArray(
-					new String[PanoramaAugmentedCapturePlugin.getResolutionspicturenameslist().size()]);
-			mEntryValues = PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().toArray(
-					new String[PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().size()]);
+			mEntries = PanoramaAugmentedCapturePlugin.getResolutionsPictureNamesList().toArray(
+					new String[PanoramaAugmentedCapturePlugin.getResolutionsPictureNamesList().size()]);
+			mEntryValues = PanoramaAugmentedCapturePlugin.getResolutionsPictureIndexesList().toArray(
+					new String[PanoramaAugmentedCapturePlugin.getResolutionsPictureIndexesList().size()]);
 		} else if (modeId.equals("nightmode") || modeId.equals("multishot"))
 		{
 			opt1 = ApplicationScreen.sImageSizeMultishotBackPref;

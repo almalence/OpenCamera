@@ -1274,11 +1274,10 @@ public class SonyRemoteCamera
 			mPreviewSizes.add(new CameraController.Size(640, 480));
 		}
 
+		mPictureSizes.add(new CameraController.Size(1920, 1080));
 		if (isCameraApiAvailable("getAvailableStillSize"))
 		{
 			fillPictureSizeList();
-		} else {
-			mPictureSizes.add(new CameraController.Size(1920, 1080));
 		}
 
 		if (isCameraApiAvailable("getAvailableExposureCompensation"))
@@ -1419,6 +1418,9 @@ public class SonyRemoteCamera
 	{
 		synchronized (mPictureSizes)
 		{
+			if (mPictureSizes.size() == 0) {
+				mPictureSizes.add(new CameraController.Size(1920, 1080));
+			}
 			return mPictureSizes;
 		}
 	}

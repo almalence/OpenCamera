@@ -1713,6 +1713,21 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		return CameraController.MultishotResolutionsNamesList;
 	}
+	
+	public static List<CameraController.Size> getMultishotResolutionsSizeList()
+	{
+		return CameraController.MultishotResolutionsSizeList;
+	}
+
+	public static List<String> getMultishotResolutionsIdxesList()
+	{
+		return CameraController.MultishotResolutionsIdxesList;
+	}
+
+	public static List<String> getMultishotResolutionsNamesList()
+	{
+		return CameraController.MultishotResolutionsNamesList;
+	}
 
 	public static int getNumberOfCameras()
 	{

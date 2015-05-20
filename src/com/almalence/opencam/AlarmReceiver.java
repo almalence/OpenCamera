@@ -20,9 +20,8 @@ import android.os.Build;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
-
+import android.util.Log;
 //<!-- -+-
-import com.almalence.opencam.ui.SelfTimerAndPhotoTimeLapse;
 //-+- -->
 /* <!-- +++
  import com.almalence.opencam_plus.ui.SelfTimerAndPhotoTimeLapse;
@@ -63,8 +62,7 @@ public class AlarmReceiver extends BroadcastReceiver
 	{
 		if (wakeLock == null)
 		{
-			PowerManager pm = (PowerManager) ApplicationScreen.instance.getApplicationContext()
-					.getSystemService(Context.POWER_SERVICE);
+			PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
 			wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP
 					| PowerManager.ON_AFTER_RELEASE, TAG);
 		}
@@ -77,17 +75,16 @@ public class AlarmReceiver extends BroadcastReceiver
 
 		try
 		{
-			if (ApplicationScreen.getCameraController().getCamera() == null)
+			if (ApplicationScreen.instance == null || ApplicationScreen.getCameraController() == null || ApplicationScreen.getCameraController().getCamera() == null)
 			{
-				if (ApplicationScreen.instance != null) {
-					Intent dialogIntent = new Intent(ApplicationScreen.instance, MainScreen.class);
-					dialogIntent.addFlags(Intent.FLAG_FROM_BACKGROUND | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-					ApplicationScreen.instance.startActivity(dialogIntent);
-				} else {
-					Intent dialogIntent = new Intent(context, MainScreen.class);
-					dialogIntent.addFlags(Intent.FLAG_FROM_BACKGROUND | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-					context.startActivity(dialogIntent);
-				}
+				Intent dialogIntent = new Intent(context, MainScreen.class);
+				dialogIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+						| Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+				context.startActivity(dialogIntent);
+				if (wakeLock != null)
+					if (wakeLock.isHeld())
+						wakeLock.release();
+
 			} else
 			{
 				takePicture();

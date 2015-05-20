@@ -3,9 +3,15 @@ package com.almalence.opencam_plus.ui;
 +++ --> */
 //<!-- -+-
 package com.almalence.opencam.ui;
+
 //-+- -->
 
+import java.util.List;
+
+import android.app.ProgressDialog;
 import android.content.SharedPreferences;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
@@ -16,26 +22,29 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-/* <!-- +++
-import com.almalence.opencam_plus.ApplicationScreen;
-import com.almalence.opencam_plus.R;
-import com.almalence.opencam_plus.cameracontroller.CameraController;
-+++ --> */
-//<!-- -+-
 import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
-//-+- -->
-
 import com.almalence.sony.cameraremote.DeviceListAdapter;
 import com.almalence.sony.cameraremote.ServerDevice;
 import com.almalence.sony.cameraremote.SimpleSsdpClient;
+import com.almalence.sony.cameraremote.utils.WifiListener;
 
-public class SonyCameraDeviceExplorer
+/* <!-- +++
+ import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.opencam_plus.R;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
+ +++ --> */
+//<!-- -+-
+//-+- -->
+
+public class SonyCameraDeviceExplorer implements WifiListener
 {
 	private SimpleSsdpClient				mSsdpClient;
 	private DeviceListAdapter				mListAdapter;
-	private SonyCameraDeviceExplorerDialog	dialog	= null;
+	private SonyCameraDeviceExplorerDialog	dialog				= null;
+	private boolean							isSearchingDevice	= false;
 
 	public SonyCameraDeviceExplorer(View gui)
 	{
@@ -46,10 +55,17 @@ public class SonyCameraDeviceExplorer
 
 	public void showExplorer()
 	{
+		isSearchingDevice = true;
+
+		if (MainScreen.getInstance().getWifiHandler() != null)
+		{
+			MainScreen.getInstance().getWifiHandler().addListener(this);
+		}
+
 		dialog.show();
 
 		mListAdapter.clearDevices();
-		
+
 		ListView listView = (ListView) dialog.findViewById(R.id.list_device);
 		listView.setAdapter(mListAdapter);
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -81,7 +97,8 @@ public class SonyCameraDeviceExplorer
 
 		// Show Wi-Fi SSID.
 		TextView textWifiSsid = (TextView) dialog.findViewById(R.id.text_wifi_ssid);
-		WifiManager wifiManager = (WifiManager) ApplicationScreen.instance.getSystemService(ApplicationScreen.WIFI_SERVICE);
+		WifiManager wifiManager = (WifiManager) ApplicationScreen.instance
+				.getSystemService(ApplicationScreen.WIFI_SERVICE);
 		if (wifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLED)
 		{
 			WifiInfo wifiInfo = wifiManager.getConnectionInfo();
@@ -96,26 +113,37 @@ public class SonyCameraDeviceExplorer
 	public void launchRemoteCamera(ServerDevice device)
 	{
 		ApplicationScreen.instance.pauseMain();
-		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		prefs.edit().putInt(ApplicationScreen.sCameraModePref, CameraController.getNumberOfCameras() - 1).commit();
 		ApplicationScreen.getGUIManager().setCameraModeGUI(CameraController.getNumberOfCameras() - 1);
 		CameraController.setCameraIndex(CameraController.getNumberOfCameras() - 1);
 		ApplicationScreen.instance.switchingMode(false);
-		
+
 		CameraController.setTargetServerDevice(device);
 		ApplicationScreen.instance.resumeMain();
-		
+
 		hideExplorer();
 	}
 
 	public void hideExplorer()
 	{
+		if (progress != null)
+		{
+			progress.dismiss();
+		}
+		
+		isSearchingDevice = false;
+
+		if (MainScreen.getInstance().getWifiHandler() != null)
+		{
+			MainScreen.getInstance().getWifiHandler().removeListener(this);
+		}
+
 		if (mSsdpClient != null && mSsdpClient.isSearching())
 		{
 			mSsdpClient.cancelSearching();
 		}
-		
+
 		dialog.dismiss();
 	}
 
@@ -140,7 +168,8 @@ public class SonyCameraDeviceExplorer
 					{
 						mListAdapter.addDevice(device);
 						mListAdapter.notifyDataSetChanged();
-						if (dialog != null) {
+						if (dialog != null)
+						{
 							dialog.setRotate(GUI.mDeviceOrientation);
 						}
 					}
@@ -176,11 +205,110 @@ public class SonyCameraDeviceExplorer
 			}
 		});
 	}
-	
+
 	public void setOrientation()
 	{
-		if (dialog != null) {
+		if (dialog != null)
+		{
 			dialog.setRotate(GUI.mDeviceOrientation);
 		}
+	}
+
+	public static ProgressDialog							progress;
+	
+	SimpleSsdpClient.SearchResultHandler loopSearchHandler = new SimpleSsdpClient.SearchResultHandler()
+	{
+		@Override
+		public void onDeviceFound(final ServerDevice device)
+		{
+			// Called by non-UI thread.
+			ApplicationScreen.instance.runOnUiThread(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					if (isSearchingDevice)
+						launchRemoteCamera(device);
+				}
+			});
+		}
+
+		@Override
+		public void onFinished()
+		{
+			// Called by non-UI thread.
+			ApplicationScreen.instance.runOnUiThread(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					if (progress != null)
+					{
+						progress.dismiss();
+					}
+				}
+			});
+		}
+
+		@Override
+		public void onErrorFinished()
+		{
+			try
+			{
+				Thread.sleep(1000);
+			} catch (InterruptedException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if (isSearchingDevice) {
+				searchForCameraAndOpenLoop();
+			}
+		}
+	};
+	
+	private void searchForCameraAndOpenLoop()
+	{
+		mSsdpClient.search(loopSearchHandler);
+
+	}
+
+	@Override
+	public void onWifiConnected(String ssid)
+	{
+		ApplicationScreen.instance.runOnUiThread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				if (progress != null) {
+					progress.dismiss();
+				}
+				progress = ProgressDialog.show(ApplicationScreen.instance, ApplicationScreen.instance.getResources().getString(R.string.title_connecting),
+						ApplicationScreen.instance.getResources().getString(R.string.msg_connecting), true, true);
+			}
+		});
+		searchForCameraAndOpenLoop();
+	}
+
+	@Override
+	public void onWifiDisconnected()
+	{
+	}
+
+	@Override
+	public void onWifiStartScan()
+	{
+	}
+
+	@Override
+	public void onWifiScanFinished(List<ScanResult> sonyCameraScanResults,
+			List<WifiConfiguration> sonyCameraWifiConfiguration)
+	{
+	}
+
+	@Override
+	public void onWifiConnecting(String ssid)
+	{
 	}
 }

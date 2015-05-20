@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.onepf.oms.OpenIabHelper;
@@ -49,30 +48,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Point;
-import android.graphics.Rect;
-import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
-import android.hardware.Camera.Area;
 import android.media.AudioManager;
 import android.media.CamcorderProfile;
 import android.media.ImageReader;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.opengl.GLSurfaceView;
-import android.os.Build;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiConfiguration;
+import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Debug;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
-import android.os.StatFs;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -80,13 +73,11 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -103,19 +94,24 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.almalence.plugins.capture.panoramaaugmented.PanoramaAugmentedCapturePlugin;
-import com.almalence.plugins.capture.video.VideoCapturePlugin;
-import com.almalence.sony.cameraremote.SimpleStreamSurfaceView;
-import com.almalence.util.AppWidgetNotifier;
-import com.almalence.util.Util;
-
-//<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
-//import com.almalence.opencam.cameracontroller.HALv3;
+import com.almalence.opencam.cameracontroller.SonyRemoteCamera;
 import com.almalence.opencam.ui.AlmalenceGUI;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
+import com.almalence.opencam.ui.SonyCameraDeviceExplorer;
+import com.almalence.plugins.capture.panoramaaugmented.PanoramaAugmentedCapturePlugin;
+import com.almalence.plugins.capture.video.VideoCapturePlugin;
+import com.almalence.sony.cameraremote.ServerDevice;
+import com.almalence.sony.cameraremote.SimpleSsdpClient;
+import com.almalence.sony.cameraremote.SimpleStreamSurfaceView;
+import com.almalence.sony.cameraremote.utils.NFCHandler;
+import com.almalence.sony.cameraremote.utils.WifiHandler;
+import com.almalence.sony.cameraremote.utils.WifiListener;
 import com.almalence.util.AppRater;
+import com.almalence.util.AppWidgetNotifier;
+//<!-- -+-
+//import com.almalence.opencam.cameracontroller.HALv3;
 
 //-+- -->
 /* <!-- +++
@@ -152,8 +148,8 @@ public class MainScreen extends ApplicationScreen
 	private static final int	MODE_PANORAMA					= 2;
 	private static final int	MODE_VIDEO						= 3;
 
-	private static final int			MIN_MPIX_SUPPORTED				= 1280 * 960;
-	private static final int			MIN_MPIX_PREVIEW				= 600 * 400;
+	private static final int	MIN_MPIX_SUPPORTED				= 1280 * 960;
+	private static final int	MIN_MPIX_PREVIEW				= 600 * 400;
 
 	public static MainScreen	thiz;
 
@@ -165,8 +161,8 @@ public class MainScreen extends ApplicationScreen
 	private ImageReader			mImageReaderJPEG;
 	private ImageReader			mImageReaderRAW;
 
-	private File						forceFilename					= null;
-	private Uri							forceFilenameUri;
+	private File				forceFilename					= null;
+	private Uri					forceFilenameUri;
 
 	// Common preferences
 	private int					imageSizeIdxPreference;
@@ -247,7 +243,7 @@ public class MainScreen extends ApplicationScreen
 	private static String		sShotOnTapPref;
 	private static String		sVolumeButtonPref;
 
-//	public static String		sInitModeListPref				= "initModeListPref";
+	// public static String sInitModeListPref = "initModeListPref";
 
 	// public static String sAELockPref;
 	// public static String sAWBLockPref;
@@ -264,21 +260,39 @@ public class MainScreen extends ApplicationScreen
 	public static String		sAdditionalRotationPref;
 
 	// Camera parameters info
-	int									cameraId;
-	List<CameraController.Size>			preview_sizes;
-	List<CameraController.Size>			video_sizes;
-	List<CameraController.Size>			picture_sizes;
-	boolean								supports_video_stabilization;
-	List<String>						flash_values;
-	List<String>						focus_values;
-	List<String>						scene_modes_values;
-	List<String>						white_balances_values;
-	List<String>						isos;
-	String								flattenParamteters;
-	
+	int							cameraId;
+	List<CameraController.Size>	preview_sizes;
+	List<CameraController.Size>	video_sizes;
+	List<CameraController.Size>	picture_sizes;
+	boolean						supports_video_stabilization;
+	List<String>				flash_values;
+	List<String>				focus_values;
+	List<String>				scene_modes_values;
+	List<String>				white_balances_values;
+	List<String>				isos;
+	String						flattenParamteters;
+
+	private NfcAdapter			mNfcAdapter;
+	private WifiHandler			mWifiHandler;
+
 	protected void createPluginManager()
 	{
 		pluginManager = PluginManager.getInstance();
+	}
+
+	/*
+	 * Try to catch NFC intent
+	 */
+	@Override
+	protected void onNewIntent(Intent intent)
+	{
+		try
+		{
+			Pair<String, String> cameraWifiSettings = NFCHandler.parseIntent(intent);
+			mWifiHandler.createIfNeededThenConnectToWifi(cameraWifiSettings.first, cameraWifiSettings.second);
+		} catch (Exception e)
+		{
+		}
 	}
 
 	@Override
@@ -387,8 +401,11 @@ public class MainScreen extends ApplicationScreen
 		// -+- -->
 
 		AppWidgetNotifier.app_launched(this);
-		
+
 		keepScreenOn = prefs.getBoolean(sKeepScreenOn, false);
+
+		mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+		mWifiHandler = new WifiHandler(this);
 	}
 
 	@Override
@@ -658,15 +675,15 @@ public class MainScreen extends ApplicationScreen
 		CharSequence[] entryValues = null;
 
 		int[] colorEfects = CameraController.getSupportedColorEffects();
-		
-		
+
 		String opt1 = sRearColorEffectPref;
 		String opt2 = sFrontColorEffectPref;
 
-		entries = CameraController.CollorEffectsNamesList.toArray(
-				new CharSequence[CameraController.CollorEffectsNamesList.size()]);
+		entries = CameraController.CollorEffectsNamesList
+				.toArray(new CharSequence[CameraController.CollorEffectsNamesList.size()]);
 		entryValues = new CharSequence[colorEfects.length];
-		for (int i = 0; i < colorEfects.length; i++) {
+		for (int i = 0; i < colorEfects.length; i++)
+		{
 			entryValues[i] = Integer.toString(colorEfects[i]);
 		}
 
@@ -735,10 +752,10 @@ public class MainScreen extends ApplicationScreen
 			{
 				PanoramaAugmentedCapturePlugin.onDefaultSelectResolutons();
 				currentIdx = PanoramaAugmentedCapturePlugin.prefResolution;
-				entries = PanoramaAugmentedCapturePlugin.getResolutionspicturenameslist().toArray(
-						new CharSequence[PanoramaAugmentedCapturePlugin.getResolutionspicturenameslist().size()]);
-				entryValues = PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().toArray(
-						new CharSequence[PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().size()]);
+				entries = PanoramaAugmentedCapturePlugin.getResolutionsPictureNamesList().toArray(
+						new CharSequence[PanoramaAugmentedCapturePlugin.getResolutionsPictureNamesList().size()]);
+				entryValues = PanoramaAugmentedCapturePlugin.getResolutionsPictureIndexesList().toArray(
+						new CharSequence[PanoramaAugmentedCapturePlugin.getResolutionsPictureIndexesList().size()]);
 			}
 		} else if (mode == MODE_VIDEO)
 		{
@@ -873,13 +890,13 @@ public class MainScreen extends ApplicationScreen
 							int value = Integer.parseInt(newValue.toString());
 							PanoramaAugmentedCapturePlugin.prefResolution = value;
 
-							for (int i = 0; i < PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().size(); i++)
+							for (int i = 0; i < PanoramaAugmentedCapturePlugin.getResolutionsPictureIndexesList().size(); i++)
 							{
-								if (PanoramaAugmentedCapturePlugin.getResolutionspictureidxeslist().get(i)
+								if (PanoramaAugmentedCapturePlugin.getResolutionsPictureIndexesList().get(i)
 										.equals(newValue))
 								{
 									final int idx = i;
-									final Point point = PanoramaAugmentedCapturePlugin.getResolutionspicturesizeslist()
+									final Point point = PanoramaAugmentedCapturePlugin.getResolutionsPictureSizeslist()
 											.get(idx);
 
 									// frames_fit_count may decrease when
@@ -911,7 +928,7 @@ public class MainScreen extends ApplicationScreen
 			}
 		}
 	}
-	
+
 	@Override
 	public void onAdvancePreferenceCreate(PreferenceFragment prefActivity)
 	{
@@ -978,13 +995,15 @@ public class MainScreen extends ApplicationScreen
 			else
 				fp.setEnabled(false);
 		}
-		
+
 		setColorEffectOptions(prefActivity);
 	}
 
 	@Override
 	protected void onApplicationStart()
 	{
+		mWifiHandler.register();
+
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 
 		boolean isHALv3 = prefs.getBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
@@ -1020,6 +1039,27 @@ public class MainScreen extends ApplicationScreen
 		CameraController.onStart();
 		MainScreen.getGUIManager().onStart();
 		PluginManager.getInstance().onStart();
+	}
+
+	@Override
+	protected void onApplicationStop()
+	{
+		switchingMode = false;
+		mApplicationStarted = false;
+		orientationMain = 0;
+		orientationMainPrevious = 0;
+		ApplicationScreen.getGUIManager().onStop();
+		ApplicationScreen.getPluginManager().onStop();
+		CameraController.onStop();
+
+		if (!CameraController.isRemoteCamera())
+		{
+			if (CameraController.isUseHALv3())
+				stopImageReaders();
+		}
+
+		mWifiHandler.reconnectToLastWifi();
+		mWifiHandler.unregister();
 	}
 
 	@TargetApi(21)
@@ -1090,6 +1130,12 @@ public class MainScreen extends ApplicationScreen
 	protected void onApplicationResume()
 	{
 		isCameraConfiguring = false;
+
+		mWifiHandler.register();
+		if (mNfcAdapter != null) {
+			mNfcAdapter.enableForegroundDispatch(this, NFCHandler.getPendingIntent(this),
+					NFCHandler.getIntentFilterArray(), NFCHandler.getTechListArray());
+		}
 
 		if (!isCreating)
 			onResumeTimer = new CountDownTimer(50, 50)
@@ -1270,6 +1316,10 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	protected void onApplicationPause()
 	{
+		if (mNfcAdapter != null) {
+			mNfcAdapter.disableForegroundDispatch(this);
+		}
+
 		if (onResumeTimer != null)
 		{
 			onResumeTimer.cancel();
@@ -1434,10 +1484,11 @@ public class MainScreen extends ApplicationScreen
 	public static int selectImageDimensionMultishot()
 	{
 		String modeName = PluginManager.getInstance().getActiveModeID();
-		if (CameraController.isUseHALv3() && modeName.contains("night")) {
+		if (CameraController.isUseHALv3() && modeName.contains("night"))
+		{
 			return 0;
 		}
-		
+
 		long maxMem = Runtime.getRuntime().maxMemory() - Debug.getNativeHeapAllocatedSize();
 		long maxMpix = (maxMem - 1000000) / 3; // 2 x Mpix - result, 1/4 x Mpix
 												// x 4 - compressed input jpegs,
@@ -1588,8 +1639,8 @@ public class MainScreen extends ApplicationScreen
 			}
 		} else
 		{
-			guiManager.setupViewfinderPreviewSize(new CameraController.Size(((SimpleStreamSurfaceView) preview).getSurfaceWidth(),
-					((SimpleStreamSurfaceView) preview).getSurfaceHeight()));
+			guiManager.setupViewfinderPreviewSize(new CameraController.Size(((SimpleStreamSurfaceView) preview)
+					.getSurfaceWidth(), ((SimpleStreamSurfaceView) preview).getSurfaceHeight()));
 			onCameraConfigured();
 		}
 
@@ -1942,7 +1993,6 @@ public class MainScreen extends ApplicationScreen
 	{
 		return mApplicationStarted;
 	}
-
 
 	public void menuButtonPressed()
 	{
@@ -3108,7 +3158,7 @@ public class MainScreen extends ApplicationScreen
 
 			// show google store with paid version
 			callStoreForUnlocked(MainScreen.thiz);
-			
+
 			return false;
 		} else if (5 >= launchesLeft)
 		{
@@ -3516,5 +3566,9 @@ public class MainScreen extends ApplicationScreen
 	public boolean getAWBLockPref()
 	{
 		return PreferenceManager.getDefaultSharedPreferences(mainContext).getBoolean(MainScreen.sAWBLockPref, false);
+	}
+	
+	public WifiHandler getWifiHandler() {
+		return mWifiHandler;
 	}
 }
