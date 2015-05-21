@@ -20,7 +20,11 @@ package com.almalence.plugins.capture.multishot;
 
 import android.annotation.TargetApi;
 import android.os.CountDownTimer;
+import android.os.Message;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 import android.hardware.camera2.CaptureResult;
 
 /* <!-- +++
@@ -107,6 +111,10 @@ public class MultiShotCapturePlugin extends PluginCapture
 	{
 		imagesTaken++;
 
+		//show indication
+		ApplicationScreen.instance.findViewById(R.id.captureIndicationText).setVisibility(View.VISIBLE);
+		((TextView)ApplicationScreen.instance.findViewById(R.id.captureIndicationText)).setText(imagesTaken+" of " + imageAmount);
+		
 		if (frame == 0)
 		{
 			Log.i(TAG, "Load to heap failed");
@@ -131,6 +139,9 @@ public class MultiShotCapturePlugin extends PluginCapture
 
 		if (imagesTaken >= imageAmount)
 		{
+			//hide capture indication
+			ApplicationScreen.instance.findViewById(R.id.captureIndicationText).setVisibility(View.GONE);
+			
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
 					String.valueOf(imagesTaken));
 

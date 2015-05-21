@@ -29,9 +29,11 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.almalence.opencam.ApplicationInterface;
@@ -456,8 +458,6 @@ public class PreshotCapturePlugin extends PluginCapture
 	@Override
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, int format)
 	{
-//		inCapture = false;
-
 		PreShot.InsertToBuffer(frameData, ApplicationScreen.getGUIManager().getDisplayOrientation());
 
 		try

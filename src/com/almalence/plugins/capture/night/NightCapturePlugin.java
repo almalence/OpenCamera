@@ -800,13 +800,9 @@ public class NightCapturePlugin extends PluginCapture
 	}
 
 	// onPreviewFrame is used to collect frames for brightened VF output
-//	static int testFrame = 0;
 	@Override
 	public void onPreviewFrame(byte[] data)
 	{
-//		if(testFrame == 0)
-//			Log.e("Night", "onPreviewFrame first");
-		
 		if (!usingSuperMode)
 		{
 			if (OpenGLPreference && !inCapture)
