@@ -821,15 +821,6 @@ public class NightCapturePlugin extends PluginCapture
 					int imageWidth = ApplicationScreen.getPreviewWidth();
 					int imageHeight = ApplicationScreen.getPreviewHeight();
 					
-//					if(testFrame == 0)
-//					{
-//						Log.e("Night", "Model = " + Build.MODEL);
-//						Log.e("Night", "onPreviewFrame. preview size = " + imageWidth + "x" + imageHeight);
-//						Log.e("Night", "dataS lenght = " + dataS.length);
-//						testFrame++;
-//					}
-//					Log.e("Night", "data lenght = " + data.length);
-					
 					ImageConversion.sumByteArraysNV21(data1, data2, dataS, imageWidth, imageHeight);
 					if (CameraController.isFrontCamera())
 					{

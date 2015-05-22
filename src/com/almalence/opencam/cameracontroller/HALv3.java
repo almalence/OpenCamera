@@ -2270,8 +2270,14 @@ public class HALv3
 			 currentExposure = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
 			 currentSensitivity = result.get(CaptureResult.SENSOR_SENSITIVITY);
 			
-			 if (request.get(CaptureRequest.SENSOR_SENSITIVITY) >= 50 && currentSensitivity != request.get(CaptureRequest.SENSOR_SENSITIVITY) && request.get(CaptureRequest.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_OFF && !resetInProgress) {
-				 resetCaptureCallback();
+			 if (request.get(CaptureRequest.SENSOR_SENSITIVITY) >= 50 && currentSensitivity != request.get(CaptureRequest.SENSOR_SENSITIVITY) && request.get(CaptureRequest.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_OFF && !resetInProgress) 
+			 {
+				try {
+					resetCaptureCallback();
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+				}
 			 }
 			 
 			try {
