@@ -5760,10 +5760,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			mFocusMode = newMode;
 			setButtonSelected(focusModeButtons, mFocusMode);
 
-			preferences
-					.edit()
-					.putInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
-							: ApplicationScreen.sFrontFocusModePref, newMode).commit();
+			MainScreen.getInstance().setFocusModePref(newMode);
 		}
 
 		try
