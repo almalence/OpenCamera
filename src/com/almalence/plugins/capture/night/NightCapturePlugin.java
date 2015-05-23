@@ -800,13 +800,9 @@ public class NightCapturePlugin extends PluginCapture
 	}
 
 	// onPreviewFrame is used to collect frames for brightened VF output
-//	static int testFrame = 0;
 	@Override
 	public void onPreviewFrame(byte[] data)
 	{
-//		if(testFrame == 0)
-//			Log.e("Night", "onPreviewFrame first");
-		
 		if (!usingSuperMode)
 		{
 			if (OpenGLPreference && !inCapture)
@@ -824,15 +820,6 @@ public class NightCapturePlugin extends PluginCapture
 	
 					int imageWidth = ApplicationScreen.getPreviewWidth();
 					int imageHeight = ApplicationScreen.getPreviewHeight();
-					
-//					if(testFrame == 0)
-//					{
-//						Log.e("Night", "Model = " + Build.MODEL);
-//						Log.e("Night", "onPreviewFrame. preview size = " + imageWidth + "x" + imageHeight);
-//						Log.e("Night", "dataS lenght = " + dataS.length);
-//						testFrame++;
-//					}
-//					Log.e("Night", "data lenght = " + data.length);
 					
 					ImageConversion.sumByteArraysNV21(data1, data2, dataS, imageWidth, imageHeight);
 					if (CameraController.isFrontCamera())
