@@ -94,9 +94,6 @@ public abstract class Plugin
 
 	protected static final String	TIME_STAMP_NAME		= "'IMG'_yyyyMMdd_HHmmss";
 	
-	public static final String	CAMERA_IMAGE_BUCKET_NAME	= Environment.getExternalStorageDirectory().toString()
-																+ "/DCIM/Camera/tmp_raw_img";
-
 	protected long					SessionID			= 0;
 
 	protected int[]					requestIDArray;

@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -41,16 +42,21 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
+import android.provider.DocumentsContract.Document;
+import android.provider.DocumentsContract;
+import android.provider.DocumentsProvider;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.provider.MediaStore.Video;
 import android.provider.MediaStore.Video.VideoColumns;
+import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 
 /* <!-- +++
-import com.almalence.opencam_plus.PluginManagerBase;
-+++ --> */
+ import com.almalence.opencam_plus.PluginManagerBase;
+ +++ --> */
 //<!-- -+-
 import com.almalence.opencam.PluginManagerBase;
 //-+- -->
@@ -316,24 +322,64 @@ public class Thumbnail
 		return output;
 	}
 
+	public static String getName() {
+		String name = "";
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+		{
+			DocumentFile saveDir = PluginManagerBase.getSaveDirNew(false);
+			if (!saveDir.canWrite())
+			{
+				saveDir = PluginManagerBase.getSaveDirNew(true);
+			}
+
+			// Try to build max deep file path
+			DocumentFile parentFile = saveDir.getParentFile();
+			name = saveDir.getName();
+			while (parentFile != null)
+			{
+				name = parentFile.getName() + "/" + name;
+				parentFile = parentFile.getParentFile(); 
+			}
+			
+			// If we able to get File object, than get path from it
+			try
+			{
+				File file = new File(URI.create(saveDir.getUri().toString()));
+				name = file.getAbsolutePath();
+			} catch (Exception e)
+			{
+			} finally
+			{
+			}
+		} else
+		{
+			File saveDir = PluginManagerBase.getSaveDir(false);
+			if (!saveDir.canWrite())
+			{
+				saveDir = PluginManagerBase.getSaveDir(true);
+			}
+			name = saveDir.getAbsolutePath();
+		}
+		
+		return name;
+	}
+	
 	public static Media getLastImageThumbnail(ContentResolver resolver)
 	{
 		Media internalMedia = null;
 		Media externalMedia = null;
 
+		String name = getName();
+		
 		try
 		{
 			Uri baseUri = Images.Media.INTERNAL_CONTENT_URI;
 
 			Uri query = baseUri.buildUpon().appendQueryParameter("limit", "1").build();
 			String[] projection = new String[] { ImageColumns._ID, ImageColumns.ORIENTATION, ImageColumns.DATE_TAKEN };
-			
-			File saveDir = PluginManagerBase.getSaveDir(false);
-			if (!saveDir.canWrite()) {
-				saveDir = PluginManagerBase.getSaveDir(true);
-			}
-			
-			String selection = ImageColumns.DATA + " like '" + saveDir.getAbsolutePath() + "%' AND " + ImageColumns.MIME_TYPE + "='image/jpeg'";
+
+			String selection = ImageColumns.DATA + " like '%" + name + "%' AND " + ImageColumns.MIME_TYPE
+					+ "='image/jpeg'";
 			String order = ImageColumns.DATE_TAKEN + " DESC," + ImageColumns._ID + " DESC";
 
 			Cursor cursor = null;
@@ -364,13 +410,9 @@ public class Thumbnail
 			Uri baseUri = Images.Media.EXTERNAL_CONTENT_URI;
 			Uri query = baseUri.buildUpon().appendQueryParameter("limit", "1").build();
 			String[] projection = new String[] { ImageColumns._ID, ImageColumns.ORIENTATION, ImageColumns.DATE_TAKEN };
-			
-			File saveDir = PluginManagerBase.getSaveDir(false);
-			if (!saveDir.canWrite()) {
-				saveDir = PluginManagerBase.getSaveDir(true);
-			}
-			
-			String selection = ImageColumns.DATA + " like '" + saveDir.getAbsolutePath() + "%' AND " + ImageColumns.MIME_TYPE + "='image/jpeg'";
+
+			String selection = ImageColumns.DATA + " like '%" + name + "%' AND " + ImageColumns.MIME_TYPE
+					+ "='image/jpeg'";
 			String order = ImageColumns.DATE_TAKEN + " DESC," + ImageColumns._ID + " DESC";
 
 			Cursor cursor = null;
@@ -395,6 +437,47 @@ public class Thumbnail
 		{
 
 		}
+
+		// if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+		// String[] projection = new String[] { Document.COLUMN_DOCUMENT_ID,
+		// Document.COLUMN_FLAGS, Document.COLUMN_LAST_MODIFIED };
+		//
+		// DocumentFile saveDir = PluginManagerBase.getSaveDirNew(false);
+		// if (!saveDir.canWrite()) {
+		// saveDir = PluginManagerBase.getSaveDirNew(true);
+		// }
+		// saveDir.get
+		// Uri query =
+		// DocumentsContract.buildChildDocumentsUri(saveDir.getUri().getAuthority(),
+		// DocumentsContract.getDocumentId(saveDir.getUri()));
+		// // query = query.buildUpon().appendQueryParameter("limit",
+		// "1").build();
+		// String selection = Document.COLUMN_MIME_TYPE + "='image/jpeg'";
+		// String order = Document.COLUMN_LAST_MODIFIED + " DESC," +
+		// Document.COLUMN_DOCUMENT_ID + " DESC";
+		//
+		// Cursor cursor = null;
+		//
+		// try
+		// {
+		// cursor = resolver.query(query, projection, selection, null, order);
+		// if (cursor != null && cursor.moveToFirst())
+		// {
+		// final long id = cursor.getLong(0);
+		// internalMedia = new Media(id, cursor.getInt(1), 0,
+		// ContentUris.withAppendedId(
+		// saveDir.getUri(), id));
+		// }
+		// } catch(Exception e) {
+		// e.printStackTrace();
+		// } finally
+		// {
+		// if (cursor != null)
+		// {
+		// cursor.close();
+		// }
+		// }
+		// }
 
 		if (internalMedia == null)
 		{
@@ -436,9 +519,11 @@ public class Thumbnail
 
 	private static Media getLastVideoThumbnail(ContentResolver resolver)
 	{
-		
+
 		Media internalMedia = null;
 		Media externalMedia = null;
+
+		String name = getName();
 
 		try
 		{
@@ -446,13 +531,9 @@ public class Thumbnail
 
 			Uri query = baseUri.buildUpon().appendQueryParameter("limit", "1").build();
 			String[] projection = new String[] { VideoColumns._ID, VideoColumns.DATA, VideoColumns.DATE_TAKEN };
-			
-			File saveDir = PluginManagerBase.getSaveDir(false);
-			if (!saveDir.canWrite()) {
-				saveDir = PluginManagerBase.getSaveDir(true);
-			}
-			
-			String selection = VideoColumns.DATA + " like '" + saveDir.getAbsolutePath() + "%' AND " + VideoColumns.MIME_TYPE + "='video/mp4'";
+
+			String selection = VideoColumns.DATA + " like '%" + name + "%' AND " + VideoColumns.MIME_TYPE
+					+ "='video/mp4'";
 			String order = VideoColumns.DATE_TAKEN + " DESC," + VideoColumns._ID + " DESC";
 
 			Cursor cursor = null;
@@ -482,13 +563,9 @@ public class Thumbnail
 			Uri baseUri = Video.Media.EXTERNAL_CONTENT_URI;
 			Uri query = baseUri.buildUpon().appendQueryParameter("limit", "1").build();
 			String[] projection = new String[] { VideoColumns._ID, VideoColumns.DATA, VideoColumns.DATE_TAKEN };
-			
-			File saveDir = PluginManagerBase.getSaveDir(false);
-			if (!saveDir.canWrite()) {
-				saveDir = PluginManagerBase.getSaveDir(true);
-			}
-			
-			String selection = VideoColumns.DATA + " like '" + saveDir.getAbsolutePath() + "%' AND " + VideoColumns.MIME_TYPE + "='video/mp4'";
+
+			String selection = VideoColumns.DATA + " like '%" + name + "%' AND " + VideoColumns.MIME_TYPE
+					+ "='video/mp4'";
 			String order = VideoColumns.DATE_TAKEN + " DESC," + VideoColumns._ID + " DESC";
 
 			Cursor cursor = null;

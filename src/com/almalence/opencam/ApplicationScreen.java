@@ -42,6 +42,7 @@ import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.media.AudioManager;
 import android.media.ImageReader;
+import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Bundle;
@@ -52,6 +53,7 @@ import android.os.Message;
 import android.os.StatFs;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -68,11 +70,11 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 /* <!-- +++
-import com.almalence.opencam_plus.cameracontroller.CameraController;
-import com.almalence.opencam_plus.ui.GLLayer;
-import com.almalence.opencam_plus.ui.GUI;
-import com.almalence.opencam_plus.R;
-+++ --> */
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.opencam_plus.ui.GLLayer;
+ import com.almalence.opencam_plus.ui.GUI;
+ import com.almalence.opencam_plus.R;
+ +++ --> */
 //<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.GLLayer;
@@ -102,7 +104,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	//
 	// Description<<
 
-	protected static final int			MSG_RETURN_CAPTURED		= -1;
+	protected static final int			MSG_RETURN_CAPTURED			= -1;
 	//
 	// protected static final int MODE_GENERAL = 0;
 	// protected static final int MODE_SMART_MULTISHOT_AND_NIGHT = 1;
@@ -116,45 +118,45 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	protected Handler					messageHandler;
 
 	// Interface to HALv3 camera and Old style camera
-	protected CameraController			cameraController		= null;
+	protected CameraController			cameraController			= null;
 
-	protected int						captureFormat			= CameraController.JPEG;
+	protected int						captureFormat				= CameraController.JPEG;
 
-	public GUI							guiManager				= null;
-	
-	protected PluginManagerBase			pluginManager			= null;	
+	public GUI							guiManager					= null;
+
+	protected PluginManagerBase			pluginManager				= null;
 
 	// OpenGL layer. May be used to allow capture plugins to draw overlaying
 	// preview, such as night vision or panorama frames.
 	protected GLLayer					glView;
 
-	protected boolean					mPausing				= false;
+	protected boolean					mPausing					= false;
 
 	protected SurfaceHolder				surfaceHolder;
 	protected SurfaceView				preview;
-	protected Surface					mCameraSurface			= null;
+	protected Surface					mCameraSurface				= null;
 	protected OrientationEventListener	orientListener;
-	protected boolean					landscapeIsNormal		= false;
-	protected boolean					surfaceCreated			= false;
+	protected boolean					landscapeIsNormal			= false;
+	protected boolean					surfaceCreated				= false;
 
-	protected int						surfaceWidth			= 0;
-	protected int						surfaceHeight			= 0;
+	protected int						surfaceWidth				= 0;
+	protected int						surfaceHeight				= 0;
 	//
-	protected int						surfaceLayoutWidth		= 0;
-	protected int						surfaceLayoutHeight		= 0;
+	protected int						surfaceLayoutWidth			= 0;
+	protected int						surfaceLayoutHeight			= 0;
 
 	// shared between activities
 	// protected int imageWidth, imageHeight;
 	protected int						previewWidth, previewHeight;
 
-	protected CountDownTimer			screenTimer				= null;
-	protected boolean					isScreenTimerRunning	= false;
+	protected CountDownTimer			screenTimer					= null;
+	protected boolean					isScreenTimerRunning		= false;
 
-	protected static boolean			wantLandscapePhoto		= false;
-	protected int						orientationMain			= 0;
-	protected int						orientationMainPrevious	= 0;
+	protected static boolean			wantLandscapePhoto			= false;
+	protected int						orientationMain				= 0;
+	protected int						orientationMainPrevious		= 0;
 
-	protected SoundPlayer				shutterPlayer			= null;
+	protected SoundPlayer				shutterPlayer				= null;
 
 	// Common preferences
 	// protected String imageSizeIdxPreference;
@@ -164,7 +166,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	//
 	// protected boolean showHelp = false;
 	//
-	protected boolean					keepScreenOn			= false;
+	protected boolean					keepScreenOn				= false;
 	//
 	// protected String saveToPath;
 	// protected String saveToPreference;
@@ -174,10 +176,10 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	//
 	protected List<Surface>				surfaceList;
 	//
-	protected static boolean			mAFLocked				= false;
+	protected static boolean			mAFLocked					= false;
 	//
 	// // shows if mode is currently switching
-	protected boolean					switchingMode			= false;
+	protected boolean					switchingMode				= false;
 
 	// >>Description
 	// section with initialize, resume, start, stop procedures, preferences
@@ -189,24 +191,24 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	//
 	// Description<<
 
-	protected static boolean			isCreating				= false;
-	protected static boolean			mApplicationStarted		= false;
-	protected static boolean			mCameraStarted			= false;
-	protected static boolean			isForceClose			= false;
+	protected static boolean			isCreating					= false;
+	protected static boolean			mApplicationStarted			= false;
+	protected static boolean			mCameraStarted				= false;
+	protected static boolean			isForceClose				= false;
 
-	protected static final int			VOLUME_FUNC_SHUTTER		= 0;
-	protected static final int			VOLUME_FUNC_EXPO		= 2;
-	protected static final int			VOLUME_FUNC_NONE		= 3;
+	protected static final int			VOLUME_FUNC_SHUTTER			= 0;
+	protected static final int			VOLUME_FUNC_EXPO			= 2;
+	protected static final int			VOLUME_FUNC_NONE			= 3;
 
-	protected static List<Area>			mMeteringAreaMatrix5	= new ArrayList<Area>();
-	protected static List<Area>			mMeteringAreaMatrix4	= new ArrayList<Area>();
-	protected static List<Area>			mMeteringAreaMatrix1	= new ArrayList<Area>();
-	protected static List<Area>			mMeteringAreaCenter		= new ArrayList<Area>();
-	protected static List<Area>			mMeteringAreaSpot		= new ArrayList<Area>();
+	protected static List<Area>			mMeteringAreaMatrix5		= new ArrayList<Area>();
+	protected static List<Area>			mMeteringAreaMatrix4		= new ArrayList<Area>();
+	protected static List<Area>			mMeteringAreaMatrix1		= new ArrayList<Area>();
+	protected static List<Area>			mMeteringAreaCenter			= new ArrayList<Area>();
+	protected static List<Area>			mMeteringAreaSpot			= new ArrayList<Area>();
 
-	protected int						currentMeteringMode		= -1;
-	
-	public static String				sInitModeListPref		= "initModeListPref";
+	protected int						currentMeteringMode			= -1;
+
+	public static String				sInitModeListPref			= "initModeListPref";
 
 	public static String				sEvPref;
 	public static String				sExposureTimeModePref;
@@ -274,14 +276,14 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	// public static String sDefaultInfoSetPref;
 	// public static String sSWCheckedPref;
 	public static String				sSavePathPref;
-	public static String 				sExportNamePref;
-	public static String 				sExportNamePrefixPref;
-	public static String 				sExportNamePostfixPref;
+	public static String				sExportNamePref;
+	public static String				sExportNamePrefixPref;
+	public static String				sExportNamePostfixPref;
 	public static String				sSaveToPref;
 	// public static String sSortByDataPref;
 	// public static String sEnableExifOrientationTagPref;
 	// public static String sAdditionalRotationPref;
-	
+
 	public static String				sTimestampDate;
 	public static String				sTimestampAbbreviation;
 	public static String				sTimestampTime;
@@ -291,17 +293,20 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public static String				sTimestampFontSize;
 	//
 	public static String				sExpoPreviewModePref;
-	
+
 	public static String				sDefaultModeName;
 	//
 	// public static String sDefaultModeName;
 	//
-	public static int					sDefaultValue			= CameraParameters.SCENE_MODE_AUTO;
-	public static int					sDefaultFocusValue		= CameraParameters.AF_MODE_CONTINUOUS_PICTURE;
-	public static int					sDefaultFlashValue		= CameraParameters.FLASH_MODE_OFF;
-	public static int					sDefaultMeteringValue	= CameraParameters.meteringModeAuto;
-	public static Long					lDefaultExposureTimeValue		= 33333333l;
-	public static int					sDefaultCollorEffectValue		= CameraParameters.COLOR_EFFECT_MODE_OFF;
+	public static int					sDefaultValue				= CameraParameters.SCENE_MODE_AUTO;
+	public static int					sDefaultFocusValue			= CameraParameters.AF_MODE_CONTINUOUS_PICTURE;
+	public static int					sDefaultFlashValue			= CameraParameters.FLASH_MODE_OFF;
+	public static int					sDefaultMeteringValue		= CameraParameters.meteringModeAuto;
+	public static Long					lDefaultExposureTimeValue	= 33333333l;
+	public static int					sDefaultCollorEffectValue	= CameraParameters.COLOR_EFFECT_MODE_OFF;
+
+	private File						forceFilename				= null;
+	private Uri							forceFilenameUri;
 
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -326,7 +331,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		sCameraModePref = getResources().getString(R.string.Preference_CameraModeValue);
 
 		sUseFrontCameraPref = getResources().getString(R.string.Preference_UseFrontCameraValue);
-		
+
 		sImageSizeRearPref = getResources().getString(R.string.Preference_ImageSizeRearValue);
 		sImageSizeFrontPref = getResources().getString(R.string.Preference_ImageSizeFrontValue);
 		sImageSizeSonyRemotePref = getResources().getString(R.string.Preference_ImageSizeSonyRemoteValue);
@@ -355,7 +360,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		sExportNamePostfixPref = getResources().getString(R.string.Preference_SavePathPostfixValue);
 		sSavePathPref = getResources().getString(R.string.Preference_SavePathValue);
 		sSaveToPref = getResources().getString(R.string.Preference_SaveToValue);
-		
+
 		sTimestampDate = getResources().getString(R.string.Preference_TimestampDateValue);
 		sTimestampAbbreviation = getResources().getString(R.string.Preference_TimestampAbbreviationValue);
 		sTimestampTime = getResources().getString(R.string.Preference_TimestampTimeValue);
@@ -368,7 +373,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		sAWBLockPref = getResources().getString(R.string.Preference_AWBLockValue);
 
 		sExpoPreviewModePref = getResources().getString(R.string.Preference_ExpoBracketingPreviewModePref);
-		
+
 		sDefaultModeName = getResources().getString(R.string.Preference_DefaultModeName);
 
 		mainContext = this.getBaseContext();
@@ -488,17 +493,43 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		screenTimer.start();
 		isScreenTimerRunning = true;
 
+		if (this.getIntent().getAction() != null)
+		{
+			if (this.getIntent().getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE))
+			{
+				try
+				{
+					forceFilenameUri = this.getIntent().getExtras().getParcelable(MediaStore.EXTRA_OUTPUT);
+					ApplicationScreen.setForceFilename(new File(((Uri) forceFilenameUri).getPath()));
+					if (ApplicationScreen.getForceFilename().getAbsolutePath().equals("/scrapSpace"))
+					{
+						ApplicationScreen.setForceFilename(new File(Environment.getExternalStorageDirectory()
+								.getAbsolutePath() + "/mms/scrapSpace/.temp.jpg"));
+						new File(ApplicationScreen.getForceFilename().getParent()).mkdirs();
+					}
+				} catch (Exception e)
+				{
+					ApplicationScreen.setForceFilename(null);
+				}
+			} else
+			{
+				ApplicationScreen.setForceFilename(null);
+			}
+		} else
+		{
+			ApplicationScreen.setForceFilename(null);
+		}
+
 		afterOnCreate();
 	}
 
-	
 	abstract protected void createPluginManager();
-	
+
 	public static PluginManagerBase getPluginManager()
 	{
 		return ApplicationScreen.instance.pluginManager;
 	}
-	
+
 	// At this point CameraController, GUIManager are not created yet.
 	// Use this method to initialize some shared preferences or do any other
 	// logic that isn't depended from OpenCamera core's objects.
@@ -741,11 +772,14 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	protected void onApplicationDestroy()
 	{
-//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-//
-//		prefs.edit().putBoolean(ApplicationScreen.sPhotoTimeLapseIsRunningPref, false);
-//		prefs.edit().putBoolean(ApplicationScreen.sPhotoTimeLapseActivePref, false);
-		
+		// SharedPreferences prefs =
+		// PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		//
+		// prefs.edit().putBoolean(ApplicationScreen.sPhotoTimeLapseIsRunningPref,
+		// false);
+		// prefs.edit().putBoolean(ApplicationScreen.sPhotoTimeLapseActivePref,
+		// false);
+
 		ApplicationScreen.getGUIManager().onDestroy();
 		ApplicationScreen.getPluginManager().onDestroy();
 		CameraController.onDestroy();
@@ -884,7 +918,8 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 					public void onFinish()
 					{
 						ApplicationScreen.getPluginManager().switchMode(
-								ConfigParser.getInstance().getMode(ApplicationScreen.getPluginManager().getActiveModeID()));
+								ConfigParser.getInstance().getMode(
+										ApplicationScreen.getPluginManager().getActiveModeID()));
 					}
 				}.start();
 			} else
@@ -1121,8 +1156,8 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 				if (cp != null)
 				{
-					SharedPreferences prefs = PreferenceManager
-							.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen
+							.getMainContext());
 					int antibanding = Integer.parseInt(prefs.getString(ApplicationScreen.sAntibandingPref, "3"));
 					switch (antibanding)
 					{
@@ -1565,7 +1600,8 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		ApplicationScreen.getPluginManager().menuButtonPressed();
 	}
 
-	public void disableCameraParameter(GUI.CameraParameter iParam, boolean bDisable, boolean bInitMenu, boolean bModeInit)
+	public void disableCameraParameter(GUI.CameraParameter iParam, boolean bDisable, boolean bInitMenu,
+			boolean bModeInit)
 	{
 		guiManager.disableCameraParameter(iParam, bDisable, bInitMenu, bModeInit);
 	}
@@ -1882,6 +1918,21 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	{
 		return PreferenceManager.getDefaultSharedPreferences(mainContext).getBoolean(ApplicationScreen.sAWBLockPref,
 				false);
+	}
+
+	public static Uri getForceFilenameURI()
+	{
+		return ApplicationScreen.instance.forceFilenameUri;
+	}
+	
+	public static File getForceFilename()
+	{
+		return ApplicationScreen.instance.forceFilename;
+	}
+
+	public static void setForceFilename(File fileName)
+	{
+		ApplicationScreen.instance.forceFilename = fileName;
 	}
 
 	public void sonyCameraSelected()
