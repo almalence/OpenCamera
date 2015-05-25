@@ -71,9 +71,7 @@ public final class CameraParameters
 	public static final int		AF_MODE_NORMAL					= 7;
 	public static final int		AF_MODE_FIXED					= 8;
 
-	public static final int		MF_MODE							= 11;				// Manual
-																					// focus
-																					// mode
+	public static final int		MF_MODE							= 11;	// Manual focus mode
 
 	// FLASH
 	public static final int		FLASH_MODE_OFF					= 0;

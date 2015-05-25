@@ -21,7 +21,6 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
-
 //-+- -->
 
 import java.io.IOException;
@@ -38,7 +37,6 @@ import android.media.SoundPool;
  * that any slowness with preparing or loading doesn't block the calling thread.
  */
 public class SoundPlayer {
-	private static final String TAG = "SoundPlayer";
 	private SoundPool mPlayer;
 	private int soundStartId = 0;
 	private AssetFileDescriptor mAfd;

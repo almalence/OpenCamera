@@ -21,9 +21,10 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
+//-+- -->
 
 import android.hardware.camera2.CaptureResult;
-//-+- -->
+
 
 //PluginManagerInterface used by Camera Controller to communicate with appluication's plugins
 public interface PluginManagerInterface

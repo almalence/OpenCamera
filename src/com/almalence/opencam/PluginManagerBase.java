@@ -21,7 +21,6 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 //<!-- -+-
 package com.almalence.opencam;
-
 //-+- -->
 
 import java.io.ByteArrayInputStream;
@@ -85,7 +84,6 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.support.v4.provider.DocumentFile;
-import android.util.Log;
 import android.util.Size;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -94,7 +92,6 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.almalence.SwapHeap;
-import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.plugins.export.ExifDriver.ExifDriver;
 import com.almalence.plugins.export.ExifDriver.ExifManager;
 import com.almalence.plugins.export.ExifDriver.Values.ValueByteArray;
@@ -110,11 +107,9 @@ import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
 
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
- import com.almalence.opencam_plus.ui.GUI.ShutterButton;
- import com.almalence.opencam_plus.R;
  +++ --> */
 //<!-- -+-
-
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 /***
@@ -734,13 +729,6 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onCaptureCompleted(result);
 	}
-
-	// @Override
-	// public void createRequestIDList(int nFrames)
-	// {
-	// if (null != pluginList.get(activeCapture))
-	// pluginList.get(activeCapture).createRequestIDList(nFrames);
-	// }
 
 	@Override
 	public void addRequestID(int nFrame, int requestID)
@@ -2173,13 +2161,12 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			ei.saveAttributes();
 		} catch (IOException e1)
 		{
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
 		addTimestamp(file);
 
-		// // Open ExifDriver.
+		// Open ExifDriver.
 		ExifDriver exifDriver = ExifDriver.getInstance(file.getAbsolutePath());
 		ExifManager exifManager = null;
 		if (exifDriver != null)
@@ -2724,9 +2711,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		int textHeight = text_bounds.bottom - text_bounds.top;
 		if (paint.getTextAlign() == Paint.Align.RIGHT || paint.getTextAlign() == Paint.Align.CENTER)
 		{
-			float width = paint.measureText(maxLengthText); // n.b., need to use
-			// measureText rather than
-			// getTextBounds here
+			float width = paint.measureText(maxLengthText); // n.b., need to use measureText rather than getTextBounds here
 			textWidth = (int) width;
 		}
 
@@ -2741,8 +2726,6 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			textHeight /= 3;
 		}
 		text_bounds.bottom = imageHeight - padding;
-
-		// canvas.drawRect(text_bounds, paint);
 
 		paint.setColor(foreground);
 		if (resText.length > 0)
@@ -2813,11 +2796,6 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		ContentValues values = null;
 		String resultOrientation = getFromSharedMem("frameorientation" + (i + 1) + Long.toString(SessionID));
-		Boolean orientationLandscape = false;
-		if (resultOrientation == null)
-			orientationLandscape = true;
-		else
-			orientationLandscape = Boolean.parseBoolean(resultOrientation);
 
 		String resultMirrored = getFromSharedMem("framemirrored" + (i + 1) + Long.toString(SessionID));
 		Boolean cameraMirrored = false;

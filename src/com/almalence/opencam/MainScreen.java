@@ -59,8 +59,6 @@ import android.media.CamcorderProfile;
 import android.media.ImageReader;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.net.wifi.ScanResult;
-import android.net.wifi.WifiConfiguration;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -72,7 +70,6 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Display;
@@ -95,19 +92,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.cameracontroller.SonyRemoteCamera;
 import com.almalence.opencam.ui.AlmalenceGUI;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
-import com.almalence.opencam.ui.SonyCameraDeviceExplorer;
 import com.almalence.plugins.capture.panoramaaugmented.PanoramaAugmentedCapturePlugin;
 import com.almalence.plugins.capture.video.VideoCapturePlugin;
-import com.almalence.sony.cameraremote.ServerDevice;
-import com.almalence.sony.cameraremote.SimpleSsdpClient;
 import com.almalence.sony.cameraremote.SimpleStreamSurfaceView;
 import com.almalence.sony.cameraremote.utils.NFCHandler;
 import com.almalence.sony.cameraremote.utils.WifiHandler;
-import com.almalence.sony.cameraremote.utils.WifiListener;
 import com.almalence.util.AppRater;
 import com.almalence.util.AppWidgetNotifier;
 //<!-- -+-
@@ -129,9 +121,6 @@ import com.almalence.util.AppWidgetNotifier;
  ***/
 
 @SuppressWarnings("deprecation")
-// public class MainScreen extends Activity implements ApplicationInterface,
-// View.OnClickListener, View.OnTouchListener,
-// SurfaceHolder.Callback, Handler.Callback, Camera.ShutterCallback
 public class MainScreen extends ApplicationScreen
 {
 	// >>Description
@@ -179,9 +168,6 @@ public class MainScreen extends ApplicationScreen
 
 	private static boolean		maxScreenBrightnessPreference;
 
-	// shows if mode is currently switching
-	// private boolean switchingMode = false;
-
 	// >>Description
 	// section with initialize, resume, start, stop procedures, preferences
 	// access
@@ -191,11 +177,6 @@ public class MainScreen extends ApplicationScreen
 	// Create main GUI controls and plugin specific controls.
 	//
 	// Description<<
-
-	// private static boolean isCreating = false;
-	// private static boolean mApplicationStarted = false;
-	// private static boolean mCameraStarted = false;
-	// private static boolean isForceClose = false;
 
 	// Clicked mode id from widget.
 	public static final String	EXTRA_ITEM						= "WidgetModeID";
@@ -215,13 +196,6 @@ public class MainScreen extends ApplicationScreen
 	private static final int	VOLUME_FUNC_EXPO				= 2;
 	private static final int	VOLUME_FUNC_NONE				= 3;
 
-	// private static List<Area> mMeteringAreaMatrix5 = new ArrayList<Area>();
-	// private static List<Area> mMeteringAreaMatrix4 = new ArrayList<Area>();
-	// private static List<Area> mMeteringAreaMatrix1 = new ArrayList<Area>();
-	// private static List<Area> mMeteringAreaCenter = new ArrayList<Area>();
-	// private static List<Area> mMeteringAreaSpot = new ArrayList<Area>();
-
-	// private int currentMeteringMode = -1;
 	public static String		sKeepScreenOn;
 
 	public static String		sDelayedCapturePref;
@@ -239,11 +213,6 @@ public class MainScreen extends ApplicationScreen
 	private static String		sShutterPref;
 	private static String		sShotOnTapPref;
 	private static String		sVolumeButtonPref;
-
-	// public static String sInitModeListPref = "initModeListPref";
-
-	// public static String sAELockPref;
-	// public static String sAWBLockPref;
 
 	public static String		sDefaultInfoSetPref;
 	public static String		sSWCheckedPref;
@@ -444,21 +413,6 @@ public class MainScreen extends ApplicationScreen
 		return thiz;
 	}
 
-	static private void putBundleExtra(Bundle bundle, String key, List<String> values)
-	{
-		if (values != null)
-		{
-			String[] values_arr = new String[values.size()];
-			int i = 0;
-			for (String value : values)
-			{
-				values_arr[i] = value;
-				i++;
-			}
-			bundle.putStringArray(key, values_arr);
-		}
-	}
-
 	public void getCameraParametersBundle()
 	{
 		try
@@ -498,8 +452,6 @@ public class MainScreen extends ApplicationScreen
 		// ImageReader for preview frames in YUV format
 		mImageReaderPreviewYUV = ImageReader.newInstance(thiz.previewWidth, thiz.previewHeight,
 				ImageFormat.YUV_420_888, 2);
-		// thiz.mImageReaderPreviewYUV = ImageReader.newInstance(1280, 960,
-		// ImageFormat.YUV_420_888, 1);
 
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		// ImageReader for YUV still images
@@ -966,23 +918,6 @@ public class MainScreen extends ApplicationScreen
 
 		boolean isHALv3 = prefs.getBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
 				(CameraController.isNexus() || CameraController.isFlex2()) ? true : false);
-		// String modeID = PluginManager.getInstance().getActiveModeID();
-		//
-		// // Temp fix HDR modes for LG G Flex 2.
-		// boolean isLgGFlex2 = Build.MODEL.toLowerCase(Locale.US).replace(" ",
-		// "").contains("lg-h959")
-		// || Build.MODEL.toLowerCase(Locale.US).replace(" ",
-		// "").contains("lg-h510")
-		// || Build.MODEL.toLowerCase(Locale.US).replace(" ",
-		// "").contains("lg-f510k");
-		//
-		// if (modeID.equals("video")
-		// || (Build.MODEL.contains("Nexus 6") && (modeID.equals("pixfix") ||
-		// modeID.equals("panorama_augmented")))
-		// || (isLgGFlex2 && (modeID.equals("hdrmode") ||
-		// modeID.equals("expobracketing"))))
-		// isHALv3 = false;
-		//
 		CameraController.useHALv3(isHALv3);
 		prefs.edit()
 				.putBoolean(getResources().getString(R.string.Preference_UseHALv3Key), CameraController.isUseHALv3())
@@ -1098,10 +1033,7 @@ public class MainScreen extends ApplicationScreen
 		if (!isCreating)
 			onResumeTimer = new CountDownTimer(50, 50)
 			{
-				public void onTick(long millisUntilFinished)
-				{
-					// Not used
-				}
+				public void onTick(long millisUntilFinished){}
 
 				public void onFinish()
 				{
@@ -1121,14 +1053,6 @@ public class MainScreen extends ApplicationScreen
 					setScreenBrightness(maxScreenBrightnessPreference);
 
 					captureRAW = prefs.getBoolean(MainScreen.sCaptureRAWPref, false);
-
-					// CameraController.useHALv3(prefs.getBoolean(getResources()
-					// .getString(R.string.Preference_UseHALv3Key),
-					// CameraController.isNexus() ? true : false));
-					// prefs.edit()
-					// .putBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
-					// CameraController.isUseHALv3()).commit();
-
 					MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
 
 					boolean openCamera = false;
@@ -1160,7 +1084,6 @@ public class MainScreen extends ApplicationScreen
 						preview.setOnTouchListener(MainScreen.this);
 						preview.setKeepScreenOn(true);
 
-						// Log.e("MainScreen",
 						if (CameraController.isUseHALv3())
 						{
 							MainScreen.setSurfaceHolderSize(1, 1);
@@ -1307,8 +1230,6 @@ public class MainScreen extends ApplicationScreen
 			isScreenTimerRunning = false;
 		}
 
-		// CameraController.onPause(CameraController.isUseHALv3()? false :
-		// switchingMode);
 		CameraController.onPause(switchingMode);
 		switchingMode = false;
 
@@ -1360,10 +1281,6 @@ public class MainScreen extends ApplicationScreen
 		{
 			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_SURFACE_CONFIGURED, 0);
 			isCameraConfiguring = false;
-			// updatePreferences();
-			// MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-			// configureHALv3Camera(captureFormat);
-			// messageHandler.sendEmptyMessage(ApplicationInterface.MSG_SURFACE_READY);
 		} else if (!isCreating)
 		{
 			new CountDownTimer(50, 50)
@@ -1389,7 +1306,6 @@ public class MainScreen extends ApplicationScreen
 								CameraController.setupCamera(holder, !switchingMode);
 							} else
 							{
-								// CameraController.setupCamera(null);
 								Log.e("MainScreen",
 										"surfaceChanged: sendEmptyMessage(ApplicationInterface.MSG_SURFACE_READY)");
 								messageHandler.sendEmptyMessage(ApplicationInterface.MSG_SURFACE_READY);
@@ -1452,15 +1368,6 @@ public class MainScreen extends ApplicationScreen
 												// x 4 - compressed input jpegs,
 												// 1Mb - safe reserve
 
-		// if (maxMpix < MIN_MPIX_SUPPORTED)
-		// {
-		// String msg;
-		// msg = "MainScreen.selectImageDimension maxMem = " + maxMem;
-		// // Log.d("MultishotCapturePlugin",
-		// // "MainScreen.selectImageDimension maxMpix < MIN_MPIX_SUPPORTED");
-		// // Log.d("MultishotCapturePlugin", msg);
-		// }
-
 		// find index selected in preferences
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		int prefIdx = Integer.parseInt(prefs.getString(
@@ -1519,40 +1426,6 @@ public class MainScreen extends ApplicationScreen
 		return captureIdx;
 	}
 
-	// public void onSurfaceChangedMain(final SurfaceHolder holder, final int
-	// width, final int height)
-	// {
-	// SharedPreferences prefs =
-	// PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-	// CameraController.setCameraIndex(!prefs.getBoolean(sUseFrontCameraPref,
-	// false) ? 0 : 1);
-	//
-	// shutterPreference = prefs.getBoolean(sShutterPref, false);
-	// shotOnTapPreference =
-	// Integer.parseInt(prefs.getString(MainScreen.sShotOnTapPref, "0"));
-	// imageSizeIdxPreference =
-	// prefs.getString(CameraController.getCameraIndex() == 0 ?
-	// sImageSizeRearPref
-	// : sImageSizeFrontPref, "-1");
-	//
-	// if (!MainScreen.thiz.mPausing && surfaceCreated &&
-	// (!CameraController.isCameraCreated()))
-	// {
-	// MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-	//
-	// if (CameraController.isUseHALv3())
-	// {
-	// // CameraController.setupCamera(null);
-	// messageHandler.sendEmptyMessage(ApplicationInterface.MSG_SURFACE_READY);
-	// } else
-	// {
-	// Log.d("MainScreen",
-	// "surfaceChangedMain: CameraController.setupCamera(null)");
-	// CameraController.setupCamera(holder, !switchingMode);
-	// }
-	// }
-	// }
-
 	@Override
 	public void addSurfaceCallback()
 	{
@@ -1574,12 +1447,8 @@ public class MainScreen extends ApplicationScreen
 		if (!CameraController.isRemoteCamera())
 		{
 			if (CameraController.isUseHALv3())
-			{
-				// Log.e("MainScreen",
-				// "configureCamera. Set isCameraConfiguring to TRUE");
-				// isCameraConfiguring = true;
 				configureHALv3Camera(captureFormat);
-			} else
+			else
 			{
 				Camera.Size sz = CameraController.getCameraParameters().getPreviewSize();
 
@@ -1589,9 +1458,6 @@ public class MainScreen extends ApplicationScreen
 						* ImageFormat.getBitsPerPixel(CameraController.getCameraParameters().getPreviewFormat()) / 8);
 
 				CameraController.getCamera().setErrorCallback(CameraController.getInstance());
-
-				// PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAMERA_CONFIGURED,
-				// 0);
 
 				onCameraConfigured();
 			}
@@ -1647,13 +1513,7 @@ public class MainScreen extends ApplicationScreen
 				surfaceList.add(mImageReaderRAW.getSurface());
 		}
 
-		// sfl.add(mImageReaderJPEG.getSurface());
 		CameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
-
-		// guiManager.setupViewfinderPreviewSize(new
-		// CameraController.Size(this.previewWidth, this.previewHeight));
-		// guiManager.setupViewfinderPreviewSize(new CameraController.Size(1280,
-		// 960));
 
 		CameraController.setCaptureFormat(captureFormat);
 		// configure camera with all the surfaces to be ever used
@@ -1684,19 +1544,6 @@ public class MainScreen extends ApplicationScreen
 
 		Log.d("MainScreen", "SURFACE CREATED");
 	}
-
-	// @Override
-	// public void surfaceDestroyed(SurfaceHolder holder)
-	// {
-	// surfaceCreated = false;
-	// }
-	//
-	// // SURFACES (preview, image readers)
-	// @Override
-	// public Surface getCameraSurface()
-	// {
-	// return mCameraSurface;
-	// }
 
 	// Probably used only by Panorama plugin. Added to avoid non direct
 	// interface (message/handler)
@@ -1911,37 +1758,6 @@ public class MainScreen extends ApplicationScreen
 		return false;
 	}
 
-	// @Override
-	// public void onClick(View v)
-	// {
-	// if (mApplicationStarted)
-	// MainScreen.getGUIManager().onClick(v);
-	// }
-	//
-	// @Override
-	// public boolean onTouch(View view, MotionEvent event)
-	// {
-	// if (mApplicationStarted)
-	// return MainScreen.getGUIManager().onTouch(view, event);
-	// return true;
-	// }
-	//
-	// public boolean onTouchSuper(View view, MotionEvent event)
-	// {
-	// return super.onTouchEvent(event);
-	// }
-	//
-	// public void onButtonClick(View v)
-	// {
-	// MainScreen.getGUIManager().onButtonClick(v);
-	// }
-	//
-	// @Override
-	// public void onShutter()
-	// {
-	// PluginManager.getInstance().onShutter();
-	// }
-
 	public static boolean isForceClose()
 	{
 		return isForceClose;
@@ -1981,7 +1797,6 @@ public class MainScreen extends ApplicationScreen
 	{
 		if (glView != null)
 		{
-			// preview.getHolder().getSurface().lockCanvas(null).drawColor(Color.BLACK);
 			glView.onPause();
 			glView.destroyDrawingCache();
 			((RelativeLayout) this.findViewById(R.id.mainLayout2)).removeView(glView);
@@ -2025,47 +1840,6 @@ public class MainScreen extends ApplicationScreen
 			mgr.setStreamMute(AudioManager.STREAM_SYSTEM, mute);
 		}
 	}
-
-	// public static int getImageWidth()
-	// {
-	// return thiz.imageWidth;
-	// }
-	//
-	// public static void setImageWidth(int setImageWidth)
-	// {
-	// thiz.imageWidth = setImageWidth;
-	// }
-	//
-	// public static int getImageHeight()
-	// {
-	// return thiz.imageHeight;
-	// }
-	//
-	// public static void setImageHeight(int setImageHeight)
-	// {
-	// thiz.imageHeight = setImageHeight;
-	// }
-
-	// public static int getSaveImageWidth()
-	// {
-	// return thiz.saveImageWidth;
-	// }
-	//
-	// public static void setSaveImageWidth(int setSaveImageWidth)
-	// {
-	// thiz.saveImageWidth = setSaveImageWidth;
-	// }
-	//
-	// public static int getSaveImageHeight()
-	// {
-	// return thiz.saveImageHeight;
-	// }
-	//
-	// public static void setSaveImageHeight(int setSaveImageHeight)
-	// {
-	// thiz.saveImageHeight = setSaveImageHeight;
-	// }
-
 	@Override
 	public void setExpoPreviewPref(boolean previewMode)
 	{
@@ -2255,12 +2029,7 @@ public class MainScreen extends ApplicationScreen
 
 	// controls subscription status request
 	private static boolean	subscriptionStatusRequest	= false;
-	private static long		timeLastSubscriptionCheck	= 0;							// should
-	// check
-	// each
-	// 32
-	// days
-	// 32*24*60*60*1000
+	private static long		timeLastSubscriptionCheck	= 0;// should check each 32 days - 32*24*60*60*1000
 	private long			days32						= 32 * 24 * 60 * 60 * 1000L;
 
 	private void createBillingHandler()
@@ -2292,7 +2061,6 @@ public class MainScreen extends ApplicationScreen
 			String base64EncodedPublicKeyYandex = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6KzaraKmv48Y+Oay2ZpWu4BHtSKYZidyCxbaYZmmOH4zlRNic/PDze7OA4a1buwdrBg3AAHwfVbHFzd9o91yinnHIWYQqyPg7L1Swh5W70xguL4jlF2N/xI9VoL4vMRv3Bf/79VfQ11utcPLHEXPR8nPEp9PT0wN2Hqp4yCWFbfvhVVmy7sQjywnfLqcWTcFCT6N/Xdxs1quq0hTE345MiCgkbh1xVULmkmZrL0rWDVCaxfK4iZWSRgQJUywJ6GMtUh+FU6/7nXDenC/vPHqnDR0R6BRi+QsES0ZnEfQLqNJoL+rqJDr/sDIlBQQDMQDxVOx0rBihy/FlHY34UF+bwIDAQAB";
 			// Create the helper, passing it our context and the public key to
 			// verify signatures with
-			// Log.v("Main billing", "Creating IAB helper.");
 			Map<String, String> storeKeys = new HashMap<String, String>();
 			storeKeys.put(OpenIabHelper.NAME_GOOGLE, base64EncodedPublicKeyGoogle);
 			storeKeys.put("com.yandex.store", base64EncodedPublicKeyYandex);
@@ -2305,7 +2073,6 @@ public class MainScreen extends ApplicationScreen
 
 			OpenIabHelper.enableDebugLogging(true);
 
-			// Log.v("Main billing", "Starting setup.");
 			mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener()
 			{
 				public void onIabSetupFinished(IabResult result)
@@ -2348,8 +2115,6 @@ public class MainScreen extends ApplicationScreen
 						additionalSkuList.add(SKU_SALE1);
 						additionalSkuList.add(SKU_SALE2);
 
-						// Log.v("Main billing",
-						// "Setup successful. Querying inventory.");
 						mHelper.queryInventoryAsync(true, additionalSkuList, mGotInventoryListener);
 					} catch (Exception e)
 					{
@@ -2389,195 +2154,187 @@ public class MainScreen extends ApplicationScreen
 	public static String						titleSubscriptionYear		= "$4.99";
 
 	public static String						summary_SKU_PROMO			= "alyrom0nap";
-	// public String summaryUnlockAll = "";
-	// public String summaryUnlockHDR = "";
-	// public String summaryUnlockPano = "";
-	// public String summaryUnlockMoving = "";
-	// public String summaryUnlockGroup = "";
-	//
-	// public String summarySubscriptionMonth = "";
-	// public String summarySubscriptionYear = "";
+	IabHelper.QueryInventoryFinishedListener	mGotInventoryListener		= 
+			new IabHelper.QueryInventoryFinishedListener()
+			{
+				public void onQueryInventoryFinished(
+						IabResult result,
+						Inventory inventory)
+				{
+					if (inventory == null)
+					{
+						Log.e("Main billing",
+								"mGotInventoryListener inventory null ");
+						return;
+					}
 
-	IabHelper.QueryInventoryFinishedListener	mGotInventoryListener		= new IabHelper.QueryInventoryFinishedListener()
-																			{
-																				public void onQueryInventoryFinished(
-																						IabResult result,
-																						Inventory inventory)
-																				{
-																					if (inventory == null)
-																					{
-																						Log.e("Main billing",
-																								"mGotInventoryListener inventory null ");
-																						return;
-																					}
+					SharedPreferences prefs = PreferenceManager
+							.getDefaultSharedPreferences(MainScreen
+									.getMainContext());
 
-																					SharedPreferences prefs = PreferenceManager
-																							.getDefaultSharedPreferences(MainScreen
-																									.getMainContext());
+					Editor prefsEditor = prefs.edit();
+					if (inventory
+							.hasPurchase(SKU_SUPER))
+					{
+						superPurchased = true;
+						prefsEditor
+								.putBoolean(
+										"plugin_almalence_super",
+										true).commit();
+					}
+					if (inventory.hasPurchase(SKU_HDR))
+					{
+						hdrPurchased = true;
+						prefsEditor.putBoolean(
+								"plugin_almalence_hdr",
+								true).commit();
+					}
+					if (inventory
+							.hasPurchase(SKU_PANORAMA))
+					{
+						panoramaPurchased = true;
+						prefsEditor
+								.putBoolean(
+										"plugin_almalence_panorama",
+										true).commit();
+					}
+					if (inventory
+							.hasPurchase(SKU_UNLOCK_ALL))
+					{
+						unlockAllPurchased = true;
+						prefsEditor.putBoolean(
+								"unlock_all_forever",
+								true).commit();
+					}
+					if (inventory
+							.hasPurchase(SKU_UNLOCK_ALL_COUPON))
+					{
+						unlockAllPurchased = true;
+						prefsEditor.putBoolean(
+								"unlock_all_forever",
+								true).commit();
+					}
+					if (inventory
+							.hasPurchase(SKU_MOVING_SEQ))
+					{
+						objectRemovalBurstPurchased = true;
+						prefsEditor
+								.putBoolean(
+										"plugin_almalence_moving_burst",
+										true).commit();
+					}
+					if (inventory
+							.hasPurchase(SKU_GROUPSHOT))
+					{
+						groupShotPurchased = true;
+						prefsEditor
+								.putBoolean(
+										"plugin_almalence_moving_burst",
+										true).commit();
+					}
+					if (inventory
+							.hasPurchase(SKU_SUBSCRIPTION_YEAR))
+					{
+						unlockAllSubscriptionYear = true;
+						prefsEditor
+								.putBoolean(
+										"subscription_unlock_all_year",
+										true).commit();
+						unlockAllPurchased = true;
+						prefsEditor.putBoolean(
+								"unlock_all_forever",
+								true).commit();
+					}
+					if (inventory
+							.hasPurchase(SKU_SUBSCRIPTION_YEAR_NEW))
+					{
+						unlockAllSubscriptionYear = true;
+						prefsEditor
+								.putBoolean(
+										"subscription_unlock_all_year",
+										true).commit();
+						unlockAllPurchased = true;
+						prefsEditor.putBoolean(
+								"unlock_all_forever",
+								true).commit();
+					}
 
-																					Editor prefsEditor = prefs.edit();
-																					if (inventory
-																							.hasPurchase(SKU_SUPER))
-																					{
-																						superPurchased = true;
-																						prefsEditor
-																								.putBoolean(
-																										"plugin_almalence_super",
-																										true).commit();
-																					}
-																					if (inventory.hasPurchase(SKU_HDR))
-																					{
-																						hdrPurchased = true;
-																						prefsEditor.putBoolean(
-																								"plugin_almalence_hdr",
-																								true).commit();
-																					}
-																					if (inventory
-																							.hasPurchase(SKU_PANORAMA))
-																					{
-																						panoramaPurchased = true;
-																						prefsEditor
-																								.putBoolean(
-																										"plugin_almalence_panorama",
-																										true).commit();
-																					}
-																					if (inventory
-																							.hasPurchase(SKU_UNLOCK_ALL))
-																					{
-																						unlockAllPurchased = true;
-																						prefsEditor.putBoolean(
-																								"unlock_all_forever",
-																								true).commit();
-																					}
-																					if (inventory
-																							.hasPurchase(SKU_UNLOCK_ALL_COUPON))
-																					{
-																						unlockAllPurchased = true;
-																						prefsEditor.putBoolean(
-																								"unlock_all_forever",
-																								true).commit();
-																					}
-																					if (inventory
-																							.hasPurchase(SKU_MOVING_SEQ))
-																					{
-																						objectRemovalBurstPurchased = true;
-																						prefsEditor
-																								.putBoolean(
-																										"plugin_almalence_moving_burst",
-																										true).commit();
-																					}
-																					if (inventory
-																							.hasPurchase(SKU_GROUPSHOT))
-																					{
-																						groupShotPurchased = true;
-																						prefsEditor
-																								.putBoolean(
-																										"plugin_almalence_moving_burst",
-																										true).commit();
-																					}
-																					if (inventory
-																							.hasPurchase(SKU_SUBSCRIPTION_YEAR))
-																					{
-																						unlockAllSubscriptionYear = true;
-																						prefsEditor
-																								.putBoolean(
-																										"subscription_unlock_all_year",
-																										true).commit();
-																						unlockAllPurchased = true;
-																						prefsEditor.putBoolean(
-																								"unlock_all_forever",
-																								true).commit();
-																					}
-																					if (inventory
-																							.hasPurchase(SKU_SUBSCRIPTION_YEAR_NEW))
-																					{
-																						unlockAllSubscriptionYear = true;
-																						prefsEditor
-																								.putBoolean(
-																										"subscription_unlock_all_year",
-																										true).commit();
-																						unlockAllPurchased = true;
-																						prefsEditor.putBoolean(
-																								"unlock_all_forever",
-																								true).commit();
-																					}
+					try
+					{
+						String[] separated = inventory
+								.getSkuDetails(
+										SKU_SALE1)
+								.getPrice().split(",");
+						int price1 = Integer
+								.valueOf(separated[0]);
+						String[] separated2 = inventory
+								.getSkuDetails(
+										SKU_SALE2)
+								.getPrice().split(",");
+						int price2 = Integer
+								.valueOf(separated2[0]);
 
-																					try
-																					{
-																						String[] separated = inventory
-																								.getSkuDetails(
-																										SKU_SALE1)
-																								.getPrice().split(",");
-																						int price1 = Integer
-																								.valueOf(separated[0]);
-																						String[] separated2 = inventory
-																								.getSkuDetails(
-																										SKU_SALE2)
-																								.getPrice().split(",");
-																						int price2 = Integer
-																								.valueOf(separated2[0]);
+						if (price1 < price2)
+							bOnSale = true;
+						else
+							bOnSale = false;
 
-																						if (price1 < price2)
-																							bOnSale = true;
-																						else
-																							bOnSale = false;
+						prefsEditor.putBoolean(
+								"bOnSale", bOnSale)
+								.commit();
+					} catch (Exception e)
+					{
+						Log.e("Main billing SALE",
+								"No sale data available");
+						bOnSale = false;
+					}
 
-																						prefsEditor.putBoolean(
-																								"bOnSale", bOnSale)
-																								.commit();
-																					} catch (Exception e)
-																					{
-																						Log.e("Main billing SALE",
-																								"No sale data available");
-																						bOnSale = false;
-																					}
+					try
+					{
+						titleUnlockAll = inventory
+								.getSkuDetails(
+										SKU_UNLOCK_ALL)
+								.getPrice();
+						titleUnlockAllCoupon = inventory
+								.getSkuDetails(
+										SKU_UNLOCK_ALL_COUPON)
+								.getPrice();
+						titleUnlockSuper = inventory
+								.getSkuDetails(
+										SKU_SUPER)
+								.getPrice();
+						titleUnlockHDR = inventory
+								.getSkuDetails(SKU_HDR)
+								.getPrice();
+						titleUnlockPano = inventory
+								.getSkuDetails(
+										SKU_PANORAMA)
+								.getPrice();
+						titleUnlockMoving = inventory
+								.getSkuDetails(
+										SKU_MOVING_SEQ)
+								.getPrice();
+						titleUnlockGroup = inventory
+								.getSkuDetails(
+										SKU_GROUPSHOT)
+								.getPrice();
 
-																					try
-																					{
-																						titleUnlockAll = inventory
-																								.getSkuDetails(
-																										SKU_UNLOCK_ALL)
-																								.getPrice();
-																						titleUnlockAllCoupon = inventory
-																								.getSkuDetails(
-																										SKU_UNLOCK_ALL_COUPON)
-																								.getPrice();
-																						titleUnlockSuper = inventory
-																								.getSkuDetails(
-																										SKU_SUPER)
-																								.getPrice();
-																						titleUnlockHDR = inventory
-																								.getSkuDetails(SKU_HDR)
-																								.getPrice();
-																						titleUnlockPano = inventory
-																								.getSkuDetails(
-																										SKU_PANORAMA)
-																								.getPrice();
-																						titleUnlockMoving = inventory
-																								.getSkuDetails(
-																										SKU_MOVING_SEQ)
-																								.getPrice();
-																						titleUnlockGroup = inventory
-																								.getSkuDetails(
-																										SKU_GROUPSHOT)
-																								.getPrice();
+						titleSubscriptionYear = inventory
+								.getSkuDetails(
+										SKU_SUBSCRIPTION_YEAR_CTRL)
+								.getPrice();
 
-																						titleSubscriptionYear = inventory
-																								.getSkuDetails(
-																										SKU_SUBSCRIPTION_YEAR_CTRL)
-																								.getPrice();
-
-																						summary_SKU_PROMO = inventory
-																								.getSkuDetails(
-																										SKU_PROMO)
-																								.getDescription();
-																					} catch (Exception e)
-																					{
-																						Log.e("Market",
-																								"Error Getting data for store!!!!!!!!");
-																					}
-																				}
-																			};
+						summary_SKU_PROMO = inventory
+								.getSkuDetails(
+										SKU_PROMO)
+								.getDescription();
+					} catch (Exception e)
+					{
+						Log.e("Market",
+								"Error Getting data for store!!!!!!!!");
+					}
+				}
+			};
 
 	private static int							HDR_REQUEST					= 100;
 	private static int							SUPER_REQUEST				= 107;
