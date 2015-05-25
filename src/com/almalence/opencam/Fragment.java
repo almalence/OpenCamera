@@ -25,7 +25,6 @@ package com.almalence.opencam;
 //-+- -->
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import android.annotation.TargetApi;
@@ -39,7 +38,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.content.UriPermission;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Point;
@@ -55,22 +53,20 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Display;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.cameracontroller.CameraController.Size;
-import com.almalence.opencam.ui.SeekBarPreference;
 /* <!-- +++
  import com.almalence.opencam_plus.ui.SeekBarPreference;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.cameracontroller.CameraController.Size;
  +++ --> */
 //<!-- -+-
-
+import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam.cameracontroller.CameraController.Size;
+import com.almalence.opencam.ui.SeekBarPreference;
 //-+- -->
 
 /***
@@ -248,21 +244,6 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		ListPreference saveToPreference = (ListPreference) this.findPreference(getResources().getString(
 				R.string.Preference_SaveToValue));
 		if (saveToPreference != null) {
-//			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//				// Remove "memory card" option for Android 5+
-//				CharSequence[] entries = saveToPreference.getEntries();
-//				CharSequence[] entryValues = saveToPreference.getEntryValues();
-//				
-//				CharSequence[] newEntries = new CharSequence[2];
-//				CharSequence[] newEntryValues = new CharSequence[2];
-//				
-//				newEntries[0] = entries[0];
-//				entryValues[1] = newEntryValues[1];
-//				
-//				saveToPreference.setEntries(newEntries);
-//				saveToPreference.setEntryValues(newEntryValues);
-//				saveToPreference.notifyDependencyChange(false);
-//			}
 			
 			saveToPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 			{

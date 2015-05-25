@@ -203,13 +203,13 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 
 	private void HDRPreview()
 	{
-		int SXP, SYP;
+		int iSXP, iSYP;
 		int[] pview;
 
-		SXP = mImageWidth / 4;
-		SYP = mImageHeight / 4;
+		iSXP = mImageWidth / 4;
+		iSYP = mImageHeight / 4;
 
-		pview = new int[SXP * SYP]; // allocate memory for preview
+		pview = new int[iSXP * iSYP]; // allocate memory for preview
 
 		int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
 				"amountofcapturedframes" + sessionID));

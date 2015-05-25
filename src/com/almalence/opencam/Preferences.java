@@ -23,7 +23,6 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.opencam;
 //-+- -->
 
-import java.io.OutputStream;
 import java.util.List;
 
 import android.annotation.TargetApi;
@@ -35,17 +34,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.support.v4.provider.DocumentFile;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-/* <!-- +++
-import com.almalence.opencam_plus.R;
-+++ --> */
-//<!-- -+-
-//-+- -->
 
 /***
  * Preference activity class - manages preferences

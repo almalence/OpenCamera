@@ -21,65 +21,38 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 //<!-- -+-
 package com.almalence.opencam;
-
 //-+- -->
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.nio.ByteBuffer;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
 
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
 
-import org.xmlpull.v1.XmlPullParserException;
-
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.AssetFileDescriptor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Paint.Align;
 import android.graphics.Rect;
-import android.hardware.Camera;
-import android.hardware.camera2.CaptureResult;
-import android.hardware.camera2.DngCreator;
 import android.location.Location;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.CountDownTimer;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.Preference;
@@ -91,10 +64,7 @@ import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.support.v4.provider.DocumentFile;
 import android.util.Log;
-import android.util.Size;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
@@ -115,11 +85,6 @@ import com.almalence.plugins.capture.standard.CapturePlugin;
 import com.almalence.plugins.capture.video.VideoCapturePlugin;
 import com.almalence.plugins.export.standard.ExportPlugin;
 import com.almalence.plugins.export.standard.GPSTagsConverter;
-import com.almalence.plugins.export.ExifDriver.ExifDriver;
-import com.almalence.plugins.export.ExifDriver.ExifManager;
-import com.almalence.plugins.export.ExifDriver.Values.ValueByteArray;
-import com.almalence.plugins.export.ExifDriver.Values.ValueNumber;
-import com.almalence.plugins.export.ExifDriver.Values.ValueRationals;
 import com.almalence.plugins.processing.bestshot.BestshotProcessingPlugin;
 import com.almalence.plugins.processing.hdr.HDRProcessingPlugin;
 import com.almalence.plugins.processing.multishot.MultiShotProcessingPlugin;
@@ -143,7 +108,6 @@ import com.almalence.util.MLocation;
 //<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.GUI.ShutterButton;
-
 //-+- -->
 
 /***
@@ -196,8 +160,6 @@ public class PluginManager extends PluginManagerBase
 		listExport = new ArrayList<Plugin>();
 
 		// init plugins and add to pluginList
-		// probably will be created only active for memory saving purposes.
-
 		/*
 		 * Insert any new plugin below (create and add to list of concrete type)
 		 */
@@ -865,10 +827,10 @@ public class PluginManager extends PluginManagerBase
 			pluginList.get(activeCapture).onCameraSetup();
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		boolean photoTimeLapseActive = prefs.getBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
-		boolean photoTimeLapseIsRunning = prefs.getBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false);
+		boolean bPhotoTimeLapseActive = prefs.getBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
+		boolean bPhotoTimeLapseIsRunning = prefs.getBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false);
 
-		if (photoTimeLapseActive && photoTimeLapseIsRunning)
+		if (bPhotoTimeLapseActive && bPhotoTimeLapseIsRunning)
 		{
 			AlarmReceiver.getInstance().takePicture();
 		}
@@ -1291,11 +1253,6 @@ public class PluginManager extends PluginManagerBase
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		ContentValues values = null;
 		String resultOrientation = getFromSharedMem("frameorientation" + (i + 1) + Long.toString(SessionID));
-		Boolean orientationLandscape = false;
-		if (resultOrientation == null)
-			orientationLandscape = true;
-		else
-			orientationLandscape = Boolean.parseBoolean(resultOrientation);
 
 		String resultMirrored = getFromSharedMem("framemirrored" + (i + 1) + Long.toString(SessionID));
 		Boolean cameraMirrored = false;
@@ -1417,7 +1374,5 @@ public class PluginManager extends PluginManagerBase
 	@Override
 	public void onAutoFocusMoving(boolean start)
 	{
-		// TODO Auto-generated method stub
-
 	}
 }

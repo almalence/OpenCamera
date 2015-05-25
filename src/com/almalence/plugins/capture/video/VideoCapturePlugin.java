@@ -1545,31 +1545,36 @@ public class VideoCapturePlugin extends PluginCapture
 		boolean onPause = this.onPause;
 		this.onPause = false;
 
-		File fileSaved = this.fileSaved;
+		File fileSaved = VideoCapturePlugin.fileSaved;
 		ArrayList<File> filesListToExport = filesList;
 		if (filesListToExport.size() > 0)
 		{
-			String[] inputFiles = new String[filesListToExport.size()];
+			int inputFileCount = filesListToExport.size();
+			if(!onPause)
+				inputFileCount++;
+				
+			String[] inputFiles = new String[inputFileCount];
+			
 			File firstFile = filesListToExport.get(0);
-			inputFiles[0] = firstFile.getAbsolutePath();
-			for (int i = 1; i < filesListToExport.size(); i++)
+			for (int i = 0; i < filesListToExport.size(); i++)
 			{
 				File currentFile = filesListToExport.get(i);
 				inputFiles[i] = currentFile.getAbsolutePath();
-//				append(firstFile.getAbsolutePath(), currentFile.getAbsolutePath());
 			}
-			append(inputFiles);
 			
-			// if not onPause, then last video isn't added to list.
-			if (!onPause)
+			if(!onPause)
+				inputFiles[inputFileCount-1] = fileSaved.getAbsolutePath();
+			
+			Log.e(TAG, "Append start");
+			append(inputFiles);
+			Log.e(TAG, "Append finished");
+			
+			for (int i = 1; i < filesListToExport.size(); i++)
 			{
-				inputFiles = new String[2];
-				inputFiles[0] = firstFile.getAbsolutePath();
-				inputFiles[1] = fileSaved.getAbsolutePath();
-//				append(firstFile.getAbsolutePath(), fileSaved.getAbsolutePath());
-				append(inputFiles);
+				File currentFile = filesListToExport.get(i);
+				currentFile.delete();
 			}
-
+			
 			if (!filesListToExport.get(0).getAbsoluteFile().equals(fileSaved.getAbsoluteFile()))
 			{
 				fileSaved.delete();

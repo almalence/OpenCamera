@@ -21,7 +21,6 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam.ui;
-
 //-+- -->
 
 import android.content.Context;
@@ -44,7 +43,6 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
-
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.MainScreen;

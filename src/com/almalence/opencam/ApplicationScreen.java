@@ -21,7 +21,6 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
-
 //-+- -->
 
 import java.io.File;
@@ -105,13 +104,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	// Description<<
 
 	protected static final int			MSG_RETURN_CAPTURED			= -1;
-	//
-	// protected static final int MODE_GENERAL = 0;
-	// protected static final int MODE_SMART_MULTISHOT_AND_NIGHT = 1;
-	// protected static final int MODE_PANORAMA = 2;
-	// protected static final int MODE_VIDEO = 3;
-	//
-	// protected static final int MIN_MPIX_PREVIEW = 600 * 400;
 
 	public static ApplicationScreen		instance;
 	public Context						mainContext;
@@ -159,25 +151,11 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	protected SoundPlayer				shutterPlayer				= null;
 
 	// Common preferences
-	// protected String imageSizeIdxPreference;
-	// protected String multishotImageSizeIdxPreference;
-	// protected boolean shutterPreference = true;
-	// protected int shotOnTapPreference = 0;
-	//
-	// protected boolean showHelp = false;
-	//
 	protected boolean					keepScreenOn				= false;
-	//
-	// protected String saveToPath;
-	// protected String saveToPreference;
-	// protected boolean sortByDataPreference;
-	//
-	// protected boolean captureRAW;
-	//
+
 	protected List<Surface>				surfaceList;
-	//
+
 	protected static boolean			mAFLocked					= false;
-	//
 	// // shows if mode is currently switching
 	protected boolean					switchingMode				= false;
 
@@ -228,22 +206,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public static String				sMeteringModePref;
 	public static String				sCameraModePref;
 
-	// public static String sDelayedCapturePref;
-	// public static String sShowDelayedCapturePref;
-	// public static String sDelayedSoundPref;
-	// public static String sDelayedFlashPref;
-	// public static String sDelayedCaptureIntervalPref;
-
-	// public static String sPhotoTimeLapseCaptureIntervalPref;
-	// public static String sPhotoTimeLapseCaptureIntervalMeasurmentPref;
-	// public static String sPhotoTimeLapseActivePref;
-	// public static String sPhotoTimeLapseIsRunningPref;
-	// public static String sPhotoTimeLapseCount;
-
 	public static String				sUseFrontCameraPref;
-	// protected static String sShutterPref;
-	// protected static String sShotOnTapPref;
-	// protected static String sVolumeButtonPref;
 
 	public static String				sImageSizeRearPref;
 	public static String				sImageSizeFrontPref;
@@ -255,26 +218,13 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	public static String				sImageSizePanoramaBackPref;
 	public static String				sImageSizePanoramaFrontPref;
-	//
-	// public static String sImageSizePanoramaBackPref;
-	// public static String sImageSizePanoramaFrontPref;
-	//
 	public static String				sImageSizeVideoBackPref;
 	public static String				sImageSizeVideoFrontPref;
-	//
 	public static String				sCaptureRAWPref;
-	//
-	// public static String sInitModeListPref = "initModeListPref";
-	//
 	public static String				sJPEGQualityPref;
-	//
 	public static String				sAntibandingPref;
-	//
 	public static String				sAELockPref;
 	public static String				sAWBLockPref;
-	//
-	// public static String sDefaultInfoSetPref;
-	// public static String sSWCheckedPref;
 	public static String				sSavePathPref;
 	public static String				sExportNamePref;
 	public static String				sExportNamePrefixPref;
@@ -292,13 +242,9 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public static String				sTimestampCustomText;
 	public static String				sTimestampColor;
 	public static String				sTimestampFontSize;
-	//
 	public static String				sExpoPreviewModePref;
 
 	public static String				sDefaultModeName;
-	//
-	// public static String sDefaultModeName;
-	//
 	public static int					sDefaultValue				= CameraParameters.SCENE_MODE_AUTO;
 	public static int					sDefaultFocusValue			= CameraParameters.AF_MODE_CONTINUOUS_PICTURE;
 	public static int					sDefaultFlashValue			= CameraParameters.FLASH_MODE_OFF;
@@ -543,14 +489,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	// At this point all OpenCamera main objects are created.
 	abstract protected void afterOnCreate();
 
-	/*
-	 * Get/Set method for protected variables
-	 */
-	// public static ApplicationScreen getInstance()
-	// {
-	// return instance;
-	// }
-
 	public static Context getMainContext()
 	{
 		return instance.mainContext;
@@ -664,11 +602,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		return instance.currentMeteringMode;
 	}
 
-	/*
-	 * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Get/Set method for protected
-	 * variables
-	 */
-
 	abstract public void onPreferenceCreate(PreferenceFragment prefActivity);
 
 	abstract public void onAdvancePreferenceCreate(PreferenceFragment prefActivity);
@@ -777,14 +710,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	protected void onApplicationDestroy()
 	{
-		// SharedPreferences prefs =
-		// PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		//
-		// prefs.edit().putBoolean(ApplicationScreen.sPhotoTimeLapseIsRunningPref,
-		// false);
-		// prefs.edit().putBoolean(ApplicationScreen.sPhotoTimeLapseActivePref,
-		// false);
-
 		ApplicationScreen.getGUIManager().onDestroy();
 		ApplicationScreen.getPluginManager().onDestroy();
 		CameraController.onDestroy();
@@ -981,8 +906,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 			isScreenTimerRunning = false;
 		}
 
-		// CameraController.onPause(CameraController.isUseHALv3()? false :
-		// switchingMode);
 		CameraController.onPause(true);
 
 		if (!CameraController.isRemoteCamera())
