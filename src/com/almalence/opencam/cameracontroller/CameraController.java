@@ -21,7 +21,6 @@
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam.cameracontroller;
-
 //-+- -->
 
 import java.io.IOException;
@@ -29,7 +28,6 @@ import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -39,7 +37,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
@@ -61,8 +58,6 @@ import android.widget.Toast;
 import com.almalence.SwapHeap;
 import com.almalence.sony.cameraremote.PictureCallbackSonyRemote;
 import com.almalence.sony.cameraremote.ServerDevice;
-import com.almalence.sony.cameraremote.SimpleCameraEventObserver;
-import com.almalence.sony.cameraremote.SimpleRemoteApi;
 import com.almalence.sony.cameraremote.ZoomCallbackSonyRemote;
 import com.almalence.util.ImageConversion;
 //<!-- -+-
@@ -71,8 +66,6 @@ import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.PluginManagerInterface;
 import com.almalence.opencam.R;
-import com.almalence.opencam.ui.SonyCameraDeviceExplorerDialog;
-
 //-+- -->
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationInterface;
@@ -80,7 +73,6 @@ import com.almalence.opencam.ui.SonyCameraDeviceExplorerDialog;
  import com.almalence.opencam_plus.CameraParameters;
  import com.almalence.opencam_plus.PluginManagerInterface;
  import com.almalence.opencam_plus.R;
- import com.almalence.opencam_plus.ui.SonyCameraDeviceExplorerDialog;
  +++ --> */
 
 public class CameraController implements Camera.PictureCallback, Camera.AutoFocusCallback, Camera.ErrorCallback,
@@ -95,8 +87,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static final int							YUV_RAW							= 0x22;
 	public static final int							YUV								= 0x23;
 	public static final int							JPEG							= 0x100;
-
-	private static int								captureFormat					= JPEG;
 
 	protected static final long						MPIX_1080						= 1920 * 1080;
 
@@ -875,10 +865,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 
-	public static void onDestroy()
-	{
-		// Does nothing yet
-	}
+	public static void onDestroy() {}
 
 	/* Get different list and maps of camera parameters */
 	public static List<Integer> getIsoValuesList()
@@ -1049,20 +1036,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		mDisplayOrientation = result;
 		camera.setDisplayOrientation(mDisplayOrientation);
-
-		// //Hack for Samsung SM-P601 (sensor orientation 0, display orientation
-		// 90)
-		// if((info.orientation == 0 && mDisplayOrientation == 90) ||
-		// (info.orientation == 90 && mDisplayOrientation == 90) ||
-		// (info.orientation == 90 && mDisplayOrientation == 270))
-		// mDisplayOrientation = 0;
 	}
 
 	public static int getDisplayOrientation()
 	{
-		// if(!isHALv3)
-		// return mDisplayOrientation;
-		// else
 		return 0;
 	}
 
@@ -1115,9 +1092,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				{
 					try
 					{
-						// int result = (CameraController.getSensorOrientation()
-						// + (CameraMirrored ? 180 : 0)) % 360;
-						// camera.setDisplayOrientation(result);
 						setCameraDisplayOrientation(appInterface.getMainActivity(), CameraIndex, camera);
 					} catch (RuntimeException e)
 					{
@@ -1139,30 +1113,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			pluginManager.selectDefaults();
 
-			// if (!CameraController.isHALv3)
-			// {
-			// // screen rotation
-			// try
-			// {
-			// int result = (CameraController.getSensorOrientation() +
-			// (CameraMirrored ? 180 : 0)) % 360;
-			// camera.setDisplayOrientation(result);
-			// } catch (RuntimeException e)
-			// {
-			// Log.e(TAG, "Unable to set display orientation for camera");
-			// e.printStackTrace();
-			// }
-			//
-			// try
-			// {
-			// camera.setPreviewDisplay(holder);
-			// } catch (IOException e)
-			// {
-			// Log.e(TAG, "Unable to set preview display for camera");
-			// e.printStackTrace();
-			// }
-			// }
-
 			CameraController.fillPreviewSizeList();
 			CameraController.fillPictureSizeList();
 
@@ -1177,9 +1127,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 
 			pluginManager.selectImageDimension(); // updates SX, SY values
-
-			// if (CameraController.isHALv3)
-			// HALv3.setupImageReadersHALv3();
 
 			if (!CameraController.isHALv3)
 			{
@@ -1679,7 +1626,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		} else
 			videoSizes = null;
-		// HALv3.fillVideoSizeList(videoSizes);
 
 		return videoSizes;
 	}
@@ -1781,13 +1727,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	}
 
 	@Override
-	public void onError(int arg0, Camera arg1)
-	{
-		// Not used
-	}
+	public void onError(int arg0, Camera arg1) {}
 
-	// ------------ CAMERA PARAMETERS AND CAPABILITIES
-	// SECTION-------------------------------------------
+	// ------------ CAMERA PARAMETERS AND CAPABILITIES SECTION-------------------------------------------
 	public static boolean isAutoExposureLockSupported()
 	{
 		return false;
@@ -2763,7 +2705,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return false;
 		} else
 			return false;
-		// return false;
 	}
 
 	public static long getMinimumExposureTime()
@@ -2781,8 +2722,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		else
 			return 0;
 	}
-
-	// ////////////////////////////////////////////////////
 
 	public static int getMaxNumMeteringAreas()
 	{
@@ -3235,7 +3174,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (CameraController.isHALv3)
 		{
-			// isManualExposure = true;
 			HALv3.setCameraExposureTimeHALv3(iTime);
 		}
 	}
@@ -3255,7 +3193,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (CameraController.isHALv3)
 		{
-			// isManualExposure = false;
 			HALv3.resetCameraAEModeHALv3();
 		}
 	}
@@ -3264,16 +3201,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		if (CameraController.isHALv3)
 		{
-			// isManualFocus = true;
 			HALv3.setCameraFocusDistanceHALv3(fDistance);
 		}
 	}
-
-	// public static void resetCameraFocusDistance()
-	// {
-	// // if (CameraController.isHALv3)
-	// // isManualFocus = false;
-	// }
 
 	public static void setCameraFocusAreas(List<Area> focusAreas)
 	{
@@ -3378,10 +3308,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						|| focusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
 						|| focusMode == CameraParameters.AF_MODE_INFINITY
 						|| focusMode == CameraParameters.AF_MODE_FIXED || focusMode == CameraParameters.AF_MODE_EDOF || focusMode == CameraParameters.MF_MODE)
-				&& !ApplicationScreen.instance.getAutoFocusLock()/*
-												 * && !isManualFocus &&
-												 * !isManualExposure
-												 */)
+				&& !ApplicationScreen.instance.getAutoFocusLock())
 			return true;
 		else
 			return false;
@@ -3491,8 +3418,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 
-	// ^^^^^^^^^^^ CAMERA PARAMETERS AND CAPABILITIES
-	// SECTION---------------------------------------------
+	// CAMERA PARAMETERS AND CAPABILITIES SECTION---------------------------------------------
 
 	// ------------ CAPTURE AND FOCUS FUNCTION ----------------------------
 
@@ -3719,8 +3645,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 
 		CameraController.mCaptureState = CameraController.CAPTURE_STATE_IDLE;
-
-		// nextFrame();
 	}
 
 	// Callback always contains JPEG frame.
@@ -3744,8 +3668,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		} else
 		// is YUV frame requested
 		{
-			// new DecodeToYUVFrameTask().execute(paramArrayOfByte);
-
 			int yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte, imageSize.getWidth(), imageSize.getHeight(),
 					false, false, 0);
 			int frameLen = imageSize.getWidth() * imageSize.getHeight() + 2 * ((imageSize.getWidth() + 1) / 2)
@@ -3759,21 +3681,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 
 			pluginManager.onImageTaken(yuvFrame, frameData, frameLen, CameraController.YUV);
-
-			// int yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte,
-			// imageSize.getWidth(),
-			// imageSize.getHeight(), false, false, 0);
-			// int frameLen = imageSize.getWidth() * imageSize.getHeight() + 2
-			// * ((imageSize.getWidth() + 1) / 2) * ((imageSize.getHeight() + 1)
-			// / 2);
-			//
-			// byte[] frameData = null;
-			// if (!resultInHeap)
-			// {
-			// frameData = SwapHeap.SwapFromHeap(yuvFrame, frameLen);
-			// yuvFrame = 0;
-			// }
-			// pluginManager.onImageTaken(yuvFrame, frameData, frameLen, true);
 		}
 
 		try
@@ -3839,8 +3746,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				frameData = SwapHeap.SwapFromHeap(yuvFrame, frameLen);
 				yuvFrame = 0;
 			}
-
-			// pluginManager.onImageTaken(yuvFrame, frameData, frameLen, true);
 			return null;
 		}
 
@@ -3903,13 +3808,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			} else
 			{
 				int jpegData = 0;
-				// int yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte,
-				// imageSize.getWidth(), imageSize.getHeight(),
-				// false, false, 0);
-				// pluginManager.onImageTaken(yuvFrame, null, 0, true);
 			}
-
-			// pluginManager.onPictureTaken(data, true);
 			nextFrame();
 			return;
 		}
@@ -4108,11 +4007,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		try
 		{
-			// Note: LumaAdaptation is obsolete and unlikely to be relevant for
-			// Android >= 4.0
-			// if (UseLumaAdaptation && LumaAdaptationAvailable)
-			// CameraController.setLumaAdaptation(evValues[frame_num]);
-			// else
 			if (evValues != null && evValues.length > frame_num)
 				CameraController.setCameraExposureCompensation(evValues[frame_num]);
 		} catch (RuntimeException e)
