@@ -6,237 +6,6 @@
 
 #include "Ap4.h"
 
-/*----------------------------------------------------------------------
-|   AP4_EditingProcessor
-+---------------------------------------------------------------------*/
-class AP4_EditingProcessor : public AP4_Processor
-{
-public:
-    // types
-    class Command {
-    public:
-        // types
-        typedef enum {
-            TYPE_INSERT,
-            TYPE_REMOVE,
-            TYPE_REPLACE
-        } Type;
-
-        // constructor
-        Command(Type type, const char* atom_path,
-                           const char* file_path,
-                           int         position = -1) :
-          m_Type(type),
-          m_AtomPath(atom_path),
-          m_FilePath(file_path),
-          m_Position(position) {}
-
-        // members
-        Type       m_Type;
-        AP4_String m_AtomPath;
-        AP4_String m_FilePath;
-        int        m_Position;
-    };
-
-    // constructor and destructor
-    virtual ~AP4_EditingProcessor();
-
-    // methods
-    virtual AP4_Result Initialize(AP4_AtomParent&   top_level,
-                                  AP4_ByteStream&   stream,
-                                  ProgressListener* listener);
-    AP4_Result         AddCommand(Command::Type type,
-                                  const char*   atom_path,
-                                  const char*   file_path,
-                                  int           position = -1);
-
-private:
-    // methods
-    AP4_Result InsertAtom(const char*     file_path,
-                          AP4_AtomParent* container,
-                          int             position);
-    AP4_Result DoRemove(Command* command, AP4_AtomParent& top_level);
-    AP4_Result DoInsert(Command* command, AP4_AtomParent& top_level);
-    AP4_Result DoReplace(Command* command, AP4_AtomParent& top_level);
-
-    // members
-    AP4_List<Command> m_Commands;
-    AP4_AtomParent    m_TopLevelParent;
-};
-
-/*----------------------------------------------------------------------
-|   AP4_EditingProcessor::~AP4_EditingProcessor
-+---------------------------------------------------------------------*/
-AP4_EditingProcessor::~AP4_EditingProcessor()
-{
-    m_Commands.DeleteReferences();
-}
-
-/*----------------------------------------------------------------------
-|   AP4_EditingProcessor::AddCommand
-+---------------------------------------------------------------------*/
-AP4_Result
-AP4_EditingProcessor::AddCommand(Command::Type type,
-                                 const char*   atom_path,
-                                 const char*   file_path,
-                                 int           position)
-{
-    return m_Commands.Add(new Command(type, atom_path, file_path, position));
-}
-
-/*----------------------------------------------------------------------
-|   AP4_EditingProcessor::Initialize
-+---------------------------------------------------------------------*/
-AP4_Result
-AP4_EditingProcessor::Initialize(AP4_AtomParent& top_level,
-                                 AP4_ByteStream&,
-                                 ProgressListener*)
-{
-    AP4_Result result;
-
-    AP4_List<Command>::Item* command_item = m_Commands.FirstItem();
-    while (command_item) {
-        Command* command = command_item->GetData();
-        switch (command->m_Type) {
-          case Command::TYPE_REMOVE:
-            result = DoRemove(command, top_level);
-            if (AP4_FAILED(result)) return result;
-            break;
-
-          case Command::TYPE_INSERT:
-            result = DoInsert(command, top_level);
-            if (AP4_FAILED(result)) return result;
-            break;
-
-          case Command::TYPE_REPLACE:
-            result = DoReplace(command, top_level);
-            if (AP4_FAILED(result)) return result;
-            break;
-        }
-        command_item = command_item->GetNext();
-    }
-
-    return AP4_SUCCESS;
-}
-
-/*----------------------------------------------------------------------
-|   AP4_EditingProcessor::DoRemove
-+---------------------------------------------------------------------*/
-AP4_Result
-AP4_EditingProcessor::DoRemove(Command* command, AP4_AtomParent& top_level)
-{
-    AP4_Atom* atom = top_level.FindChild(command->m_AtomPath.GetChars());
-    if (atom == NULL) {
-        fprintf(stderr, "ERROR: atom '%s' not found\n", command->m_AtomPath.GetChars());
-        return AP4_FAILURE;
-    } else {
-        atom->Detach();
-        delete atom;
-        return AP4_SUCCESS;
-    }
-}
-
-/*----------------------------------------------------------------------
-|   AP4_EditingProcessor::InsertAtom
-+---------------------------------------------------------------------*/
-AP4_Result
-AP4_EditingProcessor::InsertAtom(const char*     file_path,
-                                 AP4_AtomParent* container,
-                                 int             position)
-{
-    // read the atom to insert
-    AP4_Atom* child = NULL;
-    AP4_ByteStream* input = NULL;
-    AP4_Result result = AP4_FileByteStream::Create(file_path, AP4_FileByteStream::STREAM_MODE_READ, input);
-    if (AP4_FAILED(result)) {
-        fprintf(stderr, "ERROR: cannot open atom file (%s)\n", file_path);
-        return AP4_FAILURE;
-    }
-
-    result = AP4_DefaultAtomFactory::Instance.CreateAtomFromStream(*input, child);
-    input->Release();
-    if (AP4_FAILED(result)) {
-        fprintf(stderr, "ERROR: failed to create atom\n");
-        return AP4_FAILURE;
-    }
-
-    // insert the atom
-    result = container->AddChild(child, position);
-    if (AP4_FAILED(result)) {
-        fprintf(stderr, "ERROR: failed to insert atom\n");
-        delete child;
-        return result;
-    }
-
-    return AP4_SUCCESS;
-}
-
-/*----------------------------------------------------------------------
-|   AP4_EditingProcessor::DoInsert
-+---------------------------------------------------------------------*/
-AP4_Result
-AP4_EditingProcessor::DoInsert(Command* command, AP4_AtomParent& top_level)
-{
-    AP4_AtomParent* parent = NULL;
-    if (command->m_AtomPath.GetLength() == 0) {
-        // insert into the toplevel list
-        parent = &top_level;
-    } else {
-        // find the atom to insert into
-        AP4_Atom* atom = top_level.FindChild(command->m_AtomPath.GetChars(), true);
-        if (atom == NULL) {
-            fprintf(stderr, "ERROR: atom '%s' not found\n",
-                command->m_AtomPath.GetChars());
-            return AP4_FAILURE;
-        }
-
-        // check that the atom is a container
-        parent = AP4_DYNAMIC_CAST(AP4_AtomParent, atom);
-    }
-
-    // check that we have a place to insert into
-    if (parent == NULL) {
-        fprintf(stderr, "ERROR: atom '%s' is not a container\n",
-            command->m_AtomPath.GetChars());
-        return AP4_FAILURE;
-    }
-
-    return InsertAtom(command->m_FilePath.GetChars(), parent, command->m_Position);
-}
-
-/*----------------------------------------------------------------------
-|   AP4_EditingProcessor::DoReplace
-+---------------------------------------------------------------------*/
-AP4_Result
-AP4_EditingProcessor::DoReplace(Command* command, AP4_AtomParent& top_level)
-{
-    // remove the atom
-    AP4_Atom* atom = top_level.FindChild(command->m_AtomPath.GetChars());
-    if (atom == NULL) {
-        fprintf(stderr, "ERROR: atom '%s' not found\n", command->m_AtomPath.GetChars());
-        return AP4_FAILURE;
-    } else {
-        // find the position of the atom in the parent
-        AP4_AtomParent* parent = atom->GetParent();
-        int position = 0;
-        AP4_List<AP4_Atom>::Item* list_item = parent->GetChildren().FirstItem();
-        while (list_item) {
-            if (list_item->GetData() == atom) break;
-            position++;
-            list_item = list_item->GetNext();
-        }
-
-        // remove the atom from the parent
-        atom->Detach();
-        delete atom;
-
-        // insert the replacement
-        return InsertAtom(command->m_FilePath.GetChars(), parent, position);
-    }
-}
-
-
-
 const unsigned int AP4_MUX_DEFAULT_VIDEO_FRAME_RATE = 24;
 
 /*----------------------------------------------------------------------
@@ -585,7 +354,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 	AP4_SyntheticSampleTable* sample_audio_table = new AP4_SyntheticSampleTable();
 
 	//Prototypes track is used to pass transform matrix from input files to ouput
-	const AP4_Track* prototype_track_video = NULL;
+	AP4_Track* prototype_track_video = NULL;
 
 	AP4_UI32 duration_movie = 0;
 	AP4_UI32 duration_media = 0;
@@ -603,6 +372,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 	int inputFileCount = env->GetArrayLength(inputFiles);
 	for (int i = 0; i < inputFileCount; i++)
 	{
+		__android_log_print(ANDROID_LOG_ERROR, "Mp4Editor", "Process file %d", i);
 		jstring string = (jstring) env->GetObjectArrayElement(inputFiles, i);
 		const char *input_filename = env->GetStringUTFChars(string, 0);
 
@@ -631,6 +401,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 		AP4_SyntheticSampleTable* sample_video = (AP4_SyntheticSampleTable*)track_video->GetSampleTable();
 		AP4_SyntheticSampleTable* sample_audio = (AP4_SyntheticSampleTable*)track_audio->GetSampleTable();
 
+
 		if(i == 0)
 		{
 			__android_log_print(ANDROID_LOG_ERROR, "Mp4Editor", "Clone track from first file");
@@ -657,6 +428,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 			sample_video_table->AddSampleDescription(sample_description->Clone());
 		}
 
+
 		AP4_Sample  sample;
 		AP4_Ordinal index = 0;
 
@@ -679,6 +451,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 
 		duration_movie =+ track_video->GetDuration();
 		duration_media =+ track_video->GetMediaDuration();
+
 
 
 
@@ -715,9 +488,9 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 		}
 
 		env->ReleaseStringUTFChars(string, input_filename);
+
 	}
 
-	__android_log_print(ANDROID_LOG_ERROR, "Mp4Editor", "Create track for ouput file");
 	// create the output video track
 	AP4_Track* output_video_track = new AP4_Track(sample_video_table,
 												  0,
@@ -726,7 +499,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 												  media_time_scale,
 												  duration_media,
 												  prototype_track_video);
-	__android_log_print(ANDROID_LOG_ERROR, "Mp4Editor", "Created video track for ouput file");
+
 	// create the output audio track
 	AP4_Track* output_audio_track = new AP4_Track(AP4_Track::TYPE_AUDIO,
 												  sample_audio_table,
@@ -738,10 +511,9 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 												  language,
 												  0,
 												  0);
-	__android_log_print(ANDROID_LOG_ERROR, "Mp4Editor", "Created audio track for ouput file");
-
 	output_movie->AddTrack(output_video_track);
 	output_movie->AddTrack(output_audio_track);
+
 
 
 
@@ -970,8 +742,10 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 	// set the file type
 	file.SetFileType(AP4_FILE_BRAND_ISOM, 0, &brands[0], brands.ItemCount());
 
+	__android_log_print(ANDROID_LOG_ERROR, "Mp4Editor", "Start to write file");
 	// write the file to the output
 	AP4_FileWriter::Write(file, *output);
+	__android_log_print(ANDROID_LOG_ERROR, "Mp4Editor", "Output file writed");
 
 	// cleanup
 	output->Release();
