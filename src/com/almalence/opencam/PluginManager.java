@@ -865,10 +865,10 @@ public class PluginManager extends PluginManagerBase
 			pluginList.get(activeCapture).onCameraSetup();
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		boolean photoTimeLapseActive = prefs.getBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
-		boolean photoTimeLapseIsRunning = prefs.getBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false);
+		boolean bPhotoTimeLapseActive = prefs.getBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
+		boolean bPhotoTimeLapseIsRunning = prefs.getBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false);
 
-		if (photoTimeLapseActive && photoTimeLapseIsRunning)
+		if (bPhotoTimeLapseActive && bPhotoTimeLapseIsRunning)
 		{
 			AlarmReceiver.getInstance().takePicture();
 		}

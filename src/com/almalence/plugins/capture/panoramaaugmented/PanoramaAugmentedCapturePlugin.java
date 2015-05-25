@@ -631,12 +631,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		
 		// Paranoia check. In some unusual cases prefResolution value may be more then cs.size.
 		if (PanoramaAugmentedCapturePlugin.prefResolution >= cs.size()) {
-			int prefResolution = PanoramaAugmentedCapturePlugin.prefResolution;
-			while (prefResolution >= cs.size()) {
-				prefResolution--;
+			int iPrefResolution = PanoramaAugmentedCapturePlugin.prefResolution;
+			while (iPrefResolution >= cs.size()) {
+				iPrefResolution--;
 			}
 			
-			size = cs.get(prefResolution);
+			size = cs.get(iPrefResolution);
 		} else {
 			size = cs.get(PanoramaAugmentedCapturePlugin.prefResolution);
 		}
