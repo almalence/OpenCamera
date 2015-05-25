@@ -60,8 +60,6 @@ public class CapturePlugin extends PluginCapture
 																									// 1=DRO
 																									// Off
 	private Switch				modeSwitcher;
-	public static final String	CAMERA_IMAGE_BUCKET_NAME	= Environment.getExternalStorageDirectory().toString()
-																	+ "/DCIM/Camera/tmp_raw_img";
 
 	private int					singleModeEV;
 	private int					droEvDiff;

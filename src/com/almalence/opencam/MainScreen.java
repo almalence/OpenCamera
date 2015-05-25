@@ -161,9 +161,6 @@ public class MainScreen extends ApplicationScreen
 	private ImageReader			mImageReaderJPEG;
 	private ImageReader			mImageReaderRAW;
 
-	private File				forceFilename					= null;
-	private Uri					forceFilenameUri;
-
 	// Common preferences
 	private int					imageSizeIdxPreference;
 	private int					multishotImageSizeIdxPreference;
@@ -338,6 +335,9 @@ public class MainScreen extends ApplicationScreen
 		sAdditionalRotationPref = getResources().getString(R.string.Preference_AdditionalRotationValue);
 
 		sKeepScreenOn = getResources().getString(R.string.Preference_KeepScreenOnValue);
+		
+		sSavePathPref = getResources().getString(R.string.Preference_SavePathValue);
+		sSaveToPref = getResources().getString(R.string.Preference_SaveToValue);
 
 		Intent intent = this.getIntent();
 		String mode = intent.getStringExtra(EXTRA_ITEM);
@@ -424,33 +424,6 @@ public class MainScreen extends ApplicationScreen
 
 		Intent intent = this.getIntent();
 		goShopping = intent.getBooleanExtra(EXTRA_SHOP, false);
-
-		if (this.getIntent().getAction() != null)
-		{
-			if (this.getIntent().getAction().equals(MediaStore.ACTION_IMAGE_CAPTURE))
-			{
-				try
-				{
-					forceFilenameUri = this.getIntent().getExtras().getParcelable(MediaStore.EXTRA_OUTPUT);
-					MainScreen.setForceFilename(new File(((Uri) forceFilenameUri).getPath()));
-					if (MainScreen.getForceFilename().getAbsolutePath().equals("/scrapSpace"))
-					{
-						MainScreen.setForceFilename(new File(Environment.getExternalStorageDirectory()
-								.getAbsolutePath() + "/mms/scrapSpace/.temp.jpg"));
-						new File(MainScreen.getForceFilename().getParent()).mkdirs();
-					}
-				} catch (Exception e)
-				{
-					MainScreen.setForceFilename(null);
-				}
-			} else
-			{
-				MainScreen.setForceFilename(null);
-			}
-		} else
-		{
-			MainScreen.setForceFilename(null);
-		}
 
 		// <!-- -+-
 		if (goShopping)
@@ -587,21 +560,6 @@ public class MainScreen extends ApplicationScreen
 	public SimpleStreamSurfaceView getSimpleStreamSurfaceView()
 	{
 		return (SimpleStreamSurfaceView) preview;
-	}
-
-	public static File getForceFilename()
-	{
-		return MainScreen.getInstance().forceFilename;
-	}
-
-	public static void setForceFilename(File fileName)
-	{
-		MainScreen.getInstance().forceFilename = fileName;
-	}
-
-	public static Uri getForceFilenameURI()
-	{
-		return MainScreen.getInstance().forceFilenameUri;
 	}
 
 	@Override
