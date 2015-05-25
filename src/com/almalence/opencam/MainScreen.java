@@ -252,9 +252,6 @@ public class MainScreen extends ApplicationScreen
 	public static String		sExportNamePrefixPref;
 	public static String		sExportNamePostfixPref;
 	public static String		sSaveToPref;
-	public static String		sSortByDataPref;
-	public static String		sEnableExifOrientationTagPref;
-	public static String		sAdditionalRotationPref;
 
 	// Camera parameters info
 	int							cameraId;

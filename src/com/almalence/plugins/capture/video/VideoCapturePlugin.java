@@ -433,16 +433,29 @@ public class VideoCapturePlugin extends PluginCapture
 			break;
 		}
 
+		// If selected profile not supported, then select max from available.
 		if (!CamcorderProfile.hasProfile(CameraController.getCameraIndex(), quality) && !previewSizes.get(quality))
 		{
-			ImageSizeIdxPreference = 4;
-			quality = CamcorderProfile.QUALITY_720P;
-			quickControlIconID = R.drawable.gui_almalence_video_720;
+			ImageSizeIdxPreference = 2;
+			quality = CamcorderProfile.QUALITY_2160P;
+			quickControlIconID = R.drawable.gui_almalence_video_2160;
 			if (!CamcorderProfile.hasProfile(CameraController.getCameraIndex(), quality) && !previewSizes.get(quality))
 			{
-				ImageSizeIdxPreference = 5;
-				quality = CamcorderProfile.QUALITY_480P;
-				quickControlIconID = R.drawable.gui_almalence_video_480;
+				ImageSizeIdxPreference = 3;
+				quality = CamcorderProfile.QUALITY_1080P;
+				quickControlIconID = R.drawable.gui_almalence_video_1080;
+				if (!CamcorderProfile.hasProfile(CameraController.getCameraIndex(), quality) && !previewSizes.get(quality))
+				{
+					ImageSizeIdxPreference = 4;
+					quality = CamcorderProfile.QUALITY_720P;
+					quickControlIconID = R.drawable.gui_almalence_video_720;
+					if (!CamcorderProfile.hasProfile(CameraController.getCameraIndex(), quality) && !previewSizes.get(quality))
+					{
+						ImageSizeIdxPreference = 5;
+						quality = CamcorderProfile.QUALITY_480P;
+						quickControlIconID = R.drawable.gui_almalence_video_480;
+					}
+				}
 			}
 		}
 
@@ -1123,19 +1136,32 @@ public class VideoCapturePlugin extends PluginCapture
 			break;
 		}
 
+		// If selected profile not supported, then select max from available.
 		if (!CamcorderProfile.hasProfile(CameraController.getCameraIndex(), quality) && !previewSizes.get(quality))
 		{
-			ImageSizeIdxPreference = 4;
-			quality = CamcorderProfile.QUALITY_720P;
-			quickControlIconID = R.drawable.gui_almalence_video_720;
+			ImageSizeIdxPreference = 2;
+			quality = CamcorderProfile.QUALITY_2160P;
+			quickControlIconID = R.drawable.gui_almalence_video_2160;
 			if (!CamcorderProfile.hasProfile(CameraController.getCameraIndex(), quality) && !previewSizes.get(quality))
 			{
-				ImageSizeIdxPreference = 5;
-				quality = CamcorderProfile.QUALITY_480P;
-				quickControlIconID = R.drawable.gui_almalence_video_480;
+				ImageSizeIdxPreference = 3;
+				quality = CamcorderProfile.QUALITY_1080P;
+				quickControlIconID = R.drawable.gui_almalence_video_1080;
+				if (!CamcorderProfile.hasProfile(CameraController.getCameraIndex(), quality) && !previewSizes.get(quality))
+				{
+					ImageSizeIdxPreference = 4;
+					quality = CamcorderProfile.QUALITY_720P;
+					quickControlIconID = R.drawable.gui_almalence_video_720;
+					if (!CamcorderProfile.hasProfile(CameraController.getCameraIndex(), quality) && !previewSizes.get(quality))
+					{
+						ImageSizeIdxPreference = 5;
+						quality = CamcorderProfile.QUALITY_480P;
+						quickControlIconID = R.drawable.gui_almalence_video_480;
+					}
+				}
 			}
 		}
-
+		
 		Editor editor = prefs.edit();
 		editor.putString(CameraController.getCameraIndex() == 0 ? ApplicationScreen.sImageSizeVideoBackPref
 				: ApplicationScreen.sImageSizeVideoFrontPref, String.valueOf(ImageSizeIdxPreference));

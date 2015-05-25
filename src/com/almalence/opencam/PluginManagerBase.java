@@ -155,7 +155,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	protected List<Plugin>						listExport;
 
 	// counter indicating amout of processing tasks running
-	protected int								cntProcessing		= 0;
+	protected int								cntProcessing			= 0;
 
 	// table for sharing plugin's data
 	// hashtable for storing shared data - assoc massive for string key and
@@ -166,15 +166,19 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	protected Hashtable<String, CaptureResult>	rawCaptureResults;
 
 	// Support flag to avoid plugin's view disappearance issue
-	protected static boolean					isRestarting		= false;
+	protected static boolean					isRestarting			= false;
 
-	static int									jpegQuality			= 95;
+	static int									jpegQuality				= 95;
 
-	protected static boolean					isDefaultsSelected	= false;
+	protected static boolean					isDefaultsSelected		= false;
 
 	protected static Map<Integer, Integer>		exifOrientationMap;
 
 	protected int								saveOption;
+	private boolean								useGeoTaggingPrefExport;
+	private boolean								enableExifTagOrientation;
+	private int									additionalRotation;
+	private int									additionalRotationValue	= 0;
 
 	// plugin manager ctor. plugins initialization and filling plugin list
 	protected PluginManagerBase()
@@ -1528,8 +1532,34 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		return saveDir;
 	}
 
+	private void getPrefs()
+	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		saveOption = Integer.parseInt(prefs.getString(ApplicationScreen.sExportNamePref, "2"));
+		useGeoTaggingPrefExport = prefs.getBoolean("useGeoTaggingPrefExport", false);
+		enableExifTagOrientation = prefs.getBoolean(ApplicationScreen.sEnableExifOrientationTagPref, true);
+		additionalRotation = Integer.parseInt(prefs.getString(ApplicationScreen.sAdditionalRotationPref, "0"));
+
+		switch (additionalRotation)
+		{
+		case 0:
+			additionalRotationValue = 0;
+			break;
+		case 1:
+			additionalRotationValue = -90;
+			break;
+		case 2:
+			additionalRotationValue = 90;
+			break;
+		case 3:
+			additionalRotationValue = 180;
+			break;
+		}
+	}
+	
 	public void saveResultPicture(long sessionID)
 	{
+		getPrefs();
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		// save fused result
 		try
@@ -1745,6 +1775,28 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 						break;
 					}
 				} else
+				{
+					switch ((additionalRotationValue + 360) % 360)
+					{
+					default:
+					case 0:
+						exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+						break;
+					case 90:
+						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
+								: ExifInterface.ORIENTATION_ROTATE_90;
+						break;
+					case 180:
+						exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
+						break;
+					case 270:
+						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
+								: ExifInterface.ORIENTATION_ROTATE_270;
+						break;
+					}
+				}
+
+				if (!enableExifTagOrientation)
 					exif_orientation = ExifInterface.ORIENTATION_NORMAL;
 
 				File parent = file.getParentFile();
@@ -1762,10 +1814,16 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 				values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
 				values.put(ImageColumns.MIME_TYPE, "image/jpeg");
 
-				if (writeOrientationTag)
+				if (enableExifTagOrientation)
 				{
-					values.put(ImageColumns.ORIENTATION,
-							String.valueOf((Integer.parseInt(orientation_tag) + 360) % 360));
+					if (writeOrientationTag)
+					{
+						values.put(ImageColumns.ORIENTATION, String.valueOf((Integer.parseInt(orientation_tag)
+								+ additionalRotationValue + 360) % 360));
+					} else
+					{
+						values.put(ImageColumns.ORIENTATION, String.valueOf((additionalRotationValue + 360) % 360));
+					}
 				} else
 				{
 					values.put(ImageColumns.ORIENTATION, String.valueOf(0));
@@ -1786,8 +1844,37 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 					copyFromForceFileName(tmpFile);
 				}
 
-				File modifiedFile = saveExifTags(tmpFile, sessionID, i, x, y, exif_orientation, false, true);
-				modifiedFile.renameTo(file);
+				if (!enableExifTagOrientation)
+				{
+					Matrix matrix = new Matrix();
+					if (writeOrientationTag && (orientation + additionalRotationValue) != 0)
+					{
+						matrix.postRotate((orientation + additionalRotationValue + 360) % 360);
+						rotateImage(tmpFile, matrix);
+					} else if (!writeOrientationTag && additionalRotationValue != 0)
+					{
+						matrix.postRotate((additionalRotationValue + 360) % 360);
+						rotateImage(tmpFile, matrix);
+					}
+				}
+
+				if (useGeoTaggingPrefExport)
+				{
+					Location l = MLocation.getLocation(ApplicationScreen.getMainContext());
+					if (l != null)
+					{
+						double lat = l.getLatitude();
+						double lon = l.getLongitude();
+						boolean hasLatLon = (lat != 0.0d) || (lon != 0.0d);
+						if (hasLatLon)
+						{
+							values.put(ImageColumns.LATITUDE, l.getLatitude());
+							values.put(ImageColumns.LONGITUDE, l.getLongitude());
+						}
+					}
+				}
+
+				File modifiedFile = saveExifTags(tmpFile, sessionID, i, x, y, exif_orientation, useGeoTaggingPrefExport, enableExifTagOrientation);
 				if (ApplicationScreen.getForceFilename() == null)
 				{
 					file.delete();
@@ -1868,6 +1955,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			return;
 		}
 
+		getPrefs();
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		// save fused result
 		try
@@ -1910,13 +1998,20 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 				fileFormat += idx;
 
 				DocumentFile file = null;
-				if (hasDNGResult)
+				if (ApplicationScreen.getForceFilename() == null)
 				{
-					file = saveDir.createFile("image/x-adobe-dng", fileFormat + ".dng");
+					if (hasDNGResult)
+					{
+						file = saveDir.createFile("image/x-adobe-dng", fileFormat + ".dng");
+					} else
+					{
+						file = saveDir.createFile("image/jpeg", fileFormat);
+					}
 				} else
 				{
-					file = saveDir.createFile("image/jpeg", fileFormat);
+					file = DocumentFile.fromFile(ApplicationScreen.getForceFilename());
 				}
+				
 
 				// Create buffer image to deal with exif tags.
 				OutputStream os = null;
@@ -2064,9 +2159,30 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 								: ExifInterface.ORIENTATION_ROTATE_270;
 						break;
 					}
-				} else
-					exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+				} else {
+					switch ((additionalRotationValue + 360) % 360)
+					{
+					default:
+					case 0:
+						exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+						break;
+					case 90:
+						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
+								: ExifInterface.ORIENTATION_ROTATE_90;
+						break;
+					case 180:
+						exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
+						break;
+					case 270:
+						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
+								: ExifInterface.ORIENTATION_ROTATE_270;
+						break;
+					}					
+				}
 
+				if (!enableExifTagOrientation)
+					exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+				
 				DocumentFile parent = file.getParentFile();
 				String path = parent.toString().toLowerCase();
 				String name = parent.getName().toLowerCase();
@@ -2082,10 +2198,16 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 				values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
 				values.put(ImageColumns.MIME_TYPE, "image/jpeg");
 
-				if (writeOrientationTag)
+				if (enableExifTagOrientation)
 				{
-					values.put(ImageColumns.ORIENTATION,
-							String.valueOf((Integer.parseInt(orientation_tag) + 360) % 360));
+					if (writeOrientationTag)
+					{
+						values.put(ImageColumns.ORIENTATION, String.valueOf((Integer.parseInt(orientation_tag)
+								+ additionalRotationValue + 360) % 360));
+					} else
+					{
+						values.put(ImageColumns.ORIENTATION, String.valueOf((additionalRotationValue + 360) % 360));
+					}
 				} else
 				{
 					values.put(ImageColumns.ORIENTATION, String.valueOf(0));
@@ -2107,29 +2229,62 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 				values.put(ImageColumns.BUCKET_DISPLAY_NAME, name);
 				values.put(ImageColumns.DATA, fileName);
 
-				File tmpFile = bufFile;
-
-				File modifiedFile = saveExifTags(tmpFile, sessionID, i, x, y, exif_orientation, false, true);
-
-				tmpFile.delete();
-
-				// Copy buffer image with exif tags into result file.
-				InputStream is = null;
-				int len;
-				byte[] buf = new byte[1024];
-				try
+				if (!enableExifTagOrientation)
 				{
-					os = ApplicationScreen.instance.getContentResolver().openOutputStream(file.getUri());
-					is = new FileInputStream(modifiedFile);
-					while ((len = is.read(buf)) > 0)
+					Matrix matrix = new Matrix();
+					if (writeOrientationTag && (orientation + additionalRotationValue) != 0)
 					{
-						os.write(buf, 0, len);
+						matrix.postRotate((orientation + additionalRotationValue + 360) % 360);
+						rotateImage(bufFile, matrix);
+					} else if (!writeOrientationTag && additionalRotationValue != 0)
+					{
+						matrix.postRotate((additionalRotationValue + 360) % 360);
+						rotateImage(bufFile, matrix);
 					}
-					is.close();
-					os.close();
-				} catch (Exception e)
+				}
+
+				if (useGeoTaggingPrefExport)
 				{
-					e.printStackTrace();
+					Location l = MLocation.getLocation(ApplicationScreen.getMainContext());
+					if (l != null)
+					{
+						double lat = l.getLatitude();
+						double lon = l.getLongitude();
+						boolean hasLatLon = (lat != 0.0d) || (lon != 0.0d);
+						if (hasLatLon)
+						{
+							values.put(ImageColumns.LATITUDE, l.getLatitude());
+							values.put(ImageColumns.LONGITUDE, l.getLongitude());
+						}
+					}
+				}
+
+				File modifiedFile = saveExifTags(bufFile, sessionID, i, x, y, exif_orientation, useGeoTaggingPrefExport, enableExifTagOrientation);
+				bufFile.delete();
+
+				if (ApplicationScreen.getForceFilename() == null)
+				{
+					// Copy buffer image with exif tags into result file.
+					InputStream is = null;
+					int len;
+					byte[] buf = new byte[1024];
+					try
+					{
+						os = ApplicationScreen.instance.getContentResolver().openOutputStream(file.getUri());
+						is = new FileInputStream(modifiedFile);
+						while ((len = is.read(buf)) > 0)
+						{
+							os.write(buf, 0, len);
+						}
+						is.close();
+						os.close();
+					} catch (Exception e)
+					{
+						e.printStackTrace();
+					}
+				} else
+				{
+					copyToForceFileName(modifiedFile);
 				}
 
 				modifiedFile.delete();
@@ -2155,6 +2310,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	protected File saveExifTags(File file, long sessionID, int i, int x, int y, int exif_orientation,
 			boolean useGeoTaggingPrefExport, boolean enableExifTagOrientation)
 	{
+		addTimestamp(file, exif_orientation);
+		
 		// Set tag_model using ExifInterface.
 		// If we try set tag_model using ExifDriver, then standard
 		// gallery of android (Nexus 4) will crash on this file.
@@ -2176,8 +2333,6 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-
-		addTimestamp(file);
 
 		// // Open ExifDriver.
 		ExifDriver exifDriver = ExifDriver.getInstance(file.getAbsolutePath());
@@ -2453,7 +2608,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		return null;
 	}
 
-	protected void addTimestamp(File file)
+	protected void addTimestamp(File file, int exif_orientation)
 	{
 		try
 		{
@@ -2530,18 +2685,15 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			Bitmap sourceBitmap;
 			Bitmap bitmap;
 
-			ExifInterface exifInterface = new ExifInterface(file.getAbsolutePath());
-			int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-					ExifInterface.ORIENTATION_NORMAL);
 			int rotation = 0;
 			Matrix matrix = new Matrix();
-			if (orientation == ExifInterface.ORIENTATION_ROTATE_90)
+			if (exif_orientation == ExifInterface.ORIENTATION_ROTATE_90)
 			{
 				rotation = 90;
-			} else if (orientation == ExifInterface.ORIENTATION_ROTATE_180)
+			} else if (exif_orientation == ExifInterface.ORIENTATION_ROTATE_180)
 			{
 				rotation = 180;
-			} else if (orientation == ExifInterface.ORIENTATION_ROTATE_270)
+			} else if (exif_orientation == ExifInterface.ORIENTATION_ROTATE_270)
 			{
 				rotation = 270;
 			}

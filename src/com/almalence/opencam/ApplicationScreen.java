@@ -280,9 +280,10 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public static String				sExportNamePrefixPref;
 	public static String				sExportNamePostfixPref;
 	public static String				sSaveToPref;
-	// public static String sSortByDataPref;
-	// public static String sEnableExifOrientationTagPref;
-	// public static String sAdditionalRotationPref;
+	public static String				sSortByDataPref;
+	public static String				sEnableExifOrientationTagPref;
+	public static String				sAdditionalRotationPref;
+	public static String				sUseGeotaggingPref;
 
 	public static String				sTimestampDate;
 	public static String				sTimestampAbbreviation;
@@ -360,6 +361,10 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		sExportNamePostfixPref = getResources().getString(R.string.Preference_SavePathPostfixValue);
 		sSavePathPref = getResources().getString(R.string.Preference_SavePathValue);
 		sSaveToPref = getResources().getString(R.string.Preference_SaveToValue);
+		sSortByDataPref = getResources().getString(R.string.Preference_SortByDataValue);
+		sEnableExifOrientationTagPref = getResources().getString(R.string.Preference_EnableExifTagOrientationValue);
+		sAdditionalRotationPref = getResources().getString(R.string.Preference_AdditionalRotationValue);
+		sUseGeotaggingPref = getResources().getString(R.string.Preference_UseGeotaggingValue);
 
 		sTimestampDate = getResources().getString(R.string.Preference_TimestampDateValue);
 		sTimestampAbbreviation = getResources().getString(R.string.Preference_TimestampAbbreviationValue);
@@ -1924,7 +1929,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	{
 		return ApplicationScreen.instance.forceFilenameUri;
 	}
-	
+
 	public static File getForceFilename()
 	{
 		return ApplicationScreen.instance.forceFilename;
