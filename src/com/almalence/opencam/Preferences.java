@@ -23,38 +23,29 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.opencam;
 //-+- -->
 
+import java.io.OutputStream;
 import java.util.List;
 
-/* <!-- +++
-import com.almalence.opencam_plus.R;
-+++ --> */
-//<!-- -+-
-import com.almalence.opencam.R;
-//-+- -->
-
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.AlertDialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.support.v4.provider.DocumentFile;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+/* <!-- +++
+import com.almalence.opencam_plus.R;
++++ --> */
+//<!-- -+-
+//-+- -->
 
 /***
  * Preference activity class - manages preferences
@@ -63,7 +54,7 @@ import android.widget.ImageView;
 public class Preferences extends PreferenceActivity
 {
 	public static PreferenceActivity	thiz;
-
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{

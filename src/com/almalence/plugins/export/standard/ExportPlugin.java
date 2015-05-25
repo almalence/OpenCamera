@@ -20,6 +20,7 @@ package com.almalence.plugins.export.standard;
 
 import android.content.SharedPreferences;
 import android.location.GpsStatus;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,7 +71,12 @@ public class ExportPlugin extends PluginExport
 		isResultFromProcessingPlugin = Boolean.parseBoolean(ApplicationScreen.getPluginManager().getFromSharedMem(
 				"ResultFromProcessingPlugin" + sessionID));
 
-		ApplicationScreen.getPluginManager().saveResultPicture(sessionID);
+		
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			ApplicationScreen.getPluginManager().saveResultPictureNew(sessionID);
+		} else {
+			ApplicationScreen.getPluginManager().saveResultPicture(sessionID);
+		}
 	}
 
 	private void getPrefs()
