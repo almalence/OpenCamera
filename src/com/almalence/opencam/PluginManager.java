@@ -1234,7 +1234,6 @@ public class PluginManager extends PluginManagerBase
 										}
 									};
 
-	private int		saveOption;
 	private boolean	useGeoTaggingPrefExport;
 	private boolean	enableExifTagOrientation;
 	private int		additionalRotation;
@@ -1455,23 +1454,15 @@ public class PluginManager extends PluginManagerBase
 				default:
 				case 0:
 					orientation_tag = String.valueOf(0);
-					// orientation_tag = cameraMirrored ? String.valueOf((270 -
-					// sensorOrientation)%360) : String.valueOf(0);
 					break;
 				case 90:
 					orientation_tag = cameraMirrored ? String.valueOf(270) : String.valueOf(90);
-					// orientation_tag = String.valueOf(sensorOrientation);
 					break;
 				case 180:
 					orientation_tag = String.valueOf(180);
-					// orientation_tag = cameraMirrored ? String.valueOf(((270 -
-					// sensorOrientation)%360 + 180)%360) : String.valueOf(180);
 					break;
 				case 270:
 					orientation_tag = cameraMirrored ? String.valueOf(90) : String.valueOf(270);
-					// orientation_tag = cameraMirrored ?
-					// String.valueOf((sensorOrientation + 180)%360) :
-					// String.valueOf(270);
 					break;
 				}
 
@@ -1482,27 +1473,16 @@ public class PluginManager extends PluginManagerBase
 					{
 					default:
 					case 0:
-						// exif_orientation =
-						// exifOrientationMap.get(cameraMirrored ? (270 -
-						// sensorOrientation)%360 : 0);
 						exif_orientation = ExifInterface.ORIENTATION_NORMAL;
 						break;
 					case 90:
-						// exif_orientation =
-						// exifOrientationMap.get(sensorOrientation);
 						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
 								: ExifInterface.ORIENTATION_ROTATE_90;
 						break;
 					case 180:
-						// exif_orientation =
-						// exifOrientationMap.get(cameraMirrored ? ((270 -
-						// sensorOrientation)%360 + 180)%360 : 180);
 						exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
 						break;
 					case 270:
-						// exif_orientation =
-						// exifOrientationMap.get(cameraMirrored ?
-						// (sensorOrientation + 180)%360 : 270);
 						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
 								: ExifInterface.ORIENTATION_ROTATE_270;
 						break;
@@ -1992,11 +1972,6 @@ public class PluginManager extends PluginManagerBase
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		ContentValues values = null;
 		String resultOrientation = getFromSharedMem("frameorientation" + (i + 1) + Long.toString(SessionID));
-		Boolean orientationLandscape = false;
-		if (resultOrientation == null)
-			orientationLandscape = true;
-		else
-			orientationLandscape = Boolean.parseBoolean(resultOrientation);
 
 		String resultMirrored = getFromSharedMem("framemirrored" + (i + 1) + Long.toString(SessionID));
 		Boolean cameraMirrored = false;
@@ -2118,7 +2093,5 @@ public class PluginManager extends PluginManagerBase
 	@Override
 	public void onAutoFocusMoving(boolean start)
 	{
-		// TODO Auto-generated method stub
-
 	}
 }
