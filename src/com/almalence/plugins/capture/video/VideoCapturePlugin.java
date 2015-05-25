@@ -1539,9 +1539,9 @@ public class VideoCapturePlugin extends PluginCapture
 			if(!onPause)
 				inputFiles[inputFileCount-1] = fileSaved.getAbsolutePath();
 			
-//			Log.e(TAG, "Append start");
+			Log.e(TAG, "Append start");
 			append(inputFiles);
-//			Log.e(TAG, "Append finished");
+			Log.e(TAG, "Append finished");
 			
 			for (int i = 1; i < filesListToExport.size(); i++)
 			{
