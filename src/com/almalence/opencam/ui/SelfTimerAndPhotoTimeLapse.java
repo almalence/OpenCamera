@@ -27,7 +27,6 @@ package com.almalence.opencam.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.SharedPreferences;
@@ -46,7 +45,6 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
-
 import com.almalence.ui.RotateImageView;
 //<!-- -+-
 import com.almalence.opencam.MainScreen;
@@ -54,7 +52,6 @@ import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginType;
 import com.almalence.opencam.R;
 //-+- -->
-
 /* <!-- +++
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginManager;
@@ -72,7 +69,6 @@ public class SelfTimerAndPhotoTimeLapse
 	int									timeLapseInterval;
 	int									timeLapseMeasurementVal;
 	String[]							stringTimerInterval			= { "3", "5", "10", "15", "30", "60" };
-	//public static String[]				stringTimelapseInterval		= { "3", "5", "10", "15", "30", "60" };
 	String[]							stringTimelapseMeasurement	= { "seconds", "minutes", "hours", "days" };
 	CheckBox							flashCheckbox;
 	CheckBox							soundCheckbox;
@@ -115,13 +111,11 @@ public class SelfTimerAndPhotoTimeLapse
 			{
 				if (!sw.isChecked())
 				{
-					// np.setEnabled(false);
 					flashCheckbox.setEnabled(false);
 					soundCheckbox.setEnabled(false);
 					swTimerChecked = false;
 				} else
 				{
-					// np.setEnabled(true);
 					flashCheckbox.setEnabled(true);
 					soundCheckbox.setEnabled(true);
 					swTimerChecked = true;
@@ -147,10 +141,8 @@ public class SelfTimerAndPhotoTimeLapse
 			sw.setChecked(false);
 			flashCheckbox.setEnabled(false);
 			soundCheckbox.setEnabled(false);
-			// np.setEnabled(false);
 		} else
 		{
-			// np.setEnabled(true);
 			flashCheckbox.setEnabled(true);
 			soundCheckbox.setEnabled(true);
 			sw.setChecked(true);
@@ -166,7 +158,6 @@ public class SelfTimerAndPhotoTimeLapse
 
 		npTimeLapse = (NumberPicker) dialog.findViewById(R.id.photoTimeLapseInterval_numberPicker);
 		npTimeLapse.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-		//npTimeLapse.setDisplayedValues(stringTimelapseInterval);
 		npTimeLapse.setMaxValue(60);
 		npTimeLapse.setMinValue(1);
 		// Fix for Acer Liquid E2 Duo.

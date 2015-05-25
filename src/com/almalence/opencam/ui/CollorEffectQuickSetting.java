@@ -21,31 +21,29 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam.ui;
-
 //-+- -->
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.media.CamcorderProfile;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.R;
-import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.plugins.capture.panoramaaugmented.PanoramaAugmentedCapturePlugin;
-import com.almalence.plugins.capture.video.VideoCapturePlugin;
+
 import com.almalence.ui.ListPreferenceAdapter;
 import com.almalence.ui.RotateDialog;
 //<!-- -+-
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 /* <!-- +++
- import com.almalence.opencam_plus.R;
+import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.cameracontroller.CameraController;
+import com.almalence.opencam_plus.R;
  +++ --> */
 
 public class CollorEffectQuickSetting

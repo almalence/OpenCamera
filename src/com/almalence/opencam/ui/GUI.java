@@ -276,10 +276,6 @@ public abstract class GUI
 
 	abstract public void onVolumeBtnExpo(int keyCode);
 
-	// abstract public void autoFocus();
-	//
-	// abstract public void onAutoFocus(boolean focused, Camera paramCamera);
-
 	@TargetApi(14)
 	abstract public void setFocusParameters();
 
