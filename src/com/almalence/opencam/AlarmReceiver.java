@@ -20,12 +20,6 @@ import android.os.Build;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
-import android.util.Log;
-//<!-- -+-
-//-+- -->
-/* <!-- +++
- import com.almalence.opencam_plus.ui.SelfTimerAndPhotoTimeLapse;
- +++ --> */
 
 public class AlarmReceiver extends BroadcastReceiver
 {

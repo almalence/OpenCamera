@@ -21,6 +21,7 @@ package com.almalence.opencam_plus;
 +++ --> */
 //<!-- -+-
 package com.almalence.opencam;
+//-+- -->
 
 import com.almalence.sony.cameraremote.SimpleStreamSurfaceView;
 
@@ -28,8 +29,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.media.ImageReader;
 import android.view.Surface;
-
-//-+- -->
 
 /*
  * Application interface used by CameraController and secondary classes as HALv3
@@ -188,7 +187,7 @@ public interface ApplicationInterface
 	public void    setSpecialImageSizeIndexPref(int iIndex);
 	public String  getSpecialImageSizeIndexPref();
 	
-	//Indicate on GUI capturing and play sound if neeeded
+	//Indicate on GUI capturing and play sound if needed
 	public void showCaptureIndication(boolean playShutter);
 	
 	//Auto focus lock
