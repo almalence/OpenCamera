@@ -1523,16 +1523,25 @@ public class VideoCapturePlugin extends PluginCapture
 		ArrayList<File> filesListToExport = filesList;
 		if (filesListToExport.size() > 0)
 		{
+			String[] inputFiles = new String[filesListToExport.size()];
 			File firstFile = filesListToExport.get(0);
+			inputFiles[0] = firstFile.getAbsolutePath();
 			for (int i = 1; i < filesListToExport.size(); i++)
 			{
 				File currentFile = filesListToExport.get(i);
-				append(firstFile.getAbsolutePath(), currentFile.getAbsolutePath());
+				inputFiles[i] = currentFile.getAbsolutePath();
+//				append(firstFile.getAbsolutePath(), currentFile.getAbsolutePath());
 			}
+			append(inputFiles);
+			
 			// if not onPause, then last video isn't added to list.
 			if (!onPause)
 			{
-				append(firstFile.getAbsolutePath(), fileSaved.getAbsolutePath());
+				inputFiles = new String[2];
+				inputFiles[0] = firstFile.getAbsolutePath();
+				inputFiles[1] = fileSaved.getAbsolutePath();
+//				append(firstFile.getAbsolutePath(), fileSaved.getAbsolutePath());
+				append(inputFiles);
 			}
 
 			if (!filesListToExport.get(0).getAbsoluteFile().equals(fileSaved.getAbsoluteFile()))
@@ -1557,6 +1566,7 @@ public class VideoCapturePlugin extends PluginCapture
 			e.printStackTrace();
 		}
 		ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED);
+		
 	}
 
 	private void startRecording()
@@ -2363,10 +2373,17 @@ public class VideoCapturePlugin extends PluginCapture
 		try
 		{
 			// stop recording and release camera
-			mMediaRecorder.stop(); // stop the recording
+			try
+			{
+				mMediaRecorder.stop(); // stop the recording
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+				Log.e("video pauseVideoRecording", "mMediaRecorder.stop() exception: " + e.getMessage());
+			}
 
-			ContentValues values = null;
-			values = new ContentValues();
+			releaseMediaRecorder(); // release the MediaRecorder object
+			
 			File parent = fileSaved.getParentFile();
 			String path = parent.toString().toLowerCase();
 			String name = parent.getName().toLowerCase();
@@ -2379,6 +2396,20 @@ public class VideoCapturePlugin extends PluginCapture
 			values.put(VideoColumns.BUCKET_ID, path.hashCode());
 			values.put(VideoColumns.BUCKET_DISPLAY_NAME, name);
 			values.put(VideoColumns.DATA, fileSaved.getAbsolutePath());
+			values.put(VideoColumns.DURATION, timeStringToMillisecond(mRecordingTimeView.getText().toString()));
+
+			
+			if (lastUseProfile)
+			{
+				values.put(
+						VideoColumns.RESOLUTION,
+						String.valueOf(lastCamcorderProfile.videoFrameWidth) + "x"
+								+ String.valueOf(lastCamcorderProfile.videoFrameHeight));
+			} else
+			{
+				values.put(VideoColumns.RESOLUTION,
+						String.valueOf(lastSz.getWidth()) + "x" + String.valueOf(lastSz.getHeight()));
+			}
 
 			filesList.add(fileSaved);
 
@@ -2406,26 +2437,30 @@ public class VideoCapturePlugin extends PluginCapture
 	 * Appends mp4 audio/video from {@code anotherFileName} to
 	 * {@code mainFileName}.
 	 */
-	public static boolean append(String mainFileName, String anotherFileName)
+	public static boolean append(String[] inputFiles)
 	{
 		boolean rvalue = false;
 		try
 		{
-			File targetFile = new File(mainFileName);
-			File anotherFile = new File(anotherFileName);
+			File targetFile = new File(inputFiles[0]);
+			
+//			File targetFile = new File(mainFileName);
+//			File anotherFile = new File(anotherFileName);
 			if (targetFile.exists() && targetFile.length() > 0)
-			{
-				String tmpFileName = mainFileName + ".tmp";
+			{ 
+				String tmpFileName = targetFile.getAbsolutePath() + ".tmp";
 
-				append(mainFileName, anotherFileName, tmpFileName);
-				anotherFile.delete();
+//				append(mainFileName, anotherFileName, tmpFileName);
+				Mp4Editor.append(inputFiles, tmpFileName);
+//				anotherFile.delete();
 				targetFile.delete();
 				new File(tmpFileName).renameTo(targetFile);
 				rvalue = true;
-			} else if (targetFile.createNewFile())
+			}
+			else if (targetFile.createNewFile())
 			{
-				copyFile(anotherFileName, mainFileName);
-				anotherFile.delete();
+				copyFile(inputFiles[1], inputFiles[0]);
+//				anotherFile.delete();
 				rvalue = true;
 			}
 		} catch (IOException e)
@@ -2453,9 +2488,9 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 	}
 
+	//JAVA implementation of append method
 	public static void append(final String firstFile, final String secondFile, final String newFile) throws IOException
 	{
-
 		final FileOutputStream fos = new FileOutputStream(new File(String.format(newFile)));
 		final FileChannel fc = fos.getChannel();
 
@@ -2476,7 +2511,6 @@ public class VideoCapturePlugin extends PluginCapture
 		fc.close();
 		fos.close();
 	}
-
 	// append video
 
 	public void takePicture()

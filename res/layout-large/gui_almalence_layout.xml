@@ -64,6 +64,16 @@
 		android:visibility="gone">
 	</RelativeLayout>
      
+	<TextView 
+		android:id="@+id/captureIndicationText"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"		    		    	  
+		android:textSize="@dimen/multishotOptionsTitle"
+		android:gravity="center"
+		android:layout_centerHorizontal="true"
+		android:layout_above="@+id/mainButtons"	
+		android:visibility="gone"/>
+	
       <LinearLayout
 		android:id="@+id/mainButtons"
 	    android:orientation="horizontal"
@@ -802,7 +812,31 @@
 					    android:stretchMode="columnWidth"
 					    android:gravity="center"					    
 					/>
-			</RelativeLayout>										
+			</RelativeLayout>
+			
+        	<RelativeLayout
+	            android:id="@+id/cameraLayout"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_gravity="top"
+	            android:layout_marginLeft="5dip"
+	            android:layout_marginRight="5dip"
+	            android:background="@drawable/blacktransparentlayersettings"
+	            android:orientation="vertical"
+	            android:padding="15dp"
+	            android:visibility="gone" >
+	
+	            <GridView
+	                android:id="@+id/cameramodeGrid"
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content"
+	                android:gravity="center"
+	                android:horizontalSpacing="10dp"
+	                android:numColumns="3"
+	                android:paddingLeft="3dp"
+	                android:paddingRight="3dp"
+	                android:stretchMode="columnWidth" />
+        </RelativeLayout>
 	</RelativeLayout>	 	
 		
 	   <LinearLayout

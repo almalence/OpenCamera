@@ -748,7 +748,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		try
 		{
-			if (!(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService("camera") != null))
+			if (!(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService("camera") != null) || (!isFlex2() && !isNexus()))
 			{
 				isHALv3 = false;
 				isHALv3Supported = false;
@@ -3789,7 +3789,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		nextFrame();
 
-		if (pluginManager.isPreviewDependentMode())
+		if (pluginManager.isPreviewDependentMode() && (frame_num < total_frames))
 		{
 			// if preview not working
 			if (previewMode == false)

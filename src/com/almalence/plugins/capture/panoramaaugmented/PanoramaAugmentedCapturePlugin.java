@@ -488,6 +488,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		if(Build.MODEL.equals("Nexus 6") && camera2Preference)
 		{
 			prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), false).commit();
+			CameraController.useHALv3(false);
 			
 			CameraController.isOldCameraOneModeLaunched = true;
 			PluginManager.getInstance().setSwitchModeType(true);

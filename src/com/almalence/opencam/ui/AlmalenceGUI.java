@@ -3453,7 +3453,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					int currentIdx = Integer.parseInt(CameraController.MultishotResolutionsIdxesList.get(MainScreen
 							.selectImageDimensionMultishot()));
 					
-					selectedSize = CameraController.MultishotResolutionsNamesList.get(currentIdx);
+					selectedSize = getSizeName(CameraController.getMultishotResolutionsNamesList(), 
+											   CameraController.getMultishotResolutionsSizeList(), 
+											   CameraController.getMultishotResolutionsIdxesList(), 
+											   currentIdx);
 
 				} else
 				{
@@ -3463,19 +3466,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						currentIdx = 0;
 					}
 					
-					selectedSize = CameraController.getResolutionsNamesList().get(0);
-					
-					List<CameraController.Size> cs = CameraController.getResolutionsSizeList();
-					int ii = 0;
-					for (CameraController.Size s : cs)
-					{
-						if (Integer.parseInt(CameraController.getResolutionsIdxesList().get(ii)) == currentIdx)
-						{
-							selectedSize = CameraController.getResolutionsNamesList().get(ii);
-							break;
-						}
-						ii++;
-					}
+					selectedSize = getSizeName(CameraController.getResolutionsNamesList(), 
+											   CameraController.getResolutionsSizeList(), 
+											   CameraController.getResolutionsIdxesList(), 
+											   currentIdx);
 				}
 				icon_id = ICON_IMAGE_SIZE;
 				icon_text = selectedSize;
@@ -3559,18 +3553,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			else
 				createSettingEVOnClick(settingView);
 			break;
-		// case EXTIME:
-		// if (isQuickControl)
-		// createQuickControlExTimeOnClick(settingView);
-		// else
-		// createSettingExTimeOnClick(settingView);
-		// break;
-		// case FDIST:
-		// if (isQuickControl)
-		// createQuickControlFDistOnClick(settingView);
-		// else
-		// createSettingFDistOnClick(settingView);
-		// break;
 		case SELF_TIMER:
 			if (isQuickControl)
 				createQuickControlSelfTimerOnClick(settingView);
@@ -3605,6 +3587,24 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			settingsViews.add(settingView);
 	}
 
+	private String getSizeName(List<String> listNames, List<CameraController.Size> listSizes, List<String> listIdxes, int currentIdx)
+	{
+		String selectedSize = listNames.get(0);
+		
+		List<CameraController.Size> cs = listSizes;
+		int ii = 0;
+		for (CameraController.Size s : cs)
+		{
+			if (Integer.parseInt(listIdxes.get(ii)) == currentIdx)
+			{
+				selectedSize = listNames.get(ii);
+				break;
+			}
+			ii++;
+		}
+		return selectedSize;
+	}
+	
 	private void addPluginQuickSetting(Plugin plugin, boolean isQuickControl)
 	{
 		int iconID = plugin.getQuickControlIconID();
@@ -5760,10 +5760,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			mFocusMode = newMode;
 			setButtonSelected(focusModeButtons, mFocusMode);
 
-			preferences
-					.edit()
-					.putInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
-							: ApplicationScreen.sFrontFocusModePref, newMode).commit();
+			MainScreen.getInstance().setFocusModePref(newMode);
 		}
 
 		try
