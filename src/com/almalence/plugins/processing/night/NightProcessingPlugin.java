@@ -23,9 +23,6 @@ import java.util.Locale;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.util.Log;
-
-import com.almalence.SwapHeap;
 import com.almalence.asynctaskmanager.OnTaskCompleteListener;
 
 /* <!-- +++
@@ -41,7 +38,6 @@ import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
-
 //-+- -->
 
 /***
@@ -135,8 +131,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 				.contains("nexus5");
 		boolean isNexus6 = Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
 				.contains("nexus6");
-		// boolean isNexus9 = Build.MODEL.toLowerCase(Locale.US).replace(" ",
-		// "").contains("nexus9");
+
 		// camera indexes in libalmalib corresponding to models
 		if (isNexus5)   cameraIndex = 100;
 		if (isNexus6)   cameraIndex = 103;
@@ -181,9 +176,6 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 		}
 
 		AlmaShotNight.NightAddYUVFrames(frames, imagesAmount, mImageWidth, mImageHeight);
-
-		// Log.d("Night",
-		// "PreviewTask.doInBackground AlmaShotNight.Process start");
 
 		float zoom = Float.parseFloat(PluginManager.getInstance().getFromSharedMem("zoom" + sessionID));
 		boolean isSuperMode = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem(

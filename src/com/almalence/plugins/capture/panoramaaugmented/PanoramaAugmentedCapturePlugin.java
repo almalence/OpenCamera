@@ -69,7 +69,6 @@ import com.almalence.ui.RotateImageView;
 import com.almalence.ui.Switch.Switch;
 import com.almalence.util.HeapUtil;
 
-import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.CameraParameters;
  import com.almalence.opencam_plus.ApplicationScreen;
@@ -79,12 +78,14 @@ import com.almalence.opencam.ApplicationInterface;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.ui.GUI.CameraParameter;
  import com.almalence.opencam_plus.ConfigParser;
+ import com.almalence.opencam_plus.ApplicationInterface;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.ConfigParser;
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginCapture;
+import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;

@@ -20,8 +20,6 @@ package com.almalence.plugins.capture.standard;
 
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
-import android.hardware.Camera;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,9 +28,10 @@ import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.hardware.camera2.CaptureResult;
 
-import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.CameraController.Size;
+ import com.almalence.opencam_plus.ApplicationInterface;
  import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginCapture;
  import com.almalence.opencam_plus.PluginManager;
@@ -43,6 +42,7 @@ import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
+import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.cameracontroller.CameraController.Size;
 //-+- -->
@@ -55,14 +55,10 @@ import com.almalence.ui.Switch.Switch;
 
 public class CapturePlugin extends PluginCapture
 {
-	private static String		ModePreference;													// 0=DRO
-																									// On
-																									// 1=DRO
-																									// Off
+	private static String		ModePreference;		// 0=DRO On
+													// 1=DRO Off
 	private Switch				modeSwitcher;
-
 	private int					singleModeEV;
-	private int					droEvDiff;
 	
 	public CapturePlugin()
 	{
@@ -80,14 +76,12 @@ public class CapturePlugin extends PluginCapture
 			if (diff < 1)
 				diff = 1;
 
-			droEvDiff = diff;
 			ev -= diff;
 		}
 
 		int minValue = CameraController.getMinExposureCompensation();
 		if (ev >= minValue)
 		{
-			//Log.d("Capture", "UpdateEv. isDRO = " + isDro + " EV = " + ev);
 			CameraController.setCameraExposureCompensation(ev);
 			MainScreen.getInstance().setEVPref(ev);
 		}
@@ -117,7 +111,6 @@ public class CapturePlugin extends PluginCapture
 				if (isDro)
 				{
 					singleModeEV = MainScreen.getInstance().getEVPref();
-					//Log.d("Capture", "onCheckedChanged. isDro = true singleModeEV = " + singleModeEV);
 
 					ModePreference = "0";
 					MainScreen.setCaptureFormat(CameraController.YUV);
@@ -125,12 +118,8 @@ public class CapturePlugin extends PluginCapture
 				{
 					ModePreference = "1";
 					MainScreen.setCaptureFormat(CameraController.JPEG);
-
-//					Log.d("Capture", "onCheckedChanged. isDro = false singleModeEV = " + singleModeEV);
 				}
 
-				// UpdateEv(isDro, isDro? singleModeEV :
-				// (singleModeEV+droEvDiff));
 				UpdateEv(isDro, singleModeEV);
 
 				SharedPreferences.Editor editor = prefs.edit();
@@ -154,8 +143,6 @@ public class CapturePlugin extends PluginCapture
 	public void onCameraParametersSetup()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-//		Log.d("Capture", "onCameraParametersSetup. singleModeEV = " + singleModeEV);
-
 		if (ModePreference.equals("0"))
 		{
 			// FixMe: why not setting exposure if we are in dro-off mode?
@@ -198,7 +185,6 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void onPause()
 	{
-//		Log.d("Capture", "onPause");
 		if (ModePreference.contains("0"))
 		{
 			UpdateEv(false, singleModeEV);
@@ -222,10 +208,6 @@ public class CapturePlugin extends PluginCapture
 		}
 
 		this.modeSwitcher.setLayoutParams(params);
-		// this.modeSwitcher.requestLayout();
-		//
-		// ((RelativeLayout)
-		// MainScreen.getInstance().findViewById(R.id.specialPluginsLayout3)).requestLayout();
 
 		if (ModePreference.compareTo("0") == 0)
 			MainScreen.getGUIManager().showHelp("Dro help",
@@ -260,7 +242,6 @@ public class CapturePlugin extends PluginCapture
 	@Override
 	public void takePicture()
 	{
-//		Log.d("CapturePlugin", "takePicture");
 		framesCaptured = 0;
 		resultCompleted = 0;
 		createRequestIDList(captureRAW? 2 : 1);
@@ -310,7 +291,6 @@ public class CapturePlugin extends PluginCapture
 	{
 		int requestID = requestIDArray[resultCompleted];
 		resultCompleted++;
-//		Log.e("CapturePlugin", "onCaptureCompleted. resultCompleted = " +resultCompleted);
 		if (result.getSequenceId() == requestID)
 		{
 			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, resultCompleted);

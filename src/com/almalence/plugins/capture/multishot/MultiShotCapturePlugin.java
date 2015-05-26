@@ -20,11 +20,9 @@ package com.almalence.plugins.capture.multishot;
 
 import android.annotation.TargetApi;
 import android.os.CountDownTimer;
-import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.hardware.camera2.CaptureResult;
 
 /* <!-- +++
@@ -32,6 +30,7 @@ import com.almalence.opencam_plus.cameracontroller.CameraController;
 import com.almalence.opencam_plus.ApplicationScreen;
 import com.almalence.opencam_plus.PluginCapture;
 import com.almalence.opencam_plus.PluginManager;
+import com.almalence.opencam_plus.ApplicationInterface;
 import com.almalence.opencam_plus.R;
 +++ --> */
 //<!-- -+-
@@ -49,26 +48,15 @@ import com.almalence.opencam.R;
 
 public class MultiShotCapturePlugin extends PluginCapture
 {
-
-	private static final String					TAG					= "MultiShotCapturePlugin";
-
-	private static final int					MIN_MPIX_SUPPORTED	= 1280 * 960;
-	private static final int					MIN_MPIX_PREVIEW	= 600 * 400;
-
-	private static int							captureIndex		= -1;
-
-	public static int getCaptureIndex()
-	{
-		return captureIndex;
-	}
-
-	private static int	imgCaptureWidth		= 0;
-	private static int	imgCaptureHeight	= 0;
+	private static final String	TAG						= "MultiShotCapturePlugin";
+	private static int			captureIndex			= -1;
+	private static int			imgCaptureWidth			= 0;
+	private static int			imgCaptureHeight		= 0;
 
 	// defaul val. value should come from config
-	private int		imageAmount			= 8;
-	private int[]	pauseBetweenShots			= { 0, 0, 250, 250, 500, 750, 1000, 1250 };
-	private int[]	pauseBetweenShotsCamera2	= { 100, 200, 250, 250, 500, 750, 1000, 1250 };
+	private int					imageAmount				= 8;
+	private int[]				pauseBetweenShots		= { 0, 0, 250, 250, 500, 750, 1000, 1250 };
+	private int[]				pauseBetweenShotsCamera2= { 100, 200, 250, 250, 500, 750, 1000, 1250 };
 
 	public MultiShotCapturePlugin()
 	{
@@ -93,6 +81,11 @@ public class MultiShotCapturePlugin extends PluginCapture
 				R.drawable.plugin_help_multishot, "multiShotShowHelp");
 	}
 
+	public static int getCaptureIndex()
+	{
+		return captureIndex;
+	}
+	
 	public boolean delayedCaptureSupported()
 	{
 		return true;
@@ -191,14 +184,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 	private void setCameraImageSize()
 	{
 		if (imgCaptureWidth > 0 && imgCaptureHeight > 0)
-		{
 			CameraController.setCameraImageSize(new CameraController.Size(imgCaptureWidth, imgCaptureHeight));
-//			ApplicationScreen.setSaveImageWidth(imgCaptureWidth);
-//			ApplicationScreen.setSaveImageHeight(imgCaptureHeight);
-//
-//			ApplicationScreen.setImageWidth(imgCaptureWidth);
-//			ApplicationScreen.setImageHeight(imgCaptureHeight);
-		}
 	}
 
 	public static void selectImageDimensionMultishot()

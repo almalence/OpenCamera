@@ -31,6 +31,7 @@ import android.hardware.camera2.CaptureResult;
  import com.almalence.opencam_plus.ui.GUI.CameraParameter;
  import com.almalence.opencam_plus.CameraParameters;
  import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.opencam_plus.ApplicationInterface;
  import com.almalence.opencam_plus.PluginCapture;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.R;

@@ -53,15 +53,16 @@ import android.widget.TextView;
 
 import com.almalence.SwapHeap;
 
-import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.opencam_plus.ApplicationInterface;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
@@ -87,16 +88,9 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 	private static final int			MSG_SELECTOR_VISIBLE		= 5;
 	private static final int			MSG_SELECTOR_INVISIBLE		= 6;
 
-	static final int					img2lay						= 8;					// 16
-																							// //
-																							// image-to-layout
-																							// subsampling
-																							// factor
+	static final int					img2lay						= 8; // 16 image-to-layout subsampling factor
 
-	private static int					nFrames;											// number
-																							// of
-																							// input
-																							// images
+	private static int					nFrames;						 // number of input images
 	private static int					imgWidthFD;
 	private static int					imgHeightFD;
 
@@ -125,14 +119,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 
 	static int							mBaseFrame					= 0;					// temporary
 
-	static int[]						crop						= new int[5];			// crop
-																							// parameters
-																							// and
-																							// base
-																							// image
-																							// are
-																							// stored
-																							// here
+	static int[]						crop						= new int[5];			// crop parameters and base image are stored here
 
 	private ImageView					mImgView;
 	private Button						mSaveButton;
@@ -213,7 +200,6 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		mDisplayOrientationOnStartProcessing = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("frameorientation1" + sessionID));
 		mDisplayOrientationCurrent = ApplicationScreen.getGUIManager().getDisplayOrientation();
 		int orientation = ApplicationScreen.getGUIManager().getLayoutOrientation();
-//		Log.d("GroupShot", "onStartProcessing layout orientation: " + orientation);
 		mLayoutOrientationCurrent = (orientation == 0 || orientation == 180) ? orientation : (orientation + 180) % 360;
 		mCameraMirrored = Boolean.valueOf(PluginManager.getInstance().getFromSharedMem("framemirrored1" + sessionID));
 		
@@ -719,17 +705,14 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 			float y_tmp = y;
 			x = mDisplayOrientationOnStartProcessing == 180 ? mDisplayWidth - 1 - y_tmp : y_tmp;
 			y = mDisplayOrientationOnStartProcessing == 180 ? x_tmp : mDisplayHeight - 1 - x_tmp;
-//			Log.d("GroupShot", "Correction 1 coordinates x = " + x + "  y = " + y);
 		} else if (!mCameraMirrored && mDisplayOrientationOnStartProcessing == 270)
 		{
 			x = mDisplayHeight - x;
 			y = mDisplayWidth - y;
-//			Log.d("GroupShot", "Correction 1 coordinates x = " + x + "  y = " + y);
 		} else if (mCameraMirrored && mDisplayOrientationOnStartProcessing == 90)
 		{
 			x = mDisplayHeight - x;
 			y = mDisplayWidth - y;
-//			Log.d("GroupShot", "Correction 1 coordinates x = " + x + "  y = " + y);
 		}
 		// Have to correct touch coordinates coz ImageView centered on the
 		// screen
@@ -750,7 +733,6 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 						- (((mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270) ? mDisplayWidth
 								: mDisplayHeight) - previewBmpRealHeight) / 2;
 			}
-//			Log.d("GroupShot", "Correction 2 coordinates x = " + x + "  y = " + y);
 		}
 
 		int i = 0;
@@ -793,8 +775,6 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 
 	private void setupImageView()
 	{
-//		PreviewBmp = PreviewBmp.copy(Config.ARGB_8888, true);
-
 		if (PreviewBmp != null)
 		{
 			updateBitmap();
@@ -972,8 +952,6 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 	public synchronized void updateBitmap()
 	{
 		PreviewBmp = mSeamless.getPreviewBitmap();
-//		Log.d("GroupShot", "updateBitmap. PreviewBmp WxH: " + PreviewBmp.getWidth() + " x " + PreviewBmp.getHeight());
-//		PreviewBmp = PreviewBmp.copy(Config.ARGB_8888, true);
 		drawFaceRectOnBitmap(PreviewBmp, mFaceList.get(mBaseFrame));
 		if (mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180)
 		{
@@ -1015,7 +993,6 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		//Nexus 6 has a original front camera sensor orientation, we have to manage it
 		PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID,
 				String.valueOf(((Build.MODEL.contains("Nexus 6") && mCameraMirrored)? 180 : 0)));
-//		PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID, String.valueOf(0));
 		PluginManager.getInstance().addToSharedMem("resultframemirrored1" + sessionID, String.valueOf(mCameraMirrored));
 
 		PluginManager.getInstance().addToSharedMem("amountofresultframes" + sessionID, String.valueOf(1));

@@ -588,9 +588,6 @@ public class GyroVFPlugin extends PluginViewfinder
 				LayoutParams.WRAP_CONTENT);
 		((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout)).addView(mHorizonLayout,
 				params);
-		// mHorizonLayout.requestLayout();
-		// ((RelativeLayout)
-		// ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout)).requestLayout();
 
 		mHorizonIndicatorAim = (RotateImageView) mHorizonLayout.findViewById(R.id.horizon_indicator_aim);
 		mHorizonIndicatorAimTopDown = (RotateImageView) mHorizonLayout

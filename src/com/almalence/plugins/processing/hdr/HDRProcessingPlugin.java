@@ -70,9 +70,9 @@ import android.widget.TextView;
 
 import com.almalence.SwapHeap;
 
-import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.opencam_plus.ApplicationInterface;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginProcessing;
  import com.almalence.opencam_plus.R;
@@ -83,15 +83,13 @@ import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
+import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 import com.almalence.util.ImageConversion;
-
 import com.almalence.asynctaskmanager.OnTaskCompleteListener;
-
 import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
-import com.almalence.plugins.capture.panoramaaugmented.AugmentedPanoramaEngine;
 
 /***
  * Implements HDR processing plugin.
@@ -100,8 +98,7 @@ import com.almalence.plugins.capture.panoramaaugmented.AugmentedPanoramaEngine;
 public class HDRProcessingPlugin extends PluginProcessing implements OnItemClickListener, OnClickListener,
 		OnSeekBarChangeListener, OnItemSelectedListener, OnTaskCompleteListener
 {
-	private byte[]				yuv;													// fused
-																						// result
+	private byte[]				yuv;	// fused result
 	private static final int[]	crop									= new int[4];
 
 	private static String		ContrastPreference;
@@ -153,7 +150,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		mDisplayOrientationOnStartProcessing = ApplicationScreen.getGUIManager().getDisplayOrientation();
 		mDisplayOrientationCurrent = ApplicationScreen.getGUIManager().getDisplayOrientation();
 		int orientation = ApplicationScreen.getGUIManager().getLayoutOrientation();
-//		Log.d("PreShot", "onStartProcessing layout orientation: " + orientation);
 		mLayoutOrientationCurrent = orientation == 0 || orientation == 180 ? orientation : (orientation + 180) % 360;
 		mCameraMirrored = CameraController.isFrontCamera();
 
@@ -162,24 +158,13 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		mImageHeight = imageSize.getHeight();
 
 		AlmaShotHDR.Initialize();
-//		Log.e("HDR", "almashot lib initialize success");
 
 		// hdr processing
 		HDRPreview();
-//		Log.e("HDR", "HDRPreview success");
 
 		if (!AutoAdjustments)
 		{
 			HDRProcessing();
-//			Log.e("HDR", "HDRProcessing success");
-
-//			if (mDisplayOrientationOnStartProcessing == 180 || mDisplayOrientationOnStartProcessing == 270)
-//			{
-//				byte[] dataRotated = new byte[yuv.length];
-//				ImageConversion.TransformNV21(yuv, dataRotated, mImageWidth, mImageHeight, 1, 1, 0);
-//
-//				yuv = dataRotated;
-//			}
 
 			int frame_len = yuv.length;
 			int frame = SwapHeap.SwapToHeap(yuv);
@@ -1221,16 +1206,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		if (this.previewTaskCurrent == null)
 		{
 			HDRProcessing();
-//			Log.d("HDR", "HDRProcessing success");
-
-			//Why this code is presents here? It make a bad rotation of result image.
-//			if (mDisplayOrientationOnStartProcessing == 180 || mDisplayOrientationOnStartProcessing == 270)
-//			{
-//				byte[] dataRotated = new byte[yuv.length];
-//				ImageConversion.TransformNV21(yuv, dataRotated, mImageWidth, mImageHeight, 1, 1, 0);
-//
-//				yuv = dataRotated;
-//			}
 
 			int frame_len = yuv.length;
 			int frame = SwapHeap.SwapToHeap(yuv);
