@@ -33,7 +33,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
@@ -46,7 +45,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.util.FloatMath;
@@ -70,7 +68,6 @@ import com.almalence.plugins.capture.panoramaaugmented.AugmentedPanoramaEngine.A
 import com.almalence.ui.RotateImageView;
 import com.almalence.ui.Switch.Switch;
 import com.almalence.util.HeapUtil;
-import com.almalence.util.ImageConversion;
 
 import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
@@ -95,8 +92,7 @@ import com.almalence.opencam.ui.GUI.CameraParameter;
 
 //-+- -->
 
-public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
-// AutoFocusCallback
+public class PanoramaAugmentedCapturePlugin extends PluginCapture
 {
 	private static final String			TAG								= "Almalence";
 
@@ -143,8 +139,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	private static Sensor				sensorGyroscope;
 	private VfGyroSensor				sensorSoftGyroscope			= null;
 	private boolean						remapOrientation;
-
-	// private boolean aboutToTakePicture = false;
 
 	private AugmentedRotationListener	rotationListener;
 
@@ -374,15 +368,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen
 						.getMainContext());
 				prefs.edit().putBoolean(sModePref, modeSweep).commit();
-				
-//				PluginManager.getInstance().setSwitchModeType(true);
-//				ApplicationScreen.instance.relaunchCamera();
+
 				new CountDownTimer(100, 100)
 				{
-					public void onTick(long millisUntilFinished)
-					{
-						// Not used
-					}
+					public void onTick(long millisUntilFinished){}
 
 					public void onFinish()
 					{
@@ -433,19 +422,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			this.engine.setDistanceLimit(0.1f);
 			this.engine.setMiniDisplayMode(true);
 
-			//SM: removed 28.10.14 as causing problems on S4 (5905). Decided not useful on other devices.
-//			if (!CameraController.isUseHALv3())
-//			{
-//				try
-//				{
-//					Camera.Parameters cp = CameraController.getCameraParameters();
-//					cp.setRecordingHint(true);
-//					CameraController.setCameraParameters(cp);
-//				} catch (Exception e)
-//				{
-//					e.printStackTrace();
-//				}
-//			}
+			//SM: removed 28.10.14 as causing problems on S4 (5905). Decided not useful on other devices. cp.setRecordingHint(true);
 		} else
 		{
 			this.engine.setFrameIntersection(intersection);
@@ -456,20 +433,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			this.engine.setMaxFrames(prefMemoryRelax ? frames_fit_count * 2 : frames_fit_count);
 			this.engine.setDistanceLimit(0.1f);
 			this.engine.setMiniDisplayMode(false);
-
-			//SM: removed 28.10.14 as causing problems on S4 (5905). Decided not useful on other devices.
-//			if (!CameraController.isUseHALv3())
-//			{
-//				try
-//				{
-//					Camera.Parameters cp = CameraController.getCameraParameters();
-//					cp.setRecordingHint(false);
-//					CameraController.setCameraParameters(cp);
-//				} catch (Exception e)
-//				{
-//					e.printStackTrace();
-//				}
-//			}
 		}
 	}
 
@@ -500,10 +463,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	{
 		ApplicationScreen.instance.muteShutter(false);
 
-//		final Message msg = new Message();
-//		msg.what = ApplicationInterface.MSG_OPENGL_LAYER_SHOW;
-//		ApplicationScreen.getMessageHandler().sendMessage(msg);
-
 		showGyroWarnOnce = false;
 		aeLockedByPanorama = false;
 		wbLockedByPanorama = false;
@@ -523,16 +482,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				this.stopCapture();
 		}
 
-		if (!CameraController.isUseHALv3() && CameraController.isCameraCreated())
-		{
-			Camera.Parameters cp = CameraController.getCameraParameters();
-			if (cp != null)
-			{
-				cp.setRecordingHint(false);
-				CameraController.setCameraParameters(cp);
-			}
-		}
-		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 
 		prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), camera2Preference).commit();
@@ -655,8 +604,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		
 		this.pictureWidth = size.getWidth();
 		this.pictureHeight = size.getHeight();
-		// Log.d(TAG, String.format("Picture dimensions: %dx%d",
-		// size.getWidth(), size.getHeight()));
 
 		CameraController.setCameraImageSize(new CameraController.Size(this.pictureWidth, this.pictureHeight));
 	}
@@ -664,10 +611,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	@Override
 	public void setCameraPreviewSize()
 	{
-		// final Camera camera = CameraController.getCamera();
-		// if (camera == null)
-		// return;
-
 		final CameraController.Size previewSize;
 		if (this.modeSweep)
 		{
@@ -683,8 +626,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		this.previewHeight = previewSize.getHeight();
 
 		ApplicationScreen.instance.setCameraPreviewSize(previewSize.getWidth(), previewSize.getHeight());;
-//		ApplicationScreen.setPreviewWidth(previewSize.getWidth());
-//		ApplicationScreen.setPreviewHeight(previewSize.getHeight());
 	}
 
 	@Override
@@ -713,8 +654,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		this.pictureHeight = picture_sizes.get(this.prefResolution).getHeight();
 
 		CameraController.setCameraImageSize(new CameraController.Size(this.pictureWidth, this.pictureHeight));
-//		ApplicationScreen.setImageWidth(this.pictureWidth);
-//		ApplicationScreen.setImageHeight(this.pictureHeight);
 
 		CameraController.setPictureSize(this.pictureWidth, this.pictureHeight);
 
@@ -784,8 +723,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				|| (HorizontalViewFromAspect > 1.1f * this.viewAngleX))
 			this.viewAngleX = HorizontalViewFromAspect;
 
-		// this.setMode();
-
 		if (!this.prefHardwareGyroscope)
 		{
 			this.sensorSoftGyroscope.SetFrameParameters(this.previewWidth, this.previewHeight, this.viewAngleX,
@@ -829,7 +766,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 						|| fm == CameraParameters.MF_MODE)
 				&& !ApplicationScreen.instance.getAutoFocusLock())
 		{
-			// aboutToTakePicture = true;
 			this.focused = false;
 		} else if (!takingAlready)
 		{
@@ -1122,27 +1058,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		{
 			if (this.modeSweep)
 			{
-				// File file = new File(saveDir, "PANORAMA_PREVIEW_FRAME_" +
-				// (CameraController.isUseHALv3()? "NEW" : "OLD") + ".jpg");
-				// OutputStream os = null;
-				// try
-				// {
-				// os = new FileOutputStream(file);
-				// com.almalence.YuvImage out;
-				// out = new com.almalence.YuvImage(image, ImageFormat.NV21,
-				// ApplicationScreen.getPreviewWidth(), ApplicationScreen.getPreviewHeight(),
-				// null);
-				// if(out.compressToJpeg(new Rect(0, 0, out.getWidth(),
-				// out.getHeight()), 95, os))
-				// Log.e(TAG,
-				// "++++++++++++++++++++++++++++++++++++++ PANORAMA FRAME SAVED. Width x Height = "
-				// + ApplicationScreen.getPreviewWidth() + " x " +
-				// ApplicationScreen.getPreviewHeight());
-				// } catch (FileNotFoundException e)
-				// {
-				// // TODO Auto-generated catch block
-				// e.printStackTrace();
-				// }
 				this.engine.recordCoordinates();
 				this.engine.onFrameAdded(image);
 				this.isFirstFrame = false;
@@ -1172,20 +1087,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	{
 		this.previewRestartFlag = false;
 
-		byte[] data = null;
-//		if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
-//		{
-//			 data = new byte[dataOrig.length];
-//			int imageWidth = ApplicationScreen.getPreviewWidth();
-//			int imageHeight = ApplicationScreen.getPreviewHeight();
-//			ImageConversion.TransformNV21(dataOrig, data, imageWidth, imageHeight, 0, 1, 0);
-//		}
-//		else
-			data = dataOrig;
-		
 		if (!this.prefHardwareGyroscope && this.sensorSoftGyroscope != null)
 		{
-			this.sensorSoftGyroscope.NewData(data);
+			this.sensorSoftGyroscope.NewData(dataOrig);
 		}
 
 		synchronized (this.engine)
@@ -1199,7 +1103,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				{
 					if (this.modeSweep)
 					{
-						this.takePictureUnimode(SwapHeap.SwapToHeap(data));
+						this.takePictureUnimode(SwapHeap.SwapToHeap(dataOrig));
 					} else
 					{
 						this.takePictureUnimode(0);
@@ -1213,8 +1117,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	public void onAutoFocus(final boolean success)
 	{
 		this.focused = true;
-		// if (aboutToTakePicture)
-		// startCapture();
 	}
 
 	private Handler captureDelayHandler = new Handler();
@@ -1236,7 +1138,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 			if (!this.inCapture)
 			{
 				takingAlready = false;
-				// this.aboutToTakePicture = false;
 				return;
 			}
 		}
@@ -1245,7 +1146,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 		this.coordsRecorded = false;
 		
-		// Log.d(TAG, "Perform CAPTURE Panorama");
 		captureDelayHandler.postDelayed(captureDelayRunnable, 500);
 	}
 
@@ -1342,17 +1242,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 	public void onImageTaken(int frame, byte[] frameDataOrig, int frame_len, int format)
 	{
 		final boolean goodPlace;
-
-		byte[] frameData = null;
-//		if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
-//		{
-//			frameData = new byte[frameDataOrig.length];
-//			int imageWidth = ApplicationScreen.getPreviewWidth();
-//			int imageHeight = ApplicationScreen.getPreviewHeight();
-//			ImageConversion.TransformNV21(frameDataOrig, frameData, imageWidth, imageHeight, 0, 1, 0);
-//		}
-//		else
-			frameData = frameDataOrig;
 		
 		synchronized (this.engine)
 		{
@@ -1366,8 +1255,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 
 			if (frame == 0)
 			{
-				frame = SwapHeap.SwapToHeap(frameData);
-				frame_len = frameData.length;
+				frame = SwapHeap.SwapToHeap(frameDataOrig);
+				frame_len = frameDataOrig.length;
 			}
 
 			goodPlace = this.engine.onFrameAdded(frame);
@@ -1415,8 +1304,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		this.previewRestartFlag = true;
 
 		CameraController.startCameraPreview();
-
-		// initSensors(); // attempt to fix LG G2 accelerometer slowdown
 
 		new CountDownTimer(1000, 330)
 		{
@@ -1559,8 +1446,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 				PixelsShiftY = angleY * R;
 
 				CameraController.Size imageSize = CameraController.getCameraImageSize();
-				// convert rotation around center into rotation around top-left
-				// corner
+				// convert rotation around center into rotation around top-left corner
 				PixelsShiftX += imageSize.getWidth() / 2 * (1 - FloatMath.cos(angleR))
 						+ imageSize.getHeight() / 2 * FloatMath.sin(angleR);
 				PixelsShiftY += -imageSize.getWidth() / 2 * FloatMath.sin(angleR) + imageSize.getHeight()
@@ -1633,8 +1519,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture // implements
 		return vo;
 	}
 
-	// as in:
-	// http://stackoverflow.com/questions/5188561/signed-angle-between-two-3d-vectors-with-same-origin-within-the-same-plane-reci
+	// as in: http://stackoverflow.com/questions/5188561/signed-angle-between-two-3d-vectors-with-same-origin-within-the-same-plane-reci
 	private static float signedAngle(final Vector3d Va, final Vector3d Vb, final Vector3d Vn)
 	{
 		try
