@@ -546,6 +546,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public static void setCaptureFormat(int capture)
 	{
 		instance.captureFormat = capture;
+		CameraController.setCaptureFormat(capture);
 	}
 
 	public static int getPreviewSurfaceLayoutWidth()
