@@ -372,7 +372,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 	int inputFileCount = env->GetArrayLength(inputFiles);
 	for (int i = 0; i < inputFileCount; i++)
 	{
-		__android_log_print(ANDROID_LOG_ERROR, "Mp4Editor", "Process file %d", i);
+//		__android_log_print(ANDROID_LOG_ERROR, "Mp4Editor", "Process file %d", i);
 		jstring string = (jstring) env->GetObjectArrayElement(inputFiles, i);
 		const char *input_filename = env->GetStringUTFChars(string, 0);
 
@@ -404,9 +404,9 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 
 		if(i == 0)
 		{
-			__android_log_print(ANDROID_LOG_ERROR, "Mp4Editor", "Clone track from first file");
+//			__android_log_print(ANDROID_LOG_ERROR, "Mp4Editor", "Clone track from first file");
 			prototype_track_video  = track_video->Clone();
-			__android_log_print(ANDROID_LOG_ERROR, "Mp4Editor", "Cloned ");
+//			__android_log_print(ANDROID_LOG_ERROR, "Mp4Editor", "Cloned ");
 			movie_time_scale 	   = track_video->GetMovieTimeScale();
 			media_time_scale 	   = track_video->GetMediaTimeScale();
 			movie_time_scale_audio = track_audio->GetMovieTimeScale();
@@ -442,7 +442,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 									sample.GetSize(),
 									sample.GetDuration(),
 									sample.GetDescriptionIndex(),
-									sample.GetDts(),
+									0,
 									sample.GetCtsDelta(),
 									sample.IsSync());
 			AP4_RELEASE(data_stream); // release our ref, the table has kept its own ref.
@@ -480,7 +480,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 									sample.GetSize(),
 									sample.GetDuration(),
 									sample.GetDescriptionIndex(),
-									sample.GetDts(),
+									0,
 									sample.GetCtsDelta(),
 									sample.IsSync());
 			AP4_RELEASE(data_stream); // release our ref, the table has kept its own ref.
@@ -742,10 +742,10 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 	// set the file type
 	file.SetFileType(AP4_FILE_BRAND_ISOM, 0, &brands[0], brands.ItemCount());
 
-	__android_log_print(ANDROID_LOG_ERROR, "Mp4Editor", "Start to write file");
+//	__android_log_print(ANDROID_LOG_ERROR, "Mp4Editor", "Start to write file");
 	// write the file to the output
 	AP4_FileWriter::Write(file, *output);
-	__android_log_print(ANDROID_LOG_ERROR, "Mp4Editor", "Output file writed");
+//	__android_log_print(ANDROID_LOG_ERROR, "Mp4Editor", "Output file writed");
 
 	// cleanup
 	output->Release();

@@ -249,7 +249,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public static int					sDefaultFocusValue			= CameraParameters.AF_MODE_CONTINUOUS_PICTURE;
 	public static int					sDefaultFlashValue			= CameraParameters.FLASH_MODE_OFF;
 	public static int					sDefaultMeteringValue		= CameraParameters.meteringModeAuto;
-	public static Long					lDefaultExposureTimeValue	= 33333333l;
+	public static Long					lDefaultExposureTimeValue	= 33333333L;
 	public static int					sDefaultCollorEffectValue	= CameraParameters.COLOR_EFFECT_MODE_OFF;
 
 	private File						forceFilename				= null;
