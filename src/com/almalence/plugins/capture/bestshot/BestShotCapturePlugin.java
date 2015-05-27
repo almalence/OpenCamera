@@ -31,6 +31,7 @@ import android.hardware.camera2.CaptureResult;
  import com.almalence.opencam_plus.ui.GUI.CameraParameter;
  import com.almalence.opencam_plus.CameraParameters;
  import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.opencam_plus.ApplicationInterface;
  import com.almalence.opencam_plus.PluginCapture;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.R;
@@ -57,19 +58,13 @@ public class BestShotCapturePlugin extends PluginCapture
 	private int	imageAmount	= 5;
 	private int	preferenceFlashMode;
 
-	// private static String sImagesAmountPref;
-
 	public BestShotCapturePlugin()
 	{
 		super("com.almalence.plugins.bestshotcapture", 0, 0, 0, null);
 	}
 
 	@Override
-	public void onCreate()
-	{
-		// sImagesAmountPref =
-		// ApplicationScreen.getAppResources().getString(R.string.Preference_BestShotImagesAmount);
-	}
+	public void onCreate() {}
 
 	@Override
 	public void onResume()
@@ -77,7 +72,6 @@ public class BestShotCapturePlugin extends PluginCapture
 		imagesTaken = 0;
 		inCapture = false;
 		aboutToTakePicture = false;
-		// refreshPreferences();
 
 		if (CameraController.isUseHALv3() && CameraController.isNexus())
 		{

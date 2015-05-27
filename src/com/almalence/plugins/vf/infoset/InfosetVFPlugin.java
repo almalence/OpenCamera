@@ -37,23 +37,21 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
  import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginViewfinder;
  import com.almalence.opencam_plus.R;
+ import com.almalence.opencam_plus.ApplicationInterface;
  +++ --> */
 // <!-- -+-
+import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.plugins.vf.histogram.Histogram;
 //-+- -->
 
 import com.almalence.util.Util;
@@ -484,10 +482,8 @@ public class InfosetVFPlugin extends PluginViewfinder
 				String currentSensetivityString = "ISO Auto";
 				currentSensitivityText.setText(currentSensetivityString);
 			}
-				
-				currentSensitivityText.setVisibility(View.VISIBLE);
-//			else
-//				currentSensitivityText.setVisibility(View.GONE);
+			currentSensitivityText.setVisibility(View.VISIBLE);
+
 		}
 
 		if (useCurrentExposureTimeMonitor && currentExposureTimeText != null)

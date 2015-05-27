@@ -20,9 +20,7 @@ package com.almalence.plugins.vf.aeawlock;
 
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
-import android.hardware.Camera;
 import android.preference.CheckBoxPreference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -32,17 +30,16 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
 
-import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginViewfinder;
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.opencam_plus.ApplicationInterface;
  +++ --> */
 // <!-- -+-
+import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
@@ -158,13 +155,6 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 			this.buttonsLayout.requestLayout();
 
 			((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout2)).requestLayout();
-
-//			aeLockButton.setOrientation(ApplicationScreen.getGUIManager().getLayoutOrientation());
-//			aeLockButton.invalidate();
-//			aeLockButton.requestLayout();
-//			awLockButton.setOrientation(ApplicationScreen.getGUIManager().getLayoutOrientation());
-//			awLockButton.invalidate();
-//			awLockButton.requestLayout();
 		}
 	}
 
@@ -283,7 +273,6 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 	{
 		if (arg1 == ApplicationInterface.MSG_AEWB_CHANGED)
 		{
-//			Camera.Parameters params = CameraController.getCameraParameters();
 			if (CameraController.isExposureLockSupported() && CameraController.isExposureLock())
 			{
 				Drawable icon = ApplicationScreen.getMainContext().getResources().getDrawable(icon_ae_lock);

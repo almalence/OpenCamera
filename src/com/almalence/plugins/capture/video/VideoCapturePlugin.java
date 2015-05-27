@@ -36,7 +36,6 @@ import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -58,7 +57,6 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.provider.MediaStore.MediaColumns;
 import android.provider.MediaStore.Video;
 import android.provider.MediaStore.Video.VideoColumns;
 import android.util.DisplayMetrics;
@@ -72,10 +70,8 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.RotateAnimation;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
@@ -91,7 +87,6 @@ import com.googlecode.mp4parser.authoring.builder.DefaultMp4Builder;
 import com.googlecode.mp4parser.authoring.container.mp4.MovieCreator;
 import com.googlecode.mp4parser.authoring.tracks.AppendTrack;
 
-import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
@@ -100,8 +95,10 @@ import com.almalence.opencam.ApplicationInterface;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.ui.GUI.ShutterButton;
+ import com.almalence.opencam_plus.ApplicationInterface;
  +++ --> */
 // <!-- -+-
+import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginCapture;
@@ -163,7 +160,6 @@ public class VideoCapturePlugin extends PluginCapture
 	public static final int						QUALITY_4K						= 4096;
 
 	private ImageView							rotateToLandscapeNotifier;
-	private boolean								showRotateToLandscapeNotifier	= false;
 	private boolean								showLandscapeNotification		= true;
 	private View								rotatorLayout;
 	private TimeLapseDialog						timeLapseDialog;
@@ -837,13 +833,11 @@ public class VideoCapturePlugin extends PluginCapture
 		{
 			if (!isRecording && (orientation == 90 || orientation == 270))
 			{
-				showRotateToLandscapeNotifier = true;
 				startrotateAnimation();
 				rotatorLayout.findViewById(R.id.rotatorImageView).setVisibility(View.VISIBLE);
 				rotatorLayout.findViewById(R.id.rotatorInnerImageView).setVisibility(View.VISIBLE);
 			} else
 			{
-				showRotateToLandscapeNotifier = false;
 				rotatorLayout.findViewById(R.id.rotatorInnerImageView).setVisibility(View.GONE);
 				rotatorLayout.findViewById(R.id.rotatorImageView).setVisibility(View.GONE);
 				if (rotateToLandscapeNotifier != null)

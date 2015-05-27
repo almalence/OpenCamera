@@ -47,7 +47,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.almalence.SwapHeap;
-import com.almalence.opencam.ApplicationInterface;
+
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
@@ -56,6 +56,7 @@ import com.almalence.opencam.ApplicationInterface;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.ui.GUI.CameraParameter;
+ import com.almalence.opencam_plus.ApplicationInterface;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.CameraParameters;
@@ -65,6 +66,7 @@ import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.GUI.CameraParameter;
 import com.almalence.opencam.R;
+import com.almalence.opencam.ApplicationInterface;
 //-+- -->
 import com.almalence.plugins.processing.night.AlmaShotNight;
 
@@ -143,29 +145,6 @@ public class NightCapturePlugin extends PluginCapture
 	@TargetApi(21)
 	public void onCreate()
 	{
-//		//onCreate called once at application starts. Initialize variables for camera2 API detection.
-//		usingCamera2API = CameraController.isUseHALv3(); 
-//		usingSuperMode = CameraController.isUseSuperMode();
-//
-//		if (usingSuperMode)
-//		{
-//			CameraCharacteristics camCharacter = CameraController.getCameraCharacteristics();
-//			minExposure = camCharacter.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE).getLower();
-//			minSensitivity = camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE).getLower();
-//			if (minExposure < 1000) minExposure = 1000; // not expecting minimum exposure to be below 1usec
-//			if (minSensitivity < 25) minSensitivity = 25; // not expecting minimum sensitivity to be below ISO25
-//			//Log.i("NightCapturePlugin", "minSensitivity: "+minSensitivity+" minExposure: "+minExposure+"ns");
-//			
-//			
-//			MainScreen.getGUIManager().showHelp(MainScreen.getInstance().getString(R.string.Super_Help_Header),
-//					MainScreen.getAppResources().getString(R.string.Super_Help),
-//					R.drawable.store_super, "superShowHelp");
-//		}
-//		else
-//		{
-//			cameraPreview = new GLCameraPreview(MainScreen.getMainContext());
-//		}
-		
 		nightVisionLayerShowPref = ApplicationScreen.getAppResources().getString(R.string.NightVisionLayerShow);
 		nightCaptureFocusPref = ApplicationScreen.getAppResources().getString(R.string.NightCaptureFocusPref);
 	}
@@ -184,10 +163,8 @@ public class NightCapturePlugin extends PluginCapture
 			CameraCharacteristics camCharacter = CameraController.getCameraCharacteristics();
 			minExposure = camCharacter.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE).getLower();
 			minSensitivity = camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE).getLower();
-			int max = camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE).getUpper();
 			if (minExposure < 1000) minExposure = 1000; // not expecting minimum exposure to be below 1usec
 			if (minSensitivity < 25) minSensitivity = 25; // not expecting minimum sensitivity to be below ISO25
-			//Log.i("NightCapturePlugin", "minSensitivity: "+minSensitivity+" minExposure: "+minExposure+"ns");
 		}
 		else
 		{
@@ -239,8 +216,6 @@ public class NightCapturePlugin extends PluginCapture
 
 		ApplicationScreen.setCaptureFormat(CameraController.YUV);
 		
-//		testFrame = 0;
-		
 		data1 = null;
 		data2 = null;
 		dataS = null;
@@ -260,8 +235,6 @@ public class NightCapturePlugin extends PluginCapture
 							: ApplicationScreen.sFrontFocusModePref, preferenceFocusMode).commit();
 		}
 		prefs.edit().putInt(ApplicationScreen.sFlashModePref, preferenceFlashMode).commit();
-		
-//		Log.e("Night", "onPause FOCUS PREF = " + preferenceFocusMode);
 		
 		CameraController.setCameraSceneMode(preferenceSceneMode);
 		if(!usingSuperMode)
@@ -401,8 +374,6 @@ public class NightCapturePlugin extends PluginCapture
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		CameraController.Size os = getOptimalPreviewSize(cs, imageSize.getWidth(), imageSize.getHeight());
 		ApplicationScreen.instance.setCameraPreviewSize(os.getWidth(), os.getHeight());
-//		ApplicationScreen.setPreviewWidth(os.getWidth());
-//		ApplicationScreen.setPreviewHeight(os.getHeight());
 	}
 
 	@Override
@@ -486,13 +457,6 @@ public class NightCapturePlugin extends PluginCapture
 		{
 			Log.e("CameraTest", "ApplicationScreen.setupCamera unable to setFlashMode");
 		}
-
-//		Message msg = new Message();
-//		if (OpenGLPreference)
-//			msg.what = ApplicationInterface.MSG_OPENGL_LAYER_SHOW;
-//		else
-//			msg.what = ApplicationInterface.MSG_OPENGL_LAYER_HIDE;
-//		ApplicationScreen.getMessageHandler().sendMessage(msg);
 	}
 	
 	@Override
@@ -613,15 +577,11 @@ public class NightCapturePlugin extends PluginCapture
 		burstGain = Math.max(sensorGain, minSensitivity);
 		long burstExposure = exposureTime;
 
-		Log.i("NightCapturePlugin", "gain: "+burstGain+" expoTime: "+burstExposure+"ns clipped: "+clipped);
-
 		if (clipped)
 		{
 			// find updated exposure and ISO parameters
 			// Exposure compensation is not working in an optimal way
 			// (appear to be changing exposure time, while it is optimal for us to reduce ISO, if possible) 
-			//int evIndex = (int)(fUnclip / fEvStep);
-			//superRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, evIndex);
 			float UnclipLinear = 2.0f;
 			
 			// first - attempt to reduce sensor ISO, but only if exposure time is short (<50msec)
@@ -666,18 +626,6 @@ public class NightCapturePlugin extends PluginCapture
 			CameraController.captureImagesWithParams(
 					total_frames, CameraController.YUV_RAW, null, null, null, null, true, true);
 		}
-
-		Log.i("NightCapturePlugin", "After adjusting: gain: "+burstGain+" expoTime: "+burstExposure+"ns");
-		
-//		int[] burstGainArray = new int[total_frames];
-//		long[] burstExposureArray = new long[total_frames];
-//		Arrays.fill(burstGainArray, burstGain);
-//		Arrays.fill(burstExposureArray, burstExposure);
-//		
-//		resultCompleted = 0; //Reset to get right capture result indexes in burst capturing.
-//		// capture the burst
-//		CameraController.captureImagesWithParams(
-//				total_frames, CameraController.YUV_RAW, null, null, burstGainArray, burstExposureArray, true, true);
 	}
 	
 	

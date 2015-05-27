@@ -27,7 +27,6 @@ import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.PluginCapture;
@@ -35,6 +34,7 @@ import com.almalence.opencam.ApplicationInterface;
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.ui.GUI.CameraParameter;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.opencam_plus.ApplicationInterface;
  import com.almalence.opencam_plus.CameraParameters;
  +++ --> */
 // <!-- -+-
@@ -42,6 +42,7 @@ import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
+import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.GUI.CameraParameter;
 import com.almalence.opencam.R;
@@ -62,9 +63,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	// almashot - related
 	public static int[]			evValues				= new int[MAX_HDR_FRAMES];
 	public static int[]			evIdx					= new int[MAX_HDR_FRAMES];
-	private int					cur_ev, frame_num, captureResult_num;
+	private int					frame_num, captureResult_num;
 	public static float			ev_step;
-	private int					evRequested, evLatency;
 	private boolean				cm7_crap;
 
 	// shared between activities
@@ -79,15 +79,11 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	private int					preferenceFlashMode;
 
 	// set exposure based on onpreviewframe
-	private boolean				previewMode				= true;
-	private boolean				previewWorking			= false;
 	private CountDownTimer		cdt						= null;
 
 	private static String		sEvPref;
 	private static String		sRefocusPref;
 	private static String		sUseLumaPref;
-
-	private static String		sExpoPreviewModePref;
 
 	public ExpoBracketingCapturePlugin()
 	{
@@ -103,9 +99,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		sEvPref = ApplicationScreen.getAppResources().getString(R.string.Preference_ExpoBracketingPref);
 		sRefocusPref = ApplicationScreen.getAppResources().getString(R.string.Preference_ExpoBracketingRefocusPref);
 		sUseLumaPref = ApplicationScreen.getAppResources().getString(R.string.Preference_ExpoBracketingUseLumaPref);
-
-		sExpoPreviewModePref = ApplicationScreen.getAppResources()
-				.getString(R.string.Preference_ExpoBracketingPreviewModePref);
 	}
 
 	@Override
@@ -119,8 +112,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	{
 		inCapture = false;
 		aboutToTakePicture = false;
-		evRequested = 0;
-		evLatency = 0;
 
 		ApplicationScreen.instance.muteShutter(false);
 
@@ -132,13 +123,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		if (CameraController.isUseHALv3() && CameraController.isNexus())
 			ApplicationScreen.instance.setFlashModePref(CameraParameters.FLASH_MODE_OFF);
 
-		if (prefs.contains(sExpoPreviewModePref))
-		{
-			previewMode = prefs.getBoolean(sExpoPreviewModePref, true);
-		} else
-			previewMode = true;
-
-		previewWorking = false;
 		cdt = null;
 
 		if (PluginManager.getInstance().getActiveModeID().equals("hdrmode"))
@@ -223,7 +207,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			Date curDate = new Date();
 			SessionID = curDate.getTime();
 
-			previewWorking = false;
 			cdt = null;
 			startCaptureSequence();
 		}
@@ -238,7 +221,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			inCapture = true;
 
 			// reiniting for every shutter press
-			cur_ev = 0;
 			frame_num = 0;
 			captureResult_num = 0;
 
@@ -320,7 +302,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		{
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
 					String.valueOf(frame_num + imagesTakenRAW));
-			previewWorking = true;
 			if (cdt != null)
 			{
 				cdt.cancel();

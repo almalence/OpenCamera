@@ -50,17 +50,16 @@ import android.widget.TextView;
 
 import com.almalence.SwapHeap;
 
-import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
+ import com.almalence.opencam_plus.ApplicationInterface;
  import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginProcessing;
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
+import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
@@ -482,13 +481,11 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		float[] f = new float[9];
 		imgView.getImageMatrix().getValues(f);
 
-		// Extract the scale values using the constants (if aspect ratio
-		// maintained, scaleX == scaleY)
+		// Extract the scale values using the constants (if aspect ratio maintained, scaleX == scaleY)
 		final float scaleX = f[Matrix.MSCALE_X];
 		final float scaleY = f[Matrix.MSCALE_Y];
 
-		// Get the drawable (could also get the bitmap behind the drawable and
-		// getWidth/getHeight)
+		// Get the drawable (could also get the bitmap behind the drawable and getWidth/getHeight)
 		final Drawable d = imgView.getDrawable();
 		final int origW = d.getIntrinsicWidth();
 		final int origH = d.getIntrinsicHeight();

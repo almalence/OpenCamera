@@ -23,7 +23,6 @@ import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -47,7 +46,6 @@ import com.google.zxing.common.HybridBinarizer;
  import com.almalence.opencam_plus.PluginViewfinder;
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.SoundPlayer;
- import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 //<!-- -+-
 import com.almalence.opencam.ApplicationScreen;
@@ -56,7 +54,6 @@ import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
 import com.almalence.opencam.SoundPlayer;
-import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 public class BarcodeScannerVFPlugin extends PluginViewfinder
@@ -69,7 +66,6 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 	private final MultiFormatReader		mMultiFormatReader		= new MultiFormatReader();
 	private SoundPlayer					mSoundPlayer			= null;
 	private static Boolean				mBarcodeScannerState	= OFF;
-	private static final Object			lock					= new Object();
 	private static Boolean				decodedProcessing		= false;
 	private int							mFrameCounter			= 0;
 	private int							mOrientation			= 0;

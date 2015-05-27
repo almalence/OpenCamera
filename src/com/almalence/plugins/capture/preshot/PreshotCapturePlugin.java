@@ -25,18 +25,14 @@ import android.content.SharedPreferences;
 import android.hardware.camera2.CaptureResult;
 import android.os.Build;
 import android.os.CountDownTimer;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.almalence.opencam.ApplicationInterface;
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
@@ -44,6 +40,7 @@ import com.almalence.opencam.ApplicationInterface;
  import com.almalence.opencam_plus.PluginCapture;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.R;
+ import com.almalence.opencam_plus.ApplicationInterface;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.CameraParameters;
@@ -51,6 +48,7 @@ import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
+import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
@@ -417,7 +415,6 @@ public class PreshotCapturePlugin extends PluginCapture
 			t1 = System.currentTimeMillis();
 			System.gc();
 
-			//??? should it be 0? frmCnt seems never to be 0! 
 			if (frmCnt == 1)
 				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
 
@@ -530,7 +527,6 @@ public class PreshotCapturePlugin extends PluginCapture
 		{
 			if (CameraController.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
 				return;
-	//				inCapture = true;
 	
 			createRequestIDList(1);
 			CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, false, true);
