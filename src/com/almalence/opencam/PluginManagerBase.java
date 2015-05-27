@@ -1574,6 +1574,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			boolean hasDNGResult = false;
 			for (int i = 1; i <= imagesAmount; i++)
 			{
+				hasDNGResult = false;
 				String format = getFromSharedMem("resultframeformat" + i + Long.toString(sessionID));
 
 				if (format != null && format.equalsIgnoreCase("dng"))
@@ -1968,6 +1969,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			boolean hasDNGResult = false;
 			for (int i = 1; i <= imagesAmount; i++)
 			{
+				hasDNGResult = false;
 				String format = getFromSharedMem("resultframeformat" + i + Long.toString(sessionID));
 
 				if (format != null && format.equalsIgnoreCase("dng"))
@@ -2217,7 +2219,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 				values.put(ImageColumns.BUCKET_DISPLAY_NAME, name);
 				values.put(ImageColumns.DATA, fileName);
 
-				if (!enableExifTagOrientation)
+				if (!enableExifTagOrientation && !hasDNGResult)
 				{
 					Matrix matrix = new Matrix();
 					if (writeOrientationTag && (orientation + additionalRotationValue) != 0)
@@ -2246,20 +2248,49 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 						}
 					}
 				}
-
-				File modifiedFile = saveExifTags(bufFile, sessionID, i, x, y, exif_orientation, useGeoTaggingPrefExport, enableExifTagOrientation);
-				bufFile.delete();
-
-				if (ApplicationScreen.getForceFilename() == null)
-				{
-					// Copy buffer image with exif tags into result file.
+				
+				File modifiedFile = null;
+				if (!hasDNGResult) {
+					modifiedFile = saveExifTags(bufFile, sessionID, i, x, y, exif_orientation, useGeoTaggingPrefExport, enableExifTagOrientation);
+				}
+				if (modifiedFile != null) {
+					bufFile.delete();
+					
+					if (ApplicationScreen.getForceFilename() == null)
+					{
+						// Copy buffer image with exif tags into result file.
+						InputStream is = null;
+						int len;
+						byte[] buf = new byte[1024];
+						try
+						{
+							os = ApplicationScreen.instance.getContentResolver().openOutputStream(file.getUri());
+							is = new FileInputStream(modifiedFile);
+							while ((len = is.read(buf)) > 0)
+							{
+								os.write(buf, 0, len);
+							}
+							is.close();
+							os.close();
+						} catch (Exception e)
+						{
+							e.printStackTrace();
+						}
+					} else
+					{
+						copyToForceFileName(modifiedFile);
+					}
+					
+					modifiedFile.delete();
+				} else {
+					// Copy buffer image into result file.
 					InputStream is = null;
 					int len;
 					byte[] buf = new byte[1024];
 					try
 					{
 						os = ApplicationScreen.instance.getContentResolver().openOutputStream(file.getUri());
-						is = new FileInputStream(modifiedFile);
+						is = new FileInputStream(bufFile);
 						while ((len = is.read(buf)) > 0)
 						{
 							os.write(buf, 0, len);
@@ -2270,17 +2301,13 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 					{
 						e.printStackTrace();
 					}
-				} else
-				{
-					copyToForceFileName(modifiedFile);
+					bufFile.delete();
 				}
-
-				modifiedFile.delete();
+				
+				Uri uri = ApplicationScreen.instance.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+				broadcastNewPicture(uri);
 			}
-
-			Uri uri = ApplicationScreen.instance.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
-			ApplicationScreen.instance.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
-
+			
 			ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED);
 		} catch (IOException e)
 		{
