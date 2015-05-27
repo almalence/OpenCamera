@@ -164,8 +164,6 @@ public class MainScreen extends ApplicationScreen
 	private String				saveToPreference;
 	private boolean				sortByDataPreference;
 
-	private boolean				captureRAW;
-
 	private static boolean		maxScreenBrightnessPreference;
 
 	// >>Description
@@ -1049,7 +1047,6 @@ public class MainScreen extends ApplicationScreen
 					maxScreenBrightnessPreference = prefs.getBoolean("maxScreenBrightnessPref", false);
 					setScreenBrightness(maxScreenBrightnessPreference);
 
-					captureRAW = prefs.getBoolean(MainScreen.sCaptureRAWPref, false);
 					MainScreen.thiz.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
 
 					boolean openCamera = false;

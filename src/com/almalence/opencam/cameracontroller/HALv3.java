@@ -2084,12 +2084,12 @@ public class HALv3
 		{
 			try
 			{
-				if(HALv3.autoFocusTriggered)
-					Log.e(TAG, "CAPTURE_AF_STATE = " + result.get(CaptureResult.CONTROL_AF_STATE));
+//				if(HALv3.autoFocusTriggered)
+//					Log.e(TAG, "CAPTURE_AF_STATE = " + result.get(CaptureResult.CONTROL_AF_STATE));
 				if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED
 						&& HALv3.autoFocusTriggered)
 				{
-					 Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED");
+//					 Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED");
 					resetCaptureCallback();
 					CameraController.onAutoFocus(true);
 					HALv3.autoFocusTriggered = false;
@@ -2098,7 +2098,7 @@ public class HALv3
 				else if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED
 						&& HALv3.autoFocusTriggered)
 				{
-					Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED");
+//					Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED");
 					resetCaptureCallback();
 					CameraController.onAutoFocus(false);
 					HALv3.autoFocusTriggered = false;
@@ -2173,8 +2173,8 @@ public class HALv3
 					CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE);
 			try
 			{
-				Log.e(TAG,
-						"resetCaptureCallback. CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE");
+//				Log.e(TAG,
+//						"resetCaptureCallback. CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE");
 				resetRequestId = HALv3.getInstance().mCaptureSession.capture(
 						HALv3.previewRequestBuilder.build(), captureCallback, null);
 				CameraController.iCaptureID = resetRequestId;

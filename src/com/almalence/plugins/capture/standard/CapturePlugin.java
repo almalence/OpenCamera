@@ -162,7 +162,7 @@ public class CapturePlugin extends PluginCapture
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		ModePreference = prefs.getString("modeStandardPref", "1");
 		
-		captureRAW = (prefs.getBoolean(MainScreen.sCaptureRAWPref, false) && CameraController.isRAWCaptureSupported());
+		captureRAW = prefs.getBoolean(MainScreen.sCaptureRAWPref, false);
 	}
 
 	@Override

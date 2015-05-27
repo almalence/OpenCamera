@@ -1067,7 +1067,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT)
 							CameraMirrored = true;
 						else
-							camera = Camera.open();
+							CameraMirrored = false;
 
 						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
 							setAutoFocusMoveCallback(camera);
