@@ -195,8 +195,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private static final Integer							ICON_EV						= R.drawable.gui_almalence_settings_exposure;
 	private static final Integer							ICON_CAM					= R.drawable.gui_almalence_settings_changecamera_back;
 	private static final Integer							ICON_SETTINGS				= R.drawable.gui_almalence_settings_more_settings;
-	private static final Integer							ICON_IMAGE_SIZE				= R.drawable.gui_almalence_settings_more_settings;
-	private static final Integer							ICON_COLLOR_EFFECT			= R.drawable.gui_almalence_settings_more_settings;
+	private static final Integer							ICON_IMAGE_SIZE				= R.drawable.gui_almalence_mode_image_sizes;
+	private static final Integer							ICON_COLLOR_EFFECT			= R.drawable.gui_almalence_mode_color_effects;
 	private static final Integer							ICON_SELF_TIMER_ACTIVE		= R.drawable.gui_almalence_mode_selftimer_controlcative;
 	private static final Integer							ICON_SELF_TIMER_INACTIVE	= R.drawable.gui_almalence_mode_selftimer_control;
 
