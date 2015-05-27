@@ -7,10 +7,10 @@ import android.content.Context;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 
 import com.almalence.opencam.R;
 import com.almalence.sony.cameraremote.ServerDevice.ApiService;
@@ -59,9 +59,9 @@ public class DeviceListAdapter extends BaseAdapter {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
-            Button buttonView = (Button) convertView;
-            if (buttonView == null) {
-                buttonView = (Button) mInflater.inflate(R.layout.gui_almalence_device_list_item, parent, false);
+        	RelativeLayout view = (RelativeLayout) convertView;
+            if (view == null) {
+                view = (RelativeLayout) mInflater.inflate(R.layout.gui_almalence_device_list_item, parent, false);
             }
             ServerDevice device = (ServerDevice) getItem(position);
             ApiService apiService = device.getApiService("camera");
@@ -70,10 +70,12 @@ public class DeviceListAdapter extends BaseAdapter {
                 endpointUrl = apiService.getEndpointUrl();
             }
 
+            Button buttonView = (Button) view.findViewById(R.id.list_item_text);
+            
             // Label
             String htmlLabel = device.getFriendlyName();
             buttonView.setText(Html.fromHtml(htmlLabel));
             
-            return buttonView;
+            return view;
         }
     }

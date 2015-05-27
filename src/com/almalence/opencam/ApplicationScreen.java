@@ -861,7 +861,10 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 			}
 		} else
 		{
-			// Sony camera
+			ApplicationScreen.getGUIManager().setCameraModeGUI(0);
+			ApplicationScreen.instance.pauseMain();
+			ApplicationScreen.instance.switchingMode(false);
+			ApplicationScreen.instance.resumeMain();
 		}
 	}
 

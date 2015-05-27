@@ -55,13 +55,8 @@ public class NFCHandler {
 	public static Pair<String, String> getCameraWifiSettingsFromTag(Tag tag, Parcelable[] messages) 
 			throws Exception{
 
-		Ndef ndef = Ndef.get(tag);
-		ndef.connect();
-
 		NdefRecord record = ((NdefMessage) messages[0]).getRecords()[0];
 		Pair<String, String> cameraWifiSettings = decodeSonyPPMMessage(record);
-
-		ndef.close();
 
 		return cameraWifiSettings;
 	}
