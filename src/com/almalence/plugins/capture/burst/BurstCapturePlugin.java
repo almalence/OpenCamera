@@ -160,8 +160,7 @@ public class BurstCapturePlugin extends PluginCapture
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 			imageAmount = Integer.parseInt(prefs.getString(sImagesAmountPref, "3"));
 			pauseBetweenShots = Integer.parseInt(prefs.getString(sPauseBetweenShotsPref, "0"));
-			captureRAW = (prefs.getBoolean(ApplicationScreen.sCaptureRAWPref, false) && CameraController
-					.isRAWCaptureSupported());
+			captureRAW = prefs.getBoolean(ApplicationScreen.sCaptureRAWPref, false);
 		} catch (Exception e)
 		{
 			Log.e("Burst capture", "Cought exception " + e.getMessage());

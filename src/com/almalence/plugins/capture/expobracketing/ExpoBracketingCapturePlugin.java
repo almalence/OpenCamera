@@ -375,7 +375,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 		EvPreference = prefs.getString(sEvPref, "0");
 
-		captureRAW = (prefs.getBoolean(ApplicationScreen.sCaptureRAWPref, false) && CameraController.isRAWCaptureSupported());
+		captureRAW = prefs.getBoolean(ApplicationScreen.sCaptureRAWPref, false);
 		if (PluginManager.getInstance().getActiveModeID().equals("hdrmode"))
 			captureRAW = false;
 	}
