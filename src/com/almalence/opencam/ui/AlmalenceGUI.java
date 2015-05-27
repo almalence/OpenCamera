@@ -796,58 +796,58 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	protected static final LinkedHashMap<Integer, Long>		EXPOSURE_TIME_VALUES		= new LinkedHashMap<Integer, Long>()
 																						{
 																							{
-																								put(0, 250000l);
-																								put(1, 500000l);
-																								put(2, 666667l);
-																								put(3, 800000l);
-																								put(4, 1250000l);
-																								put(5, 2000000l);
-																								put(6, 2857143l);
-																								put(7, 4000000l);
-																								put(8, 5000000l);
-																								put(9, 6250000l);
-																								put(10, 8000000l);
-																								put(11, 12500000l);
-																								put(12, 16666667l);
-																								put(13, 22222222l);
-																								put(14, 33333333l);
-																								put(15, 50000000l);
-																								put(16, 66666666l);
-																								put(17, 100000000l);
-																								put(18, 142857142l);
-																								put(19, 200000000l);
-																								put(20, 333333333l);
-																								put(21, 500000000l);
-																								put(22, 800000000l);
+																								put(0, 250000L);
+																								put(1, 500000L);
+																								put(2, 666667L);
+																								put(3, 800000L);
+																								put(4, 1250000L);
+																								put(5, 2000000L);
+																								put(6, 2857143L);
+																								put(7, 4000000L);
+																								put(8, 5000000L);
+																								put(9, 6250000L);
+																								put(10, 8000000L);
+																								put(11, 12500000L);
+																								put(12, 16666667L);
+																								put(13, 22222222L);
+																								put(14, 33333333L);
+																								put(15, 50000000L);
+																								put(16, 66666666L);
+																								put(17, 100000000L);
+																								put(18, 142857142L);
+																								put(19, 200000000L);
+																								put(20, 333333333L);
+																								put(21, 500000000L);
+																								put(22, 800000000L);
 																							}
 																						};
 
 	protected static final LinkedHashMap<Long, Integer>		EXPOSURE_TIME_INDEXES		= new LinkedHashMap<Long, Integer>()
 																						{
 																							{
-																								put(250000l, 0);
-																								put(500000l, 1);
-																								put(666667l, 2);
-																								put(800000l, 3);
-																								put(1250000l, 4);
-																								put(2000000l, 5);
-																								put(2857143l, 6);
-																								put(4000000l, 7);
-																								put(5000000l, 8);
-																								put(6250000l, 9);
-																								put(8000000l, 10);
-																								put(12500000l, 11);
-																								put(16666667l, 12);
-																								put(22222222l, 13);
-																								put(33333333l, 14);
-																								put(50000000l, 15);
-																								put(66666666l, 16);
-																								put(100000000l, 17);
-																								put(142857142l, 18);
-																								put(200000000l, 19);
-																								put(333333333l, 20);
-																								put(500000000l, 21);
-																								put(800000000l, 22);
+																								put(250000L, 0);
+																								put(500000L, 1);
+																								put(666667L, 2);
+																								put(800000L, 3);
+																								put(1250000L, 4);
+																								put(2000000L, 5);
+																								put(2857143L, 6);
+																								put(4000000L, 7);
+																								put(5000000L, 8);
+																								put(6250000L, 9);
+																								put(8000000L, 10);
+																								put(12500000L, 11);
+																								put(16666667L, 12);
+																								put(22222222L, 13);
+																								put(33333333L, 14);
+																								put(50000000L, 15);
+																								put(66666666L, 16);
+																								put(100000000L, 17);
+																								put(142857142L, 18);
+																								put(200000000L, 19);
+																								put(333333333L, 20);
+																								put(500000000L, 21);
+																								put(800000000L, 22);
 																							}
 																						};
 
@@ -2859,7 +2859,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	protected int getMinExposureTimeIndex(long expTime)
 	{
-		Long minKey = 0l;
+		Long minKey = 0L;
 		for (Long key : EXPOSURE_TIME_INDEXES.keySet())
 		{
 			if (key > expTime)
@@ -2877,7 +2877,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	protected int getMaxExposureTimeIndex(long expTime)
 	{
-		Long maxKey = 0l;
+		Long maxKey = 0L;
 		for (Long key : EXPOSURE_TIME_INDEXES.keySet())
 		{
 			if (key < expTime)
