@@ -3100,6 +3100,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 							params.set(CameraParameters.isoParam2, iso);
 						else if (params.get(CameraParameters.isoParam3) != null)
 							params.set(CameraParameters.isoParam3, iso);
+						else 
+							params.set(CameraParameters.isoParam, iso);
 						if (!setCameraParameters(params))
 						{
 							iso = isUseISO2Keys ? CameraController.mode_iso.get(mode) : CameraController.mode_iso2
@@ -3110,6 +3112,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 								params.set(CameraParameters.isoParam2, iso);
 							else if (params.get(CameraParameters.isoParam3) != null)
 								params.set(CameraParameters.isoParam3, iso);
+							else
+								params.set(CameraParameters.isoParam, iso);
 
 							setCameraParameters(params);
 						}
