@@ -1,4 +1,9 @@
+/* <!-- +++
+package com.almalence.opencam_plus.ui;
++++ --> */
+//<!-- -+-
 package com.almalence.opencam.ui;
+//-+- -->
 
 import android.annotation.SuppressLint;
 import android.media.MediaCodec;

@@ -18,17 +18,11 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.ui;
 
-/* <!-- +++
- import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.R;
- +++ --> */
-// <!-- -+-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
@@ -42,6 +36,11 @@ import android.view.animation.TranslateAnimation;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 
+/* <!-- +++
+ import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.opencam_plus.R;
+ +++ --> */
+// <!-- -+-
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.R;
 

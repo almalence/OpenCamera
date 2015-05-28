@@ -135,6 +135,8 @@
 	<string name="Pref_Advanced_Preference_Summary">Настройки для продвинутых пользователей</string>
 	<string name="Pref_Unlock_Preference_Title">Разблокировка</string>
 	<string name="Pref_Unlock_Preference_Summary">Разблокировать премиальные функции</string>
+	<string name="Pref_Help_Preference_Title">Помощь</string>
+	<string name="Pref_Help_Preference_Summary">Помощь и подсказки</string>
 	
 	<string name="layout_hint_bottom">Выбрать режим камеры</string>
 	<string name="layout_hint_center">Переключение экранов</string>
