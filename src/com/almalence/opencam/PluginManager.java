@@ -801,9 +801,7 @@ public class PluginManager extends PluginManagerBase
 		{
 			pf.getActivity().finish();
 			Preferences.closePrefs();
-			// <!-- -+-
 			MainScreen.setShowStore(true);
-			// -+- -->
 		}
 	}
 

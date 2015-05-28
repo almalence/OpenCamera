@@ -1718,13 +1718,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		View help = guiView.findViewById(R.id.mode_help);
 		help.bringToFront();
 
-		// <!-- -+-
 		if (MainScreen.isShowStore())
 		{
 			showStore();
 			MainScreen.setShowStore(false);
 		}
-		// -+- -->
 	}
 
 	@Override

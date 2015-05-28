@@ -1888,15 +1888,26 @@ public class MainScreen extends ApplicationScreen
 		}
 	}
 
+	
+	private static boolean			showStore					= false;
+	
 	public static Resources getAppResources()
 	{
 		return MainScreen.thiz.getResources();
 	}
 
+	public static void setShowStore(boolean show)
+	{
+		showStore = show;
+	}
+
+	public static boolean isShowStore()
+	{
+		return showStore;
+	}
+	
 	/*******************************************************/
 	/************************ Billing ************************/
-
-	private static boolean			showStore					= false;
 	// <!-- -+-
 	protected static OpenIabHelper	mHelper;
 
@@ -1992,16 +2003,6 @@ public class MainScreen extends ApplicationScreen
 		// "100000103369/000001018393");
 		// OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_SAMSUNG,
 		// "100000103369/000001018394");
-	}
-
-	public static void setShowStore(boolean show)
-	{
-		showStore = show;
-	}
-
-	public static boolean isShowStore()
-	{
-		return showStore;
 	}
 
 	public void activateCouponSale()
