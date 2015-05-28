@@ -2450,7 +2450,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				GridView gridview = (GridView) guiView.findViewById(R.id.isoGrid);
 				gridview.setAdapter(isoAdapter);
 
-				int initValue = preferences.getInt(ApplicationScreen.sISOPref, ApplicationScreen.sDefaultValue);
+				int initValue = preferences.getInt(ApplicationScreen.sISOPref, ApplicationScreen.sDefaultISOValue);
 				if (!activeISONames.contains(initValue))
 				{
 					if (CameraController.isFrontCamera())

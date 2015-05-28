@@ -3069,14 +3069,14 @@ public class MainScreen extends ApplicationScreen
 		isSaving = prefs.getBoolean("SaveConfiguration_ISOMode", false);
 		if (!isSaving)
 		{
-			prefsEditor.putInt(sISOPref, sDefaultValue);
+			prefsEditor.putInt(sISOPref, sDefaultISOValue);
 			prefsEditor.commit();
 		}
 
 		isSaving = prefs.getBoolean("SaveConfiguration_FlashMode", true);
 		if (!isSaving)
 		{
-			prefsEditor.putInt(sFlashModePref, sDefaultValue);
+			prefsEditor.putInt(sFlashModePref, sDefaultFlashValue);
 			prefsEditor.commit();
 		}
 

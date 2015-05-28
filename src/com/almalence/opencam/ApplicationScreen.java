@@ -248,6 +248,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public static int					sDefaultValue				= CameraParameters.SCENE_MODE_AUTO;
 	public static int					sDefaultFocusValue			= CameraParameters.AF_MODE_CONTINUOUS_PICTURE;
 	public static int					sDefaultFlashValue			= CameraParameters.FLASH_MODE_OFF;
+	public static int					sDefaultISOValue			= CameraParameters.ISO_AUTO;
 	public static int					sDefaultMeteringValue		= CameraParameters.meteringModeAuto;
 	public static Long					lDefaultExposureTimeValue	= 33333333L;
 	public static int					sDefaultCollorEffectValue	= CameraParameters.COLOR_EFFECT_MODE_OFF;
@@ -546,7 +547,9 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public static void setCaptureFormat(int capture)
 	{
 		instance.captureFormat = capture;
-		CameraController.setCaptureFormat(capture);
+		
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+			CameraController.setCaptureFormat(capture);
 	}
 
 	public static int getPreviewSurfaceLayoutWidth()
