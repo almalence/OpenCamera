@@ -9,6 +9,8 @@ package com.almalence.opencam.ui;
 import java.util.List;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.SharedPreferences;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
@@ -16,18 +18,21 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-
+import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.sony.cameraremote.DeviceListAdapter;
 import com.almalence.sony.cameraremote.ServerDevice;
 import com.almalence.sony.cameraremote.SimpleSsdpClient;
 import com.almalence.sony.cameraremote.utils.WifiListener;
-
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.R;
@@ -36,10 +41,6 @@ import com.almalence.sony.cameraremote.utils.WifiListener;
 
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.R;
-import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 public class SonyCameraDeviceExplorer implements WifiListener
@@ -66,6 +67,14 @@ public class SonyCameraDeviceExplorer implements WifiListener
 		}
 
 		dialog.show();
+		dialog.setOnDismissListener(new OnDismissListener()
+		{
+			@Override
+			public void onDismiss(DialogInterface dialog)
+			{
+				isSearchingDevice = false;
+			}
+		});
 
 		mListAdapter.clearDevices();
 
@@ -115,6 +124,8 @@ public class SonyCameraDeviceExplorer implements WifiListener
 
 	public void launchRemoteCamera(ServerDevice device)
 	{
+		hideExplorer();
+		
 		ApplicationScreen.instance.pauseMain();
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		prefs.edit().putInt(ApplicationScreen.sCameraModePref, CameraController.getNumberOfCameras() - 1).commit();
@@ -124,8 +135,6 @@ public class SonyCameraDeviceExplorer implements WifiListener
 
 		CameraController.setTargetServerDevice(device);
 		ApplicationScreen.instance.resumeMain();
-
-		hideExplorer();
 	}
 
 	public void hideExplorer()
@@ -278,19 +287,21 @@ public class SonyCameraDeviceExplorer implements WifiListener
 	@Override
 	public void onWifiConnected(String ssid)
 	{
-		ApplicationScreen.instance.runOnUiThread(new Runnable()
-		{
-			@Override
-			public void run()
+		if (isSearchingDevice) {
+			ApplicationScreen.instance.runOnUiThread(new Runnable()
 			{
-				if (progress != null) {
-					progress.dismiss();
+				@Override
+				public void run()
+				{
+					if (progress != null) {
+						progress.dismiss();
+					}
+					progress = ProgressDialog.show(ApplicationScreen.instance, ApplicationScreen.instance.getResources().getString(R.string.title_connecting),
+							ApplicationScreen.instance.getResources().getString(R.string.msg_connecting), true, true);
 				}
-				progress = ProgressDialog.show(ApplicationScreen.instance, ApplicationScreen.instance.getResources().getString(R.string.title_connecting),
-						ApplicationScreen.instance.getResources().getString(R.string.msg_connecting), true, true);
-			}
-		});
-		searchForCameraAndOpenLoop();
+			});
+			searchForCameraAndOpenLoop();
+		}
 	}
 
 	@Override

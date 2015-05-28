@@ -21,6 +21,7 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 //<!-- -+-
 package com.almalence.opencam;
+
 //-+- -->
 
 import java.io.ByteArrayInputStream;
@@ -110,6 +111,7 @@ import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
  +++ --> */
 //<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
+
 //-+- -->
 
 /***
@@ -1500,7 +1502,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 					DocumentFile dateFolder = saveDir.findFile(abcDir);
 					if (dateFolder == null)
 					{
-						dateFolder = saveDir.createFile(DocumentsContract.Document.MIME_TYPE_DIR, abcDir);
+						dateFolder = saveDir.createDirectory(abcDir);
 					}
 					saveDir = dateFolder;
 				}
@@ -1511,11 +1513,14 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		if (usePhoneMem || forceSaveToInternalMemory) // phone memory (internal
 														// sd card)
 		{
-			saveDir = DocumentFile.fromFile(new File(Environment
-					.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), abcDir));
+			saveDir = DocumentFile.fromFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM));
+			DocumentFile abcFolder = saveDir.findFile(abcDir);
+			if (abcFolder == null || !abcFolder.exists())
+			{
+				abcFolder = saveDir.createDirectory(abcDir);
+			}
+			saveDir = abcFolder;
 		}
-		if (!saveDir.exists())
-			saveDir.createFile(DocumentsContract.Document.MIME_TYPE_DIR, abcDir);
 
 		return saveDir;
 	}
@@ -1544,7 +1549,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			break;
 		}
 	}
-	
+
 	public void saveResultPicture(long sessionID)
 	{
 		getPrefs();
@@ -1863,7 +1868,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 					}
 				}
 
-				File modifiedFile = saveExifTags(tmpFile, sessionID, i, x, y, exif_orientation, useGeoTaggingPrefExport, enableExifTagOrientation);
+				File modifiedFile = saveExifTags(tmpFile, sessionID, i, x, y, exif_orientation,
+						useGeoTaggingPrefExport, enableExifTagOrientation);
 				if (ApplicationScreen.getForceFilename() == null)
 				{
 					file.delete();
@@ -2001,7 +2007,6 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 				{
 					file = DocumentFile.fromFile(ApplicationScreen.getForceFilename());
 				}
-				
 
 				// Create buffer image to deal with exif tags.
 				OutputStream os = null;
@@ -2149,7 +2154,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 								: ExifInterface.ORIENTATION_ROTATE_270;
 						break;
 					}
-				} else {
+				} else
+				{
 					switch ((additionalRotationValue + 360) % 360)
 					{
 					default:
@@ -2167,12 +2173,12 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
 								: ExifInterface.ORIENTATION_ROTATE_270;
 						break;
-					}					
+					}
 				}
 
 				if (!enableExifTagOrientation)
 					exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-				
+
 				DocumentFile parent = file.getParentFile();
 				String path = parent.toString().toLowerCase();
 				String name = parent.getName().toLowerCase();
@@ -2248,14 +2254,17 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 						}
 					}
 				}
-				
+
 				File modifiedFile = null;
-				if (!hasDNGResult) {
-					modifiedFile = saveExifTags(bufFile, sessionID, i, x, y, exif_orientation, useGeoTaggingPrefExport, enableExifTagOrientation);
+				if (!hasDNGResult)
+				{
+					modifiedFile = saveExifTags(bufFile, sessionID, i, x, y, exif_orientation, useGeoTaggingPrefExport,
+							enableExifTagOrientation);
 				}
-				if (modifiedFile != null) {
+				if (modifiedFile != null)
+				{
 					bufFile.delete();
-					
+
 					if (ApplicationScreen.getForceFilename() == null)
 					{
 						// Copy buffer image with exif tags into result file.
@@ -2280,9 +2289,10 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 					{
 						copyToForceFileName(modifiedFile);
 					}
-					
+
 					modifiedFile.delete();
-				} else {
+				} else
+				{
 					// Copy buffer image into result file.
 					InputStream is = null;
 					int len;
@@ -2303,11 +2313,12 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 					}
 					bufFile.delete();
 				}
-				
-				Uri uri = ApplicationScreen.instance.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+
+				Uri uri = ApplicationScreen.instance.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI,
+						values);
 				broadcastNewPicture(uri);
 			}
-			
+
 			ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED);
 		} catch (IOException e)
 		{
@@ -2326,7 +2337,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			boolean useGeoTaggingPrefExport, boolean enableExifTagOrientation)
 	{
 		addTimestamp(file, exif_orientation);
-		
+
 		// Set tag_model using ExifInterface.
 		// If we try set tag_model using ExifDriver, then standard
 		// gallery of android (Nexus 4) will crash on this file.
@@ -2890,7 +2901,11 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		int textHeight = text_bounds.bottom - text_bounds.top;
 		if (paint.getTextAlign() == Paint.Align.RIGHT || paint.getTextAlign() == Paint.Align.CENTER)
 		{
-			float width = paint.measureText(maxLengthText); // n.b., need to use measureText rather than getTextBounds here
+			float width = paint.measureText(maxLengthText); // n.b., need to use
+															// measureText
+															// rather than
+															// getTextBounds
+															// here
 			textWidth = (int) width;
 		}
 

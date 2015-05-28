@@ -3,6 +3,7 @@ package com.almalence.opencam_plus.cameracontroller;
 +++ --> */
 //<!-- -+-
 package com.almalence.opencam.cameracontroller;
+
 //-+- -->
 
 import java.io.BufferedInputStream;
@@ -24,9 +25,13 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
+import android.content.SharedPreferences;
 import android.hardware.Camera.Area;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 
@@ -40,12 +45,14 @@ import com.almalence.sony.cameraremote.ZoomCallbackSonyRemote;
 import com.almalence.util.ImageConversion;
 
 /* <!-- +++
-import com.almalence.opencam_plus.ApplicationInterface;
-import com.almalence.opencam_plus.PluginManager;
-import com.almalence.opencam_plus.PluginManagerInterface;
-import com.almalence.opencam_plus.R;
-+++ --> */
+ * import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.opencam_plus.ApplicationInterface;
+ import com.almalence.opencam_plus.PluginManager;
+ import com.almalence.opencam_plus.PluginManagerInterface;
+ import com.almalence.opencam_plus.R;
+ +++ --> */
 //<!-- -+-
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginManagerInterface;
@@ -136,6 +143,9 @@ public class SonyRemoteCamera
 					if (!mEventObserver.getLiveviewStatus() //
 							&& isCameraApiAvailable("startLiveview"))
 					{
+						if (!CameraController.isRemoteCamera())
+							return;
+						
 						if (appInterface.getSimpleStreamSurfaceView() != null
 								&& !appInterface.getSimpleStreamSurfaceView().isStarted())
 						{
@@ -237,6 +247,15 @@ public class SonyRemoteCamera
 
 		progress = ProgressDialog.show(mainContext, mainContext.getResources().getString(R.string.title_connecting),
 				mainContext.getResources().getString(R.string.msg_connecting), true);
+		progress.setCancelable(true);
+		progress.setOnCancelListener(new OnCancelListener()
+		{
+			@Override
+			public void onCancel(DialogInterface dialog)
+			{
+				switchBackToDeviceCamera();
+			}
+		});
 
 		prepareOpenConnection();
 	}
@@ -975,6 +994,9 @@ public class SonyRemoteCamera
 
 	private static void startLiveview()
 	{
+		if (!CameraController.isRemoteCamera())
+			return;
+		
 		if (appInterface.getSimpleStreamSurfaceView() == null)
 		{
 			Log.w(TAG, "startLiveview mLiveviewSurface is null.");
@@ -1006,6 +1028,9 @@ public class SonyRemoteCamera
 								@Override
 								public void run()
 								{
+									if (!CameraController.isRemoteCamera())
+										return;
+									
 									appInterface.getSimpleStreamSurfaceView().start(liveviewUrl,
 											new SimpleStreamSurfaceView.StreamFrameListener()
 											{
@@ -1022,7 +1047,7 @@ public class SonyRemoteCamera
 												@Override
 												public void onError(StreamErrorReason reason)
 												{
-													stopLiveview();
+													switchBackToDeviceCamera();
 												}
 											});
 									appInterface.getSimpleStreamSurfaceView().setVisibility(View.VISIBLE);
@@ -1044,6 +1069,21 @@ public class SonyRemoteCamera
 			}
 		});
 		sendRequest();
+	}
+
+	private static void switchBackToDeviceCamera()
+	{
+		((Activity) mainContext).runOnUiThread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen
+						.getMainContext());
+				prefs.edit().putInt(ApplicationScreen.sCameraModePref, 0).commit();
+				appInterface.relaunchCamera();
+			}
+		});
 	}
 
 	private static void stopLiveview()
@@ -1072,7 +1112,8 @@ public class SonyRemoteCamera
 		sendRequest();
 	}
 
-	static int previewImagesCount = 0;
+	static int	previewImagesCount	= 0;
+
 	public static void onPreviewFrame(byte[] jpegData)
 	{
 		previewImagesCount++;
@@ -1091,7 +1132,7 @@ public class SonyRemoteCamera
 				}
 			});
 		}
-		
+
 		if (requestQueue.size() == 0 && opening && previewImagesCount >= 3)
 		{
 			if (progress != null)
@@ -1278,7 +1319,8 @@ public class SonyRemoteCamera
 		if (isCameraApiAvailable("getAvailableLiveviewSize"))
 		{
 			fillPreviewSizeList();
-		} else {
+		} else
+		{
 			mPreviewSizes.add(new CameraController.Size(640, 480));
 		}
 
@@ -1426,7 +1468,8 @@ public class SonyRemoteCamera
 	{
 		synchronized (mPictureSizes)
 		{
-			if (mPictureSizes.size() == 0) {
+			if (mPictureSizes.size() == 0)
+			{
 				mPictureSizes.add(new CameraController.Size(1920, 1080));
 			}
 			return mPictureSizes;

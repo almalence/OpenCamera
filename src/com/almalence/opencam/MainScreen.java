@@ -253,6 +253,7 @@ public class MainScreen extends ApplicationScreen
 			mWifiHandler.createIfNeededThenConnectToWifi(cameraWifiSettings.first, cameraWifiSettings.second);
 		} catch (Exception e)
 		{
+			e.printStackTrace();
 		}
 	}
 

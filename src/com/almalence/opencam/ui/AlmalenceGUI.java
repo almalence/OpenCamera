@@ -2769,7 +2769,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				gridview.setAdapter(cameramodeAdapter);
 
 				int initValue = preferences.getInt(ApplicationScreen.sCameraModePref, 0);
-				if (!activeMeteringNames.contains(initValue))
+				if (!activeCamNames.contains(initValue))
 					initValue = activeCamNames.get(0);
 
 				setButtonSelected(cameraModeButtons, initValue);
@@ -4256,6 +4256,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				int iCamerasSupported = CameraController.getNumberOfCameras();
 				if (iCamerasSupported > 0)
 				{
+					String modeName = ApplicationScreen.getPluginManager().getActiveModeID();
+					if (iCamerasSupported > 2 && !(modeName.contains("video") || modeName.contains("single")))
+					{
+						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false);
+						setCameraMode((CameraController.getCameraIndex() + 1) % 2);
+						return;
+					}
 					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false);
 
 					if (guiView.findViewById(R.id.cameraLayout).getVisibility() != View.VISIBLE)
