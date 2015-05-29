@@ -592,6 +592,40 @@ public class SimpleRemoteApi {
     }
     
     /**
+     * Calls getAvailableFlashMode API to the target server. Request JSON data
+     * is such like as below.
+     * 
+     * <pre>
+     * {
+     *   "method": "getAvailableFlashMode",
+     *   "params": [],
+     *   "id": 2,
+     *   "version": "1.0"
+     * }
+     * </pre>
+     * 
+     * @return JSON data of response
+     * @throws all errors and exception are wrapped by this Exception.
+     */
+    public JSONObject getAvailableFlashMode() throws IOException {
+        String service = "camera";
+        try {
+            JSONObject requestJson =
+                    new JSONObject().put("method", "getAvailableFlashMode") //
+                            .put("params", new JSONArray()).put("id", id()) //
+                            .put("version", "1.0");
+            String url = findActionListUrl(service) + "/" + service;
+
+            log("Request:  " + requestJson.toString());
+            String responseJson = SimpleHttpClient.httpPost(url, requestJson.toString());
+            log("Response: " + responseJson);
+            return new JSONObject(responseJson);
+        } catch (JSONException e) {
+            throw new IOException(e);
+        }
+    }
+    
+    /**
      * Calls startLiveview API to the target server. Request JSON data is such
      * like as below.
      * 
@@ -1278,6 +1312,40 @@ public class SimpleRemoteApi {
         try {
             JSONObject requestJson =
                     new JSONObject().put("method", "setExposureCompensation") //
+                            .put("params", new JSONArray().put(value)).put("id", id()) //
+                            .put("version", "1.0");
+            String url = findActionListUrl(service) + "/" + service;
+
+            log("Request:  " + requestJson.toString());
+            String responseJson = SimpleHttpClient.httpPost(url, requestJson.toString());
+            log("Response: " + responseJson);
+            return new JSONObject(responseJson);
+        } catch (JSONException e) {
+            throw new IOException(e);
+        }
+    }
+    
+    /**
+     * Calls setFlashMode API to the target server. Request JSON data
+     * is such like as below.
+     * 
+     * <pre>
+     * {
+     *   "method": "setFlashMode",
+     *   "params": [],
+     *   "id": 2,
+     *   "version": "1.0"
+     * }
+     * </pre>
+     * 
+     * @return JSON data of response
+     * @throws all errors and exception are wrapped by this Exception.
+     */
+    public JSONObject setFlashMode(String value) throws IOException {
+        String service = "camera";
+        try {
+            JSONObject requestJson =
+                    new JSONObject().put("method", "setFlashMode") //
                             .put("params", new JSONArray().put(value)).put("id", id()) //
                             .put("version", "1.0");
             String url = findActionListUrl(service) + "/" + service;

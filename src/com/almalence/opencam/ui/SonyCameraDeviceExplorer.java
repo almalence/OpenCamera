@@ -297,6 +297,14 @@ public class SonyCameraDeviceExplorer implements WifiListener
 					}
 					progress = ProgressDialog.show(ApplicationScreen.instance, ApplicationScreen.instance.getResources().getString(R.string.title_connecting),
 							ApplicationScreen.instance.getResources().getString(R.string.msg_connecting), true, true);
+					progress.setOnDismissListener(new OnDismissListener()
+					{
+						@Override
+						public void onDismiss(DialogInterface dialog)
+						{
+							isSearchingDevice = false;
+						}
+					});
 				}
 			});
 			searchForCameraAndOpenLoop();
@@ -322,5 +330,25 @@ public class SonyCameraDeviceExplorer implements WifiListener
 	@Override
 	public void onWifiConnecting(String ssid)
 	{
+		ApplicationScreen.instance.runOnUiThread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				if (progress != null) {
+					progress.dismiss();
+				}
+				progress = ProgressDialog.show(ApplicationScreen.instance, ApplicationScreen.instance.getResources().getString(R.string.title_connecting),
+						ApplicationScreen.instance.getResources().getString(R.string.msg_connecting), true, true);
+				progress.setOnDismissListener(new OnDismissListener()
+				{
+					@Override
+					public void onDismiss(DialogInterface dialog)
+					{
+						isSearchingDevice = false;
+					}
+				});
+			}
+		});
 	}
 }
