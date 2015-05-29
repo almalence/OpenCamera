@@ -694,6 +694,9 @@ public class InfosetVFPlugin extends PluginViewfinder
 				
 				currentSensitivityText.setVisibility(View.VISIBLE);
 			}
+		} else if (arg1 == ApplicationInterface.MSG_REMOTE_CAMERA_PARAMETR_CHANGED) 
+		{
+			initInfoIndicators();
 		}
 
 		return false;

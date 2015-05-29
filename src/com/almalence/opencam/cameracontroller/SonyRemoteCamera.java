@@ -57,52 +57,58 @@ import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginManagerInterface;
 import com.almalence.opencam.R;
+
 //-+- -->
 
 public class SonyRemoteCamera
 {
-	private static final String								TAG						= "SonyRemoteCamera";
+	private static final String								TAG							= "SonyRemoteCamera";
 
-	protected static Context								mainContext				= null;
-	private static PluginManagerInterface					pluginManager			= null;
-	private static ApplicationInterface						appInterface			= null;
-	protected static Handler								messageHandler			= null;
+	protected static Context								mainContext					= null;
+	private static PluginManagerInterface					pluginManager				= null;
+	private static ApplicationInterface						appInterface				= null;
+	protected static Handler								messageHandler				= null;
 
 	public static ServerDevice								mTargetDevice;
 	private static SimpleRemoteApi							mRemoteApi;
-	private static Set<String>								mAvailableCameraApiSet	= new HashSet<String>();
-	private static Set<String>								mSupportedApiSet		= new HashSet<String>();
+	private static Set<String>								mAvailableCameraApiSet		= new HashSet<String>();
+	private static Set<String>								mAvailableApiSet			= new HashSet<String>();
 
 	private static SimpleCameraEventObserver				mEventObserver;
 	private static SimpleCameraEventObserver.ChangeListener	mEventListener;
 
-	public static List<CameraController.Size>				mPreviewSizes			= new ArrayList<CameraController.Size>();
-	public static List<CameraController.Size>				mPictureSizes			= new ArrayList<CameraController.Size>();
-	private static int										minExpoCompensation		= 0;
-	private static int										maxExpoCompensation		= 0;
-	private static float									expoCompensationStep	= 0;
-	public static List<String>								supportedWBModes		= new ArrayList<String>();
-	public static List<String>								supportedFocusModes		= new ArrayList<String>();
-	public static List<String>								supportedIsoModes		= new ArrayList<String>();
-	public static boolean									isZoomSupported			= false;
+	public static List<CameraController.Size>				mPreviewSizes				= new ArrayList<CameraController.Size>();
+	public static List<CameraController.Size>				mPictureSizes				= new ArrayList<CameraController.Size>();
+	private static int										minExpoCompensation			= 0;
+	private static int										maxExpoCompensation			= 0;
+	private static float									expoCompensationStep		= 0;
+	public static List<String>								availableWBModes			= new ArrayList<String>();
+	public static List<String>								availableFocusModes			= new ArrayList<String>();
+	public static List<String>								availableIsoModes			= new ArrayList<String>();
+	public static List<String>								availableFlashModes			= new ArrayList<String>();
+	public static boolean									isZoomAvailable				= false;
 
-	public static HashMap<Long, JSONObject>					mPictureSizeNames		= new HashMap<Long, JSONObject>();
+	public static HashMap<Long, JSONObject>					mPictureSizeNames			= new HashMap<Long, JSONObject>();
 
-	public static int										previewWidth			= 640;
-	public static int										previewHeight			= 480;
+	public static int										previewWidth				= 640;
+	public static int										previewHeight				= 480;
 
-	public static String									currentWBMode;
-	public static Handler									UIhandler				= new Handler(
-																							Looper.getMainLooper());
+	public static String									currentWBMode				= "Auto WB";
+	public static String									currentIsoMode				= "auto";
+	public static String									currentFlashMode			= "off";
+	public static int										currentExposureCompensation	= 0;
 
-	public static List<Thread>								requestQueue			= new LinkedList<Thread>();
-	public static boolean									opening					= false;
+	public static Handler									UIhandler					= new Handler(
+																								Looper.getMainLooper());
+
+	public static List<Thread>								requestQueue				= new LinkedList<Thread>();
+	public static boolean									opening						= false;
 	public static ProgressDialog							progress;
 	public static ProgressDialog							progressImageDownloading;
-	public static ZoomCallbackSonyRemote					zoomCallbackSonyRemote	= null;
+	public static ZoomCallbackSonyRemote					zoomCallbackSonyRemote		= null;
 
-	public static double									focusX					= 50;
-	public static double									focusY					= 50;
+	public static double									focusX						= 50;
+	public static double									focusY						= 50;
 
 	public static void onCreateSonyRemoteCamera(Context context, ApplicationInterface app,
 			PluginManagerInterface pluginManagerBase, Handler msgHandler)
@@ -145,7 +151,7 @@ public class SonyRemoteCamera
 					{
 						if (!CameraController.isRemoteCamera())
 							return;
-						
+
 						if (appInterface.getSimpleStreamSurfaceView() != null
 								&& !appInterface.getSimpleStreamSurfaceView().isStarted())
 						{
@@ -157,11 +163,11 @@ public class SonyRemoteCamera
 					{
 						if (isCameraApiAvailable("actZoom"))
 						{
-							isZoomSupported = true;
+							isZoomAvailable = true;
 							zoomCallbackSonyRemote.onZoomAvailabelChanged(true);
 						} else
 						{
-							isZoomSupported = false;
+							isZoomAvailable = false;
 							zoomCallbackSonyRemote.onZoomAvailabelChanged(false);
 						}
 					}
@@ -228,6 +234,8 @@ public class SonyRemoteCamera
 		{
 			isBusy = false;
 		}
+		CameraController.sendMessage(ApplicationInterface.MSG_BROADCAST,
+				ApplicationInterface.MSG_REMOTE_CAMERA_PARAMETR_CHANGED);
 		sendRequest();
 	}
 
@@ -274,21 +282,21 @@ public class SonyRemoteCamera
 			{
 				try
 				{
-					// Get supported API list (Camera API)
+					// Get available API list (Camera API)
 					JSONObject replyJsonCamera = mRemoteApi.getCameraMethodTypes();
-					loadSupportedApiList(replyJsonCamera);
+					loadAvailableApiList(replyJsonCamera);
 
 					try
 					{
-						// Get supported API list (AvContent API)
+						// Get available API list (AvContent API)
 						JSONObject replyJsonAvcontent = mRemoteApi.getAvcontentMethodTypes();
-						loadSupportedApiList(replyJsonAvcontent);
+						loadAvailableApiList(replyJsonAvcontent);
 					} catch (IOException e)
 					{
 						Log.d(TAG, "AvContent is not support.");
 					}
 
-					if (!isApiSupported("setCameraFunction"))
+					if (!isApiAvailable("setCameraFunction"))
 					{
 
 						// this device does not support setCameraFunction.
@@ -303,7 +311,7 @@ public class SonyRemoteCamera
 						// after confirmation of camera state, open connection.
 						Log.d(TAG, "this device support set camera function");
 
-						if (!isApiSupported("getEvent"))
+						if (!isApiAvailable("getEvent"))
 						{
 							Log.e(TAG, "this device is not support getEvent");
 							openConnection();
@@ -389,7 +397,7 @@ public class SonyRemoteCamera
 					{
 						Log.d(TAG, "openConnection(): getApplicationInfo()");
 						replyJson = mRemoteApi.getApplicationInfo();
-						if (!isSupportedServerVersion(replyJson))
+						if (!isAvailableServerVersion(replyJson))
 						{
 							return;
 						}
@@ -444,11 +452,11 @@ public class SonyRemoteCamera
 					{
 						if (isCameraApiAvailable("actZoom"))
 						{
-							isZoomSupported = true;
+							isZoomAvailable = true;
 							zoomCallbackSonyRemote.onZoomAvailabelChanged(true);
 						} else
 						{
-							isZoomSupported = false;
+							isZoomAvailable = false;
 							zoomCallbackSonyRemote.onZoomAvailabelChanged(false);
 						}
 					}
@@ -518,16 +526,21 @@ public class SonyRemoteCamera
 			sendRequest();
 		}
 
+		currentWBMode = "Auto WB";
+		currentIsoMode = "auto";
+		currentFlashMode = "off";
+		currentExposureCompensation = 0;
 		requestQueue.clear();
 		mPreviewSizes.clear();
 		mPictureSizes.clear();
 		minExpoCompensation = 0;
 		maxExpoCompensation = 0;
 		expoCompensationStep = 0;
-		supportedWBModes.clear();
-		supportedFocusModes.clear();
-		supportedIsoModes.clear();
-		isZoomSupported = false;
+		availableWBModes.clear();
+		availableFocusModes.clear();
+		availableIsoModes.clear();
+		availableFlashModes.clear();
+		isZoomAvailable = false;
 		mPictureSizeNames.clear();
 		previewWidth = 640;
 		previewHeight = 480;
@@ -662,7 +675,6 @@ public class SonyRemoteCamera
 	 */
 	public static boolean autoFocusSonyRemote()
 	{
-		Log.e("TAG", "autoFocusSonyRemote");
 		requestQueue.add(new Thread()
 		{
 
@@ -760,8 +772,6 @@ public class SonyRemoteCamera
 			focusX = 50;
 			focusY = 50;
 		}
-
-		Log.e("TAG", focusX + " " + focusY);
 	}
 
 	public static void takePicture(final PictureCallbackSonyRemote pictureListener)
@@ -932,9 +942,9 @@ public class SonyRemoteCamera
 		sendRequest();
 	}
 
-	public static boolean isZoomSupported()
+	public static boolean isZoomAvailable()
 	{
-		return isZoomSupported;
+		return isZoomAvailable;
 	}
 
 	/**
@@ -996,7 +1006,7 @@ public class SonyRemoteCamera
 	{
 		if (!CameraController.isRemoteCamera())
 			return;
-		
+
 		if (appInterface.getSimpleStreamSurfaceView() == null)
 		{
 			Log.w(TAG, "startLiveview mLiveviewSurface is null.");
@@ -1030,7 +1040,7 @@ public class SonyRemoteCamera
 								{
 									if (!CameraController.isRemoteCamera())
 										return;
-									
+
 									appInterface.getSimpleStreamSurfaceView().start(liveviewUrl,
 											new SimpleStreamSurfaceView.StreamFrameListener()
 											{
@@ -1170,35 +1180,35 @@ public class SonyRemoteCamera
 	}
 
 	/**
-	 * Retrieve a list of APIs that are supported by the target device.
+	 * Retrieve a list of APIs that are available by the target device.
 	 * 
 	 * @param replyJson
 	 */
-	private static void loadSupportedApiList(JSONObject replyJson)
+	private static void loadAvailableApiList(JSONObject replyJson)
 	{
-		synchronized (mSupportedApiSet)
+		synchronized (mAvailableApiSet)
 		{
 			try
 			{
 				JSONArray resultArrayJson = replyJson.getJSONArray("results");
 				for (int i = 0; i < resultArrayJson.length(); i++)
 				{
-					mSupportedApiSet.add(resultArrayJson.getJSONArray(i).getString(0));
+					mAvailableApiSet.add(resultArrayJson.getJSONArray(i).getString(0));
 				}
 			} catch (JSONException e)
 			{
-				Log.w(TAG, "loadSupportedApiList: JSON format error.");
+				Log.w(TAG, "loadAvailableApiList: JSON format error.");
 			}
 		}
 	}
 
 	/**
-	 * Check if the version of the server is supported in this application.
+	 * Check if the version of the server is available in this application.
 	 * 
 	 * @param replyJson
 	 * @return
 	 */
-	private static boolean isSupportedServerVersion(JSONObject replyJson)
+	private static boolean isAvailableServerVersion(JSONObject replyJson)
 	{
 		try
 		{
@@ -1212,27 +1222,27 @@ public class SonyRemoteCamera
 			}
 		} catch (JSONException e)
 		{
-			Log.w(TAG, "isSupportedServerVersion: JSON format error.");
+			Log.w(TAG, "isAvailableServerVersion: JSON format error.");
 		} catch (NumberFormatException e)
 		{
-			Log.w(TAG, "isSupportedServerVersion: Number format error.");
+			Log.w(TAG, "isAvailableServerVersion: Number format error.");
 		}
 		return false;
 	}
 
 	/**
-	 * Check if the specified API is supported. This is for camera and avContent
+	 * Check if the specified API is available. This is for camera and avContent
 	 * service API. The result of this method does not change dynamically.
 	 * 
 	 * @param apiName
 	 * @return
 	 */
-	private static boolean isApiSupported(String apiName)
+	private static boolean isApiAvailable(String apiName)
 	{
 		boolean isAvailable = false;
-		synchronized (mSupportedApiSet)
+		synchronized (mAvailableApiSet)
 		{
-			isAvailable = mSupportedApiSet.contains(apiName);
+			isAvailable = mAvailableApiSet.contains(apiName);
 		}
 		return isAvailable;
 	}
@@ -1295,30 +1305,30 @@ public class SonyRemoteCamera
 	}
 
 	/**
-	 * Sets a List of supported APIs.
+	 * Sets a List of available APIs.
 	 * 
 	 * @param apiList
 	 */
-	public static void setSupportedApiList(Set<String> apiList)
+	public static void setAvailableApiList(Set<String> apiList)
 	{
-		mSupportedApiSet = apiList;
+		mAvailableApiSet = apiList;
 	}
 
 	/**
-	 * Returns a list of supported APIs.
+	 * Returns a list of available APIs.
 	 * 
-	 * @return Returns a list of supported APIs.
+	 * @return Returns a list of available APIs.
 	 */
-	public static Set<String> getSupportedApiList()
+	public static Set<String> getAvailableApiList()
 	{
-		return mSupportedApiSet;
+		return mAvailableApiSet;
 	}
 
 	public static void initRemoteCameraFeatures()
 	{
 		if (isCameraApiAvailable("getAvailableLiveviewSize"))
 		{
-			fillPreviewSizeList();
+			initPreviewSizeList();
 		} else
 		{
 			mPreviewSizes.add(new CameraController.Size(640, 480));
@@ -1327,27 +1337,32 @@ public class SonyRemoteCamera
 		mPictureSizes.add(new CameraController.Size(1920, 1080));
 		if (isCameraApiAvailable("getAvailableStillSize"))
 		{
-			fillPictureSizeList();
+			initPictureSizeList();
 		}
 
 		if (isCameraApiAvailable("getAvailableExposureCompensation"))
 		{
-			getExposureCompensationSupported();
+			initExposureCompensationAvailable();
 		}
 
 		if (isCameraApiAvailable("getAvailableFocusMode"))
 		{
-			getSupportedFocusMode();
+			initAvailableFocusMode();
 		}
 
 		if (isCameraApiAvailable("getAvailableIsoSpeedRate"))
 		{
-			getSupportedIsoMode();
+			initAvailableIsoMode();
 		}
 
 		if (isCameraApiAvailable("getAvailableWhiteBalance"))
 		{
-			getSupportedWhiteBalance();
+			initAvailableWhiteBalance();
+		}
+
+		if (isCameraApiAvailable("getAvailableFlashMode"))
+		{
+			initAvailableFlashMode();
 		}
 	}
 
@@ -1361,7 +1376,7 @@ public class SonyRemoteCamera
 		return mPreviewSizes;
 	}
 
-	public static List<CameraController.Size> fillPreviewSizeList()
+	public static List<CameraController.Size> initPreviewSizeList()
 	{
 		mPreviewSizes = new ArrayList<CameraController.Size>();
 		mPreviewSizes.add(new CameraController.Size(640, 480));
@@ -1419,7 +1434,7 @@ public class SonyRemoteCamera
 		return size;
 	}
 
-	public static void fillPictureSizeList()
+	public static void initPictureSizeList()
 	{
 		synchronized (mPictureSizes)
 		{
@@ -1476,7 +1491,7 @@ public class SonyRemoteCamera
 		}
 	}
 
-	public static void getExposureCompensationSupported()
+	public static void initExposureCompensationAvailable()
 	{
 		JSONObject replyJson = null;
 		try
@@ -1505,7 +1520,7 @@ public class SonyRemoteCamera
 		}
 	}
 
-	public static boolean isExposureCompensationSupported()
+	public static boolean isExposureCompensationAvailable()
 	{
 		boolean res = false;
 
@@ -1532,19 +1547,34 @@ public class SonyRemoteCamera
 		return expoCompensationStep;
 	}
 
-	public static List<String> getSupportedWhiteBalanceRemote()
-	{
-		return supportedWBModes;
-	}
-
 	public static String getWhiteBalanceRemote()
 	{
 		return currentWBMode;
 	}
 
-	public static void getSupportedWhiteBalance()
+	public static String getIsoModeRemote()
 	{
-		supportedWBModes = new ArrayList<String>();
+		return currentIsoMode;
+	}
+
+	public static String getFlashModeRemote()
+	{
+		return currentFlashMode;
+	}
+
+	public static int getExposureCompensationRemote()
+	{
+		return currentExposureCompensation;
+	}
+
+	public static List<String> getAvailableWhiteBalanceRemote()
+	{
+		return availableWBModes;
+	}
+
+	public static void initAvailableWhiteBalance()
+	{
+		availableWBModes = new ArrayList<String>();
 
 		JSONObject replyJson = null;
 		try
@@ -1560,7 +1590,7 @@ public class SonyRemoteCamera
 			for (int i = 0; i < availableWhiteBalanceArrayJson.length(); i++)
 			{
 				JSONObject wb = availableWhiteBalanceArrayJson.getJSONObject(i);
-				supportedWBModes.add(wb.getString("whiteBalanceMode"));
+				availableWBModes.add(wb.getString("whiteBalanceMode"));
 			}
 		} catch (JSONException e)
 		{
@@ -1571,14 +1601,14 @@ public class SonyRemoteCamera
 		}
 	}
 
-	public static List<String> getSupportedFocusModeRemote()
+	public static List<String> getAvailableFocusModeRemote()
 	{
-		return supportedFocusModes;
+		return availableFocusModes;
 	}
 
-	public static void getSupportedFocusMode()
+	public static void initAvailableFocusMode()
 	{
-		supportedFocusModes = new ArrayList<String>();
+		availableFocusModes = new ArrayList<String>();
 
 		JSONObject replyJson = null;
 		try
@@ -1594,13 +1624,13 @@ public class SonyRemoteCamera
 				if (focusMode.equals("AF-S"))
 				{
 					focusMode = "auto";
-					supportedFocusModes.add(focusMode);
+					availableFocusModes.add(focusMode);
 				}
 
 				if (focusMode.equals("AF-C"))
 				{
 					focusMode = "continuous-picture";
-					supportedFocusModes.add(focusMode);
+					availableFocusModes.add(focusMode);
 				}
 			}
 		} catch (JSONException e)
@@ -1612,19 +1642,54 @@ public class SonyRemoteCamera
 		}
 	}
 
-	public static boolean isISOModeSupportedRemote()
+	public static boolean isFlashAvailableRemote()
 	{
-		return (supportedIsoModes != null && supportedIsoModes.size() > 1);
+		return (availableFlashModes != null && availableFlashModes.size() > 1);
 	}
 
-	public static List<String> getSupportedIsoModeRemote()
+	public static List<String> getAvailableFlashModeRemote()
 	{
-		return supportedIsoModes;
+		return availableFlashModes;
 	}
 
-	public static void getSupportedIsoMode()
+	public static void initAvailableFlashMode()
 	{
-		supportedIsoModes = new ArrayList<String>();
+		availableFlashModes = new ArrayList<String>();
+
+		JSONObject replyJson = null;
+		try
+		{
+			replyJson = mRemoteApi.getAvailableFlashMode();
+
+			JSONArray resultArrayJson = replyJson.getJSONArray("result");
+			JSONArray availableFlashModeArrayJson = resultArrayJson.getJSONArray(1);
+			for (int i = 0; i < availableFlashModeArrayJson.length(); i++)
+			{
+				String flash = availableFlashModeArrayJson.getString(i);
+				availableFlashModes.add(flash);
+			}
+		} catch (JSONException e)
+		{
+			e.printStackTrace();
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public static boolean isISOModeAvailableRemote()
+	{
+		return (availableIsoModes != null && availableIsoModes.size() > 1);
+	}
+
+	public static List<String> getAvailableIsoModeRemote()
+	{
+		return availableIsoModes;
+	}
+
+	public static void initAvailableIsoMode()
+	{
+		availableIsoModes = new ArrayList<String>();
 
 		JSONObject replyJson = null;
 		try
@@ -1636,7 +1701,7 @@ public class SonyRemoteCamera
 			for (int i = 0; i < availableISOModeArrayJson.length(); i++)
 			{
 				String iso = availableISOModeArrayJson.getString(i);
-				supportedIsoModes.add(iso);
+				availableIsoModes.add(iso);
 			}
 		} catch (JSONException e)
 		{
@@ -1659,6 +1724,33 @@ public class SonyRemoteCamera
 					try
 					{
 						mRemoteApi.setExposureCompensation(value);
+						currentExposureCompensation = value;
+					} catch (IOException e)
+					{
+						e.printStackTrace();
+					} finally
+					{
+						onRequestResult();
+					}
+				}
+			});
+			sendRequest();
+		}
+	}
+
+	public static void setFlashModeRemote(final String value)
+	{
+		if (isCameraApiAvailable("setFlashMode"))
+		{
+			requestQueue.add(new Thread()
+			{
+				@Override
+				public void run()
+				{
+					try
+					{
+						mRemoteApi.setFlashMode(value.toLowerCase());
+						currentFlashMode = value;
 					} catch (IOException e)
 					{
 						e.printStackTrace();
@@ -1684,6 +1776,7 @@ public class SonyRemoteCamera
 					try
 					{
 						mRemoteApi.setIsoSpeedRate(value.toUpperCase());
+						currentIsoMode = value;
 					} catch (IOException e)
 					{
 						e.printStackTrace();
@@ -1709,6 +1802,7 @@ public class SonyRemoteCamera
 					try
 					{
 						mRemoteApi.setWhiteBalance(value);
+						currentWBMode = value;
 					} catch (IOException e)
 					{
 						e.printStackTrace();

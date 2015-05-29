@@ -825,7 +825,7 @@ public class HALv3
 				return collorEffect;
 		}
 
-		return new int[0];
+		return new int[]{0};
 	}
 	
 	public static int[] getSupportedISOModesHALv3()
