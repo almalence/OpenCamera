@@ -21,9 +21,11 @@ import android.widget.Toast;
 
 /* <!-- +++
 import com.almalence.opencam_plus.ApplicationScreen;
+import com.almalence.opencam_plus.ui.EglEncoder;
 +++ --> */
 //<!-- -+-
 import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.ui.EglEncoder;
 //-+- -->
 
 public class DROVideoEngine

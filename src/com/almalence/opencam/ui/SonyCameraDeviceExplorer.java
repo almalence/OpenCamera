@@ -25,10 +25,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.R;
-import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.sony.cameraremote.DeviceListAdapter;
 import com.almalence.sony.cameraremote.ServerDevice;
 import com.almalence.sony.cameraremote.SimpleSsdpClient;
@@ -38,9 +34,12 @@ import com.almalence.sony.cameraremote.utils.WifiListener;
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.MainScreen;
-
  +++ --> */
 //<!-- -+-
+import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 public class SonyCameraDeviceExplorer implements WifiListener

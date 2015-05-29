@@ -21,7 +21,6 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
-
 //-+- -->
 
 import java.io.File;
@@ -91,24 +90,22 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.ui.AlmalenceGUI;
-import com.almalence.opencam.ui.GLLayer;
-import com.almalence.opencam.ui.GUI;
 import com.almalence.plugins.capture.panoramaaugmented.PanoramaAugmentedCapturePlugin;
 import com.almalence.plugins.capture.video.VideoCapturePlugin;
 import com.almalence.sony.cameraremote.SimpleStreamSurfaceView;
 import com.almalence.sony.cameraremote.utils.NFCHandler;
 import com.almalence.sony.cameraremote.utils.WifiHandler;
-import com.almalence.util.AppRater;
 import com.almalence.util.AppWidgetNotifier;
-//<!-- -+-
-//import com.almalence.opencam.cameracontroller.HALv3;
 
+//<!-- -+-
+import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam.ui.AlmalenceGUI;
+import com.almalence.opencam.ui.GLLayer;
+import com.almalence.opencam.ui.GUI;
+import com.almalence.util.AppRater;
 //-+- -->
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
- //import com.almalence.opencam_plus.cameracontroller.HALv3;
  import com.almalence.opencam_plus.ui.AlmalenceGUI;
  import com.almalence.opencam_plus.ui.GLLayer;
  import com.almalence.opencam_plus.ui.GUI;
@@ -1891,15 +1888,26 @@ public class MainScreen extends ApplicationScreen
 		}
 	}
 
+	
+	private static boolean			showStore					= false;
+	
 	public static Resources getAppResources()
 	{
 		return MainScreen.thiz.getResources();
 	}
 
+	public static void setShowStore(boolean show)
+	{
+		showStore = show;
+	}
+
+	public static boolean isShowStore()
+	{
+		return showStore;
+	}
+	
 	/*******************************************************/
 	/************************ Billing ************************/
-
-	private static boolean			showStore					= false;
 	// <!-- -+-
 	protected static OpenIabHelper	mHelper;
 
@@ -1995,16 +2003,6 @@ public class MainScreen extends ApplicationScreen
 		// "100000103369/000001018393");
 		// OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_SAMSUNG,
 		// "100000103369/000001018394");
-	}
-
-	public static void setShowStore(boolean show)
-	{
-		showStore = show;
-	}
-
-	public static boolean isShowStore()
-	{
-		return showStore;
 	}
 
 	public void activateCouponSale()
