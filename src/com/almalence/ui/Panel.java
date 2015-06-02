@@ -260,7 +260,7 @@ public class Panel extends LinearLayout
 
 		if (mClosedHandle != null)
 		{
-			mHandle.setBackground(mClosedHandle);
+			mHandle.setBackgroundDrawable(mClosedHandle);
 			mOpened = false;
 		}
 		mContent.setVisibility(GONE);
@@ -648,7 +648,7 @@ public class Panel extends LinearLayout
 		{
 			moving = 0;
 			reorder(locationTop, false, false);
-			mHandle.setBackground(mClosedHandle);
+			mHandle.setBackgroundDrawable(mClosedHandle);
 			mOpened = false;
 			startScrolling = false;
 		} else if (!mIsShrinking && mOpenedHandle != null)
@@ -657,7 +657,7 @@ public class Panel extends LinearLayout
 			startScrolling = false;
 			firstTime = true;
 			mContent.getBackground().setAlpha(255);
-			mHandle.setBackground(mOpenedHandle);
+			mHandle.setBackgroundDrawable(mOpenedHandle);
 			reorder(false, false, true);
 		}
 		// invoke listener if any
