@@ -597,6 +597,8 @@ public class PluginManager extends PluginManagerBase
 		} else if ("capture_panorama_more".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_capture_panoramaaugmented_more);
+			Plugin panoramaPlugin = pluginList.get(activeCapture);
+			panoramaPlugin.onPreferenceCreate(pf);
 		} else if ("dro".equals(settings))
 		{
 			AddModeSettings("single", pf);

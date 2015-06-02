@@ -856,6 +856,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 	private void createPrefs(final Preference ud_pref)
 	{
 		if (ud_pref != null)
+		{
+			ud_pref.setEnabled(PanoramaAugmentedCapturePlugin.sensorGyroscope != null);
 			ud_pref.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 			{
 				@Override
@@ -888,6 +890,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 					}
 				}
 			});
+		}
 	}
 
 	@Override

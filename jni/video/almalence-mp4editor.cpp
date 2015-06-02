@@ -356,8 +356,9 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 	//Prototypes track is used to pass transform matrix from input files to ouput
 	AP4_Track* prototype_track_video = NULL;
 
-	AP4_UI32 duration_movie = 0;
-	AP4_UI32 duration_media = 0;
+	AP4_UI64 duration_movie = 0;
+	AP4_UI64 duration_media = 0;
+	AP4_UI64 duration_media_audio = 0;
 
 	AP4_UI32         movie_time_scale 		= 0;
 	AP4_UI32         media_time_scale 		= 0;
@@ -366,7 +367,6 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 	const char*      language 		  		= NULL;
 	AP4_UI32         width 			  		= 0;
 	AP4_UI32         height 		 		= 0;
-
 
 
 	int inputFileCount = env->GetArrayLength(inputFiles);
@@ -449,12 +449,9 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 			index++;
 		}
 
-		duration_movie =+ track_video->GetDuration();
-		duration_media =+ track_video->GetMediaDuration();
-
-
-
-
+		duration_movie = duration_movie + track_video->GetDuration();
+		duration_media = duration_media + track_video->GetMediaDuration();
+		duration_media_audio = duration_media_audio + track_audio->GetMediaDuration();
 
 
 
@@ -491,6 +488,10 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 
 	}
 
+
+	AP4_UI64 video_track_duration = AP4_ConvertTime(movie_time_scale*sample_video_table->GetSampleCount(), media_time_scale, movie_time_scale);
+	AP4_UI64 video_media_duration = media_time_scale*sample_video_table->GetSampleCount();
+
 	// create the output video track
 	AP4_Track* output_video_track = new AP4_Track(sample_video_table,
 												  0,
@@ -507,7 +508,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 												  movie_time_scale_audio,
 												  duration_movie,
 												  media_time_scale_audio,
-												  duration_media,
+												  duration_media_audio,
 												  language,
 												  0,
 												  0);
