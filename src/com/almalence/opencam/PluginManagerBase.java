@@ -567,6 +567,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		}
 
 		Mode mode = ConfigParser.getInstance().getMode(modeName);
+		if (mode == null)
+			return;
 		for (int j = 0; j < listCapture.size(); j++)
 		{
 			Plugin pg = listCapture.get(j);

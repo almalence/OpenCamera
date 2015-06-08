@@ -3504,6 +3504,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	private String getSizeName(List<String> listNames, List<CameraController.Size> listSizes, List<String> listIdxes, int currentIdx)
 	{
+		if (listNames == null)
+			return "";
 		String selectedSize = listNames.get(0);
 		
 		List<CameraController.Size> cs = listSizes;
