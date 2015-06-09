@@ -18,6 +18,15 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.ui;
 
+/* <!-- +++
+ import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.R;
+ +++ --> */
+// <!-- -+-
+import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.R;
+//-+- -->
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -35,16 +44,6 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.GridView;
 import android.widget.LinearLayout;
-
-/* <!-- +++
- import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.R;
- +++ --> */
-// <!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.R;
-
-//-+- -->
 
 /***
  * Panel - implements sliding panel
@@ -87,7 +86,6 @@ public class Panel extends LinearLayout
 	private float				mTrackX;
 	private float				mTrackY;
 	private float				mVelocity;
-	private boolean				handleTouched;
 
 	private boolean				outsideControl	= false;
 
@@ -179,22 +177,31 @@ public class Panel extends LinearLayout
 	 * 
 	 * @param open
 	 *            True if Panel is to be opened, false if Panel is to be closed.
+	 * @param animate
+	 *            True if use animation, false otherwise.
 	 * 
 	 */
-	public void setOpen(boolean open)
+	public void setOpen(boolean open, boolean animate)
 	{
 		if (isOpen() ^ open)
 		{
-			mIsShrinking = open ? false : true;
-			mState = State.ABOUT_TO_ANIMATE;
-			if (!mIsShrinking)
+			mIsShrinking = !open;
+			if (animate)
 			{
-				// this could make flicker so we test mState in
-				// dispatchDraw()
-				// to see if is equal to ABOUT_TO_ANIMATE
-				mContent.setVisibility(VISIBLE);
+				mState = State.ABOUT_TO_ANIMATE;
+				if (!mIsShrinking)
+				{
+					// this could make flicker so we test mState in
+					// dispatchDraw()
+					// to see if is equal to ABOUT_TO_ANIMATE
+					mContent.setVisibility(VISIBLE);
+				}
+				post(startAnimation);
+			} else
+			{
+				mContent.setVisibility(open ? VISIBLE : GONE);
+				postProcess();
 			}
-			post(startAnimation);
 		}
 		if (!open)
 		{
@@ -292,7 +299,7 @@ public class Panel extends LinearLayout
 				canvas.translate(delta, 0);
 			}
 		}
-		if ((mState == State.TRACKING || mState == State.FLYING) && (!mOpened || handleTouched))
+		if (mState == State.TRACKING || mState == State.FLYING)
 		{
 			canvas.translate(mTrackX, mTrackY);
 			mContent.getBackground().setAlpha((int) (255 - 255 * Math.abs(mTrackY / mContentHeight)));
@@ -318,16 +325,17 @@ public class Panel extends LinearLayout
 																// if controls
 																// locked - skip
 																// any events
-																if (ApplicationScreen.getGUIManager().lockControls)
+																if (MainScreen.getGUIManager().lockControls)
 																	return false;
 
 																int action = event.getAction();
 
-																if (v == ApplicationScreen.getPreviewSurfaceView()
-																		|| v == ((View) ApplicationScreen.instance
+																if (v == MainScreen.getPreviewSurfaceView()
+																		|| v == ((View) MainScreen.getInstance()
 																				.findViewById(R.id.mainLayout1))
-																		|| v.getParent() == (View) ApplicationScreen.instance
-																				.findViewById(R.id.paramsLayout))
+																		|| v.getParent() == (View) MainScreen
+																				.getInstance().findViewById(
+																						R.id.paramsLayout))
 																{
 																	if (!mOpened)
 																	{
@@ -335,7 +343,7 @@ public class Panel extends LinearLayout
 																		if (action == MotionEvent.ACTION_DOWN)
 																		{
 																			if (event.getRawY() > ((20 + (toTheTop ? 0
-																					: 65)) * ApplicationScreen
+																					: 65)) * MainScreen
 																					.getMainContext().getResources()
 																					.getDisplayMetrics().density))
 																				return false;
@@ -347,11 +355,11 @@ public class Panel extends LinearLayout
 																		{
 																			if (!startScrolling)
 																				return false;
-																			if (event.getY() < ((toTheTop ? 0 : 65) * ApplicationScreen
+																			if (event.getY() < ((toTheTop ? 0 : 65) * MainScreen
 																					.getMainContext().getResources()
 																					.getDisplayMetrics().density))
 																				return false;
-																			reorder(true, false, true);
+																			reorder(true, false);
 																		}
 																		if ((action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP)
 																				&& !startScrolling)
@@ -373,15 +381,6 @@ public class Panel extends LinearLayout
 																}
 																if (action == MotionEvent.ACTION_DOWN)
 																{
-																	if (Math.abs(mHandle.getTop() - event.getRawY()) < 30
-																			&& mOpened)
-																	{
-																		handleTouched = true;
-																	} else
-																	{
-																		handleTouched = false;
-																	}
-
 																	initX = 0;
 																	initY = 0;
 																	if (mContent.getVisibility() == GONE)
@@ -449,10 +448,8 @@ public class Panel extends LinearLayout
 																}
 																if (!mGestureDetector.onTouchEvent(event))
 																{
-																	if ((!mOpened || handleTouched)
-																			&& action == MotionEvent.ACTION_UP)
+																	if (action == MotionEvent.ACTION_UP)
 																	{
-																		handleTouched = false;
 																		// tup
 																		// up
 																		// after
@@ -647,7 +644,7 @@ public class Panel extends LinearLayout
 		if (mIsShrinking && mClosedHandle != null)
 		{
 			moving = 0;
-			reorder(locationTop, false, false);
+			reorder(locationTop, false);
 			mHandle.setBackgroundDrawable(mClosedHandle);
 			mOpened = false;
 			startScrolling = false;
@@ -658,7 +655,6 @@ public class Panel extends LinearLayout
 			firstTime = true;
 			mContent.getBackground().setAlpha(255);
 			mHandle.setBackgroundDrawable(mOpenedHandle);
-			reorder(false, false, true);
 		}
 		// invoke listener if any
 		if (panelListener != null)
@@ -705,25 +701,10 @@ public class Panel extends LinearLayout
 
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
 		{
-			if (!mOpened)
-			{
-				mState = State.FLYING;
-				mVelocity = mOrientation == VERTICAL ? velocityY : velocityX;
-				post(startAnimation);
-				return true;
-			} else
-			{
-				if (handleTouched)
-				{
-					mState = State.FLYING;
-					mVelocity = mOrientation == VERTICAL ? velocityY : velocityX;
-					post(startAnimation);
-
-					handleTouched = false;
-					return true;
-				}
-				return false;
-			}
+			mState = State.FLYING;
+			mVelocity = mOrientation == VERTICAL ? velocityY : velocityX;
+			post(startAnimation);
+			return true;
 		}
 
 		public void onLongPress(MotionEvent e)
@@ -742,8 +723,8 @@ public class Panel extends LinearLayout
 			if (outsideControl && e2.getY() > (mContentHeight))
 				return true;
 
-			reorder(true, false, true);
-
+			if (scrollY > -450)
+				reorder(true, false);
 			if (mOrientation == VERTICAL)
 			{
 
@@ -784,27 +765,20 @@ public class Panel extends LinearLayout
 		public boolean onSingleTapUp(MotionEvent e)
 		{
 			// simple tap: click
-			if (!mOpened)
-			{
-				post(startAnimation);
-			} else
-			{
-				setOpen(false);
-			}
-
+			post(startAnimation);
 			return true;
 		}
 	}
 
 	// corrects margin between content and handler
-	public void reorder(boolean toTop, boolean isFromGUI, boolean forceNull)
+	public void reorder(boolean toTop, boolean isFromGUI)
 	{
 		if (isFromGUI)
 			locationTop = toTop;
 		toTheTop = toTop;
 		LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) this.findViewById(R.id.panelHandle)
 				.getLayoutParams();
-		float d = ApplicationScreen.getMainContext().getResources().getDisplayMetrics().density;
+		float d = MainScreen.getMainContext().getResources().getDisplayMetrics().density;
 		if (toTheTop)
 		{
 			if (!isFromGUI && (moving != 0) && !locationTop && handle)
@@ -819,11 +793,6 @@ public class Panel extends LinearLayout
 		} else
 		{
 			lp.topMargin = (int) (downSpace);
-		}
-
-		if (forceNull)
-		{
-			lp.topMargin = 0;
 		}
 		mHandle.setLayoutParams(lp);
 	}
