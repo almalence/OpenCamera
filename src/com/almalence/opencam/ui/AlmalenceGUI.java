@@ -5830,7 +5830,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		DisplayMetrics metrics = new DisplayMetrics();
 		ApplicationScreen.instance.getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		int width = metrics.widthPixels;
-		int modeHeightByWidth = (int) (width / 3 - 5 * metrics.density);
+		int modeHeightByWidth = (int) (width / 4 - 5 * metrics.density);
 		int modeHeightByDimen = Math.round(ApplicationScreen.getAppResources().getDimension(R.dimen.gridImageSize)
 				+ ApplicationScreen.getAppResources().getDimension(R.dimen.gridTextLayoutHeight));
 

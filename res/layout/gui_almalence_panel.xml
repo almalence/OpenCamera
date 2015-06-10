@@ -9,8 +9,8 @@
     		android:layout_gravity="top"
     		android:layout_alignParentTop="true"
     		android:padding="3dp"
-			android:paddingLeft="5dp"
-    		android:paddingRight="5dp"
+			android:layout_marginLeft="5dp"
+    		android:layout_marginRight="5dp"
   			>
 				<GridView
 				    android:id="@+id/settingsGrid"
@@ -18,7 +18,7 @@
 				    android:layout_height="wrap_content"
 				    android:numColumns="4"
 				    android:stretchMode="columnWidth"
-				    android:verticalSpacing="6dp"
+				    android:verticalSpacing="7dp"
 				    android:horizontalSpacing="7dp"
 				    android:padding="6dp"
 				    android:gravity="center"					    
