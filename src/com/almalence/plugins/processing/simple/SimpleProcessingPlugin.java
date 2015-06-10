@@ -123,30 +123,10 @@ public class SimpleProcessingPlugin extends PluginProcessing
 				{
 					try
 					{
-						File saveDir = PluginManager.getSaveDir(false);
-
 						String fileFormat = PluginManager.getInstance().getFileFormat();
 						fileFormat = fileFormat + "_DROSRC";
 
-						File file = new File(saveDir, fileFormat + ".jpg");
-						FileOutputStream os = null;
-						try
-						{
-							os = new FileOutputStream(file);
-						} catch (Exception e)
-						{
-							// save always if not working saving to sdcard
-							e.printStackTrace();
-							saveDir = PluginManager.getSaveDir(true);
-							file = new File(saveDir, fileFormat + ".jpg");
-							os = new FileOutputStream(file);
-						}
-
-						PluginManager.getInstance().writeData(os, true, sessionID, i - 1, null, inputYUV, file);
-					} catch (IOException e)
-					{
-						e.printStackTrace();
-						ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED_IOEXCEPTION);
+						PluginManager.getInstance().saveInputFile(true, sessionID, i, null, inputYUV, fileFormat);
 					} catch (Exception e)
 					{
 						e.printStackTrace();

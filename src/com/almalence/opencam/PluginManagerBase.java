@@ -98,6 +98,7 @@ import com.almalence.plugins.export.ExifDriver.ExifManager;
 import com.almalence.plugins.export.ExifDriver.Values.ValueByteArray;
 import com.almalence.plugins.export.ExifDriver.Values.ValueNumber;
 import com.almalence.plugins.export.ExifDriver.Values.ValueRationals;
+import com.almalence.plugins.export.standard.GPSTagsConverter;
 import com.almalence.util.MLocation;
 import com.almalence.util.exifreader.imaging.jpeg.JpegMetadataReader;
 import com.almalence.util.exifreader.imaging.jpeg.JpegProcessingException;
@@ -2225,7 +2226,6 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 
 				values.put(ImageColumns.BUCKET_ID, path.hashCode());
 				values.put(ImageColumns.BUCKET_DISPLAY_NAME, name);
-				values.put(ImageColumns.DATA, fileName);
 
 				if (!enableExifTagOrientation && !hasDNGResult)
 				{
@@ -2986,41 +2986,234 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		}
 	}
 
-	protected void writeData(FileOutputStream os, boolean isYUV, Long SessionID, int i, byte[] buffer, int yuvBuffer,
-			File file) throws IOException
+	public void saveInputFile(boolean isYUV, Long SessionID, int i, byte[] buffer, int yuvBuffer, String fileFormat)
 	{
+		// if Android 5+ use new saving method.
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+		{
+			saveInputFileNew(isYUV, SessionID, i, buffer, yuvBuffer, fileFormat);
+			return;
+		}
+
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		ContentValues values = null;
 		String resultOrientation = getFromSharedMem("frameorientation" + (i + 1) + Long.toString(SessionID));
-
+		if (resultOrientation == null) {
+			resultOrientation = getFromSharedMem("frameorientation" + i + Long.toString(SessionID));
+		}
+		
 		String resultMirrored = getFromSharedMem("framemirrored" + (i + 1) + Long.toString(SessionID));
+		if (resultMirrored == null) {
+			resultMirrored = getFromSharedMem("framemirrored" + i + Long.toString(SessionID));
+		}
 		Boolean cameraMirrored = false;
 		if (resultMirrored != null)
 			cameraMirrored = Boolean.parseBoolean(resultMirrored);
 
-		int mDisplayOrientation = Integer.parseInt(resultOrientation);
+		int mDisplayOrientation = 0;
+		if (resultOrientation != null) {
+			mDisplayOrientation = Integer.parseInt(resultOrientation);
+		}
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		boolean saveGeoInfo = prefs.getBoolean("useGeoTaggingPrefExport", false);
+
+		File saveDir = PluginManager.getSaveDir(false);
+		File file = new File(saveDir, fileFormat + ".jpg");
+		FileOutputStream os = null;
+
+		try
+		{
+			try
+			{
+				os = new FileOutputStream(file);
+			} catch (Exception e)
+			{
+				// save always if not working saving to sdcard
+				e.printStackTrace();
+				saveDir = PluginManager.getSaveDir(true);
+				file = new File(saveDir, fileFormat + ".jpg");
+
+				os = new FileOutputStream(file);
+			}
+		} catch (FileNotFoundException e1)
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		try
+		{
+			if (os != null)
+			{
+				if (!isYUV)
+				{
+					os.write(buffer);
+				} else
+				{
+					jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
+
+					com.almalence.YuvImage image = new com.almalence.YuvImage(yuvBuffer, ImageFormat.NV21,
+							imageSize.getWidth(), imageSize.getHeight(), null);
+					// to avoid problems with SKIA
+					int cropHeight = image.getHeight() - image.getHeight() % 16;
+					image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), jpegQuality, os);
+
+					mDisplayOrientation = saveExifToInput(file, mDisplayOrientation, cameraMirrored, saveGeoInfo);
+				}
+				os.close();
+			}
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		values = new ContentValues();
+		values.put(ImageColumns.TITLE, file.getName().substring(0, file.getName().lastIndexOf(".")));
+		values.put(ImageColumns.DISPLAY_NAME, file.getName());
+		values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
+		values.put(ImageColumns.MIME_TYPE, "image/jpeg");
+		values.put(ImageColumns.ORIENTATION, mDisplayOrientation);
+		values.put(ImageColumns.DATA, file.getAbsolutePath());
+
+		if (saveGeoInfo)
+		{
+			Location l = MLocation.getLocation(ApplicationScreen.getMainContext());
+
+			if (l != null)
+			{
+				values.put(ImageColumns.LATITUDE, l.getLatitude());
+				values.put(ImageColumns.LONGITUDE, l.getLongitude());
+			}
+		}
+
+		ApplicationScreen.instance.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+	}
+
+	private void saveInputFileNew(boolean isYUV, Long SessionID, int i, byte[] buffer, int yuvBuffer, String fileFormat)
+	{
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		ContentValues values = null;
+		String resultOrientation = getFromSharedMem("frameorientation" + (i + 1) + Long.toString(SessionID));
+		if (resultOrientation == null) {
+			resultOrientation = getFromSharedMem("frameorientation" + i + Long.toString(SessionID));
+		}
+		
+		String resultMirrored = getFromSharedMem("framemirrored" + (i + 1) + Long.toString(SessionID));
+		if (resultMirrored == null) {
+			resultMirrored = getFromSharedMem("framemirrored" + i + Long.toString(SessionID));
+		}
+		
+		Boolean cameraMirrored = false;
+		if (resultMirrored != null)
+			cameraMirrored = Boolean.parseBoolean(resultMirrored);
+
+		int mDisplayOrientation = 0;
+		if (resultOrientation != null) {
+			mDisplayOrientation = Integer.parseInt(resultOrientation);
+		}
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		boolean saveGeoInfo = prefs.getBoolean("useGeoTaggingPrefExport", false);
+
+		DocumentFile file;
+		DocumentFile saveDir = getSaveDirNew(false);
+		if (saveDir == null || !saveDir.exists())
+		{
+			return;
+		}
+
+		file = saveDir.createFile("image/jpeg", fileFormat);
+		if (file == null || !file.canWrite())
+		{
+			return;
+		}
+
+		OutputStream os = null;
+		File bufFile = new File(ApplicationScreen.instance.getFilesDir(), "buffer.jpeg");
+		try
+		{
+			os = new FileOutputStream(bufFile);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
 		if (os != null)
 		{
-			if (!isYUV)
+			try
 			{
-				os.write(buffer);
-			} else
-			{
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen
-						.getMainContext());
-				jpegQuality = Integer.parseInt(prefs.getString(ApplicationScreen.sJPEGQualityPref, "95"));
+				if (!isYUV)
+				{
+					os.write(buffer);
+				} else
+				{
+					jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
 
-				com.almalence.YuvImage image = new com.almalence.YuvImage(yuvBuffer, ImageFormat.NV21,
-						imageSize.getWidth(), imageSize.getHeight(), null);
-				// to avoid problems with SKIA
-				int cropHeight = image.getHeight() - image.getHeight() % 16;
-				image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), jpegQuality, os);
+					com.almalence.YuvImage image = new com.almalence.YuvImage(yuvBuffer, ImageFormat.NV21,
+							imageSize.getWidth(), imageSize.getHeight(), null);
+					// to avoid problems with SKIA
+					int cropHeight = image.getHeight() - image.getHeight() % 16;
+					image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), jpegQuality, os);
+				}
+				os.close();
+			} catch (IOException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			os.close();
 
+			mDisplayOrientation = saveExifToInput(bufFile, mDisplayOrientation, cameraMirrored, saveGeoInfo);
+
+			// Copy buffer image with exif tags into result file.
+			InputStream is = null;
+			int len;
+			byte[] buf = new byte[1024];
+			try
+			{
+				os = ApplicationScreen.instance.getContentResolver().openOutputStream(file.getUri());
+				is = new FileInputStream(bufFile);
+				while ((len = is.read(buf)) > 0)
+				{
+					os.write(buf, 0, len);
+				}
+				is.close();
+				os.close();
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		bufFile.delete();
+
+		values = new ContentValues();
+		values.put(ImageColumns.TITLE, file.getName().substring(0, file.getName().lastIndexOf(".")));
+		values.put(ImageColumns.DISPLAY_NAME, file.getName());
+		values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
+		values.put(ImageColumns.MIME_TYPE, "image/jpeg");
+		values.put(ImageColumns.ORIENTATION, mDisplayOrientation);
+
+		if (saveGeoInfo)
+		{
+			Location l = MLocation.getLocation(ApplicationScreen.getMainContext());
+			if (l != null)
+			{
+				values.put(ImageColumns.LATITUDE, l.getLatitude());
+				values.put(ImageColumns.LONGITUDE, l.getLongitude());
+			}
+		}
+
+		ApplicationScreen.instance.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+	}
+
+	public static int saveExifToInput(File file, int displayOrientation, boolean cameraMirrored, boolean saveGeo)
+	{
+		try
+		{
 			ExifInterface ei = new ExifInterface(file.getAbsolutePath());
 			int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-			switch (mDisplayOrientation)
+			switch (displayOrientation)
 			{
 			default:
 			case 0:
@@ -3029,7 +3222,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			case 90:
 				if (cameraMirrored)
 				{
-					mDisplayOrientation = 270;
+					displayOrientation = 270;
 					exif_orientation = ExifInterface.ORIENTATION_ROTATE_270;
 				} else
 				{
@@ -3042,7 +3235,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			case 270:
 				if (cameraMirrored)
 				{
-					mDisplayOrientation = 90;
+					displayOrientation = 90;
 					exif_orientation = ExifInterface.ORIENTATION_ROTATE_90;
 				} else
 				{
@@ -3051,20 +3244,32 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 				break;
 			}
 			ei.setAttribute(ExifInterface.TAG_ORIENTATION, "" + exif_orientation);
+
+			if (saveGeo)
+			{
+				Location l = MLocation.getLocation(ApplicationScreen.getMainContext());
+
+				if (l != null)
+				{
+					ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE, GPSTagsConverter.convert(l.getLatitude()));
+					ei.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, GPSTagsConverter.latitudeRef(l.getLatitude()));
+					ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, GPSTagsConverter.convert(l.getLongitude()));
+					ei.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF,
+							GPSTagsConverter.longitudeRef(l.getLongitude()));
+
+				}
+			}
+
 			ei.saveAttributes();
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
-		values = new ContentValues();
-		values.put(ImageColumns.TITLE, file.getName().substring(0, file.getName().lastIndexOf(".")));
-		values.put(ImageColumns.DISPLAY_NAME, file.getName());
-		values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
-		values.put(ImageColumns.MIME_TYPE, "image/jpeg");
-		values.put(ImageColumns.ORIENTATION, mDisplayOrientation);
-		values.put(ImageColumns.DATA, file.getAbsolutePath());
-
-		ApplicationScreen.instance.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+		
+		return displayOrientation;
 	}
-
+	
 	public void sendMessage(int what, String obj, int arg1, int arg2)
 	{
 		Message message = new Message();

@@ -228,25 +228,10 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 						ev_mark -= 2.0;
 
 					String evmark = String.format("_%+3.1fEv", ev_mark);
-					File file = new File(saveDir, fileFormat + evmark + ".jpg");
-					FileOutputStream os = null;
-					try
-					{
-						os = new FileOutputStream(file);
-					} catch (Exception e)
-					{
-						// save always if not working saving to sdcard
-						e.printStackTrace();
-						saveDir = PluginManager.getSaveDir(true);
-						file = new File(saveDir, fileFormat + evmark + ".jpg");
-						os = new FileOutputStream(file);
-					}
 
 					byte[] buffer = SwapHeap.CopyFromHeap(compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]],
 							compressed_frame_len[ExpoBracketingCapturePlugin.evIdx[i]]);
 					int yuvBuffer = compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]];
-					
-					
 			
 					if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
 					{
@@ -258,13 +243,9 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 								imageHeight,
 								1, 1, 0);
 					}
-					
-					PluginManager.getInstance().writeData(os, true, sessionID, i, buffer, yuvBuffer, file);
+	
+					PluginManager.getInstance().saveInputFile(true, sessionID, i, buffer, yuvBuffer, fileFormat + evmark);
 				}
-			} catch (IOException e)
-			{
-				e.printStackTrace();
-				ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED_IOEXCEPTION);
 			} catch (Exception e)
 			{
 				e.printStackTrace();
