@@ -585,7 +585,7 @@
 					    android:verticalSpacing="7dp"
 					    android:horizontalSpacing="7dp"
 					    android:adjustViewBounds="true"
-					    android:padding="6dp"
+					    android:padding="3dp"
 					    android:stretchMode="columnWidth"
 					    android:gravity="center"/>					
 	</RelativeLayout>
@@ -787,9 +787,9 @@
         		android:orientation="vertical"
         		android:layout_width="fill_parent"
         		android:layout_height="wrap_content"
-        		android:layout_marginLeft="5dip"
+				android:layout_marginLeft="5dip"
         		android:layout_marginRight="5dip"
-				android:padding="10dp"					    		
+	    		android:padding="3dp"			    		
 	    		android:layout_gravity="top"
 				android:visibility="gone">
 					<GridView  
@@ -811,7 +811,7 @@
         		android:layout_height="wrap_content"        		
         		android:layout_marginLeft="5dip"
         		android:layout_marginRight="5dip"
-	    		android:padding="10dp"
+	    		android:padding="3dp"
 	    		android:layout_gravity="top"
 				android:visibility="gone">
 					<GridView  
@@ -819,9 +819,9 @@
 					    android:layout_width="match_parent" 
 					    android:layout_height="wrap_content"
 					    android:numColumns="4"
+					    android:verticalSpacing="2dp"
 					    android:horizontalSpacing="7dp"
-					    android:paddingLeft="3dp"
-					    android:paddingRight="3dp"
+					    android:padding="6dp"
 					    android:stretchMode="columnWidth"
 					    android:gravity="center"					    
 					/>
@@ -833,7 +833,7 @@
         		android:layout_height="wrap_content"        		
         		android:layout_marginLeft="5dip"
         		android:layout_marginRight="5dip"
-				android:padding="10dp"
+				android:padding="3dp"
 	    		android:layout_gravity="top"
 				android:visibility="gone">
 					<GridView  
@@ -841,9 +841,9 @@
 					    android:layout_width="match_parent" 
 					    android:layout_height="wrap_content"
 					    android:numColumns="4"
+					    android:verticalSpacing="2dp"
 					    android:horizontalSpacing="7dp"
-					    android:paddingLeft="3dp"
-					    android:paddingRight="3dp"
+					    android:padding="6dp"
 					    android:stretchMode="columnWidth"
 					    android:gravity="center"					    
 					/>
@@ -855,7 +855,7 @@
         		android:layout_height="wrap_content"        		
         		android:layout_marginLeft="5dip"
         		android:layout_marginRight="5dip"
-				android:padding="10dp"
+				android:padding="3dp"
 	    		android:layout_gravity="top"
 				android:visibility="gone">
 					<GridView  
@@ -863,9 +863,9 @@
 					    android:layout_width="match_parent" 
 					    android:layout_height="wrap_content"
 					    android:numColumns="4"
+					    android:verticalSpacing="2dp"
 					    android:horizontalSpacing="7dp"
-					    android:paddingLeft="3dp"
-					    android:paddingRight="3dp"
+					    android:padding="6dp"
 					    android:stretchMode="columnWidth"
 					    android:gravity="center"					    
 					/>
@@ -877,7 +877,7 @@
         		android:layout_height="wrap_content"        		
         		android:layout_marginLeft="5dip"
         		android:layout_marginRight="5dip"
-				android:padding="10dp"
+				android:padding="3dp"
 	    		android:layout_gravity="top"
 				android:visibility="gone">
 					<GridView  
@@ -885,9 +885,9 @@
 					    android:layout_width="match_parent" 
 					    android:layout_height="wrap_content"
 					    android:numColumns="4"
+					    android:verticalSpacing="2dp"
 					    android:horizontalSpacing="7dp"
-					    android:paddingLeft="3dp"
-					    android:paddingRight="3dp"
+					    android:padding="6dp"
 					    android:stretchMode="columnWidth"
 					    android:gravity="center"					    
 					/>
@@ -899,7 +899,7 @@
         		android:layout_height="wrap_content"        		
         		android:layout_marginLeft="5dip"
         		android:layout_marginRight="5dip"
-				android:padding="10dp"
+				android:padding="3dp"
 	    		android:layout_gravity="top"
 				android:visibility="gone">
 					<GridView  
@@ -907,9 +907,9 @@
 					    android:layout_width="match_parent" 
 					    android:layout_height="wrap_content"
 					    android:numColumns="4"
+					    android:verticalSpacing="2dp"
 					    android:horizontalSpacing="7dp"
-					    android:paddingLeft="3dp"
-					    android:paddingRight="3dp"
+					    android:padding="6dp"
 					    android:stretchMode="columnWidth"
 					    android:gravity="center"					    
 					/>
@@ -924,7 +924,7 @@
             android:layout_marginRight="5dip"
             android:background="@drawable/blacktransparentlayersettings"
             android:orientation="vertical"
-            android:padding="10dp"
+            android:padding="3dp"
             android:visibility="gone" >
 
             <GridView
@@ -932,10 +932,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:horizontalSpacing="7dp"
                 android:numColumns="4"
-                android:paddingLeft="3dp"
-                android:paddingRight="3dp"
+                android:verticalSpacing="2dp"
+			    android:horizontalSpacing="7dp"
+			    android:padding="6dp"
                 android:stretchMode="columnWidth" />
         </RelativeLayout>			
 	</RelativeLayout>
