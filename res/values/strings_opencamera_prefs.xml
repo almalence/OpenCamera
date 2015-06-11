@@ -21,6 +21,7 @@
     <string name="Preference_EvCompensationValue">Preference_EvCompensationValue</string>
     <string name="Preference_SceneModeValue">Preference_SceneModeValue</string>
     <string name="Preference_WBModeValue">Preference_WBModeValue</string>
+    <string name="Preference_ColorTemperatureValue">Preference_ColorTemperatureValue</string>
     <string name="Preference_FrontFocusModeValue">Preference_FrontFocusModeValue</string>
     <string name="Preference_FrontFocusModeVideoValue">Preference_FrontFocusModeVideoValue</string>
     <string name="Preference_RearFocusModeValue">Preference_RearFocusModeValue</string>

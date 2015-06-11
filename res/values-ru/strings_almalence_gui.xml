@@ -71,6 +71,7 @@
     <string name="sceneHDR">HDR</string>
     <string name="sceneAR">AR</string>
     
+    <string name="wbManual">Ручной</string>
     <string name="wbAuto">Авто</string>
     <string name="wbIncandescent">Накаливания</string>
     <string name="wbFluorescent">Флюоресцентная</string>

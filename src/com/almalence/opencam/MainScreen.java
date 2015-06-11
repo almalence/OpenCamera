@@ -3184,7 +3184,7 @@ public class MainScreen extends ApplicationScreen
 		return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(MainScreen.sWBModePref,
 				MainScreen.sDefaultValue);
 	}
-
+	
 	// FOCUS MODE PREFERENCE
 	@Override
 	public void setFocusModePref(int iFocusMode)

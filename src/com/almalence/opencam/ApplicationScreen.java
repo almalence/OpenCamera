@@ -195,6 +195,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public static String				sFocusDistancePref;
 	public static String				sSceneModePref;
 	public static String				sWBModePref;
+	public static String				sColorTemperaturePref;
 	public static String				sFrontFocusModePref;
 	public static String				sFrontFocusModeVideoPref;
 	public static String				sRearFocusModePref;
@@ -246,12 +247,15 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	public static String				sDefaultModeName;
 	public static int					sDefaultValue				= CameraParameters.SCENE_MODE_AUTO;
-	public static int					sDefaultFocusValue			= CameraParameters.AF_MODE_CONTINUOUS_PICTURE;
-	public static int					sDefaultFlashValue			= CameraParameters.FLASH_MODE_OFF;
-	public static int					sDefaultISOValue			= CameraParameters.ISO_AUTO;
-	public static int					sDefaultMeteringValue		= CameraParameters.meteringModeAuto;
-	public static Long					lDefaultExposureTimeValue	= 33333333L;
-	public static int					sDefaultCollorEffectValue	= CameraParameters.COLOR_EFFECT_MODE_OFF;
+	public static int					sDefaultFocusValue				= CameraParameters.AF_MODE_CONTINUOUS_PICTURE;
+	public static int					sDefaultFlashValue				= CameraParameters.FLASH_MODE_OFF;
+	public static int					sDefaultISOValue				= CameraParameters.ISO_AUTO;
+	public static int					sDefaultMeteringValue			= CameraParameters.meteringModeAuto;
+	public static Long					lDefaultExposureTimeValue		= 33333333L;
+	public static int					sDefaultCollorEffectValue		= CameraParameters.COLOR_EFFECT_MODE_OFF;
+	public static int					iDefaultColorTemperatureValue	= 6500;
+	public static int					iMinColorTemperatureValue		= 1000;
+	public static int					iMaxColorTemperatureValue		= 10000;
 
 	private File						forceFilename				= null;
 	private Uri							forceFilenameUri;
@@ -263,6 +267,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		sEvPref = getResources().getString(R.string.Preference_EvCompensationValue);
 		sSceneModePref = getResources().getString(R.string.Preference_SceneModeValue);
 		sWBModePref = getResources().getString(R.string.Preference_WBModeValue);
+		sColorTemperaturePref = getResources().getString(R.string.Preference_ColorTemperatureValue);
 		sFrontFocusModePref = getResources().getString(R.string.Preference_FrontFocusModeValue);
 		sFrontFocusModeVideoPref = getResources().getString(R.string.Preference_FrontFocusModeVideoValue);
 		sRearFocusModePref = getResources().getString(R.string.Preference_RearFocusModeValue);
@@ -1747,6 +1752,21 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(ApplicationScreen.sWBModePref,
 				ApplicationScreen.sDefaultValue);
 	}
+	
+	
+	@Override
+	public void setColorTemperature(int iTemp)
+	{
+		PreferenceManager.getDefaultSharedPreferences(mainContext).edit().putInt(ApplicationScreen.sColorTemperaturePref, iTemp)
+		.commit();
+	}
+	
+	@Override
+	public int getColorTemperature()
+	{
+		return PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(MainScreen.sColorTemperaturePref,
+				ApplicationScreen.iDefaultColorTemperatureValue);
+	}
 
 	// FOCUS MODE PREFERENCE
 	@Override
@@ -1839,6 +1859,22 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	{
 		return Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mainContext).getString(
 				ApplicationScreen.sAntibandingPref, "3"));
+	}
+	
+	@Override
+	public int getColorEffectPref()
+	{
+		try
+		{
+			return Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mainContext).getString(
+					CameraController.isFrontCamera() ? ApplicationScreen.sRearColorEffectPref
+							: ApplicationScreen.sFrontColorEffectPref, String
+							.valueOf(ApplicationScreen.sDefaultCollorEffectValue)));
+		} catch (Exception e)
+		{
+			return (PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearColorEffectPref
+					: ApplicationScreen.sFrontColorEffectPref, ApplicationScreen.sDefaultCollorEffectValue));
+		}
 	}
 
 	@Override

@@ -70,6 +70,7 @@ public abstract class GUI
 	
 	public boolean			mManualExposureTimeSupported  	= false;
 	public boolean			mManualFocusDistanceSupported	= false;
+	public boolean			mManualWhiteBalanceSupported	= false;
 	
 	public boolean			isAutoFocusDistance				= true;
 

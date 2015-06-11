@@ -51,6 +51,7 @@ public final class CameraParameters
 	public static final int		SCENE_MODE_HIGH_SPEED_VIDEO		= 17;
 
 	// WHITE BALANCE
+	public static final int		WB_MODE_OFF						= 0;
 	public static final int		WB_MODE_AUTO					= 1;
 	public static final int		WB_MODE_INCANDESCENT			= 2;
 	public static final int		WB_MODE_FLUORESCENT				= 3;
@@ -59,7 +60,7 @@ public final class CameraParameters
 	public static final int		WB_MODE_CLOUDY_DAYLIGHT			= 6;
 	public static final int		WB_MODE_TWILIGHT				= 7;
 	public static final int		WB_MODE_SHADE					= 8;
-
+	
 	// FOCUS
 	public static final int		AF_MODE_OFF						= 0;
 	public static final int		AF_MODE_AUTO					= 1;

@@ -2077,6 +2077,95 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			if (!activeWBNames.isEmpty())
 			{
 				mWBSupported = true;
+				
+				// Add Manual Focus control
+				if (CameraController.isManualWhiteBalanceSupported())
+				{
+					mManualWhiteBalanceSupported = true;
+
+					LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
+					View paramMode = inflator.inflate(R.layout.gui_almalence_quick_control_grid_element, null, false);
+
+					String wbmanual_name = MainScreen.getAppResources().getString(R.string.wbManual);
+					((ImageView) paramMode.findViewById(R.id.imageView))
+							.setImageResource(R.drawable.gui_almalence_settings_wb_manual);
+					((TextView) paramMode.findViewById(R.id.textView)).setText(wbmanual_name);
+
+					paramMode.setOnClickListener(new OnClickListener()
+					{
+
+						@Override
+						public void onClick(View v)
+						{
+							try
+							{
+								RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_WB);
+								but.setImageResource(R.drawable.gui_almalence_settings_wb_manual);
+							} catch (Exception e)
+							{
+								e.printStackTrace();
+								Log.d("set Manual white balance failed", "icons_wbs.get exception: " + e.getMessage());
+							}
+
+							guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
+							guiView.findViewById(R.id.manualWBLayout).setVisibility(View.VISIBLE);
+
+							mWB = CameraParameters.WB_MODE_OFF;
+
+//							preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref, false).commit();
+							int iColorTempValue = preferences.getInt(MainScreen.sColorTemperaturePref, ApplicationScreen.iDefaultColorTemperatureValue);
+
+//							mOriginalFocusMode = preferences.getInt(
+//									CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
+//											: MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
+							CameraController.setCameraWhiteBalance(mWB);
+							CameraController.setCameraColorTemperature(iColorTempValue);
+
+							ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
+									ApplicationInterface.MSG_WB_CHANGED);
+
+							initSettingsMenu(true);
+							hideSecondaryMenus();
+							unselectPrimaryTopMenuButtons(-1);
+
+							guiView.findViewById(R.id.topPanel).setVisibility(View.VISIBLE);
+							quickControlsVisible = false;
+
+							guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
+							manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
+							manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS,
+									CLOSE_MANUAL_CONTROLS_DELAY);
+
+//							preferences
+//									.edit()
+//									.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
+//											: MainScreen.sFrontFocusModePref, FOCUS_MF).commit();
+						}
+					});
+
+					wbModeButtons.put(CameraParameters.WB_MODE_OFF, paramMode);
+					activeWB.add(wbModeButtons.get(CameraParameters.WB_MODE_OFF));
+					activeWBNames.add(CameraParameters.WB_MODE_OFF);
+
+//					isAutoFocusDistance = preferences.getBoolean(MainScreen.sFocusDistanceModePref, true);
+
+					SeekBar temperatureBar = (SeekBar) guiView.findViewById(R.id.manualWBSeekBar);
+					if (temperatureBar != null)
+					{
+						int colorTemperature = preferences.getInt(MainScreen.sColorTemperaturePref, ApplicationScreen.iDefaultColorTemperatureValue);
+						
+						temperatureBar.setMax(ApplicationScreen.iMaxColorTemperatureValue/100 - 10);
+						temperatureBar.setProgress(colorTemperature/100 - 10);
+
+						TextView wbText = (TextView) guiView.findViewById(R.id.manualWBText);
+
+						wbText.setText(String.valueOf(colorTemperature) +"K");
+
+//						mFocusDistance = colorTemperature;
+						temperatureBar.setOnSeekBarChangeListener(this);
+					}
+				} else
+					mManualWhiteBalanceSupported = false;
 
 				wbmodeAdapter.Elements = activeWB;
 				GridView gridview = (GridView) guiView.findViewById(R.id.wbGrid);
@@ -3282,7 +3371,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			isEnabled = isSceneEnabled;
 			break;
 		case WB:
-			icon_id = ICONS_WB.get(mWB);
+			if (mWB == CameraParameters.WB_MODE_OFF)
+				icon_id = R.drawable.gui_almalence_settings_wb_manual;
+			else
+				icon_id = ICONS_WB.get(mWB);
 			icon_text = ApplicationScreen.getAppResources().getString(R.string.settings_mode_wb);
 			isEnabled = isWBEnabled;
 			break;
@@ -5395,7 +5487,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		if (mWB != -1)
 		{
 			but = (RotateImageView) topMenuButtons.get(MODE_WB);
-			icon_id = ICONS_WB.get(mWB);
+			if (mWB == CameraParameters.WB_MODE_OFF)
+				icon_id = R.drawable.gui_almalence_settings_wb_manual;
+			else
+				icon_id = ICONS_WB.get(mWB);
 			but.setImageResource(icon_id);
 			ApplicationScreen.instance.setWBModePref(mWB);
 
@@ -5471,10 +5566,19 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			setButtonSelected(wbModeButtons, mWB);
 
 			ApplicationScreen.instance.setWBModePref(newMode);
+			
+			if(newMode == CameraParameters.WB_MODE_OFF)
+			{
+				setColorTemperature(MainScreen.getInstance().getColorTemperature());
+			}
 		}
 
 		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_WB);
-		int icon_id = ICONS_WB.get(mWB);
+		int icon_id = -1;
+		if (mWB == CameraParameters.WB_MODE_OFF)
+			icon_id = R.drawable.gui_almalence_settings_wb_manual;
+		else
+			icon_id = ICONS_WB.get(mWB);
 		but.setImageResource(icon_id);
 
 		initSettingsMenu(false);
@@ -5483,6 +5587,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
 				ApplicationInterface.MSG_WB_CHANGED);
+	}
+	
+	private void setColorTemperature(int iTemp)
+	{
+		CameraController.setCameraColorTemperature(iTemp);
 	}
 
 	private void setFocusMode(int newMode)
@@ -7166,6 +7275,18 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 			manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
 		}
+		 else if (seekBar == (SeekBar) guiView.findViewById(R.id.manualWBSeekBar))
+			{
+				int iTemp = (progress + 10) * 100;
+				CameraController.setCameraColorTemperature(iTemp);
+				preferences.edit().putInt(MainScreen.sColorTemperaturePref, iTemp).commit();
+//				mFocusDistance = iDistance / 100;
+				TextView wbText = (TextView) guiView.findViewById(R.id.manualWBText);
+				wbText.setText(String.valueOf(iTemp) +"K");
+
+				manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
+				manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
+			}
 	}
 
 	@Override

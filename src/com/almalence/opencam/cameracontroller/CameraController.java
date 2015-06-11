@@ -42,6 +42,7 @@ import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.hardware.Camera.AutoFocusCallback;
+import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.media.Image;
 import android.os.AsyncTask;
@@ -978,7 +979,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static boolean isUseSuperMode()
 	{
-		return (isSuperModePossible() && isHALv3) || isOldCameraOneModeLaunched;
+		return (isSuperModePossible() && isHALv3) || (isSuperModePossible() && isOldCameraOneModeLaunched);
 	}
 
 	public static boolean isNexus()
@@ -2763,16 +2764,23 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	}
 
 	/*
-	 * Manual sensor parameters: focus distance and exposure time. Available
+	 * Manual sensor parameters: focus distance and exposure time + manual white balance. Available
 	 * only in Camera2 mode.
 	 */
+	public static boolean isManualWhiteBalanceSupported()
+	{
+		if (CameraController.isHALv3)
+			return HALv3.isManualWhiteBalanceSupportedHALv3();
+		else
+			return false;
+	}
+	
 	public static boolean isManualFocusDistanceSupported()
 	{
 		if (CameraController.isHALv3)
 			return isManualSensorSupported && HALv3.isManualFocusDistanceSupportedHALv3();
 		else
 			return false;
-		// return false;
 	}
 
 	public static float getMinimumFocusDistance()
@@ -3123,6 +3131,23 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		} else
 		{
 			SonyRemoteCamera.setWhiteBalanceRemote(CameraController.mode_wb_sony_remote.get(mode));
+		}
+	}
+	
+	@TargetApi(21)
+	public static void setCameraColorTemperature(int iTemp)
+	{
+		if (CameraController.isHALv3)
+		{
+			appInterface.setColorTemperature(iTemp);
+			try
+			{
+				HALv3.getInstance().configurePreviewRequest(true);
+			} catch (CameraAccessException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
