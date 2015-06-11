@@ -803,7 +803,8 @@ public class HALv3
 	public static boolean isManualWhiteBalanceSupportedHALv3()
 	{
 		if (HALv3.getInstance().camCharacter != null
-				&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES) != null)
+				&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES) != null
+				&& !Build.MODEL.contains("Nexus 6")) //Disable manual WB for Nexus 6 - it manages WB wrong
 		{
 			int[] wb = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES);
 			
@@ -1394,6 +1395,29 @@ public class HALv3
 			if (isRAWCapture)
 				rawRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropCapture);
 		}
+		
+//		int sceneMode = appInterface.getSceneModePref();
+//		if (sceneMode != CameraParameters.SCENE_MODE_AUTO)
+//		{
+//			stillRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_USE_SCENE_MODE);
+//			stillRequestBuilder.set(CaptureRequest.CONTROL_SCENE_MODE, sceneMode);
+//			
+//			precaptureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_USE_SCENE_MODE);
+//			precaptureRequestBuilder.set(CaptureRequest.CONTROL_SCENE_MODE, sceneMode);
+//			
+//			if (isRAWCapture)
+//			{
+//				rawRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_USE_SCENE_MODE);
+//				rawRequestBuilder.set(CaptureRequest.CONTROL_SCENE_MODE, sceneMode);
+//			}
+//		}
+//		else
+//		{
+//			stillRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+//			precaptureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+//			if (isRAWCapture)
+//				rawRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+//		}
 
 		//Focus mode. Event in case of manual exposure switch off auto focusing.
 		int focusMode = appInterface.getFocusModePref(-1);
@@ -1408,8 +1432,10 @@ public class HALv3
 		int wbMode = appInterface.getWBModePref();
 		stillRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, wbMode);
 		precaptureRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, wbMode);
-		if(wbMode == CameraParameters.WB_MODE_OFF)
+		if(wbMode == CaptureRequest.CONTROL_AWB_MODE_OFF)
 		{
+			stillRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_MODE, CaptureRequest.COLOR_CORRECTION_MODE_TRANSFORM_MATRIX);
+			precaptureRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_MODE, CaptureRequest.COLOR_CORRECTION_MODE_TRANSFORM_MATRIX);
 			
 			stillRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_GAINS, rggbVector);
 			stillRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_TRANSFORM, new ColorSpaceTransform(colorTransformMatrix));
@@ -1511,7 +1537,7 @@ public class HALv3
 		{
 			stillRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_OFF);
 			precaptureRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_OFF);
-			if(appInterface.getWBModePref() == CameraParameters.WB_MODE_OFF)
+			if(appInterface.getWBModePref() == CaptureRequest.CONTROL_AWB_MODE_OFF)
 			{
 				stillRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_GAINS, rggbVector);
 				stillRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_TRANSFORM, new ColorSpaceTransform(colorTransformMatrix));

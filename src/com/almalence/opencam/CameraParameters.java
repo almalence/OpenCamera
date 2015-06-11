@@ -60,6 +60,7 @@ public final class CameraParameters
 	public static final int		WB_MODE_CLOUDY_DAYLIGHT			= 6;
 	public static final int		WB_MODE_TWILIGHT				= 7;
 	public static final int		WB_MODE_SHADE					= 8;
+	public static final int		WB_MODE_MANUAL					= 10;
 	
 	// FOCUS
 	public static final int		AF_MODE_OFF						= 0;

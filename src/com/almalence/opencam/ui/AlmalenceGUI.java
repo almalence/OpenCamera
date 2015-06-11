@@ -269,6 +269,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 																										R.drawable.gui_almalence_settings_wb_twilight);
 																								put(CameraParameters.WB_MODE_SHADE,
 																										R.drawable.gui_almalence_settings_wb_shade);
+																								put(CameraParameters.WB_MODE_MANUAL,
+																										R.drawable.gui_almalence_settings_wb_manual);
 																							}
 																						};
 
@@ -2110,7 +2112,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 							guiView.findViewById(R.id.manualWBLayout).setVisibility(View.VISIBLE);
 
-							mWB = CameraParameters.WB_MODE_OFF;
+							mWB = CameraParameters.WB_MODE_MANUAL;
 
 //							preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref, false).commit();
 							int iColorTempValue = preferences.getInt(MainScreen.sColorTemperaturePref, ApplicationScreen.iDefaultColorTemperatureValue);
@@ -2118,7 +2120,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 //							mOriginalFocusMode = preferences.getInt(
 //									CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
 //											: MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
-							CameraController.setCameraWhiteBalance(mWB);
+							CameraController.setCameraWhiteBalance(CameraParameters.WB_MODE_OFF);
 							CameraController.setCameraColorTemperature(iColorTempValue);
 
 							ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
@@ -2143,9 +2145,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						}
 					});
 
-					wbModeButtons.put(CameraParameters.WB_MODE_OFF, paramMode);
-					activeWB.add(wbModeButtons.get(CameraParameters.WB_MODE_OFF));
-					activeWBNames.add(CameraParameters.WB_MODE_OFF);
+					wbModeButtons.put(CameraParameters.WB_MODE_MANUAL, paramMode);
+					activeWB.add(wbModeButtons.get(CameraParameters.WB_MODE_MANUAL));
+					activeWBNames.add(CameraParameters.WB_MODE_MANUAL);
 
 //					isAutoFocusDistance = preferences.getBoolean(MainScreen.sFocusDistanceModePref, true);
 
