@@ -272,8 +272,6 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		{
 			try
 			{
-				File saveDir = PluginManager.getSaveDir(false);
-
 				String fileFormat = PluginManager.getInstance().getFileFormat();
 
 				for (int i = 0; i < imagesAmount; ++i)
@@ -290,28 +288,9 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 					}
 
 					String index = String.format("_%02d", i);
-					File file = new File(saveDir, fileFormat + index + ".jpg");
 
-					FileOutputStream os = null;
-					try
-					{
-						os = new FileOutputStream(file);
-					} catch (Exception e)
-					{
-						// save always if not working saving to sdcard
-						e.printStackTrace();
-						saveDir = PluginManager.getSaveDir(true);
-						file = new File(saveDir, fileFormat + index + ".jpg");
-						os = new FileOutputStream(file);
-					}
-
-					PluginManager.getInstance().writeData(os, true, sessionID, i, null, mYUVBufferList.get(i), file);
+					PluginManager.getInstance().saveInputFile(true, sessionID, i, null, mYUVBufferList.get(i), fileFormat + index);
 				}
-			} catch (IOException e)
-			{
-				e.printStackTrace();
-				ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED_IOEXCEPTION);
-				return;
 			} catch (Exception e)
 			{
 				e.printStackTrace();
