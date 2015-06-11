@@ -2226,6 +2226,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 
 				values.put(ImageColumns.BUCKET_ID, path.hashCode());
 				values.put(ImageColumns.BUCKET_DISPLAY_NAME, name);
+				values.put(ImageColumns.DATA, fileName);
 
 				if (!enableExifTagOrientation && !hasDNGResult)
 				{
@@ -3193,6 +3194,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
 		values.put(ImageColumns.MIME_TYPE, "image/jpeg");
 		values.put(ImageColumns.ORIENTATION, mDisplayOrientation);
+		values.put(ImageColumns.DATA, file.getName());
 
 		if (saveGeoInfo)
 		{
