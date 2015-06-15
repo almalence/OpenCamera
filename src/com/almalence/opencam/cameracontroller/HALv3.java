@@ -1395,29 +1395,6 @@ public class HALv3
 			if (isRAWCapture)
 				rawRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropCapture);
 		}
-		
-//		int sceneMode = appInterface.getSceneModePref();
-//		if (sceneMode != CameraParameters.SCENE_MODE_AUTO)
-//		{
-//			stillRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_USE_SCENE_MODE);
-//			stillRequestBuilder.set(CaptureRequest.CONTROL_SCENE_MODE, sceneMode);
-//			
-//			precaptureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_USE_SCENE_MODE);
-//			precaptureRequestBuilder.set(CaptureRequest.CONTROL_SCENE_MODE, sceneMode);
-//			
-//			if (isRAWCapture)
-//			{
-//				rawRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_USE_SCENE_MODE);
-//				rawRequestBuilder.set(CaptureRequest.CONTROL_SCENE_MODE, sceneMode);
-//			}
-//		}
-//		else
-//		{
-//			stillRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
-//			precaptureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
-//			if (isRAWCapture)
-//				rawRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
-//		}
 
 		//Focus mode. Event in case of manual exposure switch off auto focusing.
 		int focusMode = appInterface.getFocusModePref(-1);
@@ -2010,7 +1987,6 @@ public class HALv3
 		}
 		
 		previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, wbMode);
-//		previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_OFF);
 		if(wbMode == CaptureRequest.CONTROL_AWB_MODE_OFF)
 		{
 			previewRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_MODE, CaptureRequest.COLOR_CORRECTION_MODE_TRANSFORM_MATRIX);
@@ -2129,16 +2105,6 @@ public class HALv3
 			previewRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, iso);
 		}
 
-//		int collorEffect = CameraParameters.COLOR_EFFECT_MODE_OFF;
-//		try {
-//			collorEffect = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getString(
-//					CameraController.isFrontCamera() ? ApplicationScreen.sRearColorEffectPref : ApplicationScreen.sFrontColorEffectPref, String.valueOf(ApplicationScreen.sDefaultCollorEffectValue)));
-//		} catch (Exception e) {
-//			collorEffect = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getInt(
-//					CameraController.isFrontCamera() ? ApplicationScreen.sRearColorEffectPref : ApplicationScreen.sFrontColorEffectPref, ApplicationScreen.sDefaultCollorEffectValue);
-//		}
-//		previewRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, colorEffect);
-		
 		previewRequestBuilder.addTarget(appInterface.getCameraSurface());
 		
 		
@@ -2371,10 +2337,10 @@ public class HALv3
 				TotalCaptureResult result)
 		{
 			Log.e(TAG, "CAPTURE COMPLETED");
-			RggbChannelVector rggb = result.get(CaptureResult.COLOR_CORRECTION_GAINS);
-			ColorSpaceTransform transformMatrix = result.get(CaptureResult.COLOR_CORRECTION_TRANSFORM);
-			Log.e(TAG, "RGGB = R: " + rggb.getRed() + " G_even: " + rggb.getGreenEven()+ " G_odd: " + rggb.getGreenOdd() + " B: " + rggb.getBlue());
-			Log.e(TAG, "Transform Matrix: " + transformMatrix.toString());
+//			RggbChannelVector rggb = result.get(CaptureResult.COLOR_CORRECTION_GAINS);
+//			ColorSpaceTransform transformMatrix = result.get(CaptureResult.COLOR_CORRECTION_TRANSFORM);
+//			Log.e(TAG, "RGGB = R: " + rggb.getRed() + " G_even: " + rggb.getGreenEven()+ " G_odd: " + rggb.getGreenOdd() + " B: " + rggb.getBlue());
+//			Log.e(TAG, "Transform Matrix: " + transformMatrix.toString());
 			pluginManager.onCaptureCompleted(result);
 		}
 	};

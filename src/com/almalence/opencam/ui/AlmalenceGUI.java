@@ -2630,6 +2630,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 						guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 						guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.VISIBLE);
+						guiView.findViewById(R.id.manualWBLayout).setVisibility(View.VISIBLE);
 
 						mMeteringMode = CameraParameters.meteringModeManual;
 
@@ -2739,6 +2740,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
 					}
 					guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.VISIBLE);
+					guiView.findViewById(R.id.manualWBLayout).setVisibility(View.VISIBLE);
 
 					manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 
@@ -2757,6 +2759,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				} else
 				{
 					guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.GONE);
+					if(mWB != CameraParameters.WB_MODE_OFF)
+						guiView.findViewById(R.id.manualWBLayout).setVisibility(View.GONE);
 
 					if (CameraController.isUseHALv3())
 					{
@@ -5704,7 +5708,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private void setMeteringMode(int newMode)
 	{
 		guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.GONE);
-		if (guiView.findViewById(R.id.focusDistanceLayout).getVisibility() == View.GONE)
+		if(mWB != CameraParameters.WB_MODE_OFF)
+		{
+			guiView.findViewById(R.id.manualWBLayout).setVisibility(View.GONE);
+			setWhiteBalance(mWB);
+		}
+		
+		if (guiView.findViewById(R.id.focusDistanceLayout).getVisibility() == View.GONE &&
+			guiView.findViewById(R.id.manualWBLayout).getVisibility() == View.GONE	)
 		{
 			guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
 			guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
@@ -7252,7 +7263,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
 					ApplicationInterface.MSG_EV_CHANGED);
-		} else if (seekBar == (SeekBar) guiView.findViewById(R.id.exposureTimeSeekBar))
+		} 
+		else if (seekBar == (SeekBar) guiView.findViewById(R.id.exposureTimeSeekBar))
 		{
 			if (mMeteringMode == CameraParameters.meteringModeManual)
 			{
@@ -7269,7 +7281,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 				manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
 			}
-		} else if (seekBar == (SeekBar) guiView.findViewById(R.id.focusDistanceSeekBar))
+		}
+		else if (seekBar == (SeekBar) guiView.findViewById(R.id.focusDistanceSeekBar))
 		{
 			int iDistance = progress;
 			CameraController.setCameraFocusDistance(iDistance / 100);
@@ -7279,18 +7292,18 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 			manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
 		}
-		 else if (seekBar == (SeekBar) guiView.findViewById(R.id.manualWBSeekBar))
-			{
-				int iTemp = (progress + 10) * 100;
-				CameraController.setCameraColorTemperature(iTemp);
-				preferences.edit().putInt(MainScreen.sColorTemperaturePref, iTemp).commit();
+		else if (seekBar == (SeekBar) guiView.findViewById(R.id.manualWBSeekBar))
+		{
+			int iTemp = (progress + 10) * 100;
+			CameraController.setCameraColorTemperature(iTemp);
+			preferences.edit().putInt(MainScreen.sColorTemperaturePref, iTemp).commit();
 //				mFocusDistance = iDistance / 100;
-				TextView wbText = (TextView) guiView.findViewById(R.id.manualWBText);
-				wbText.setText(String.valueOf(iTemp) +"K");
+			TextView wbText = (TextView) guiView.findViewById(R.id.manualWBText);
+			wbText.setText(String.valueOf(iTemp) +"K");
 
-				manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
-				manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
-			}
+			manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
+			manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
+		}
 	}
 
 	@Override

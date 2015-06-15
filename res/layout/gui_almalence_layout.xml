@@ -386,7 +386,57 @@
 			    		</RelativeLayout>
 		   			</LinearLayout>
 	  			</LinearLayout>	    		
-	  		</LinearLayout>	
+	  		</LinearLayout>
+	  		
+			
+			<LinearLayout
+			 	android:id="@+id/manualWBLayout"
+			 	android:orientation="horizontal"
+			 	android:layout_width="wrap_content"
+		  		android:layout_height="wrap_content"
+		  		android:layout_marginLeft="3dip"	    		
+		  		android:paddingTop="10dip"
+		  		android:paddingLeft="10dip"
+		  		android:paddingRight="10dip"
+		  		android:layout_below="@id/exposureTimeLayout"
+		  		android:layout_gravity="bottom"
+		  		android:visibility="gone">
+		   		<TextView android:id="@+id/manualWBTitleText"
+		   		    	  android:layout_width="wrap_content"
+		   		    	  android:layout_height="match_parent"		    		    	  
+						  android:textSize="@dimen/exposureTimeTitleSize"
+						  android:paddingLeft="10dp"							  
+						  android:textStyle="bold"
+						  android:text="Manual WB"
+						  android:textColor="@android:color/white"							  
+						  android:gravity="center"
+						  android:layout_gravity="center_vertical"/>	    		
+		   		<LinearLayout
+		 	 	android:orientation="vertical"
+		 	 	android:layout_width="wrap_content"
+		   		android:layout_height="wrap_content">		    		
+		    		<SeekBar android:id="@+id/manualWBSeekBar"
+							 android:layout_width="@dimen/exposureSeekBarWidth"
+							 android:layout_height="wrap_content"
+							 android:orientation="horizontal"/>
+		    		<RelativeLayout
+				 	 	android:id="@+id/manualWBTextLayout"		 	 	    	 	 	    
+				 	 	android:orientation="horizontal"
+				 	 	android:layout_width="@dimen/exposureSeekBarWidth"
+			    		android:layout_height="wrap_content">
+			    		<TextView android:id="@+id/manualWBText"
+			    		    	  android:layout_width="match_parent"
+			    		    	  android:layout_height="wrap_content"		    		    	  
+								  android:textSize="@dimen/exposureTimeTitleSize"
+								  android:paddingLeft="10dp"							  
+								  android:textStyle="bold"
+								  android:textColor="@android:color/white"							  
+								  android:gravity="center"
+								  android:layout_gravity="center"
+								  android:layout_centerInParent="true"/>
+		    		</RelativeLayout>
+		   		</LinearLayout>
+	  		</LinearLayout>		
 	  		
 			<LinearLayout
 			 	android:id="@+id/focusDistanceLayout"
@@ -397,7 +447,7 @@
 		  		android:paddingTop="10dip"
 		  		android:paddingLeft="10dip"
 		  		android:paddingRight="10dip"
-		  		android:layout_below="@id/exposureTimeLayout"
+		  		android:layout_below="@id/manualWBLayout"
 		  		android:layout_gravity="bottom"
 		  		android:visibility="gone">
 		   		<TextView android:id="@+id/focusDistanceTitleText"
@@ -447,54 +497,7 @@
 		   		</LinearLayout>
 	  		</LinearLayout>
 	  		
-			<LinearLayout
-			 	android:id="@+id/manualWBLayout"
-			 	android:orientation="horizontal"
-			 	android:layout_width="wrap_content"
-		  		android:layout_height="wrap_content"
-		  		android:layout_marginLeft="3dip"	    		
-		  		android:paddingTop="10dip"
-		  		android:paddingLeft="10dip"
-		  		android:paddingRight="10dip"
-		  		android:layout_below="@id/exposureTimeLayout"
-		  		android:layout_gravity="bottom"
-		  		android:visibility="gone">
-		   		<TextView android:id="@+id/manualWBTitleText"
-		   		    	  android:layout_width="wrap_content"
-		   		    	  android:layout_height="match_parent"		    		    	  
-						  android:textSize="@dimen/exposureTimeTitleSize"
-						  android:paddingLeft="10dp"							  
-						  android:textStyle="bold"
-						  android:text="Manual WB"
-						  android:textColor="@android:color/white"							  
-						  android:gravity="center"
-						  android:layout_gravity="center_vertical"/>	    		
-		   		<LinearLayout
-		 	 	android:orientation="vertical"
-		 	 	android:layout_width="wrap_content"
-		   		android:layout_height="wrap_content">		    		
-		    		<SeekBar android:id="@+id/manualWBSeekBar"
-							 android:layout_width="@dimen/exposureSeekBarWidth"
-							 android:layout_height="wrap_content"
-							 android:orientation="horizontal"/>
-		    		<RelativeLayout
-				 	 	android:id="@+id/manualWBTextLayout"		 	 	    	 	 	    
-				 	 	android:orientation="horizontal"
-				 	 	android:layout_width="@dimen/exposureSeekBarWidth"
-			    		android:layout_height="wrap_content">
-			    		<TextView android:id="@+id/manualWBText"
-			    		    	  android:layout_width="match_parent"
-			    		    	  android:layout_height="wrap_content"		    		    	  
-								  android:textSize="@dimen/exposureTimeTitleSize"
-								  android:paddingLeft="10dp"							  
-								  android:textStyle="bold"
-								  android:textColor="@android:color/white"							  
-								  android:gravity="center"
-								  android:layout_gravity="center"
-								  android:layout_centerInParent="true"/>
-		    		</RelativeLayout>
-		   		</LinearLayout>
-	  		</LinearLayout>	
+			
 	  			
   		</RelativeLayout>          	
 	</RelativeLayout>
