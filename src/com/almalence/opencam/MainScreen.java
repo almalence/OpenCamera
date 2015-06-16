@@ -192,6 +192,7 @@ public class MainScreen extends ApplicationScreen
 	private static final int	VOLUME_FUNC_NONE				= 3;
 
 	public static String		sKeepScreenOn;
+	public static String		sFastSwitchShutterOn;
 
 	public static String		sDelayedCapturePref;
 	public static String		sShowDelayedCapturePref;
@@ -297,6 +298,7 @@ public class MainScreen extends ApplicationScreen
 		sAdditionalRotationPref = getResources().getString(R.string.Preference_AdditionalRotationValue);
 
 		sKeepScreenOn = getResources().getString(R.string.Preference_KeepScreenOnValue);
+		sFastSwitchShutterOn = getResources().getString(R.string.Preference_ShowFastSwitchShutterValue);
 		
 		sSavePathPref = getResources().getString(R.string.Preference_SavePathValue);
 		sSaveToPref = getResources().getString(R.string.Preference_SaveToValue);
