@@ -190,6 +190,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	public static String				sEvPref;
 	public static String				sExposureTimeModePref;
+	public static String				sRealExposureTimeOnPreviewPref;
 	public static String				sExposureTimePref;
 	public static String				sFocusDistanceModePref;
 	public static String				sFocusDistancePref;
@@ -279,6 +280,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		sMeteringModePref = getResources().getString(R.string.Preference_MeteringModeValue);
 		sExposureTimePref = getResources().getString(R.string.Preference_ExposureTimeValue);
 		sExposureTimeModePref = getResources().getString(R.string.Preference_ExposureTimeModeValue);
+		sRealExposureTimeOnPreviewPref = getResources().getString(R.string.Preference_RealExposureTimeOnPreviewValue);
 		sFocusDistancePref = getResources().getString(R.string.Preference_FocusDistanceValue);
 		sFocusDistanceModePref = getResources().getString(R.string.Preference_FocusDistanceModeValue);
 		sCameraModePref = getResources().getString(R.string.Preference_CameraModeValue);

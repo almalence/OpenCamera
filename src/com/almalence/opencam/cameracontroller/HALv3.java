@@ -105,6 +105,8 @@ public class HALv3
 	private static long[]				exposureTime				= null;
 	private static long 				currentExposure 			= 0;
 	private static int 					currentSensitivity 			= 0;
+	
+	private static boolean				isManualExposureTime		= false;
 
 	protected static boolean			resultInHeap				= false;
 
@@ -1117,10 +1119,46 @@ public class HALv3
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null
 				&& HALv3.getInstance().mCaptureSession != null)
 		{
+			boolean isRealExposureTimeOnPreview = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getBoolean(ApplicationScreen.sRealExposureTimeOnPreviewPref, false);
+			long exposureTime = iTime;
+			long frameDuration = 0;
+			int  sensorSensitivity = CameraController.getIsoModeHALv3().get(appInterface.getISOModePref(1));
+
+			//Exposure time longer than 1/15 gets preview very slow
+			//Set custom exposure time/frame duration/ISO allows preview looks like real but on high fps.
+			if(!isRealExposureTimeOnPreview)
+			{
+				if(iTime == 100000000L)
+				{
+					exposureTime = 70000000L;
+					frameDuration = 70000000L;
+					sensorSensitivity = 500;
+				}
+				else if(iTime == 142857142L)
+				{
+					exposureTime = 35000000L;
+					frameDuration = 39000000L;
+					sensorSensitivity = 1100;
+				}
+				else if(iTime >= 200000000L)
+				{
+					exposureTime = 40000000L;
+					frameDuration = 40000000L;
+					sensorSensitivity = 1300;
+				}
+			}
 			previewRequestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF);
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
-			HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, iTime);
+			HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, exposureTime);
+			
+			if(frameDuration > 0)
+				HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_FRAME_DURATION, frameDuration);
+			
+			if(sensorSensitivity > 0)
+				HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, sensorSensitivity);
+			
 			HALv3.setRepeatingRequest();
+			isManualExposureTime = true;
 		}
 
 		PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).edit()
@@ -1247,6 +1285,7 @@ public class HALv3
 		{
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, ae_regions);
 			HALv3.setRepeatingRequest();
+			isManualExposureTime = false;
 		}
 	}
 	
@@ -1539,6 +1578,11 @@ public class HALv3
 				rawRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, gain);
 		}
 
+		if(isManualExposureTime)
+		{
+			expo = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getLong(ApplicationScreen.sExposureTimePref, 0);
+		}
+		
 		if (expo > 0)
 		{
 			stillRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, expo);
@@ -1923,6 +1967,7 @@ public class HALv3
 
 		long exTime = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getLong(ApplicationScreen.sExposureTimePref, 0);
 		boolean isAutoExpTime = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getBoolean(ApplicationScreen.sExposureTimeModePref, true);
+		boolean isRealExposureTimeOnPreview = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getBoolean(ApplicationScreen.sRealExposureTimeOnPreviewPref, false);
 		
 		float fDist = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getFloat(ApplicationScreen.sFocusDistancePref, 0);
 		boolean isAutoFDist = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getBoolean(ApplicationScreen.sFocusDistanceModePref, true);
@@ -2101,10 +2146,43 @@ public class HALv3
 		
 		if(!isAutoExpTime)
 		{
+			long exposureTime = exTime;
+			long frameDuration = 0;
+			int  sensorSensitivity = iso;
+
+			//Exposure time longer than 1/15 gets preview very slow
+			//Set custom exposure time/frame duration/ISO allows preview looks like real but on high fps.
+			if(!isRealExposureTimeOnPreview)
+			{
+				if(exTime == 100000000L)
+				{
+					exposureTime = 70000000L;
+					frameDuration = 70000000L;
+					sensorSensitivity = 500;
+				}
+				else if(exTime == 142857142L)
+				{
+					exposureTime = 35000000L;
+					frameDuration = 39000000L;
+					sensorSensitivity = 1100;
+				}
+				else if(exTime >= 200000000L)
+				{
+					exposureTime = 40000000L;
+					frameDuration = 40000000L;
+					sensorSensitivity = 1300;
+				}
+			}
+			
 			previewRequestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF);
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
-			previewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, exTime);
-			previewRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, iso);
+			HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, exposureTime);
+			
+			if(frameDuration > 0)
+				HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_FRAME_DURATION, frameDuration);
+			
+			if(sensorSensitivity > 0)
+				HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, sensorSensitivity);
 		}
 
 		previewRequestBuilder.addTarget(appInterface.getCameraSurface());
@@ -2343,6 +2421,9 @@ public class HALv3
 //			ColorSpaceTransform transformMatrix = result.get(CaptureResult.COLOR_CORRECTION_TRANSFORM);
 //			Log.e(TAG, "RGGB = R: " + rggb.getRed() + " G_even: " + rggb.getGreenEven()+ " G_odd: " + rggb.getGreenOdd() + " B: " + rggb.getBlue());
 //			Log.e(TAG, "Transform Matrix: " + transformMatrix.toString());
+			Log.e(TAG, "Exposure time = " + result.get(CaptureResult.SENSOR_EXPOSURE_TIME));
+			Log.e(TAG, "Frame duration = " + result.get(CaptureResult.SENSOR_FRAME_DURATION));
+			Log.e(TAG, "Sensor sensitivity = " + result.get(CaptureResult.SENSOR_SENSITIVITY));
 			pluginManager.onCaptureCompleted(result);
 		}
 	};

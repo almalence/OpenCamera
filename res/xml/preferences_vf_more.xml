@@ -12,4 +12,10 @@
 			android:defaultValue="false" 
 			android:key="changePreviewProportions" />
 	    
+	    <CheckBoxPreference
+			android:title="@string/Pref_Common_RealExposureTimeOnPreview_Title"
+			android:summary="@string/Pref_Common_RealExposureTimeOnPreview_Summary"
+			android:defaultValue="false" 
+			android:key="Preference_RealExposureTimeOnPreviewValue" />
+	    
 </PreferenceScreen>

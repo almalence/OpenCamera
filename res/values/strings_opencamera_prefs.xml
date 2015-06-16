@@ -33,6 +33,7 @@
     <string name="Preference_MeteringModeValue">Preference_MeteringModeValue</string>
     <string name="Preference_ExposureTimeValue">Preference_ExposureTimeValue</string>
     <string name="Preference_ExposureTimeModeValue">Preference_ExposureTimeModeValue</string>
+    <string name="Preference_RealExposureTimeOnPreviewValue">Preference_RealExposureTimeOnPreviewValue</string>
     <string name="Preference_FocusDistanceValue">Preference_FocusDistanceValue</string>
     <string name="Preference_FocusDistanceModeValue">Preference_FocusDistanceModeValue</string>
     <string name="Preference_CameraModeValue">Preference_CameraModeValue</string>
@@ -72,6 +73,7 @@
     <string name="Preference_UseGeotaggingValue">useGeoTaggingPrefExport</string>
     
     <string name="Preference_KeepScreenOnValue">Preference_KeepScreenOnValue</string>
+    <string name="Preference_ShowFastSwitchShutterValue">Preference_ShowFastSwitchShutterValue</string>
     
     <string name="Preference_TimestampDateValue">Preference_TimestampDateValue</string>
     <string name="Preference_TimestampAbbreviationValue">Preference_TimestampAbbreviationValue</string>
