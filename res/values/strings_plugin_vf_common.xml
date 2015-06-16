@@ -14,4 +14,7 @@
 	
 	<string name="Pref_Common_ChangePreviewProportions_Title">Change proportions</string>
 	<string name="Pref_Common_ChangePreviewProportions_Summary">Select if preview proportions are incorrect</string>
+	
+	<string name="Pref_Common_RealExposureTimeOnPreview_Title">Real exposure time on preview</string>
+	<string name="Pref_Common_RealExposureTimeOnPreview_Summary">In case of manual exposure time mode</string>
 </resources>

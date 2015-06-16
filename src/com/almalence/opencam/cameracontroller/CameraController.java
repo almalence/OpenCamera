@@ -688,7 +688,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		mode_iso_HALv3 = new HashMap<Integer, Integer>()
 		{
 			{
-				put(CameraParameters.ISO_AUTO, 1);
+				put(CameraParameters.ISO_AUTO, 500);
 				put(CameraParameters.ISO_50, 50);
 				put(CameraParameters.ISO_100, 100);
 				put(CameraParameters.ISO_200, 200);

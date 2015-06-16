@@ -2545,7 +2545,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					if (CameraController.isFrontCamera())
 						initValue = activeISONames.get(0);
 					else
-						initValue = ApplicationScreen.sDefaultValue;
+						initValue = ApplicationScreen.sDefaultISOValue;
 
 					preferences.edit().putInt(ApplicationScreen.sISOPref, initValue).commit();
 				}
