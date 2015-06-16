@@ -75,6 +75,7 @@
     <string name="sceneHDR">HDR</string>
     <string name="sceneAR">AR</string>
     
+    <string name="wbManual">Manual</string>
     <string name="wbAuto">Auto</string>
     <string name="wbIncandescent">Incandescent</string>
     <string name="wbFluorescent">Fluorescent</string>
@@ -83,6 +84,7 @@
     <string name="wbCloudyDaylight">Cloudy daylight</string>
     <string name="wbTwilight">Twilight</string>
     <string name="wbShade">Shade</string>
+    
     
     <string name="focusAuto">Auto</string>
     <string name="focusInfinity">Infinity</string>

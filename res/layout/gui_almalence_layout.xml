@@ -144,7 +144,7 @@
 
             <LinearLayout
                 android:id="@+id/buttonShutterContainer"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="@dimen/shutterHeight"
                 android:layout_gravity="center"
                 android:gravity="center"
@@ -174,8 +174,7 @@
                     android:paddingRight="0dp"
                     android:paddingTop="0dp"
                     android:scaleType="fitXY"
-                    android:src="@drawable/button_shutter"
-                    android:visibility="gone" />
+                    android:src="@drawable/button_shutter" />
             </LinearLayout>
         </LinearLayout>
 
@@ -431,10 +430,67 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/focusDistanceLayout"
+                android:id="@+id/manualWBLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/exposureTimeLayout"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="3dip"
+                android:orientation="horizontal"
+                android:paddingLeft="10dip"
+                android:paddingRight="10dip"
+                android:paddingTop="10dip"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/manualWBTitleText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center"
+                    android:paddingLeft="10dp"
+                    android:text="Manual WB"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/exposureTimeTitleSize"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" >
+
+                    <SeekBar
+                        android:id="@+id/manualWBSeekBar"
+                        android:layout_width="@dimen/exposureSeekBarWidth"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" />
+
+                    <RelativeLayout
+                        android:id="@+id/manualWBTextLayout"
+                        android:layout_width="@dimen/exposureSeekBarWidth"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:id="@+id/manualWBText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:paddingLeft="10dp"
+                            android:textColor="@android:color/white"
+                            android:textSize="@dimen/exposureTimeTitleSize"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/focusDistanceLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/manualWBLayout"
                 android:layout_gravity="bottom"
                 android:layout_marginLeft="3dip"
                 android:orientation="horizontal"

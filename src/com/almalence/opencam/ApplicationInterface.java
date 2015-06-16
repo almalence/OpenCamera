@@ -170,6 +170,9 @@ public interface ApplicationInterface
 	public void setWBModePref(int iWB);
 	public int  getWBModePref();
 	
+	public void setColorTemperature(int iTemp);
+	public int  getColorTemperature();
+	
 	public void setFocusModePref(int iFocusMode);
 	public int  getFocusModePref(int defaultMode);
 	
@@ -180,6 +183,8 @@ public interface ApplicationInterface
 	public int  getISOModePref(int defaultMode);
 	
 	public int getAntibandingModePref();
+	
+	public int getColorEffectPref();
 	
 	public boolean getAELockPref();
 	public boolean getAWBLockPref();

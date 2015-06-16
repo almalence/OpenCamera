@@ -45,7 +45,9 @@ import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
+import android.hardware.camera2.params.ColorSpaceTransform;
 import android.hardware.camera2.params.MeteringRectangle;
+import android.hardware.camera2.params.RggbChannelVector;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
@@ -112,6 +114,13 @@ public class HALv3
 	
 	protected static boolean			playShutterSound			= false;
 	protected static boolean			captureAllowed 				= false;
+	
+	protected static RggbChannelVector 	rggbVector					= null;
+//	protected static int[] 				colorTransformMatrix 		= new int[]{258, 128, -119, 128, -10, 128, -40, 128, 209, 128, -41, 128, -1, 128, -74, 128, 203, 128};
+	protected static int[] 				colorTransformMatrix 		= new int[]{227, 128, -98, 128, -1, 128, -33, 128, 193, 128, -32, 128, 0, 128, -93, 128, 221, 128};
+	protected static float				multiplierR					= 1.81f;
+	protected static float				multiplierG					= 1.0f;
+	protected static float				multiplierB					= 1.54f;
 
 	public static HALv3 getInstance()
 	{
@@ -790,6 +799,28 @@ public class HALv3
 
 		return new int[0];
 	}
+	
+	public static boolean isManualWhiteBalanceSupportedHALv3()
+	{
+		if (HALv3.getInstance().camCharacter != null
+				&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES) != null
+				&& !Build.MODEL.contains("Nexus 6")) //Disable manual WB for Nexus 6 - it manages WB wrong
+		{
+			int[] wb = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES);
+			
+			boolean wbOFF = false;
+			for(int i = 0; i < wb.length; i++)
+				if(wb[i] == CaptureRequest.CONTROL_AWB_MODE_OFF)
+				{
+					wbOFF = true;
+					break;
+				}
+			
+			return wbOFF;
+		}
+		
+		return false;
+	}
 
 	public static int[] getSupportedFocusModesHALv3()
 	{
@@ -887,6 +918,7 @@ public class HALv3
 
 		return false;
 	}
+	
 	
 	public static boolean isManualFocusDistanceSupportedHALv3()
 	{
@@ -1373,17 +1405,32 @@ public class HALv3
 			if (isRAWCapture)
 				rawRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
 		}
-
-		int collorEffect = CameraParameters.COLOR_EFFECT_MODE_OFF;
-		try {
-			collorEffect = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getString(
-					CameraController.isFrontCamera() ? ApplicationScreen.sRearColorEffectPref : ApplicationScreen.sFrontColorEffectPref, String.valueOf(ApplicationScreen.sDefaultCollorEffectValue)));
-		} catch (Exception e) {
-			collorEffect = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getInt(
-					CameraController.isFrontCamera() ? ApplicationScreen.sRearColorEffectPref : ApplicationScreen.sFrontColorEffectPref, ApplicationScreen.sDefaultCollorEffectValue);
+		
+		int wbMode = appInterface.getWBModePref();
+		stillRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, wbMode);
+		precaptureRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, wbMode);
+		if(wbMode == CaptureRequest.CONTROL_AWB_MODE_OFF)
+		{
+			stillRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_MODE, CaptureRequest.COLOR_CORRECTION_MODE_TRANSFORM_MATRIX);
+			precaptureRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_MODE, CaptureRequest.COLOR_CORRECTION_MODE_TRANSFORM_MATRIX);
+			
+			stillRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_GAINS, rggbVector);
+			stillRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_TRANSFORM, new ColorSpaceTransform(colorTransformMatrix));
+			
+			precaptureRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_GAINS, rggbVector);
+			precaptureRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_TRANSFORM, new ColorSpaceTransform(colorTransformMatrix));
 		}
-		stillRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, collorEffect);
-		precaptureRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, collorEffect);
+
+		//Color effect (filters)
+		int colorEffect = appInterface.getColorEffectPref();
+		if(colorEffect != CameraParameters.COLOR_EFFECT_MODE_OFF)
+		{
+			stillRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, colorEffect);
+			precaptureRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, colorEffect);
+			if (isRAWCapture)
+				rawRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, colorEffect);
+		}
+		
 		
 		if (format == CameraController.JPEG)
 		{
@@ -1463,9 +1510,18 @@ public class HALv3
 		// explicitly disable AWB for the duration of still/burst capture to get
 		// full burst with the same WB
 		// WB does not apply to RAW, so no need for this in rawRequestBuilder
-		if (!Build.MODEL.contains("G925F")) {
+		if (!Build.MODEL.contains("G925F"))
+		{
 			stillRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_OFF);
 			precaptureRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_OFF);
+			if(appInterface.getWBModePref() == CaptureRequest.CONTROL_AWB_MODE_OFF)
+			{
+				stillRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_GAINS, rggbVector);
+				stillRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_TRANSFORM, new ColorSpaceTransform(colorTransformMatrix));
+				
+				precaptureRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_GAINS, rggbVector);
+				precaptureRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_TRANSFORM, new ColorSpaceTransform(colorTransformMatrix));
+			}
 		}
 
 		stillRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ev);
@@ -1880,9 +1936,13 @@ public class HALv3
 		
 		boolean aeLock = appInterface.getAELockPref();
 		boolean awbLock = appInterface.getAWBLockPref();
+		
+		int colorEffect = appInterface.getColorEffectPref();
 
 		Log.e(TAG, "configurePreviewRequest()");
 		previewRequestBuilder = camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+		
+		previewRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, colorEffect);
 		
 		if(focusMode != CameraParameters.MF_MODE)
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
@@ -1927,6 +1987,99 @@ public class HALv3
 		}
 		
 		previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, wbMode);
+		if(wbMode == CaptureRequest.CONTROL_AWB_MODE_OFF)
+		{
+			previewRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_MODE, CaptureRequest.COLOR_CORRECTION_MODE_TRANSFORM_MATRIX);
+			
+			float R = 0;
+			float G_even = 0;
+			float G_odd  = 0;
+			float B      = 0;
+			float tmpKelvin = appInterface.getColorTemperature()/100;
+			
+			/*RED*/
+			if(tmpKelvin <= 66)
+				R = 255;
+			else
+			{
+				double tmpCalc = tmpKelvin - 60;
+		        tmpCalc = 329.698727446 * Math.pow(tmpCalc, -0.1332047592);
+		        R = (float)tmpCalc;
+		        if(R < 0) R = 0.0f;
+		        if(R > 255) R = 255;
+			}		
+//			double tmpCalcR = tmpKelvin;// - 60;
+//			if (tmpKelvin > 66)
+//				tmpCalcR = tmpKelvin - 60;
+//	        tmpCalcR = 329.698727446 * Math.pow(tmpCalcR, -0.1332047592);
+//	        R = (float)tmpCalcR;
+//	        if(R < 0) R = 0;
+	        
+			/*GREENs*/
+			if(tmpKelvin <= 66)
+			{
+				double tmpCalc = tmpKelvin;
+		        tmpCalc = 99.4708025861 * Math.log(tmpCalc) - 161.1195681661;
+		        G_even = (float)tmpCalc;
+		        if(G_even < 0)
+		        	G_even = 0.0f;
+		        if(G_even > 255)
+		        	G_even = 255;
+		        G_odd = G_even;
+			}
+			else
+			{
+				double tmpCalc = tmpKelvin - 60;
+		        tmpCalc = 288.1221695283 * Math.pow(tmpCalc, -0.0755148492);
+		        G_even = (float)tmpCalc;
+		        if(G_even < 0)
+		        	G_even = 0.0f;
+		        if(G_even > 255)
+		        	G_even = 255;
+		        G_odd = G_even;
+			}
+			
+			/*BLUE*/
+//			if(tmpKelvin >= 66)
+//				B = 255.0f;
+//			else if(tmpKelvin <= 19)
+//			{
+//		        B = 0.0f;
+//			}
+//			else
+//			{
+//				double tmpCalc = tmpKelvin - 10;
+//		        tmpCalc = 138.5177312231 * Math.log(tmpCalc) - 305.0447927307;
+//		        B = (float)tmpCalc;
+//		        if(B < 0) B = 0.0f;
+//		        if(B > 255) B = 255;
+//			}
+			
+			if(tmpKelvin <= 19)
+			{
+		        B = 0.0f;
+			}
+			else
+			{
+				double tmpCalc = tmpKelvin - 10;
+		        tmpCalc = 138.5177312231 * Math.log(tmpCalc) - 305.0447927307;
+		        B = (float)tmpCalc;
+		        if(B < 0) B = 0;
+			}
+			
+			R = R/255 * multiplierR;
+			G_even = G_even/255 * multiplierG;
+			G_odd = G_even;
+			B = B/255 * multiplierB;
+			
+			rggbVector = new RggbChannelVector(R, G_even, G_odd, B);
+//			RggbChannelVector rggb = new RggbChannelVector(R, 1.0f, 1.0f, B);
+			
+//			Log.e(TAG, "RGGB: R:" + R + " G:" + G_even + " B:" + B);
+			Log.e(TAG, "RGGB vector: " + rggbVector.toString());
+			previewRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_GAINS, rggbVector);
+			previewRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_TRANSFORM, new ColorSpaceTransform(colorTransformMatrix));
+		}
 		
 		if (sceneMode != CameraParameters.SCENE_MODE_AUTO)
 		{
@@ -1952,16 +2105,6 @@ public class HALv3
 			previewRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, iso);
 		}
 
-		int collorEffect = CameraParameters.COLOR_EFFECT_MODE_OFF;
-		try {
-			collorEffect = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getString(
-					CameraController.isFrontCamera() ? ApplicationScreen.sRearColorEffectPref : ApplicationScreen.sFrontColorEffectPref, String.valueOf(ApplicationScreen.sDefaultCollorEffectValue)));
-		} catch (Exception e) {
-			collorEffect = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getInt(
-					CameraController.isFrontCamera() ? ApplicationScreen.sRearColorEffectPref : ApplicationScreen.sFrontColorEffectPref, ApplicationScreen.sDefaultCollorEffectValue);
-		}
-		previewRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, collorEffect);
-		
 		previewRequestBuilder.addTarget(appInterface.getCameraSurface());
 		
 		
@@ -2194,6 +2337,10 @@ public class HALv3
 				TotalCaptureResult result)
 		{
 			Log.e(TAG, "CAPTURE COMPLETED");
+//			RggbChannelVector rggb = result.get(CaptureResult.COLOR_CORRECTION_GAINS);
+//			ColorSpaceTransform transformMatrix = result.get(CaptureResult.COLOR_CORRECTION_TRANSFORM);
+//			Log.e(TAG, "RGGB = R: " + rggb.getRed() + " G_even: " + rggb.getGreenEven()+ " G_odd: " + rggb.getGreenOdd() + " B: " + rggb.getBlue());
+//			Log.e(TAG, "Transform Matrix: " + transformMatrix.toString());
 			pluginManager.onCaptureCompleted(result);
 		}
 	};
