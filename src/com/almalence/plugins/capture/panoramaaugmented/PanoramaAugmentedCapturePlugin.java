@@ -462,6 +462,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 	@Override
 	public void onResume()
 	{
+		CameraController.setNeedPreviewFrame(true);
 		ApplicationScreen.instance.muteShutter(false);
 
 		showGyroWarnOnce = false;

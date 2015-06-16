@@ -55,6 +55,7 @@ import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
 import com.almalence.opencam.SoundPlayer;
 //-+- -->
+import com.almalence.opencam.cameracontroller.CameraController;
 
 public class BarcodeScannerVFPlugin extends PluginViewfinder
 {
@@ -84,6 +85,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 	@Override
 	public void onResume()
 	{
+		CameraController.setNeedPreviewFrame(true);
 		updatePreferences();
 	}
 

@@ -168,6 +168,7 @@ public class GyroVFPlugin extends PluginViewfinder
 	@Override
 	public void onResume()
 	{
+		CameraController.setNeedPreviewFrame(true);
 		mSensorManager = (SensorManager) ApplicationScreen.instance.getSystemService(Context.SENSOR_SERVICE);
 		mGyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 		mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
