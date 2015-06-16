@@ -9,6 +9,9 @@
 	<string name="Pref_MaxScreenBrightness">Максимальная яркость</string>
 	<string name="Pref_MaxScreenBrightness_Summary">Установить максимальную яркость экрана</string>
 	
+	<string name="Pref_FastSwitchShutter">Шаттер с быстрым переключателем</string>
+	<string name="Pref_FastSwitchShutter_Summary">Показывать шаттер с быстрым переключателем</string>
+	
 	<string name="Pref_Common_DismissKeyguard_Title">Игнорировать блокировку</string>
 	<string name="Pref_Common_DismissKeyguard_Summary">Обходить блокировку экрана слайдером при запуске.</string>
 	

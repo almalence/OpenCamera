@@ -93,15 +93,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.almalence.googsharing.Thumbnail;
+import com.almalence.plugins.capture.panoramaaugmented.PanoramaAugmentedCapturePlugin;
 import com.almalence.ui.Panel;
 import com.almalence.ui.Panel.OnPanelListener;
 import com.almalence.ui.RotateImageView;
+import com.almalence.ui.ShutterSwitch;
+import com.almalence.ui.ShutterSwitch.OnShutterCheckedListener;
+import com.almalence.ui.ShutterSwitch.OnShutterClickListener;
 import com.almalence.util.AppEditorNotifier;
 import com.almalence.util.Util;
 
-import com.almalence.plugins.capture.panoramaaugmented.PanoramaAugmentedCapturePlugin;
-
 //<!-- -+-
+import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.ConfigParser;
 import com.almalence.opencam.ApplicationScreen;
@@ -113,7 +116,6 @@ import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginType;
 import com.almalence.opencam.Preferences;
 import com.almalence.opencam.R;
-import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
@@ -172,6 +174,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	// Mode selector layout
 	private ElementAdapter									modeAdapter;
 	private List<View>										modeViews;
+	private View 											videoModeView;
 	private ViewGroup										activeMode					= null;
 	private boolean											modeSelectorVisible			= false;
 	// If quick settings layout is showing now
@@ -191,6 +194,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private RotateImageView									thumbnailView;
 
 	private RotateImageView									shutterButton;
+	private ShutterSwitch									shutterSwitch;
 
 	private static final Integer							ICON_EV						= R.drawable.gui_almalence_settings_exposure;
 	private static final Integer							ICON_CAM					= R.drawable.gui_almalence_settings_changecamera_back;
@@ -1405,9 +1409,24 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		sonyCameraDeviceExplorer.hideExplorer();
 	}
 
+	private void initShutterButton() {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		boolean switchShutterOn = prefs.getBoolean(MainScreen.sFastSwitchShutterOn, true);
+		String modeID = ApplicationScreen.getPluginManager().getActiveModeID();
+		if (!switchShutterOn || modeID.equals("video")) {
+			shutterButton.setVisibility(View.VISIBLE);
+			shutterSwitch.setVisibility(View.GONE);
+		} else {
+			shutterButton.setVisibility(View.GONE);
+			shutterSwitch.setVisibility(View.VISIBLE);
+		}
+	}
+	
 	@Override
 	public void onResume()
 	{
+		initShutterButton();
+		
 		ApplicationScreen.instance.runOnUiThread(new Runnable()
 		{
 			@Override
@@ -1545,6 +1564,25 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		shutterButton = ((RotateImageView) guiView.findViewById(R.id.buttonShutter));
 		shutterButton.setOnLongClickListener(this);
+		
+		shutterSwitch = ((ShutterSwitch) guiView.findViewById(R.id.switchShutter));
+		shutterSwitch.setOnShutterClickListener(new OnShutterClickListener()
+		{
+			@Override
+			public void onShutterClick()
+			{
+				onButtonClick(shutterButton);
+			}
+		});
+		
+		shutterSwitch.setOnShutterCheckedListener(new OnShutterCheckedListener()
+		{
+			@Override
+			public void onShutterChecked()
+			{
+				changeMode(videoModeView);
+			}
+		});
 
 		imageSizeQuickSetting = new ImageSizeQuickSetting(MainScreen.getInstance());
 		collorEffectQuickSetting = new CollorEffectQuickSetting(MainScreen.getInstance());
@@ -2785,7 +2823,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			this.mMeteringMode = -1;
 		}
 
-		Log.e("TAG", "PluginManager.getInstance().getActiveModeID() = " + PluginManager.getInstance().getActiveModeID());
 		if (!PluginManager.getInstance().getActiveModeID().equals("video") && !(PluginManager.getInstance().getActiveModeID().equals("nightmode") && CameraController.isUseHALv3()))
 		{
 			RotateImageView buttonImageSize = (RotateImageView) topMenuButtons.get(MODE_IMAGE_SIZE);
@@ -6276,6 +6313,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				});
 				buttonModeViewAssoc.put(mode, tmp.modeID);
 				modeViews.add(mode);
+				
+				if (tmp.modeID.equals("video")) {
+					videoModeView = mode;
+				}
 
 				// select active mode in grid with frame
 				if (ApplicationScreen.getPluginManager().getActiveModeID() == tmp.modeID)
@@ -7871,6 +7912,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			{
 				((RotateImageView) guiView.findViewById(R.id.buttonShutter))
 						.setImageResource(R.drawable.gui_almalence_shutter_pressed);
+				shutterSwitch.setThumbResource(R.drawable.gui_almalence_shutter_pressed);
 			}
 
 			public void onFinish()
@@ -7879,6 +7921,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				{
 					((RotateImageView) guiView.findViewById(R.id.buttonShutter))
 							.setImageResource(R.drawable.button_shutter);
+					
+					shutterSwitch.setThumbResource(R.drawable.button_shutter);
 				}
 
 			}
