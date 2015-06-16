@@ -304,12 +304,6 @@ public class FocusVFPlugin extends PluginViewfinder
 	@Override
 	public void onPause()
 	{
-		PreferenceManager
-				.getDefaultSharedPreferences(ApplicationScreen.getMainContext())
-				.edit()
-				.putInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
-						: ApplicationScreen.sFrontFocusModePref, preferenceFocusMode).commit();
-
 		releaseSoundPlayer();
 		removeMessages();
 	}
@@ -387,8 +381,10 @@ public class FocusVFPlugin extends PluginViewfinder
 	@Override
 	public void onShutterClick()
 	{
+		Log.e("TAG", "onShutterClick");
 		if (needAutoFocusCall() && !focusOnShutterDisabled())
 		{
+			Log.e("TAG", "mState = " + mState);
 			if (mState == STATE_IDLE
 					&& !(preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE || preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
 					&& !ApplicationScreen.instance.getAutoFocusLock())
@@ -1119,8 +1115,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		if (mFocusAreaSupported && mFocusArea != null)
 			mFocusMode = CameraParameters.AF_MODE_AUTO;
 		else
-			mFocusMode = mPreferences.getInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
-					: ApplicationScreen.sFrontFocusModePref, mDefaultFocusMode);
+			mFocusMode = ApplicationScreen.instance.getFocusModePref(mDefaultFocusMode);
 
 		if (!isSupported(mFocusMode, CameraController.getSupportedFocusModes()))
 		{

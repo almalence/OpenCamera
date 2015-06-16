@@ -2357,9 +2357,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							float fDistValue = preferences.getFloat(MainScreen.sFocusDistancePref,
 									CameraController.getMinimumFocusDistance());
 
-							mOriginalFocusMode = preferences.getInt(
-									CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-											: MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
+							mOriginalFocusMode = ApplicationScreen.instance.getFocusModePref(MainScreen.sDefaultFocusValue);
 							CameraController.setCameraFocusDistance(fDistValue);
 							ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
 									ApplicationInterface.MSG_FOCUS_LOCKED);
@@ -2379,10 +2377,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS,
 									CLOSE_MANUAL_CONTROLS_DELAY);
 
-							preferences
-									.edit()
-									.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-											: MainScreen.sFrontFocusModePref, FOCUS_MF).commit();
+							ApplicationScreen.instance.setFocusModePref(FOCUS_MF);
 						}
 					});
 
@@ -5555,10 +5550,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				Log.e("setSceneMode", "icons_focus.get exception: " + e.getMessage());
 			}
 
-			preferences
-					.edit()
-					.putInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
-							: ApplicationScreen.sFrontFocusModePref, mFocusMode).commit();
+			ApplicationScreen.instance.setFocusModePref(mFocusMode);
 
 			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
 					ApplicationInterface.MSG_FOCUS_CHANGED);
