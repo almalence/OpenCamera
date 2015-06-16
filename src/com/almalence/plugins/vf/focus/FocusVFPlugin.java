@@ -381,10 +381,8 @@ public class FocusVFPlugin extends PluginViewfinder
 	@Override
 	public void onShutterClick()
 	{
-		Log.e("TAG", "onShutterClick");
 		if (needAutoFocusCall() && !focusOnShutterDisabled())
 		{
-			Log.e("TAG", "mState = " + mState);
 			if (mState == STATE_IDLE
 					&& !(preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE || preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
 					&& !ApplicationScreen.instance.getAutoFocusLock())
