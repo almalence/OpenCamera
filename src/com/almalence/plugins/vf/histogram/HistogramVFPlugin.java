@@ -80,7 +80,7 @@ public class HistogramVFPlugin extends PluginViewfinder
 	private int					histoHeight		= 0;
 	private int					histoWidth		= 0;
 
-	private static int			histogramType	= RGB;
+	private static int			histogramType	= NONE;
 
 	public HistogramVFPlugin()
 	{
@@ -222,15 +222,17 @@ public class HistogramVFPlugin extends PluginViewfinder
 	void UpdatePreferences()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		histogramType = Integer.parseInt(prefs.getString("PrefHistogramVF", "0"));
+		histogramType = Integer.parseInt(prefs.getString("PrefHistogramVF", "2"));
 
 		switch (histogramType)
 		{
 		case RGB:
 			quickControlIconID = R.drawable.gui_almalence_histogram_rgb;
+			CameraController.setNeedPreviewFrame(true);
 			break;
 		case LUMA:
 			quickControlIconID = R.drawable.gui_almalence_histogram_luma;
+			CameraController.setNeedPreviewFrame(true);
 			break;
 		case NONE:
 			quickControlIconID = R.drawable.gui_almalence_histogram_off;
@@ -277,7 +279,6 @@ public class HistogramVFPlugin extends PluginViewfinder
 	@Override
 	public void onResume()
 	{
-		CameraController.setNeedPreviewFrame(true);
 		UpdatePreferences();
 		if (histogramType == NONE)
 		{

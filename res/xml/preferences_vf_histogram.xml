@@ -5,7 +5,7 @@
         <ListPreference
 	                        android:title="@string/Pref_ShowHistogramVF"
 	                        android:key="PrefHistogramVF"
-	                        android:defaultValue="0"
+	                        android:defaultValue="2"
 	                        android:entries="@array/typeArrayHistogram"
 	                        android:entryValues="@array/typeValuesHistogram" />
 

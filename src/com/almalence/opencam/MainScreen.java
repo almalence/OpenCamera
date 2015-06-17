@@ -1019,6 +1019,9 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	protected void onApplicationResume()
 	{
+		//resets all requests for preview frames on restart.
+		CameraController.resetNeedPreviewFrame();
+		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 // <!-- -+-
         //check appturbo app of the month conditions
