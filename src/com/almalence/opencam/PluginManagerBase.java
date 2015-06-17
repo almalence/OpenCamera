@@ -2213,11 +2213,13 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 				}
 
 				String fileName = file.getName();
+				boolean saveToPhone = false;
 				// If we able to get File object, than get path from it
 				try
 				{
 					File f = new File(URI.create(file.getUri().toString()));
 					fileName = f.getAbsolutePath();
+					saveToPhone = true;
 				} catch (Exception e)
 				{
 				} finally
@@ -2317,9 +2319,11 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 					bufFile.delete();
 				}
 
-				Uri uri = ApplicationScreen.instance.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI,
-						values);
-				broadcastNewPicture(uri);
+				if (saveToPhone) {
+					Uri uri = ApplicationScreen.instance.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI,
+							values);
+					broadcastNewPicture(uri);
+				}
 			}
 
 			ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED);
