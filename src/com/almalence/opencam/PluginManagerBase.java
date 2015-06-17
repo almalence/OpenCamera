@@ -1464,6 +1464,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 
 	// get file saving directory
 	// toInternalMemory - should be true only if force save to internal
+	@TargetApi(19)
 	public static DocumentFile getSaveDirNew(boolean forceSaveToInternalMemory)
 	{
 		DocumentFile saveDir = null;
@@ -1900,6 +1901,10 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		{
 			e.printStackTrace();
 			ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED);
+		}
+		finally
+		{
+			ApplicationScreen.setForceFilename(null);
 		}
 	}
 
