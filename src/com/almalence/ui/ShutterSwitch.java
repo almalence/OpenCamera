@@ -70,6 +70,8 @@ public class ShutterSwitch extends View
 
 	private OnShutterClickListener		onShutterClickListener;
 	private OnShutterCheckedListener	onShutterCheckedListener;
+	private long 						mTouchTimeStart;
+	private boolean 					mThumbMoved;
 
 	private final Rect					mTempRect			= new Rect();
 
@@ -343,15 +345,19 @@ public class ShutterSwitch extends View
 		{
 		case MotionEvent.ACTION_DOWN:
 			{
+				mThumbMoved = false;
 				final float x = ev.getX();
 				final float y = ev.getY();
 				if (isEnabled() && hitThumb(x, y))
 				{
 					mTouchMode = TOUCH_MODE_DOWN;
 					mThumbDrawable.setState(STATE_PRESSED);
+					mThumbPositionTemp = 0.f;
+					mThumbPosition = 0.f;
 					mTouchX = x;
 					mTouchY = y;
 					invalidate();
+					mTouchTimeStart = System.currentTimeMillis();
 					return true;
 				}
 				break;
@@ -391,6 +397,7 @@ public class ShutterSwitch extends View
 							if (mThumbPositionTemp >= 20.f || mThumbPositionTemp < mThumbPosition)
 							{
 								mThumbPosition = mThumbPositionTemp;
+								mThumbMoved = true;
 							}
 							mTouchX = x;
 							invalidate();
@@ -412,8 +419,9 @@ public class ShutterSwitch extends View
 				{
 					stopDrag(ev);
 					return true;
-				} else if (onShutterClickListener != null)
+				} else if (onShutterClickListener != null && !mThumbMoved && System.currentTimeMillis() - mTouchTimeStart < 1000)
 				{
+					// if thumb not moved, and it wasn't longClick, the notify listener about onShutterClick().
 					onShutterClickListener.onShutterClick();
 				}
 				mTouchMode = TOUCH_MODE_IDLE;
@@ -473,8 +481,8 @@ public class ShutterSwitch extends View
 				}
 			} else
 			{
-				// else notify onClick listener and set position = 0.
-				if (onShutterClickListener != null)
+				// else notify onClick listener if it wasn't longClick.
+				if (onShutterClickListener != null && !mThumbMoved && System.currentTimeMillis() - mTouchTimeStart < 1000)
 				{
 					onShutterClickListener.onShutterClick();
 				}
