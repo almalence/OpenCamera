@@ -85,7 +85,6 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 	@Override
 	public void onResume()
 	{
-		CameraController.setNeedPreviewFrame(true);
 		updatePreferences();
 	}
 
@@ -96,6 +95,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 
 		if (mBarcodeScannerState == ON)
 		{
+			CameraController.setNeedPreviewFrame(true);
 			quickControlIconID = R.drawable.gui_almalence_settings_scene_barcode_on;
 		} else
 		{
@@ -133,6 +133,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 
 		if (mBarcodeScannerState == ON)
 		{
+			CameraController.setNeedPreviewFrame(true);
 			quickControlIconID = R.drawable.gui_almalence_settings_off_barcode_scanner;
 			editor.putBoolean("PrefBarcodescannerVF", false);
 		} else

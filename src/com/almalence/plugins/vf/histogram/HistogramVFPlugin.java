@@ -37,6 +37,7 @@ import android.view.WindowManager;
  import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.PluginViewfinder;
  import com.almalence.opencam_plus.R;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.ApplicationScreen;
