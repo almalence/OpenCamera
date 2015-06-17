@@ -2826,7 +2826,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		mCollorEffectsSupported = CameraController.isCollorEffectSupported();
 		int[] mCollorEffects = CameraController.getSupportedColorEffects();
-		if ((mCollorEffects != null && mCollorEffects.length > 0) || mCollorEffectsSupported)
+		if (mCollorEffects != null && mCollorEffects.length > 1 && mCollorEffectsSupported)
 		{
 			int initValue = 0;
 			try
@@ -3739,7 +3739,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				}
 				break;
 			case R.id.colorEffectButton:
-				addQuickSetting(SettingsType.COLLOR_EFFECT, true);
+				if (mCollorEffectsSupported) {
+					addQuickSetting(SettingsType.COLLOR_EFFECT, true);
+				}
 				break;
 			default:
 				break;
@@ -4159,7 +4161,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				}
 				break;
 			case R.id.colorEffectButton:
-				addQuickSetting(SettingsType.COLLOR_EFFECT, false);
+				if (mCollorEffectsSupported) {
+					addQuickSetting(SettingsType.COLLOR_EFFECT, false);
+				}
 				break;
 			default:
 				break;
