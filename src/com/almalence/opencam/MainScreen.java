@@ -47,6 +47,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -59,6 +60,7 @@ import android.media.ImageReader;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Debug;
@@ -1017,6 +1019,21 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	protected void onApplicationResume()
 	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+// <!-- -+-
+        //check appturbo app of the month conditions
+        if (!unlockAllPurchased)
+        {
+        	if (isAppturboUnlockable(this))
+        	{
+        		unlockAllPurchased = true;
+    			Editor prefsEditor = prefs.edit();
+    			prefsEditor.putBoolean("unlock_all_forever", true).commit();
+        		Toast.makeText(MainScreen.getMainContext(), this.getResources().getString(R.string.string_appoftheday), Toast.LENGTH_LONG).show();
+        	}
+        }
+// -+- -->
+        
 		isCameraConfiguring = false;
 
 		mWifiHandler.register();
@@ -1134,7 +1151,6 @@ public class MainScreen extends ApplicationScreen
 			Toast.makeText(MainScreen.getMainContext(), "Almost no free space left on internal storage.",
 					Toast.LENGTH_LONG).show();
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		boolean dismissKeyguard = prefs.getBoolean("dismissKeyguard", true);
 		if (dismissKeyguard)
 			getWindow()
@@ -2715,8 +2731,7 @@ public class MainScreen extends ApplicationScreen
 					unlockAllPurchased = true;
 
 					Editor prefsEditor = prefs.edit();
-					prefsEditor.putBoolean("unlock_all_forever", true);
-					prefsEditor.commit();
+					prefsEditor.putBoolean("unlock_all_forever", true).commit();
 					dialog.dismiss();
 					guiManager.hideStore();
 					showPromoRedeemed = true;
@@ -2977,6 +2992,23 @@ public class MainScreen extends ApplicationScreen
 		}
 	}
 
+	public static boolean isAppturboUnlockable(Context context) {
+    	try
+    	{
+	        List<PackageInfo> packages = context.getPackageManager().getInstalledPackages(0); 
+	        for(PackageInfo pi : packages){ 
+	            if (pi.packageName.equalsIgnoreCase("com.appturbo.appturboCA2015") 
+	                    || pi.packageName.equalsIgnoreCase("com.appturbo.appoftheday2015") ){ 
+	                return true; 
+	            } 
+	        } 
+    	}
+    	catch (Exception e)
+    	{
+    		e.printStackTrace();
+    	}
+    	return false;
+    }
 	// -+- -->
 
 	/************************ Billing ************************/
