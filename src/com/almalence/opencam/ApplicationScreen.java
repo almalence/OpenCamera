@@ -103,8 +103,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	//
 	// Description<<
 
-	protected static final int			MSG_RETURN_CAPTURED			= -1;
-
 	public static ApplicationScreen		instance;
 	public Context						mainContext;
 	protected Handler					messageHandler;
@@ -1481,10 +1479,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		switch (msg.what)
 		{
 		case ApplicationInterface.MSG_APPLICATION_STOP:
-			this.setResult(RESULT_OK);
-			this.finish();
-			break;
-		case MSG_RETURN_CAPTURED:
 			this.setResult(RESULT_OK);
 			this.finish();
 			break;

@@ -37,11 +37,13 @@ import android.view.WindowManager;
  import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.PluginViewfinder;
  import com.almalence.opencam_plus.R;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 import com.almalence.util.Util;
@@ -78,7 +80,7 @@ public class HistogramVFPlugin extends PluginViewfinder
 	private int					histoHeight		= 0;
 	private int					histoWidth		= 0;
 
-	private static int			histogramType	= RGB;
+	private static int			histogramType	= NONE;
 
 	public HistogramVFPlugin()
 	{
@@ -220,15 +222,17 @@ public class HistogramVFPlugin extends PluginViewfinder
 	void UpdatePreferences()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		histogramType = Integer.parseInt(prefs.getString("PrefHistogramVF", "0"));
+		histogramType = Integer.parseInt(prefs.getString("PrefHistogramVF", "2"));
 
 		switch (histogramType)
 		{
 		case RGB:
 			quickControlIconID = R.drawable.gui_almalence_histogram_rgb;
+			CameraController.setNeedPreviewFrame(true);
 			break;
 		case LUMA:
 			quickControlIconID = R.drawable.gui_almalence_histogram_luma;
+			CameraController.setNeedPreviewFrame(true);
 			break;
 		case NONE:
 			quickControlIconID = R.drawable.gui_almalence_histogram_off;

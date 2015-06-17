@@ -111,6 +111,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	@Override
 	public void onResume()
 	{
+		CameraController.setNeedPreviewFrame(true);
 		preferenceFocusMode = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getInt(
 				CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref : ApplicationScreen.sFrontFocusModePref,
 				CameraParameters.AF_MODE_AUTO);
@@ -422,7 +423,6 @@ public class PreshotCapturePlugin extends PluginCapture
 		}
 		frmCnt++;
 	}
-
 
 	void StartCaptureSequence()
 	{
