@@ -207,6 +207,7 @@ public class GyroVFPlugin extends PluginViewfinder
 
 		if (mGyroState == ON)
 		{
+			CameraController.setNeedPreviewFrame(true);
 			quickControlIconID = R.drawable.gui_almalence_settings_gyro;
 			if (mHorizonIndicatorContainer != null)
 			{

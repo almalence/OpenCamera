@@ -349,6 +349,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		onStop();
 		onDestroy();
 
+		CameraController.resetNeedPreviewFrame();
+		
 		// clear lists and fill with new active plugins
 		activeVF.clear();
 		for (int i = 0; i < mode.VF.size(); i++)

@@ -586,21 +586,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	@Override
 	public void onPreviewFrame(byte[] data)
 	{
-		// if (evLatency > 0)
-		// {
-		// previewWorking = true;
-		// if (--evLatency == 0)
-		// {
-		// if (cdt != null)
-		// {
-		// cdt.cancel();
-		// cdt = null;
-		// }
-		// PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST,
-		// ApplicationInterface.MSG_TAKE_PICTURE);
-		// }
-		// return;
-		// }
 	}
 
 	public boolean photoTimeLapseCaptureSupported()

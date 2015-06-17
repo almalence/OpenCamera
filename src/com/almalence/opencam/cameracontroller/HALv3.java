@@ -124,6 +124,8 @@ public class HALv3
 	protected static float				multiplierG					= 1.0f;
 	protected static float				multiplierB					= 1.54f;
 
+	private static boolean 				needPreviewFrame			= false;
+	
 	public static HALv3 getInstance()
 	{
 		if (instance == null)
@@ -2426,6 +2428,16 @@ public class HALv3
 		}
 	};
 
+	public static void setNeedPreviewFrame(boolean needPreviewFrames)
+	{
+		needPreviewFrame |= needPreviewFrames;
+	}
+	
+	public static void resetNeedPreviewFrame()
+	{
+		needPreviewFrame = false;
+	}
+	
 	public final static ImageReader.OnImageAvailableListener imageAvailableListener = new ImageReader.OnImageAvailableListener()
 	{
 		@Override
@@ -2439,6 +2451,11 @@ public class HALv3
 			Image im = ir.acquireNextImage();
 			if (ir.getSurface() == CameraController.mPreviewSurface)
 			{
+				if (!needPreviewFrame)
+				{
+					im.close();
+					return;
+				}
 				ByteBuffer Y = im.getPlanes()[0].getBuffer();
 				ByteBuffer U = im.getPlanes()[1].getBuffer();
 				ByteBuffer V = im.getPlanes()[2].getBuffer();
@@ -2448,6 +2465,7 @@ public class HALv3
 					|| (!V.isDirect()))
 				{
 					Log.e(TAG,"Oops, YUV ByteBuffers isDirect failed");
+					im.close();
 					return;
 				}
 
@@ -2493,6 +2511,7 @@ public class HALv3
 						|| (!V.isDirect()))
 					{
 						Log.e(TAG,"Oops, YUV ByteBuffers isDirect failed");
+						im.close();
 						return;
 					}
 

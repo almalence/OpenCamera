@@ -55,6 +55,7 @@ import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
 import com.almalence.opencam.SoundPlayer;
 //-+- -->
+import com.almalence.opencam.cameracontroller.CameraController;
 
 public class BarcodeScannerVFPlugin extends PluginViewfinder
 {
@@ -94,6 +95,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 
 		if (mBarcodeScannerState == ON)
 		{
+			CameraController.setNeedPreviewFrame(true);
 			quickControlIconID = R.drawable.gui_almalence_settings_scene_barcode_on;
 		} else
 		{
@@ -131,6 +133,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 
 		if (mBarcodeScannerState == ON)
 		{
+			CameraController.setNeedPreviewFrame(true);
 			quickControlIconID = R.drawable.gui_almalence_settings_off_barcode_scanner;
 			editor.putBoolean("PrefBarcodescannerVF", false);
 		} else

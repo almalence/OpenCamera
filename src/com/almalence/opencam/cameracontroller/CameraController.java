@@ -68,7 +68,6 @@ import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.PluginManagerInterface;
 import com.almalence.opencam.R;
-
 //-+- -->
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationInterface;
@@ -110,8 +109,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static String							sceneParty;
 	private static String							sceneCandlelight;
 	private static String							sceneBarcode;
-	private static String							sceneHDR;
-	private static String							sceneAR;
 
 	private static String							wbAuto;
 	private static String							wbIncandescent;
@@ -364,8 +361,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		sceneParty = mainContext.getResources().getString(R.string.scenePartySystem);
 		sceneCandlelight = mainContext.getResources().getString(R.string.sceneCandlelightSystem);
 		sceneBarcode = mainContext.getResources().getString(R.string.sceneBarcodeSystem);
-		sceneHDR = mainContext.getResources().getString(R.string.sceneHDRSystem);
-		sceneAR = mainContext.getResources().getString(R.string.sceneARSystem);
 
 		wbAuto = mainContext.getResources().getString(R.string.wbAutoSystem);
 		wbIncandescent = mainContext.getResources().getString(R.string.wbIncandescentSystem);
@@ -4038,6 +4033,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 
+	public static void setNeedPreviewFrame(boolean needPreviewFrame)
+	{
+		HALv3.setNeedPreviewFrame(needPreviewFrame);
+	}
+	
+	public static void resetNeedPreviewFrame()
+	{
+		HALv3.resetNeedPreviewFrame();
+	}
+	
 	// ^^^^^^^^^^^^^ CAPTURE AND FOCUS FUNCTION ----------------------------
 
 	// =============== Captured Image data manipulation ======================

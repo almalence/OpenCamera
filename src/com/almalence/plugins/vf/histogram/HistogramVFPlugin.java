@@ -37,11 +37,13 @@ import android.view.WindowManager;
  import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.PluginViewfinder;
  import com.almalence.opencam_plus.R;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 import com.almalence.util.Util;
@@ -275,6 +277,7 @@ public class HistogramVFPlugin extends PluginViewfinder
 	@Override
 	public void onResume()
 	{
+		CameraController.setNeedPreviewFrame(true);
 		UpdatePreferences();
 		if (histogramType == NONE)
 		{
