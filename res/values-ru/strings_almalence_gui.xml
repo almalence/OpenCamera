@@ -33,6 +33,8 @@
 	<string name="helpTextDontShow">Не показывать</string>
 	<string name="Pref_Common_HeadsetTap_Title">Кнопки наушников</string>
     <string name="Pref_Common_HeadsetTap_Summary">Использовать кнопки наушников для съемки</string>
+    <string name="Pref_Common_ConnectToSonyCameras_Title">Позволять выбор Sony камер</string>
+    <string name="Pref_Common_ConnectToSonyCameras_Summary">Включить возможность выбора устройств Sony</string>
     <string name="Pref_SaveConfiguration_Title">Сохранение настроек</string>
     <string name="Pref_SaveConfiguration_Summary">Выбрать настройки, сохраняемые между запусками</string>
     <string name="Pref_SaveConfiguration_ShootingMode_Title">Режимы съемки</string>

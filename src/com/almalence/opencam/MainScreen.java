@@ -212,6 +212,7 @@ public class MainScreen extends ApplicationScreen
 	private static String		sShotOnTapPref;
 	private static String		sVolumeButtonPref;
 
+	public static String		sSonyCamerasPref;
 	public static String		sDefaultInfoSetPref;
 	public static String		sSWCheckedPref;
 	public static String		sSavePathPref;
@@ -286,6 +287,7 @@ public class MainScreen extends ApplicationScreen
 		sPhotoTimeLapseCount = getResources().getString(R.string.Preference_PhotoTimeLapseCount);
 
 		sShutterPref = getResources().getString(R.string.Preference_ShutterCommonValue);
+		sSonyCamerasPref = getResources().getString(R.string.Preference_ConnectToSonyCameras);
 		sShotOnTapPref = getResources().getString(R.string.Preference_ShotOnTapValue);
 		sVolumeButtonPref = getResources().getString(R.string.Preference_VolumeButtonValue);
 

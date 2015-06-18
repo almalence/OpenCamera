@@ -282,6 +282,11 @@ public class SonyRemoteCamera
 			{
 				try
 				{
+					if (mRemoteApi == null) {
+						onRequestResult();
+						return;
+					}
+					
 					// Get available API list (Camera API)
 					JSONObject replyJsonCamera = mRemoteApi.getCameraMethodTypes();
 					loadAvailableApiList(replyJsonCamera);
@@ -383,9 +388,15 @@ public class SonyRemoteCamera
 			public void run()
 			{
 				Log.d(TAG, "openConnection(): exec.");
+				
+				if (mRemoteApi == null) {
+					onRequestResult();
+					return;
+				}
 
 				try
 				{
+					
 					JSONObject replyJson = null;
 
 					// getAvailableApiList
@@ -508,6 +519,12 @@ public class SonyRemoteCamera
 				public void run()
 				{
 					Log.d(TAG, "closeConnection(): stopRecMode()");
+					
+					if (mRemoteApi == null) {
+						onRequestResult();
+						return;
+					}
+					
 					try
 					{
 						if (mRemoteApi != null)
@@ -640,6 +657,11 @@ public class SonyRemoteCamera
 			@Override
 			public void run()
 			{
+				if (mRemoteApi == null) {
+					onRequestResult();
+					return;
+				}
+				
 				try
 				{
 					if (mRemoteApi == null)
@@ -681,6 +703,12 @@ public class SonyRemoteCamera
 			@Override
 			public void run()
 			{
+				if (mRemoteApi == null) {
+					CameraController.onAutoFocus(false);
+					onRequestResult();
+					return;
+				}
+				
 				boolean result = false;
 				try
 				{
@@ -733,6 +761,11 @@ public class SonyRemoteCamera
 			@Override
 			public void run()
 			{
+				if (mRemoteApi == null) {
+					onRequestResult();
+					return;
+				}
+				
 				try
 				{
 					JSONObject replyJson = mRemoteApi.setShootMode(mode);
@@ -781,6 +814,11 @@ public class SonyRemoteCamera
 			@Override
 			public void run()
 			{
+				if (mRemoteApi == null) {
+					onRequestResult();
+					return;
+				}
+				
 				try
 				{
 					JSONObject replyJson = mRemoteApi.actTakePicture();
@@ -881,6 +919,11 @@ public class SonyRemoteCamera
 			@Override
 			public void run()
 			{
+				if (mRemoteApi == null) {
+					onRequestResult();
+					return;
+				}
+				
 				try
 				{
 					Log.d(TAG, "startMovieRec: exec.");
@@ -917,6 +960,11 @@ public class SonyRemoteCamera
 			@Override
 			public void run()
 			{
+				if (mRemoteApi == null) {
+					onRequestResult();
+					return;
+				}
+				
 				try
 				{
 					Log.d(TAG, "stopMovieRec: exec.");
@@ -960,6 +1008,11 @@ public class SonyRemoteCamera
 			@Override
 			public void run()
 			{
+				if (mRemoteApi == null) {
+					onRequestResult();
+					return;
+				}
+				
 				try
 				{
 					JSONObject replyJson = mRemoteApi.actZoom(direction, movement);
@@ -986,6 +1039,11 @@ public class SonyRemoteCamera
 
 	private static void setExposureMode()
 	{
+		if (mRemoteApi == null) {
+			onRequestResult();
+			return;
+		}
+		
 		JSONObject replyJson = null;
 		try
 		{
@@ -1017,7 +1075,11 @@ public class SonyRemoteCamera
 			@Override
 			public void run()
 			{
-
+				if (mRemoteApi == null) {
+					onRequestResult();
+					return;
+				}
+				
 				try
 				{
 					JSONObject replyJson = null;
@@ -1104,6 +1166,11 @@ public class SonyRemoteCamera
 			@Override
 			public void run()
 			{
+				if (mRemoteApi == null) {
+					onRequestResult();
+					return;
+				}
+				
 				try
 				{
 					if (mRemoteApi != null)
@@ -1381,6 +1448,10 @@ public class SonyRemoteCamera
 		mPreviewSizes = new ArrayList<CameraController.Size>();
 		mPreviewSizes.add(new CameraController.Size(640, 480));
 
+		if (mRemoteApi == null) {
+			return mPreviewSizes;
+		}
+		
 		JSONObject replyJson = null;
 		try
 		{
@@ -1441,6 +1512,11 @@ public class SonyRemoteCamera
 
 			mPictureSizes = new ArrayList<CameraController.Size>();
 			mPictureSizes.add(new CameraController.Size(1920, 1080));
+			
+			if (mRemoteApi == null) {
+				return;
+			}
+			
 			JSONObject replyJson = null;
 			try
 			{
@@ -1493,6 +1569,10 @@ public class SonyRemoteCamera
 
 	public static void initExposureCompensationAvailable()
 	{
+		if (mRemoteApi == null) {
+			return;
+		}
+		
 		JSONObject replyJson = null;
 		try
 		{
@@ -1574,8 +1654,13 @@ public class SonyRemoteCamera
 
 	public static void initAvailableWhiteBalance()
 	{
+		
 		availableWBModes = new ArrayList<String>();
 
+		if (mRemoteApi == null) {
+			return;
+		}
+		
 		JSONObject replyJson = null;
 		try
 		{
@@ -1610,6 +1695,10 @@ public class SonyRemoteCamera
 	{
 		availableFocusModes = new ArrayList<String>();
 
+		if (mRemoteApi == null) {
+			return;
+		}
+		
 		JSONObject replyJson = null;
 		try
 		{
@@ -1656,6 +1745,10 @@ public class SonyRemoteCamera
 	{
 		availableFlashModes = new ArrayList<String>();
 
+		if (mRemoteApi == null) {
+			return;
+		}
+		
 		JSONObject replyJson = null;
 		try
 		{
@@ -1691,6 +1784,10 @@ public class SonyRemoteCamera
 	{
 		availableIsoModes = new ArrayList<String>();
 
+		if (mRemoteApi == null) {
+			return;
+		}
+		
 		JSONObject replyJson = null;
 		try
 		{
@@ -1721,6 +1818,11 @@ public class SonyRemoteCamera
 				@Override
 				public void run()
 				{
+					if (mRemoteApi == null) {
+						onRequestResult();
+						return;
+					}
+					
 					try
 					{
 						mRemoteApi.setExposureCompensation(value);
@@ -1747,6 +1849,11 @@ public class SonyRemoteCamera
 				@Override
 				public void run()
 				{
+					if (mRemoteApi == null) {
+						onRequestResult();
+						return;
+					}
+					
 					try
 					{
 						mRemoteApi.setFlashMode(value.toLowerCase());
@@ -1773,6 +1880,11 @@ public class SonyRemoteCamera
 				@Override
 				public void run()
 				{
+					if (mRemoteApi == null) {
+						onRequestResult();
+						return;
+					}
+					
 					try
 					{
 						mRemoteApi.setIsoSpeedRate(value.toUpperCase());
@@ -1799,6 +1911,11 @@ public class SonyRemoteCamera
 				@Override
 				public void run()
 				{
+					if (mRemoteApi == null) {
+						onRequestResult();
+						return;
+					}
+					
 					try
 					{
 						mRemoteApi.setWhiteBalance(value);
@@ -1830,6 +1947,11 @@ public class SonyRemoteCamera
 				@Override
 				public void run()
 				{
+					if (mRemoteApi == null) {
+						onRequestResult();
+						return;
+					}
+					
 					try
 					{
 						mRemoteApi.setStillSize(jsonObject.getString("aspect"), jsonObject.getString("size"));

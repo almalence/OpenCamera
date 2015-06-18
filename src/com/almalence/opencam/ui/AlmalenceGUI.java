@@ -4391,8 +4391,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				int iCamerasSupported = CameraController.getNumberOfCameras();
 				if (iCamerasSupported > 0)
 				{
+					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+					boolean sonyCamerasSettingOn = prefs.getBoolean(MainScreen.sSonyCamerasPref, false);
 					String modeName = ApplicationScreen.getPluginManager().getActiveModeID();
-					if (iCamerasSupported > 2 && !(modeName.contains("video") || modeName.contains("single")))
+					if (!sonyCamerasSettingOn || (iCamerasSupported > 2 && !(modeName.contains("video") || modeName.contains("single"))))
 					{
 						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
 						setCameraMode((CameraController.getCameraIndex() + 1) % 2);
@@ -5380,7 +5382,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				// camera.
 				int iCamerasSupported = CameraController.getNumberOfCameras();
 				String modeName = ApplicationScreen.getPluginManager().getActiveModeID();
-				if (iCamerasSupported > 2 && !(modeName.contains("video") || modeName.contains("single")))
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+				boolean sonyCamerasSettingOn = prefs.getBoolean(MainScreen.sSonyCamerasPref, false);
+				if (!sonyCamerasSettingOn || (iCamerasSupported > 2 && !(modeName.contains("video") || modeName.contains("single"))))
 				{
 					setCameraMode((CameraController.getCameraIndex() + 1) % 2);
 					return;
