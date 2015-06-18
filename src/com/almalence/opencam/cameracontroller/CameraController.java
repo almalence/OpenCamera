@@ -4036,13 +4036,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	//plugin has to set it to TRUE if need preview frames
 	public static void setNeedPreviewFrame(boolean needPreviewFrame)
 	{
-		HALv3.setNeedPreviewFrame(needPreviewFrame);
+		if(CameraController.isUseHALv3())
+			HALv3.setNeedPreviewFrame(needPreviewFrame);
 	}
 	
 	//should be reset on each changemode and on resume (call)
 	public static void resetNeedPreviewFrame()
 	{
-		HALv3.resetNeedPreviewFrame();
+		if(CameraController.isUseHALv3())
+			HALv3.resetNeedPreviewFrame();
 	}
 	
 	// ^^^^^^^^^^^^^ CAPTURE AND FOCUS FUNCTION ----------------------------

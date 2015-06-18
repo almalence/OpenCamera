@@ -1030,6 +1030,23 @@ public class HALv3
 
 		appInterface.setWBModePref(mode);
 	}
+	
+	public static void setCameraColorTemperatureHALv3(int iTemp)
+	{
+		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
+		{
+			appInterface.setColorTemperature(iTemp);
+			try
+			{
+				HALv3.setCameraWhiteBalanceHALv3(CameraParameters.WB_MODE_OFF);
+				HALv3.getInstance().configurePreviewRequest(true);
+			} catch (CameraAccessException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 
 	public static void setCameraFocusModeHALv3(int mode)
 	{
