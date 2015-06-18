@@ -1451,7 +1451,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_METERING, false, false, false);
 		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EXPTIME, false, false, false);
 		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FDISTANCE, false, false, false);
-		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_CAMERACHANGE, false, true, false);
+		disableCameraParameter(CameraParameter.CAMERA_PARAMETER_CAMERACHANGE, false, false, false);
 
 		// if first launch - show layout with hints
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
@@ -3186,8 +3186,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			correctTopMenuButtonBackground(topMenuView, !bDisable);
 
-			if (bInitMenu)
+			if (bInitMenu) {
 				initSettingsMenu(true);
+			}
 		}
 
 	}
