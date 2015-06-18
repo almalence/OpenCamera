@@ -181,7 +181,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	private AlmalenceStore									store;
 	private ImageSizeQuickSetting							imageSizeQuickSetting;
-	private CollorEffectQuickSetting						collorEffectQuickSetting;
+	private ColorEffectQuickSetting						collorEffectQuickSetting;
 
 	private SonyCameraDeviceExplorer						sonyCameraDeviceExplorer;
 
@@ -274,7 +274,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 																								put(CameraParameters.WB_MODE_SHADE,
 																										R.drawable.gui_almalence_settings_wb_shade);
 																								put(CameraParameters.WB_MODE_MANUAL,
-																										R.drawable.gui_almalence_settings_wb_manual);
+																										R.drawable.gui_almalence_settings_wb_mwb);
 																							}
 																						};
 
@@ -1585,7 +1585,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		});
 
 		imageSizeQuickSetting = new ImageSizeQuickSetting(MainScreen.getInstance());
-		collorEffectQuickSetting = new CollorEffectQuickSetting(MainScreen.getInstance());
+		collorEffectQuickSetting = new ColorEffectQuickSetting(MainScreen.getInstance());
 
 		store = new AlmalenceStore(guiView);
 		// <!-- -+-
@@ -2128,7 +2128,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 					String wbmanual_name = MainScreen.getAppResources().getString(R.string.wbManual);
 					((ImageView) paramMode.findViewById(R.id.imageView))
-							.setImageResource(R.drawable.gui_almalence_settings_wb_manual);
+							.setImageResource(R.drawable.gui_almalence_settings_wb_mwb);
 					((TextView) paramMode.findViewById(R.id.textView)).setText(wbmanual_name);
 
 					paramMode.setOnClickListener(new OnClickListener()
@@ -2140,7 +2140,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							try
 							{
 								RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_WB);
-								but.setImageResource(R.drawable.gui_almalence_settings_wb_manual);
+								but.setImageResource(R.drawable.gui_almalence_settings_wb_mwb);
 							} catch (Exception e)
 							{
 								e.printStackTrace();
@@ -2834,14 +2834,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				initValue = Integer.parseInt(preferences.getString(
 						CameraController.isFrontCamera() ? MainScreen.sRearColorEffectPref
 								: MainScreen.sFrontColorEffectPref, String
-								.valueOf(MainScreen.sDefaultCollorEffectValue)));
+								.valueOf(MainScreen.sDefaultColorEffectValue)));
 			} catch (Exception e)
 			{
 				initValue = (preferences.getInt(CameraController.isFrontCamera() ? MainScreen.sRearColorEffectPref
-						: MainScreen.sFrontColorEffectPref, MainScreen.sDefaultCollorEffectValue));
+						: MainScreen.sFrontColorEffectPref, MainScreen.sDefaultColorEffectValue));
 			}
 
-			CameraController.setCameraCollorEffect(initValue);
+			CameraController.setCameraColorEffect(initValue);
 
 			RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_COLLOR_EFFECT);
 			int icon_id = ICON_COLLOR_EFFECT;
@@ -3410,7 +3410,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			break;
 		case WB:
 			if (mWB == CameraParameters.WB_MODE_OFF)
-				icon_id = R.drawable.gui_almalence_settings_wb_manual;
+				icon_id = R.drawable.gui_almalence_settings_wb_mwb;
 			else
 				icon_id = ICONS_WB.get(mWB);
 			icon_text = ApplicationScreen.getAppResources().getString(R.string.settings_mode_wb);
@@ -5532,7 +5532,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			but = (RotateImageView) topMenuButtons.get(MODE_WB);
 			if (mWB == CameraParameters.WB_MODE_OFF)
-				icon_id = R.drawable.gui_almalence_settings_wb_manual;
+				icon_id = R.drawable.gui_almalence_settings_wb_mwb;
 			else
 				icon_id = ICONS_WB.get(mWB);
 			but.setImageResource(icon_id);
@@ -5617,7 +5617,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_WB);
 		int icon_id = -1;
 		if (mWB == CameraParameters.WB_MODE_OFF)
-			icon_id = R.drawable.gui_almalence_settings_wb_manual;
+			icon_id = R.drawable.gui_almalence_settings_wb_mwb;
 		else
 			icon_id = ICONS_WB.get(mWB);
 		but.setImageResource(icon_id);

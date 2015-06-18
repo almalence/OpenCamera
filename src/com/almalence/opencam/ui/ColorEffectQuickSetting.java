@@ -21,6 +21,7 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam.ui;
+
 //-+- -->
 
 import android.content.Context;
@@ -31,34 +32,34 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-
 import com.almalence.ui.ListPreferenceAdapter;
 import com.almalence.ui.RotateDialog;
 //<!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
+
 //-+- -->
 
 /* <!-- +++
-import com.almalence.opencam_plus.MainScreen;
-import com.almalence.opencam_plus.cameracontroller.CameraController;
-import com.almalence.opencam_plus.R;
+ import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.opencam_plus.R;
  +++ --> */
 
-public class CollorEffectQuickSetting
+public class ColorEffectQuickSetting
 {
-	RotateDialog		dialog				= null;
-	private ListView	colorEffetcsListView	= null;
+	RotateDialog			dialog					= null;
+	private ListView		colorEffetcsListView	= null;
 
 	private CharSequence[]	mEntries;
 	private CharSequence[]	mEntryValues;
 
-	private int			mClickedDialogEntryIndex;
+	private int				mClickedDialogEntryIndex;
 
-	Context				context;
+	Context					context;
 
-	public CollorEffectQuickSetting(Context context)
+	public ColorEffectQuickSetting(Context context)
 	{
 		this.context = context;
 	}
@@ -72,22 +73,33 @@ public class CollorEffectQuickSetting
 
 		int[] colorEfects = CameraController.getSupportedColorEffects();
 		
-		mEntries = CameraController.CollorEffectsNamesList
-				.toArray(new String[CameraController.CollorEffectsNamesList.size()]);
-		
+		// Normally it should never happens. It's paranoia check.
+		if (colorEfects == null || colorEfects.length == 0 || CameraController.ColorEffectsNamesList == null
+				|| CameraController.ColorEffectsNamesList.size() == 0)
+		{
+			return;
+		}
+
+		mEntries = CameraController.ColorEffectsNamesList.toArray(new String[CameraController.ColorEffectsNamesList
+				.size()]);
+
 		mEntryValues = new CharSequence[colorEfects.length];
-		for (int i = 0; i < colorEfects.length; i++) {
+		for (int i = 0; i < colorEfects.length; i++)
+		{
 			mEntryValues[i] = Integer.toString(colorEfects[i]);
 		}
-		
+
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		currentIdx = 0;
-		try {
+		try
+		{
 			currentIdx = Integer.parseInt(prefs.getString(CameraController.isFrontCamera() ? pref1 : pref2, "0"));
-		} catch (Exception e) {
-			currentIdx = prefs.getInt(CameraController.isFrontCamera() ? pref1 : pref2, MainScreen.sDefaultCollorEffectValue);
+		} catch (Exception e)
+		{
+			currentIdx = prefs.getInt(CameraController.isFrontCamera() ? pref1 : pref2,
+					MainScreen.sDefaultColorEffectValue);
 		}
-		
+
 		int idx = 0;
 		if (currentIdx != -1)
 		{
@@ -127,7 +139,7 @@ public class CollorEffectQuickSetting
 							.putString(CameraController.isFrontCamera() ? pref1 : pref2,
 									String.valueOf(newValue.toString())).commit();
 
-					CameraController.setCameraCollorEffect(Integer.parseInt(newValue.toString()));
+					CameraController.setCameraColorEffect(Integer.parseInt(newValue.toString()));
 				}
 				dialog.dismiss();
 			}

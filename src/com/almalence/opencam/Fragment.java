@@ -21,8 +21,11 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
+
 //-+- -->
 
+import java.io.File;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,6 +55,7 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.v4.provider.DocumentFile;
 import android.view.Display;
 import android.view.Window;
 import android.view.WindowManager;
@@ -76,8 +80,8 @@ import com.almalence.opencam.ui.SeekBarPreference;
 public class Fragment extends PreferenceFragment implements OnSharedPreferenceChangeListener
 {
 	public static PreferenceFragment	thiz;
-	public static final int CHOOSE_FOLDER_CODE = 15;
-	
+	public static final int				CHOOSE_FOLDER_CODE	= 15;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -242,39 +246,60 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 
 		ListPreference saveToPreference = (ListPreference) this.findPreference(getResources().getString(
 				R.string.Preference_SaveToValue));
-		if (saveToPreference != null) {
-			
+
+		// if android 5+, then remove "save to SD card" option. Because it's
+		// equals to "save to custom folder" option.
+		if (saveToPreference != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+		{
+			CharSequence[] entries = saveToPreference.getEntries();
+			CharSequence[] entriyValues = saveToPreference.getEntryValues();
+
+			CharSequence[] newEntries = new String[2];
+			CharSequence[] newEntriyValues = new String[2];
+
+			newEntries[0] = entries[0];
+			newEntries[1] = entries[2];
+			newEntriyValues[0] = entriyValues[0];
+			newEntriyValues[1] = entriyValues[2];
+
+			saveToPreference.setEntries(newEntries);
+			saveToPreference.setEntryValues(newEntriyValues);
+		}
+		if (saveToPreference != null)
+		{
+
 			saveToPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 			{
 				@Override
 				public boolean onPreferenceChange(Preference preference, Object newValue)
 				{
 					int v = -1;
-					
+
 					int v_old = 0;
-					
+
 					try
 					{
 						v = Integer.parseInt(newValue.toString());
 						v_old = Integer.parseInt(((ListPreference) preference).getValue());
 					} catch (NumberFormatException e)
 					{
-						
+
 					}
-					
+
 					if ((v == 2 || v == 1) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
 					{
-						if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+						if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+						{
 							Toast.makeText(
 									MainScreen.getInstance(),
 									MainScreen.getAppResources().getString(
 											R.string.pref_advanced_saving_saveToPref_CantSaveToSD), Toast.LENGTH_LONG)
-											.show();
-							
+									.show();
+
 							return false;
 						}
 					}
-					
+
 					if (v == 2 || v == 1)
 					{
 						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
@@ -284,13 +309,13 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 						} else if (v != 1)
 						{
 							Intent intent = new Intent(Preferences.thiz, FolderPicker.class);
-							
+
 							intent.putExtra(MainScreen.sSavePathPref, v_old);
-							
+
 							Preferences.thiz.startActivity(intent);
 						}
 					}
-					
+
 					return true;
 				}
 			});
@@ -668,7 +693,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 				});
 		alertDialog.show();
 	}
-	
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
@@ -680,8 +705,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		        getActivity().getContentResolver().takePersistableUriPermission(treeUri,
 		                Intent.FLAG_GRANT_READ_URI_PERMISSION |
 		                Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-		        // Create a new file and write into it
-
+		        
 				prefs.edit().putString(ApplicationScreen.sSavePathPref, treeUri.toString()).commit();
 		    } else {
 		    	prefs.edit().putString(ApplicationScreen.sSaveToPref, "0").commit();

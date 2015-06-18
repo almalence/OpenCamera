@@ -251,7 +251,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public static int					sDefaultISOValue				= CameraParameters.ISO_AUTO;
 	public static int					sDefaultMeteringValue			= CameraParameters.meteringModeAuto;
 	public static Long					lDefaultExposureTimeValue		= 33333333L;
-	public static int					sDefaultCollorEffectValue		= CameraParameters.COLOR_EFFECT_MODE_OFF;
+	public static int					sDefaultColorEffectValue		= CameraParameters.COLOR_EFFECT_MODE_OFF;
 	public static int					iDefaultColorTemperatureValue	= 6500;
 	public static int					iMinColorTemperatureValue		= 1000;
 	public static int					iMaxColorTemperatureValue		= 10000;
@@ -1865,11 +1865,11 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 			return Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mainContext).getString(
 					CameraController.isFrontCamera() ? ApplicationScreen.sRearColorEffectPref
 							: ApplicationScreen.sFrontColorEffectPref, String
-							.valueOf(ApplicationScreen.sDefaultCollorEffectValue)));
+							.valueOf(ApplicationScreen.sDefaultColorEffectValue)));
 		} catch (Exception e)
 		{
 			return (PreferenceManager.getDefaultSharedPreferences(mainContext).getInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearColorEffectPref
-					: ApplicationScreen.sFrontColorEffectPref, ApplicationScreen.sDefaultCollorEffectValue));
+					: ApplicationScreen.sFrontColorEffectPref, ApplicationScreen.sDefaultColorEffectValue));
 		}
 	}
 

@@ -285,7 +285,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static List<String>						MultishotResolutionsIdxesList;
 	public static List<String>						MultishotResolutionsNamesList;
 
-	public static List<String>						CollorEffectsNamesList;
+	public static List<String>						ColorEffectsNamesList;
 
 	public static List<Integer>						FastIdxelist;
 
@@ -2556,37 +2556,37 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	private static void fillCollorEffectNames()
 	{
-		CollorEffectsNamesList = new ArrayList<String>();
+		ColorEffectsNamesList = new ArrayList<String>();
 		for (int mode : supportedCollorEffects)
 		{
 			switch (mode)
 			{
 			case CameraParameters.COLOR_EFFECT_MODE_OFF:
-				CollorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectOff));
+				ColorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectOff));
 				break;
 			case CameraParameters.COLOR_EFFECT_MODE_AQUA:
-				CollorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectAqua));
+				ColorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectAqua));
 				break;
 			case CameraParameters.COLOR_EFFECT_MODE_BLACKBOARD:
-				CollorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectBlackboard));
+				ColorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectBlackboard));
 				break;
 			case CameraParameters.COLOR_EFFECT_MODE_MONO:
-				CollorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectMono));
+				ColorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectMono));
 				break;
 			case CameraParameters.COLOR_EFFECT_MODE_NEGATIVE:
-				CollorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectNegative));
+				ColorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectNegative));
 				break;
 			case CameraParameters.COLOR_EFFECT_MODE_POSTERIZE:
-				CollorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectPosterize));
+				ColorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectPosterize));
 				break;
 			case CameraParameters.COLOR_EFFECT_MODE_SEPIA:
-				CollorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectSepia));
+				ColorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectSepia));
 				break;
 			case CameraParameters.COLOR_EFFECT_MODE_SOLARIZE:
-				CollorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectSolarize));
+				ColorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectSolarize));
 				break;
 			case CameraParameters.COLOR_EFFECT_MODE_WHITEBOARD:
-				CollorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectWhiteboard));
+				ColorEffectsNamesList.add(mainContext.getResources().getString(R.string.colorEffectWhiteboard));
 				break;
 			}
 		}
@@ -3431,7 +3431,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_FOCUS_STATE_CHANGED);
 	}
 
-	public static void setCameraCollorEffect(int effect)
+	public static void setCameraColorEffect(int effect)
 	{
 		if (!CameraController.isRemoteCamera())
 		{
