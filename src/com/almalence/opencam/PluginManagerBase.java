@@ -1203,13 +1203,13 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	}
 
 	@TargetApi(21)
-	public CaptureResult getFromRAWCaptureResults(String key)
+	private CaptureResult getFromRAWCaptureResults(String key)
 	{
 		return rawCaptureResults.get(key);
 	}
 
 	@TargetApi(21)
-	public boolean containsRAWCaptureResults(String key)
+	private boolean containsRAWCaptureResults(String key)
 	{
 		if (rawCaptureResults.containsKey(key))
 			return true;
@@ -2074,7 +2074,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 							e.printStackTrace();
 						}
 					}
-				} else if (format != null && format.equalsIgnoreCase("dng"))
+				} else if (format != null && format.equalsIgnoreCase("dng") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
 				{
 					saveDNGPicture(i, sessionID, os, x, y, orientation, cameraMirrored);
 				} else
@@ -2816,7 +2816,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	}
 
 	@TargetApi(21)
-	public void saveDNGPicture(int frameNum, long sessionID, OutputStream os, int width, int height, int orientation,
+	private void saveDNGPicture(int frameNum, long sessionID, OutputStream os, int width, int height, int orientation,
 			boolean cameraMirrored)
 	{
 		DngCreator creator = new DngCreator(CameraController.getCameraCharacteristics(),
