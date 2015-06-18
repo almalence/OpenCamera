@@ -3129,22 +3129,13 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 	
-	@TargetApi(21)
 	public static void setCameraColorTemperature(int iTemp)
 	{
-		if (CameraController.isHALv3)
-		{
-			appInterface.setColorTemperature(iTemp);
-			try
-			{
-				HALv3.getInstance().setCameraWhiteBalanceHALv3(CameraParameters.WB_MODE_OFF);
-				HALv3.getInstance().configurePreviewRequest(true);
-			} catch (CameraAccessException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+//		if (CameraController.isHALv3)
+//		{
+//				HALv3.getInstance().setCameraWhiteBalanceHALv3(CameraParameters.WB_MODE_OFF);
+//				HALv3.getInstance().setCameraColorTemperatureHALv3(iTemp);
+//		}
 	}
 
 	public static void setCameraFocusMode(int mode)
@@ -4036,13 +4027,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	//plugin has to set it to TRUE if need preview frames
 	public static void setNeedPreviewFrame(boolean needPreviewFrame)
 	{
-		HALv3.setNeedPreviewFrame(needPreviewFrame);
+		if(CameraController.isUseHALv3())
+			HALv3.setNeedPreviewFrame(needPreviewFrame);
 	}
 	
 	//should be reset on each changemode and on resume (call)
 	public static void resetNeedPreviewFrame()
 	{
-		HALv3.resetNeedPreviewFrame();
+		if(CameraController.isUseHALv3())
+			HALv3.resetNeedPreviewFrame();
 	}
 	
 	// ^^^^^^^^^^^^^ CAPTURE AND FOCUS FUNCTION ----------------------------
