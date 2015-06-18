@@ -586,8 +586,8 @@ public class MainScreen extends ApplicationScreen
 		String opt1 = sRearColorEffectPref;
 		String opt2 = sFrontColorEffectPref;
 
-		entries = CameraController.CollorEffectsNamesList
-				.toArray(new CharSequence[CameraController.CollorEffectsNamesList.size()]);
+		entries = CameraController.ColorEffectsNamesList
+				.toArray(new CharSequence[CameraController.ColorEffectsNamesList.size()]);
 		entryValues = new CharSequence[colorEfects.length];
 		for (int i = 0; i < colorEfects.length; i++)
 		{

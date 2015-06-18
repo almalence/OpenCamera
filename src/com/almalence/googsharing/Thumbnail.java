@@ -438,47 +438,6 @@ public class Thumbnail
 
 		}
 
-		// if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-		// String[] projection = new String[] { Document.COLUMN_DOCUMENT_ID,
-		// Document.COLUMN_FLAGS, Document.COLUMN_LAST_MODIFIED };
-		//
-		// DocumentFile saveDir = PluginManagerBase.getSaveDirNew(false);
-		// if (!saveDir.canWrite()) {
-		// saveDir = PluginManagerBase.getSaveDirNew(true);
-		// }
-		// saveDir.get
-		// Uri query =
-		// DocumentsContract.buildChildDocumentsUri(saveDir.getUri().getAuthority(),
-		// DocumentsContract.getDocumentId(saveDir.getUri()));
-		// // query = query.buildUpon().appendQueryParameter("limit",
-		// "1").build();
-		// String selection = Document.COLUMN_MIME_TYPE + "='image/jpeg'";
-		// String order = Document.COLUMN_LAST_MODIFIED + " DESC," +
-		// Document.COLUMN_DOCUMENT_ID + " DESC";
-		//
-		// Cursor cursor = null;
-		//
-		// try
-		// {
-		// cursor = resolver.query(query, projection, selection, null, order);
-		// if (cursor != null && cursor.moveToFirst())
-		// {
-		// final long id = cursor.getLong(0);
-		// internalMedia = new Media(id, cursor.getInt(1), 0,
-		// ContentUris.withAppendedId(
-		// saveDir.getUri(), id));
-		// }
-		// } catch(Exception e) {
-		// e.printStackTrace();
-		// } finally
-		// {
-		// if (cursor != null)
-		// {
-		// cursor.close();
-		// }
-		// }
-		// }
-
 		if (internalMedia == null)
 		{
 			return externalMedia;

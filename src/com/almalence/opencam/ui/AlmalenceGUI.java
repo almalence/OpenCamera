@@ -181,7 +181,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	private AlmalenceStore									store;
 	private ImageSizeQuickSetting							imageSizeQuickSetting;
-	private CollorEffectQuickSetting						collorEffectQuickSetting;
+	private ColorEffectQuickSetting						collorEffectQuickSetting;
 
 	private SonyCameraDeviceExplorer						sonyCameraDeviceExplorer;
 
@@ -1585,7 +1585,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		});
 
 		imageSizeQuickSetting = new ImageSizeQuickSetting(MainScreen.getInstance());
-		collorEffectQuickSetting = new CollorEffectQuickSetting(MainScreen.getInstance());
+		collorEffectQuickSetting = new ColorEffectQuickSetting(MainScreen.getInstance());
 
 		store = new AlmalenceStore(guiView);
 		// <!-- -+-
@@ -2834,14 +2834,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				initValue = Integer.parseInt(preferences.getString(
 						CameraController.isFrontCamera() ? MainScreen.sRearColorEffectPref
 								: MainScreen.sFrontColorEffectPref, String
-								.valueOf(MainScreen.sDefaultCollorEffectValue)));
+								.valueOf(MainScreen.sDefaultColorEffectValue)));
 			} catch (Exception e)
 			{
 				initValue = (preferences.getInt(CameraController.isFrontCamera() ? MainScreen.sRearColorEffectPref
-						: MainScreen.sFrontColorEffectPref, MainScreen.sDefaultCollorEffectValue));
+						: MainScreen.sFrontColorEffectPref, MainScreen.sDefaultColorEffectValue));
 			}
 
-			CameraController.setCameraCollorEffect(initValue);
+			CameraController.setCameraColorEffect(initValue);
 
 			RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_COLLOR_EFFECT);
 			int icon_id = ICON_COLLOR_EFFECT;

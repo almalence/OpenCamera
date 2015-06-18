@@ -2227,15 +2227,13 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 					File f = new File(URI.create(file.getUri().toString()));
 					fileName = f.getAbsolutePath();
 					saveToPhone = true;
+					values.put(ImageColumns.DATA, fileName);
 				} catch (Exception e)
 				{
 				} finally
 				{
 				}
 
-				values.put(ImageColumns.BUCKET_ID, path.hashCode());
-				values.put(ImageColumns.BUCKET_DISPLAY_NAME, name);
-				values.put(ImageColumns.DATA, fileName);
 
 				if (!enableExifTagOrientation && !hasDNGResult)
 				{
@@ -2282,7 +2280,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 						// Copy buffer image with exif tags into result file.
 						InputStream is = null;
 						int len;
-						byte[] buf = new byte[1024];
+						byte[] buf = new byte[4096];
 						try
 						{
 							os = ApplicationScreen.instance.getContentResolver().openOutputStream(file.getUri());
@@ -2308,7 +2306,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 					// Copy buffer image into result file.
 					InputStream is = null;
 					int len;
-					byte[] buf = new byte[1024];
+					byte[] buf = new byte[4096];
 					try
 					{
 						os = ApplicationScreen.instance.getContentResolver().openOutputStream(file.getUri());
