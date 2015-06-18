@@ -581,11 +581,27 @@ public class MainScreen extends ApplicationScreen
 		CharSequence[] entries = null;
 		CharSequence[] entryValues = null;
 
-		int[] colorEfects = CameraController.getSupportedColorEffects();
-
 		String opt1 = sRearColorEffectPref;
 		String opt2 = sFrontColorEffectPref;
+		
+		ListPreference lp = (ListPreference) prefActivity.findPreference(opt1);
+		ListPreference lp2 = (ListPreference) prefActivity.findPreference(opt2);
 
+		int[] colorEfects = CameraController.getSupportedColorEffects();
+		
+		if (colorEfects == null || CameraController.ColorEffectsNamesList == null 
+				|| !CameraController.isColorEffectSupported()) {
+			if (lp != null) {
+				prefActivity.getPreferenceScreen().removePreference(lp);
+			}
+			
+			if (lp2 != null) {
+				prefActivity.getPreferenceScreen().removePreference(lp2);
+			}
+			
+			return;
+		}
+		
 		entries = CameraController.ColorEffectsNamesList
 				.toArray(new CharSequence[CameraController.ColorEffectsNamesList.size()]);
 		entryValues = new CharSequence[colorEfects.length];
@@ -593,9 +609,6 @@ public class MainScreen extends ApplicationScreen
 		{
 			entryValues[i] = Integer.toString(colorEfects[i]);
 		}
-
-		ListPreference lp = (ListPreference) prefActivity.findPreference(opt1);
-		ListPreference lp2 = (ListPreference) prefActivity.findPreference(opt2);
 
 		if (CameraController.isFrontCamera() && lp2 != null)
 			prefActivity.getPreferenceScreen().removePreference(lp2);

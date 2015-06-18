@@ -2824,7 +2824,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			buttonImageSize.setImageResource(ICON_IMAGE_SIZE);
 		}
 
-		mCollorEffectsSupported = CameraController.isCollorEffectSupported();
+		mCollorEffectsSupported = CameraController.isColorEffectSupported();
 		int[] mCollorEffects = CameraController.getSupportedColorEffects();
 		if (mCollorEffects != null && mCollorEffects.length > 1 && mCollorEffectsSupported)
 		{

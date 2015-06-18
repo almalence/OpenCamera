@@ -2598,7 +2598,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return (supported_collor_effect != null && supported_collor_effect.length > 1);
 	}
 
-	public static boolean isCollorEffectSupported()
+	public static boolean isColorEffectSupported()
 	{
 		return mCollorEffectSupported;
 	}

@@ -34,11 +34,11 @@ import android.widget.ListView;
 
 import com.almalence.ui.ListPreferenceAdapter;
 import com.almalence.ui.RotateDialog;
+
 //<!-- -+-
 import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
-
 //-+- -->
 
 /* <!-- +++
@@ -72,10 +72,10 @@ public class ColorEffectQuickSetting
 		final String pref2 = MainScreen.sFrontColorEffectPref;
 
 		int[] colorEfects = CameraController.getSupportedColorEffects();
-		
+
 		// Normally it should never happens. It's paranoia check.
 		if (colorEfects == null || colorEfects.length == 0 || CameraController.ColorEffectsNamesList == null
-				|| CameraController.ColorEffectsNamesList.size() == 0)
+				|| !CameraController.isColorEffectSupported())
 		{
 			return;
 		}
