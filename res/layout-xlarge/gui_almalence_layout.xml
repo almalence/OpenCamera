@@ -314,135 +314,216 @@
      		android:layout_height="wrap_content"        		
   			android:layout_gravity="top"
 			android:visibility="visible">	 	 	
-			<LinearLayout
-			 	android:id="@+id/exposureTimeLayout"
-			 	android:orientation="horizontal"
-			 	android:layout_width="wrap_content"
-		  		android:layout_height="wrap_content"
-		  		android:layout_marginLeft="3dip"	    		
-		  		android:paddingTop="10dip"
-		  		android:paddingLeft="10dip"
-		  		android:paddingRight="10dip"
-		  		android:layout_gravity="top"
-		  		android:visibility="gone">
-		   		<TextView android:id="@+id/exposureTimeTitleText"
-		   		    	  android:layout_width="wrap_content"
-		   		    	  android:layout_height="match_parent"		    		    	  
-						  android:textSize="@dimen/exposureTimeTitleSize"
-						  android:paddingLeft="10dp"							  
-						  android:textStyle="bold"
-						  android:text="EV"
-						  android:textColor="@android:color/white"							  
-						  android:gravity="center"
-						  android:layout_gravity="center_vertical"/>
-		   		<LinearLayout
-			 	 	android:id="@+id/exposureTimeSeekBarLayout"		 	 	    	 	 	    
-			 	 	android:orientation="vertical"
-			 	 	android:gravity="right"
-			 	 	android:layout_width="@dimen/exposureSeekBarWidth"
-		    		android:layout_height="wrap_content">
-		   			<TextView android:id="@+id/exposureTimeValueText"
-		    		    	  android:layout_width="@dimen/exposureTitleWidth"
-		    		    	  android:layout_height="wrap_content"
-							  android:textSize="@dimen/exposureTimeTitleSize"
-							  android:textStyle="bold"
-							  android:textColor="@android:color/white"							  
-							  android:gravity="center"
-							  android:layout_gravity="center_horizontal"/>		    		
-		    		<LinearLayout
-				 	 	android:orientation="vertical"
-				 	 	android:layout_width="wrap_content"
-			    		android:layout_height="wrap_content">		    		
-			    		<SeekBar android:id="@+id/exposureTimeSeekBar"
-								 android:layout_width="@dimen/exposureSeekBarWidth"
-								 android:layout_height="wrap_content"
-								 android:orientation="horizontal"/>
-			    		<RelativeLayout
-					 	 	android:id="@+id/exposureTimeTextLayout"		 	 	    	 	 	    
-					 	 	android:orientation="horizontal"
-					 	 	android:layout_width="@dimen/exposureSeekBarWidth"
-				    		android:layout_height="wrap_content">
-				    		<TextView android:id="@+id/exposureTimeLeftText"
-				    		    	  android:layout_width="match_parent"
-				    		    	  android:layout_height="wrap_content"
-				    		    	  android:layout_alignParentLeft="true"		    		    	  
-									  android:textSize="@dimen/exposureTimeTitleSize"
-									  android:paddingLeft="10dp"							  
-									  android:textStyle="bold"
-									  android:textColor="@android:color/white"							  
-									  android:gravity="left"/>
-				    		<TextView android:id="@+id/exposureTimeRightText"
-				    		    	  android:layout_width="match_parent"
-				    		    	  android:layout_height="wrap_content"
-				    		    	  android:layout_alignParentRight="true"		    		          
-									  android:textSize="@dimen/exposureTimeTitleSize"
-									  android:paddingRight="10dp"							  
-									  android:textStyle="bold"
-									  android:textColor="@android:color/white"
-									  android:gravity="right"/>
-			    		</RelativeLayout>
-		   			</LinearLayout>
-	  			</LinearLayout>	    		
-	  		</LinearLayout>	
-	  		
-			<LinearLayout
-			 	android:id="@+id/focusDistanceLayout"
-			 	android:orientation="horizontal"
-			 	android:layout_width="wrap_content"
-		  		android:layout_height="wrap_content"
-		  		android:layout_marginLeft="3dip"	    		
-		  		android:paddingTop="10dip"
-		  		android:paddingLeft="10dip"
-		  		android:paddingRight="10dip"
-		  		android:layout_below="@id/exposureTimeLayout"
-		  		android:layout_gravity="bottom"
-		  		android:visibility="gone">
-		   		<TextView android:id="@+id/focusDistanceTitleText"
-		   		    	  android:layout_width="wrap_content"
-		   		    	  android:layout_height="match_parent"		    		    	  
-						  android:textSize="@dimen/exposureTimeTitleSize"
-						  android:paddingLeft="10dp"							  
-						  android:textStyle="bold"
-						  android:text="MF"
-						  android:textColor="@android:color/white"							  
-						  android:gravity="center"
-						  android:layout_gravity="center_vertical"/>	    		
-		   		<LinearLayout
-		 	 	android:orientation="vertical"
-		 	 	android:layout_width="wrap_content"
-		   		android:layout_height="wrap_content">		    		
-		    		<SeekBar android:id="@+id/focusDistanceSeekBar"
-							 android:layout_width="@dimen/exposureSeekBarWidth"
-							 android:layout_height="wrap_content"
-							 android:orientation="horizontal"/>
-		    		<RelativeLayout
-				 	 	android:id="@+id/focusDistanceTextLayout"		 	 	    	 	 	    
-				 	 	android:orientation="horizontal"
-				 	 	android:layout_width="@dimen/exposureSeekBarWidth"
-			    		android:layout_height="wrap_content">
-			    		<TextView android:id="@+id/focusDistanceLeftText"
-			    		    	  android:layout_width="match_parent"
-			    		    	  android:layout_height="wrap_content"		    		    	  
-								  android:textSize="@dimen/exposureTimeTitleSize"
-								  android:paddingLeft="10dp"							  
-								  android:textStyle="bold"
-								  android:textColor="@android:color/white"							  
-								  android:gravity="left"
-								  android:layout_gravity="left"
-								  android:layout_alignParentLeft="true"/>
-			    		<TextView android:id="@+id/focusDistanceRightText"
-			    		    	  android:layout_width="match_parent"
-			    		    	  android:layout_height="wrap_content"		    		          
-								  android:textSize="@dimen/exposureTimeTitleSize"
-								  android:paddingRight="10dp"							  
-								  android:textStyle="bold"
-								  android:textColor="@android:color/white"
-								  android:gravity="right"
-								  android:layout_gravity="right"
-								  android:layout_alignParentRight="true"/>
-		    		</RelativeLayout>
-		   		</LinearLayout>
-	  		</LinearLayout>	
+
+            <LinearLayout
+                android:id="@+id/exposureTimeLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:layout_marginLeft="3dip"
+                android:orientation="horizontal"
+                android:paddingLeft="10dip"
+                android:paddingRight="10dip"
+                android:paddingTop="10dip"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/exposureTimeTitleText"
+                    android:layout_width="35dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center"
+                    android:paddingLeft="10dp"
+                    android:text="S"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/exposureTimeTitleSize"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/exposureTimeSeekBarLayout"
+                    android:layout_width="@dimen/exposureSeekBarWidth"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/exposureTimeValueText"
+                        android:layout_width="@dimen/exposureTitleWidth"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="center"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/exposureTimeTitleSize"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" >
+
+                        <SeekBar
+                            android:id="@+id/exposureTimeSeekBar"
+                            android:layout_width="@dimen/exposureSeekBarWidth"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal" />
+
+                        <RelativeLayout
+                            android:id="@+id/exposureTimeTextLayout"
+                            android:layout_width="@dimen/exposureSeekBarWidth"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal" >
+
+                            <TextView
+                                android:id="@+id/exposureTimeLeftText"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentLeft="true"
+                                android:gravity="left"
+                                android:paddingLeft="10dp"
+                                android:textColor="@android:color/white"
+                                android:textSize="@dimen/exposureTimeTitleSize"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/exposureTimeRightText"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:gravity="right"
+                                android:paddingRight="10dp"
+                                android:textColor="@android:color/white"
+                                android:textSize="@dimen/exposureTimeTitleSize"
+                                android:textStyle="bold" />
+                        </RelativeLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/manualWBLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/exposureTimeLayout"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="3dip"
+                android:orientation="horizontal"
+                android:paddingLeft="10dip"
+                android:paddingRight="10dip"
+                android:paddingTop="10dip"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/manualWBTitleText"
+                    android:layout_width="35dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center"
+                    android:paddingLeft="10dp"
+                    android:text="WB"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/exposureTimeTitleSize"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" >
+
+                    <SeekBar
+                        android:id="@+id/manualWBSeekBar"
+                        android:layout_width="@dimen/exposureSeekBarWidth"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" />
+
+                    <RelativeLayout
+                        android:id="@+id/manualWBTextLayout"
+                        android:layout_width="@dimen/exposureSeekBarWidth"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:id="@+id/manualWBText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:paddingLeft="10dp"
+                            android:textColor="@android:color/white"
+                            android:textSize="@dimen/exposureTimeTitleSize"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/focusDistanceLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/manualWBLayout"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="3dip"
+                android:orientation="horizontal"
+                android:paddingLeft="10dip"
+                android:paddingRight="10dip"
+                android:paddingTop="10dip"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/focusDistanceTitleText"
+                    android:layout_width="35dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center"
+                    android:paddingLeft="10dp"
+                    android:text="MF"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/exposureTimeTitleSize"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" >
+
+                    <SeekBar
+                        android:id="@+id/focusDistanceSeekBar"
+                        android:layout_width="@dimen/exposureSeekBarWidth"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" />
+
+                    <RelativeLayout
+                        android:id="@+id/focusDistanceTextLayout"
+                        android:layout_width="@dimen/exposureSeekBarWidth"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                        <TextView
+                            android:id="@+id/focusDistanceLeftText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_gravity="left"
+                            android:gravity="left"
+                            android:paddingLeft="10dp"
+                            android:textColor="@android:color/white"
+                            android:textSize="@dimen/exposureTimeTitleSize"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/focusDistanceRightText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_gravity="right"
+                            android:gravity="right"
+                            android:paddingRight="10dp"
+                            android:textColor="@android:color/white"
+                            android:textSize="@dimen/exposureTimeTitleSize"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+                </LinearLayout>
+            </LinearLayout>	
   		</RelativeLayout>          	
 	</RelativeLayout>
 	

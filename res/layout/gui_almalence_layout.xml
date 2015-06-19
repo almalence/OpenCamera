@@ -359,7 +359,7 @@
 
                 <TextView
                     android:id="@+id/exposureTimeTitleText"
-                    android:layout_width="wrap_content"
+                    android:layout_width="35dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:gravity="center"
@@ -444,12 +444,12 @@
 
                 <TextView
                     android:id="@+id/manualWBTitleText"
-                    android:layout_width="wrap_content"
+                    android:layout_width="35dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:gravity="center"
                     android:paddingLeft="10dp"
-                    android:text="Manual WB"
+                    android:text="WB"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/exposureTimeTitleSize"
                     android:textStyle="bold" />
@@ -501,7 +501,7 @@
 
                 <TextView
                     android:id="@+id/focusDistanceTitleText"
-                    android:layout_width="wrap_content"
+                    android:layout_width="35dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:gravity="center"

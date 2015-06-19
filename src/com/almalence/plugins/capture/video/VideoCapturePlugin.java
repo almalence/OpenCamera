@@ -80,12 +80,6 @@ import android.widget.Toast;
 
 import com.almalence.ui.RotateImageView;
 import com.almalence.util.Util;
-import com.coremedia.iso.boxes.Container;
-import com.googlecode.mp4parser.authoring.Movie;
-import com.googlecode.mp4parser.authoring.Track;
-import com.googlecode.mp4parser.authoring.builder.DefaultMp4Builder;
-import com.googlecode.mp4parser.authoring.container.mp4.MovieCreator;
-import com.googlecode.mp4parser.authoring.tracks.AppendTrack;
 
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
@@ -2512,31 +2506,6 @@ public class VideoCapturePlugin extends PluginCapture
 			out.write(buf, 0, len);
 		}
 	}
-
-	//JAVA implementation of append method
-	public static void append(final String firstFile, final String secondFile, final String newFile) throws IOException
-	{
-		final FileOutputStream fos = new FileOutputStream(new File(String.format(newFile)));
-		final FileChannel fc = fos.getChannel();
-
-		final Movie movieOne = MovieCreator.build(firstFile);
-		final Movie movieTwo = MovieCreator.build(secondFile);
-		final Movie finalMovie = new Movie();
-
-		final List<Track> movieOneTracks = movieOne.getTracks();
-		final List<Track> movieTwoTracks = movieTwo.getTracks();
-
-		for (int i = 0; i < movieOneTracks.size() || i < movieTwoTracks.size(); ++i)
-		{
-			finalMovie.addTrack(new AppendTrack(movieOneTracks.get(i), movieTwoTracks.get(i)));
-		}
-
-		final Container container = new DefaultMp4Builder().build(finalMovie);
-		container.writeContainer(fc);
-		fc.close();
-		fos.close();
-	}
-	// append video
 
 	public void takePicture()
 	{
