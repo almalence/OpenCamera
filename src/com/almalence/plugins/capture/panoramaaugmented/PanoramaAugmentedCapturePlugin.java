@@ -634,6 +634,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 	public void setupCameraParameters()
 	{
 		final List<CameraController.Size> picture_sizes = CameraController.getSupportedPictureSizes();
+		final CameraController.Size size;
+		
 		if (picture_sizes.size() == 0)
 		{
 			Log.e(TAG, "Picture sizes list is empty");
@@ -652,8 +654,20 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 			}
 		}
 
-		this.pictureWidth = picture_sizes.get(this.prefResolution).getWidth();
-		this.pictureHeight = picture_sizes.get(this.prefResolution).getHeight();
+		// Paranoia check. In some unusual cases prefResolution value may be more then cs.size.
+		if (PanoramaAugmentedCapturePlugin.prefResolution >= picture_sizes.size()) {
+			int iPrefResolution = PanoramaAugmentedCapturePlugin.prefResolution;
+			while (iPrefResolution >= picture_sizes.size()) {
+				iPrefResolution--;
+			}
+			
+			size = picture_sizes.get(iPrefResolution);
+		} else {
+			size = picture_sizes.get(PanoramaAugmentedCapturePlugin.prefResolution);
+		}
+		
+		this.pictureWidth = size.getWidth();
+		this.pictureHeight = size.getHeight();
 
 		CameraController.setCameraImageSize(new CameraController.Size(this.pictureWidth, this.pictureHeight));
 
