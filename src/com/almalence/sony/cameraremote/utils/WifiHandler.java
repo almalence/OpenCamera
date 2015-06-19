@@ -209,7 +209,13 @@ public class WifiHandler {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 
-			NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+			NetworkInfo networkInfo = null;
+			try {
+				networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return;
+			}
 
 			if(networkInfo == null || networkInfo.getType() != ConnectivityManager.TYPE_WIFI) {
 				return;
