@@ -61,6 +61,11 @@
         android:title="@string/Pref_Common_ColorEffect_Title" />
     <CheckBoxPreference
         android:defaultValue="false"
+        android:key="@string/Preference_ConnectToSonyCameras"
+        android:summary="@string/Pref_Common_ConnectToSonyCameras_Summary"
+        android:title="@string/Pref_Common_ConnectToSonyCameras_Title" />
+    <CheckBoxPreference
+        android:defaultValue="false"
         android:key="headsetPrefCommon"
         android:summary="@string/Pref_Common_HeadsetTap_Summary"
         android:title="@string/Pref_Common_HeadsetTap_Title" />
