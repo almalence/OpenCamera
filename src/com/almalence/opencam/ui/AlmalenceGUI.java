@@ -5671,7 +5671,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		final LinearLayout seekBarLayout = (LinearLayout) guiView.findViewById(R.id.focusDistanceLayout);
 		seekBarLayout.setVisibility(View.GONE);
 		// CameraController.resetCameraFocusDistance();
-		if (guiView.findViewById(R.id.exposureTimeLayout).getVisibility() == View.GONE)
+		if (guiView.findViewById(R.id.exposureTimeLayout).getVisibility() == View.GONE && 
+			guiView.findViewById(R.id.manualWBLayout).getVisibility() == View.GONE)
 		{
 			guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
 			guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
@@ -5746,7 +5747,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private void setMeteringMode(int newMode)
 	{
 		guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.GONE);
-		if(mWB != CameraParameters.WB_MODE_OFF)
+		if(mWB != CameraParameters.WB_MODE_MANUAL)
 		{
 			guiView.findViewById(R.id.manualWBLayout).setVisibility(View.GONE);
 			setWhiteBalance(mWB);
