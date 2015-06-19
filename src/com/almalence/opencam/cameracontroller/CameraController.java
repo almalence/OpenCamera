@@ -3133,18 +3133,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static void setCameraColorTemperature(int iTemp)
 	{
 		if (CameraController.isHALv3)
-		{
-			appInterface.setColorTemperature(iTemp);
-			try
-			{
-				HALv3.getInstance().setCameraWhiteBalanceHALv3(CameraParameters.WB_MODE_OFF);
-				HALv3.getInstance().configurePreviewRequest(true);
-			} catch (CameraAccessException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+			HALv3.setCameraColorTemperatureHALv3(iTemp);
 	}
 
 	public static void setCameraFocusMode(int mode)
