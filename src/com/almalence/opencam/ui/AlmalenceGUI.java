@@ -3450,7 +3450,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			isEnabled = isMeteringEnabled;
 			break;
 		case CAMERA:
-			icon_id = ICON_CAM;
+			icon_id = ICONS_CAMS.get(mCameraMode);
 			if (preferences.getInt(ApplicationScreen.sCameraModePref, 0) == 0)
 				icon_text = ApplicationScreen.getAppResources().getString(R.string.settings_mode_rear);
 			else
@@ -6111,6 +6111,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			break;
 		case MODE_MET:
 			mMeteringMode = sValue;
+			break;
+		case MODE_CAM:
+			mCameraMode = sValue;
 			break;
 		default:
 			break;
