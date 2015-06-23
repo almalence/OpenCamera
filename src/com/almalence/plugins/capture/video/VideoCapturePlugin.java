@@ -19,9 +19,14 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.capture.video;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,6 +37,7 @@ import java.util.List;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -51,6 +57,7 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.ParcelFileDescriptor;
 import android.os.SystemClock;
 import android.preference.CheckBoxPreference;
 import android.preference.PreferenceCategory;
@@ -58,7 +65,9 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Video;
+import android.provider.MediaStore.Images.ImageColumns;
 import android.provider.MediaStore.Video.VideoColumns;
+import android.support.v4.provider.DocumentFile;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -78,6 +87,14 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.almalence.opencam.ApplicationInterface;
+import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.CameraParameters;
+import com.almalence.opencam.PluginCapture;
+import com.almalence.opencam.PluginManager;
+import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam.ui.GUI.ShutterButton;
 import com.almalence.ui.RotateImageView;
 import com.almalence.util.Util;
 
@@ -92,14 +109,6 @@ import com.almalence.util.Util;
  import com.almalence.opencam_plus.ApplicationInterface;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationInterface;
-import com.almalence.opencam.CameraParameters;
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.PluginCapture;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.R;
-import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.ui.GUI.ShutterButton;
 
 //-+- -->
 
@@ -109,12 +118,12 @@ import com.almalence.opencam.ui.GUI.ShutterButton;
 
 public class VideoCapturePlugin extends PluginCapture
 {
-	private static final String					TAG								= "Almalence";
+	private static final String					TAG							= "Almalence";
 
 	private volatile boolean					isRecording;
 	private boolean								onPause;
-	private boolean								lockPauseButton					= false;
-	private int									soundVolume						= 0;
+	private boolean								lockPauseButton				= false;
+	private int									soundVolume					= 0;
 
 	private MediaRecorder						mMediaRecorder;
 
@@ -127,12 +136,18 @@ public class VideoCapturePlugin extends PluginCapture
 	private TextView							mRecordingTimeView;
 	private long								mRecorded;
 
-	private boolean								mRecordingTimeCountsDown		= false;
+	private boolean								mRecordingTimeCountsDown	= false;
 
-	private boolean								shutterOff						= false;
+	private boolean								shutterOff					= false;
 
-	private static File							fileSaved						= null;
-	private ArrayList<File>						filesList						= new ArrayList<File>();
+	// vars to work with files for android < 5
+	private static File							fileSaved					= null;
+	private ArrayList<File>						filesList					= new ArrayList<File>();
+
+	// vars to work with files for android >= 5
+	private static DocumentFile					fileSavedNew				= null;
+	private static ParcelFileDescriptor			fileSavedNewFd				= null;
+	private ArrayList<DocumentFile>				filesListNew				= new ArrayList<DocumentFile>();
 
 	private int									preferenceFocusMode;
 	private int									preferenceVideoFocusMode;
@@ -142,67 +157,67 @@ public class VideoCapturePlugin extends PluginCapture
 	private RotateImageView						stopVideoButton;
 	private RotateImageView						takePictureButton;
 
-	private boolean								showRecording					= false;
-	private boolean								pauseBlink						= true;
+	private boolean								showRecording				= false;
+	private boolean								pauseBlink					= true;
 
 	private View								buttonsLayout;
 
-	private boolean								snapshotSupported				= false;
+	private boolean								snapshotSupported			= false;
 
-	private boolean								videoStabilization				= false;
+	private boolean								videoStabilization			= false;
 
-	public static final int						QUALITY_4K						= 4096;
+	public static final int						QUALITY_4K					= 4096;
 
 	private ImageView							rotateToLandscapeNotifier;
-	private boolean								showLandscapeNotification		= true;
+	private boolean								showLandscapeNotification	= true;
 	private View								rotatorLayout;
 	private TimeLapseDialog						timeLapseDialog;
 
 	private boolean								displayTakePicture;
 	private ContentValues						values;
 
-	private static Hashtable<Integer, Boolean>	previewSizes					= new Hashtable<Integer, Boolean>()
+	private static Hashtable<Integer, Boolean>	previewSizes				= new Hashtable<Integer, Boolean>()
+																			{
+																				private static final long	serialVersionUID	= -6076051817063312974L;
+
 																				{
-																					private static final long	serialVersionUID	= -6076051817063312974L;
+																					put(CamcorderProfile.QUALITY_QCIF,
+																							false);
+																					put(CamcorderProfile.QUALITY_CIF,
+																							false);
+																					put(CamcorderProfile.QUALITY_480P,
+																							false);
+																					put(CamcorderProfile.QUALITY_720P,
+																							false);
+																					put(CamcorderProfile.QUALITY_1080P,
+																							false);
+																					put(CamcorderProfile.QUALITY_2160P,
+																							false);
+																					put(CamcorderProfile.QUALITY_HIGH,
+																							false);
+																					put(QUALITY_4K, false);
+																				}
+																			};
 
-																					{
-																						put(CamcorderProfile.QUALITY_QCIF,
-																								false);
-																						put(CamcorderProfile.QUALITY_CIF,
-																								false);
-																						put(CamcorderProfile.QUALITY_480P,
-																								false);
-																						put(CamcorderProfile.QUALITY_720P,
-																								false);
-																						put(CamcorderProfile.QUALITY_1080P,
-																								false);
-																						put(CamcorderProfile.QUALITY_2160P,
-																								false);
-																						put(CamcorderProfile.QUALITY_HIGH,
-																								false);
-																						put(QUALITY_4K, false);
-																					}
-																				};
+	private boolean								qualityCIFSupported			= false;
+	private boolean								qualityQCIFSupported		= false;
+	private boolean								quality480Supported			= false;
+	private boolean								quality720Supported			= false;
+	private boolean								quality1080Supported		= false;
+	private boolean								quality2160Supported		= false;
+	private boolean								quality4KSupported			= false;
 
-	private boolean								qualityCIFSupported				= false;
-	private boolean								qualityQCIFSupported			= false;
-	private boolean								quality480Supported				= false;
-	private boolean								quality720Supported				= false;
-	private boolean								quality1080Supported			= false;
-	private boolean								quality2160Supported			= false;
-	private boolean								quality4KSupported				= false;
-
-	private volatile String						ModePreference;											// 0=DRO
-																											// On
-																											// 1=DRO
-																											// Off
+	private volatile String						ModePreference;													// 0=DRO
+																													// On
+																													// 1=DRO
+																													// Off
 	private boolean								camera2Preference;
 
 	private com.almalence.ui.Switch.Switch		modeSwitcher;
 
-	private DROVideoEngine						droEngine						= new DROVideoEngine();
-	
-	public static final String 					ACTION_NEW_VIDEO = "android.hardware.action.NEW_VIDEO";
+	private DROVideoEngine						droEngine					= new DROVideoEngine();
+
+	public static final String					ACTION_NEW_VIDEO			= "android.hardware.action.NEW_VIDEO";
 
 	public VideoCapturePlugin()
 	{
@@ -244,7 +259,8 @@ public class VideoCapturePlugin extends PluginCapture
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
 			{
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen
+						.getMainContext());
 
 				if (isChecked)
 				{
@@ -275,8 +291,9 @@ public class VideoCapturePlugin extends PluginCapture
 					if (ImageSizeIdxPreference == 2 || ImageSizeIdxPreference == 3 || maxQuality())
 					{
 						quickControlIconID = R.drawable.gui_almalence_video_720;
-						editor.putString(CameraController.getCameraIndex() == 0 ? ApplicationScreen.sImageSizeVideoBackPref
-								: ApplicationScreen.sImageSizeVideoFrontPref, "4");
+						editor.putString(
+								CameraController.getCameraIndex() == 0 ? ApplicationScreen.sImageSizeVideoBackPref
+										: ApplicationScreen.sImageSizeVideoFrontPref, "4");
 						editor.commit();
 						VideoCapturePlugin.this.refreshQuickControl();
 					}
@@ -289,8 +306,8 @@ public class VideoCapturePlugin extends PluginCapture
 					if (cp != null)
 					{
 						setCameraPreviewSize();
-						CameraController.Size sz = new CameraController.Size(ApplicationScreen.getPreviewWidth(), ApplicationScreen
-								.getPreviewHeight());
+						CameraController.Size sz = new CameraController.Size(ApplicationScreen.getPreviewWidth(),
+								ApplicationScreen.getPreviewHeight());
 						ApplicationScreen.getGUIManager().setupViewfinderPreviewSize(sz);
 					}
 					if (VideoCapturePlugin.this.modeDRO())
@@ -434,12 +451,14 @@ public class VideoCapturePlugin extends PluginCapture
 				ImageSizeIdxPreference = 3;
 				quality = CamcorderProfile.QUALITY_1080P;
 				quickControlIconID = R.drawable.gui_almalence_video_1080;
-				if (!CamcorderProfile.hasProfile(CameraController.getCameraIndex(), quality) && !previewSizes.get(quality))
+				if (!CamcorderProfile.hasProfile(CameraController.getCameraIndex(), quality)
+						&& !previewSizes.get(quality))
 				{
 					ImageSizeIdxPreference = 4;
 					quality = CamcorderProfile.QUALITY_720P;
 					quickControlIconID = R.drawable.gui_almalence_video_720;
-					if (!CamcorderProfile.hasProfile(CameraController.getCameraIndex(), quality) && !previewSizes.get(quality))
+					if (!CamcorderProfile.hasProfile(CameraController.getCameraIndex(), quality)
+							&& !previewSizes.get(quality))
 					{
 						ImageSizeIdxPreference = 5;
 						quality = CamcorderProfile.QUALITY_480P;
@@ -449,18 +468,19 @@ public class VideoCapturePlugin extends PluginCapture
 			}
 		}
 
-		if (maxQuality()) {
+		if (maxQuality())
+		{
 			quickControlIconID = -1;
 		}
-		
+
 		Editor editor = prefs.edit();
 		editor.putString(CameraController.getCameraIndex() == 0 ? ApplicationScreen.sImageSizeVideoBackPref
 				: ApplicationScreen.sImageSizeVideoFrontPref, String.valueOf(ImageSizeIdxPreference));
 		editor.commit();
 
 		List<View> specialView = new ArrayList<View>();
-		RelativeLayout specialLayout = (RelativeLayout) ApplicationScreen.instance.findViewById(
-				R.id.specialPluginsLayout2);
+		RelativeLayout specialLayout = (RelativeLayout) ApplicationScreen.instance
+				.findViewById(R.id.specialPluginsLayout2);
 		for (int i = 0; i < specialLayout.getChildCount(); i++)
 			specialView.add(specialLayout.getChildAt(i));
 
@@ -498,7 +518,8 @@ public class VideoCapturePlugin extends PluginCapture
 		ApplicationScreen.instance.getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		float fScreenDensity = metrics.density;
 
-		int iIndicatorSize = (int) (ApplicationScreen.getMainContext().getResources().getInteger(R.integer.infoControlHeight) * fScreenDensity);
+		int iIndicatorSize = (int) (ApplicationScreen.getMainContext().getResources()
+				.getInteger(R.integer.infoControlHeight) * fScreenDensity);
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(iIndicatorSize, iIndicatorSize);
 		int topMargin = ApplicationScreen.instance.findViewById(R.id.paramsLayout).getHeight()
 				+ (int) ApplicationScreen.getAppResources().getDimension(R.dimen.viewfinderViewsMarginTop);
@@ -660,8 +681,8 @@ public class VideoCapturePlugin extends PluginCapture
 		rotateToLandscapeNotifier = (ImageView) rotatorLayout.findViewById(R.id.rotatorImageView);
 
 		List<View> specialViewRotator = new ArrayList<View>();
-		RelativeLayout specialLayoutRotator = (RelativeLayout) ApplicationScreen.instance.findViewById(
-				R.id.specialPluginsLayout);
+		RelativeLayout specialLayoutRotator = (RelativeLayout) ApplicationScreen.instance
+				.findViewById(R.id.specialPluginsLayout);
 		for (int i = 0; i < specialLayoutRotator.getChildCount(); i++)
 			specialViewRotator.add(specialLayoutRotator.getChildAt(i));
 
@@ -685,8 +706,8 @@ public class VideoCapturePlugin extends PluginCapture
 
 		paramsRotator.addRule(RelativeLayout.CENTER_IN_PARENT);
 
-		((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout)).addView(this.rotatorLayout,
-				paramsRotator);
+		((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout)).addView(
+				this.rotatorLayout, paramsRotator);
 
 		// rotatorLayout.setLayoutParams(paramsRotator);
 		// rotatorLayout.requestLayout();
@@ -742,7 +763,7 @@ public class VideoCapturePlugin extends PluginCapture
 			{
 				quality = CamcorderProfile.QUALITY_1080P;
 				quickControlIconID = R.drawable.gui_almalence_video_1080;
-				editor.putString(CameraController.getCameraIndex() == 0 ?ApplicationScreen.sImageSizeVideoBackPref
+				editor.putString(CameraController.getCameraIndex() == 0 ? ApplicationScreen.sImageSizeVideoBackPref
 						: ApplicationScreen.sImageSizeVideoFrontPref, "3");
 			}
 			break;
@@ -792,11 +813,13 @@ public class VideoCapturePlugin extends PluginCapture
 		{
 			setCameraPreviewSize();
 			Camera.Size sz = CameraController.getCameraParameters().getPreviewSize();
-			ApplicationScreen.getGUIManager().setupViewfinderPreviewSize(new CameraController.Size(sz.width, sz.height));
+			ApplicationScreen.getGUIManager()
+					.setupViewfinderPreviewSize(new CameraController.Size(sz.width, sz.height));
 		}
 		CameraController.startCameraPreview();
 
-		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_PREVIEW_CHANGED);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST,
+				ApplicationInterface.MSG_PREVIEW_CHANGED);
 	}
 
 	@Override
@@ -872,6 +895,7 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 	}
 
+	// Get output file method for android < 5.0
 	private static File getOutputMediaFile()
 	{
 		File saveDir = PluginManager.getInstance().getSaveDir(false);
@@ -884,6 +908,27 @@ public class VideoCapturePlugin extends PluginCapture
 
 		fileSaved = new File(saveDir, fileFormat);
 		return fileSaved;
+	}
+
+	// Get output file method for android >= 5.0
+	@TargetApi(19)
+	private static DocumentFile getOutputMediaFileNew()
+	{
+		DocumentFile saveDir = PluginManager.getInstance().getSaveDirNew(false);
+
+		if (saveDir == null || !saveDir.exists() || !saveDir.canWrite())
+		{
+			saveDir = PluginManager.getInstance().getSaveDirNew(true);
+		}
+
+		Calendar d = Calendar.getInstance();
+		String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d", d.get(Calendar.YEAR), d.get(Calendar.MONTH) + 1,
+				d.get(Calendar.DAY_OF_MONTH), d.get(Calendar.HOUR_OF_DAY), d.get(Calendar.MINUTE),
+				d.get(Calendar.SECOND));
+
+		fileSavedNew = saveDir.createFile("video/mp4", fileFormat);
+
+		return fileSavedNew;
 	}
 
 	public void onResume()
@@ -913,7 +958,8 @@ public class VideoCapturePlugin extends PluginCapture
 		if (this.shouldPreviewToGPU())
 		{
 			ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_OPENGL_LAYER_SHOW_V2);
-			ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_OPENGL_LAYER_RENDERMODE_WHEN_DIRTY);
+			ApplicationScreen.getMessageHandler().sendEmptyMessage(
+					ApplicationInterface.MSG_OPENGL_LAYER_RENDERMODE_WHEN_DIRTY);
 		}
 
 		showLandscapeNotification = prefs.getBoolean("showLandscapeNotification", true);
@@ -922,13 +968,16 @@ public class VideoCapturePlugin extends PluginCapture
 
 		if (CameraController.isRemoteCamera())
 		{
-			if (timeLapseButton != null) {
+			if (timeLapseButton != null)
+			{
 				timeLapseButton.setVisibility(View.GONE);
 			}
-			if (takePictureButton != null) {
+			if (takePictureButton != null)
+			{
 				takePictureButton.setVisibility(View.GONE);
 			}
-			if (modeSwitcher != null) {
+			if (modeSwitcher != null)
+			{
 				modeSwitcher.setVisibility(View.GONE);
 			}
 		}
@@ -945,7 +994,9 @@ public class VideoCapturePlugin extends PluginCapture
 		ApplicationScreen.instance.setFocusModePref(CameraController.getFocusMode());
 
 		prefs.edit()
-				.putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), camera2Preference).commit();
+				.putBoolean(
+						ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
+						camera2Preference).commit();
 
 		if (!CameraController.isRemoteCamera())
 		{
@@ -1135,12 +1186,14 @@ public class VideoCapturePlugin extends PluginCapture
 				ImageSizeIdxPreference = 3;
 				quality = CamcorderProfile.QUALITY_1080P;
 				quickControlIconID = R.drawable.gui_almalence_video_1080;
-				if (!CamcorderProfile.hasProfile(CameraController.getCameraIndex(), quality) && !previewSizes.get(quality))
+				if (!CamcorderProfile.hasProfile(CameraController.getCameraIndex(), quality)
+						&& !previewSizes.get(quality))
 				{
 					ImageSizeIdxPreference = 4;
 					quality = CamcorderProfile.QUALITY_720P;
 					quickControlIconID = R.drawable.gui_almalence_video_720;
-					if (!CamcorderProfile.hasProfile(CameraController.getCameraIndex(), quality) && !previewSizes.get(quality))
+					if (!CamcorderProfile.hasProfile(CameraController.getCameraIndex(), quality)
+							&& !previewSizes.get(quality))
 					{
 						ImageSizeIdxPreference = 5;
 						quality = CamcorderProfile.QUALITY_480P;
@@ -1149,16 +1202,17 @@ public class VideoCapturePlugin extends PluginCapture
 				}
 			}
 		}
-		
+
 		Editor editor = prefs.edit();
 		editor.putString(CameraController.getCameraIndex() == 0 ? ApplicationScreen.sImageSizeVideoBackPref
 				: ApplicationScreen.sImageSizeVideoFrontPref, String.valueOf(ImageSizeIdxPreference));
 		editor.commit();
 
-		if (maxQuality()) {
+		if (maxQuality())
+		{
 			quickControlIconID = -1;
 		}
-		
+
 		Camera.Parameters cp = CameraController.getCameraParameters();
 		if (cp != null && !Build.MODEL.contains("GT-I9505") && !Build.MODEL.contains("SM-G900"))
 		{
@@ -1183,8 +1237,8 @@ public class VideoCapturePlugin extends PluginCapture
 		Log.i(TAG, String.format("Preview size: %dx%d", sz.getWidth(), sz.getHeight()));
 
 		ApplicationScreen.instance.setCameraPreviewSize(sz.getWidth(), sz.getHeight());
-//		ApplicationScreen.setPreviewWidth(sz.getWidth());
-//		ApplicationScreen.setPreviewHeight(sz.getHeight());
+		// ApplicationScreen.setPreviewWidth(sz.getWidth());
+		// ApplicationScreen.setPreviewHeight(sz.getHeight());
 	}
 
 	// Get optimal supported preview size with aspect ration 16:9 or 4:3
@@ -1238,14 +1292,16 @@ public class VideoCapturePlugin extends PluginCapture
 			return getBestPreviewSizeNormal(false);
 		}
 
-		if (maxQuality() && modeDRO()) {
+		if (maxQuality() && modeDRO())
+		{
 			width = 720;
 			height = 480;
-		} else if (maxQuality()) {
+		} else if (maxQuality())
+		{
 			width = 1920;
 			height = 1080;
 		}
-		
+
 		final List<CameraController.Size> sizes = CameraController.getSupportedPreviewSizes();
 
 		CameraController.Size size_best = sizes.get(0);
@@ -1312,7 +1368,8 @@ public class VideoCapturePlugin extends PluginCapture
 		int jpegQuality = Integer.parseInt(prefs.getString(ApplicationScreen.sJPEGQualityPref, "95"));
 		CameraController.setJpegQuality(jpegQuality);
 
-		preferenceVideoFocusMode = ApplicationScreen.instance.getFocusModePref(CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
+		preferenceVideoFocusMode = ApplicationScreen.instance
+				.getFocusModePref(CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
 
 		if (CameraController.isModeAvailable(CameraController.getSupportedFocusModes(), preferenceVideoFocusMode))
 		{
@@ -1346,10 +1403,10 @@ public class VideoCapturePlugin extends PluginCapture
 	{
 		return (ModePreference.compareTo("0") == 0);
 	}
-	
+
 	private boolean maxQuality()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()); 
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		return prefs.getBoolean("preferenceVideoMaxQuality", false);
 	}
 
@@ -1397,7 +1454,7 @@ public class VideoCapturePlugin extends PluginCapture
 		mRecordingStartTime = SystemClock.uptimeMillis();
 		isRecording = true;
 		showRecordingUI(isRecording);
-		
+
 		View mainButtonsVideo = (View) ApplicationScreen.instance.guiManager.getMainView().findViewById(
 				R.id.mainButtonsVideo);
 		mainButtonsVideo.setVisibility(View.VISIBLE);
@@ -1414,7 +1471,7 @@ public class VideoCapturePlugin extends PluginCapture
 		ApplicationScreen.getGUIManager().lockControls = false;
 		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST,
 				ApplicationInterface.MSG_CONTROL_UNLOCKED);
-		
+
 		View mainButtonsVideo = (View) ApplicationScreen.instance.guiManager.getMainView().findViewById(
 				R.id.mainButtonsVideo);
 		mainButtonsVideo.setVisibility(View.GONE);
@@ -1489,24 +1546,44 @@ public class VideoCapturePlugin extends PluginCapture
 	{
 		ApplicationScreen.getGUIManager().startProcessingAnimation();
 
-		File parent = fileSaved.getParentFile();
-		String path = parent.toString().toLowerCase();
-		String name = parent.getName().toLowerCase();
+		String name = "";
+		String data = "";
+		if (fileSavedNew != null)
+		{
+			name = fileSavedNew.getName();
+			data = null;
+
+			// If we able to get File object, than get path from it. Gallery
+			// doesn't show the file, if it's stored at phone memory and
+			// DATA field not set.
+			File file = Util.getFileFromDocumentFile(fileSavedNew);
+			if (file != null)
+			{
+				data = file.getAbsolutePath();
+			}
+		} else
+		{
+			name = fileSaved.getName();
+			data = fileSaved.getAbsolutePath();
+		}
 
 		values = new ContentValues();
-		values.put(VideoColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
-		values.put(VideoColumns.DISPLAY_NAME, fileSaved.getName());
+		values.put(VideoColumns.TITLE, name.substring(0, name.lastIndexOf(".")));
+		values.put(VideoColumns.DISPLAY_NAME, name);
 		values.put(VideoColumns.DATE_TAKEN, System.currentTimeMillis());
 		values.put(VideoColumns.MIME_TYPE, "video/mp4");
-		values.put(VideoColumns.BUCKET_ID, path.hashCode());
-		values.put(VideoColumns.BUCKET_DISPLAY_NAME, name);
-		values.put(VideoColumns.DATA, fileSaved.getAbsolutePath());
+		if (data != null)
+		{
+			values.put(VideoColumns.DATA, data);
+		}
 		values.put(VideoColumns.DURATION, timeStringToMillisecond(mRecordingTimeView.getText().toString()));
 
 		if (this.modeDRO())
 		{
-			values.put(VideoColumns.RESOLUTION,
-					String.valueOf(ApplicationScreen.getPreviewWidth()) + "x" + String.valueOf(ApplicationScreen.getPreviewHeight()));
+			values.put(
+					VideoColumns.RESOLUTION,
+					String.valueOf(ApplicationScreen.getPreviewWidth()) + "x"
+							+ String.valueOf(ApplicationScreen.getPreviewHeight()));
 		} else
 		{
 			if (lastUseProfile)
@@ -1532,50 +1609,168 @@ public class VideoCapturePlugin extends PluginCapture
 	{
 		boolean onPause = this.onPause;
 		this.onPause = false;
+		boolean isDro = this.modeDRO();
 
-		File fileSaved = VideoCapturePlugin.fileSaved;
-		ArrayList<File> filesListToExport = filesList;
-		if (filesListToExport.size() > 0)
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && (fileSavedNew != null || !isDro))
 		{
-			int inputFileCount = filesListToExport.size();
-			if(!onPause)
-				inputFileCount++;
+			DocumentFile fileSaved = VideoCapturePlugin.fileSavedNew;
+			ArrayList<DocumentFile> filesListToExport = filesListNew;
+			String resultName = fileSaved.getName();
+			DocumentFile resultFile = fileSaved;
+
+			if (filesListToExport.size() > 0)
+			{
+				int inputFileCount = filesListToExport.size();
+				if (!onPause)
+					inputFileCount++;
+
+				DocumentFile[] inputFiles = new DocumentFile[inputFileCount];
+
+				for (int i = 0; i < filesListToExport.size(); i++)
+				{
+					inputFiles[i] = filesListToExport.get(i);
+				}
+
+				// If video recording hadn't been paused before STOP was
+				// pressed, then last recorded file is not in the list with
+				// other files, added to list of files manually.
+				if (!onPause)
+				{
+					inputFiles[inputFileCount - 1] = fileSaved;
+				}
+
+				resultFile = appendNew(inputFiles);
+
+				// Remove merged files, except first one, because it stores the
+				// result of merge.
+				for (int i = 0; i < filesListToExport.size(); i++)
+				{
+					DocumentFile currentFile = filesListToExport.get(i);
+					currentFile.delete();
+				}
+
+				// If video recording hadn't been paused before STOP was
+				// pressed, then last recorded file is not in the list with
+				// other files, and should be deleted manually.
+				if (!onPause)
+					fileSaved.delete();
+
+				String tmpName = resultFile.getName();
+				if (resultFile.renameTo(resultName));
 				
-			String[] inputFiles = new String[inputFileCount];
-			
-			File firstFile = filesListToExport.get(0);
-			for (int i = 0; i < filesListToExport.size(); i++)
-			{
-				File currentFile = filesListToExport.get(i);
-				inputFiles[i] = currentFile.getAbsolutePath();
+				// Make sure, that there won't be duplicate broken file
+				// in phone memory at gallery.
+				String args[] = { tmpName };
+				ApplicationScreen.instance.getContentResolver().delete(Video.Media.EXTERNAL_CONTENT_URI,
+						Video.Media.DISPLAY_NAME + "=?", args);
 			}
 			
-			if(!onPause)
-				inputFiles[inputFileCount-1] = fileSaved.getAbsolutePath();
-			
-//			Log.e(TAG, "Append start");
-			append(inputFiles);
-//			Log.e(TAG, "Append finished");
-			
-			for (int i = 1; i < filesListToExport.size(); i++)
+			// If we able to get File object, than get path from it. Gallery
+			// doesn't show the file, if it's stored at phone memory and
+			// we need insert new file to gallery manually.
+			File file = Util.getFileFromDocumentFile(resultFile);
+			if (file != null)
 			{
-				File currentFile = filesListToExport.get(i);
-				currentFile.delete();
+				values.put(VideoColumns.DISPLAY_NAME, file.getName());
+				values.put(VideoColumns.DATA, file.getAbsolutePath());
+				Uri uri = ApplicationScreen.instance.getContentResolver().insert(Video.Media.EXTERNAL_CONTENT_URI,
+						values);
+				ApplicationScreen.getMainContext().sendBroadcast(new Intent(ACTION_NEW_VIDEO, uri));
 			}
-			
-			if (!filesListToExport.get(0).getAbsoluteFile().equals(fileSaved.getAbsoluteFile()))
+		} else
+		{
+			File fileSaved = VideoCapturePlugin.fileSaved;
+			ArrayList<File> filesListToExport = filesList;
+
+			File firstFile = fileSaved;
+
+			if (filesListToExport.size() > 0)
 			{
-				fileSaved.delete();
-				firstFile.renameTo(fileSaved);
+				firstFile = filesListToExport.get(0);
+
+				int inputFileCount = filesListToExport.size();
+				if (!onPause)
+					inputFileCount++;
+
+				File[] inputFiles = new File[inputFileCount];
+
+				for (int i = 0; i < filesListToExport.size(); i++)
+				{
+					inputFiles[i] = filesListToExport.get(i);
+				}
+
+				if (!onPause)
+					inputFiles[inputFileCount - 1] = fileSaved;
+
+				File resultFile = append(inputFiles);
+
+				for (int i = 0; i < filesListToExport.size(); i++)
+				{
+					File currentFile = filesListToExport.get(i);
+					currentFile.delete();
+				}
+
+				if (resultFile != null) {
+					if (!resultFile.getAbsoluteFile().equals(fileSaved.getAbsoluteFile()))
+					{
+						fileSaved.delete();
+						resultFile.renameTo(fileSaved);
+					}
+				}
+			}
+
+			filesListToExport.clear();
+
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && isDro)
+			{
+				DocumentFile outputFile = getOutputMediaFileNew();
+				File file = Util.getFileFromDocumentFile(outputFile);
+
+				if (file != null)
+				{
+					// Don't do anything with ouputFile. It's useless, remove
+					// it.
+					outputFile.delete();
+					Uri uri = ApplicationScreen.instance.getContentResolver().insert(Video.Media.EXTERNAL_CONTENT_URI,
+							values);
+					ApplicationScreen.getMainContext().sendBroadcast(new Intent(ACTION_NEW_VIDEO, uri));
+				} else
+				{
+					// Copy result file from phone memory to selected folder at
+					// SD-card.
+					InputStream is = null;
+					int len;
+					byte[] buf = new byte[4096];
+					try
+					{
+						OutputStream os = ApplicationScreen.instance.getContentResolver().openOutputStream(
+								outputFile.getUri());
+						is = new FileInputStream(firstFile);
+						while ((len = is.read(buf)) > 0)
+						{
+							os.write(buf, 0, len);
+						}
+						is.close();
+						os.close();
+						firstFile.delete();
+
+						// Make sure, that there won't be duplicate broken file
+						// in phone memory at gallery.
+						String args[] = { firstFile.getAbsolutePath() };
+						ApplicationScreen.instance.getContentResolver().delete(Video.Media.EXTERNAL_CONTENT_URI,
+								Video.Media.DATA + "=?", args);
+					} catch (Exception e)
+					{
+						e.printStackTrace();
+					}
+				}
+			} else
+			{
+				Uri uri = ApplicationScreen.instance.getContentResolver().insert(Video.Media.EXTERNAL_CONTENT_URI,
+						values);
+				ApplicationScreen.getMainContext().sendBroadcast(new Intent(ACTION_NEW_VIDEO, uri));
 			}
 		}
-
-		String[] filesSavedNames = new String[1];
-		filesSavedNames[0] = fileSaved.toString();
-		filesListToExport.clear();
-
-		Uri uri = ApplicationScreen.instance.getContentResolver().insert(Video.Media.EXTERNAL_CONTENT_URI, values);
-		ApplicationScreen.getMainContext().sendBroadcast(new Intent(ACTION_NEW_VIDEO, uri));
 
 		try
 		{
@@ -1585,7 +1780,7 @@ public class VideoCapturePlugin extends PluginCapture
 			e.printStackTrace();
 		}
 		ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED);
-		
+
 	}
 
 	private void startRecording()
@@ -1595,6 +1790,10 @@ public class VideoCapturePlugin extends PluginCapture
 			return;
 
 		filesList = new ArrayList<File>();
+		filesListNew = new ArrayList<DocumentFile>();
+
+		fileSaved = null;
+		fileSavedNew = null;
 
 		if (shutterOff)
 			return;
@@ -1678,6 +1877,19 @@ public class VideoCapturePlugin extends PluginCapture
 
 		releaseMediaRecorder(); // release the MediaRecorder object
 		// camera.lock(); // take camera access back from MediaRecorder
+
+		// This condition normally should be TRUE only for Android >= 5.
+		if (fileSavedNewFd != null)
+		{
+			try
+			{
+				fileSavedNewFd.close();
+			} catch (IOException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
 		CameraController.stopCameraPreview();
 		Camera.Parameters cp = CameraController.getCameraParameters();
@@ -1776,8 +1988,9 @@ public class VideoCapturePlugin extends PluginCapture
 		default:
 			break;
 		}
-		
-		if (maxQuality()) {
+
+		if (maxQuality())
+		{
 			quality = CamcorderProfile.QUALITY_HIGH;
 		}
 
@@ -1862,7 +2075,8 @@ public class VideoCapturePlugin extends PluginCapture
 					}
 					if (!CamcorderProfile.hasProfile(CameraController.getCameraIndex(), quality))
 					{
-						Toast.makeText(ApplicationScreen.instance, "Time lapse not supported", Toast.LENGTH_LONG).show();
+						Toast.makeText(ApplicationScreen.instance, "Time lapse not supported", Toast.LENGTH_LONG)
+								.show();
 					} else
 						quality = qualityTimeLapse;
 				}
@@ -1874,8 +2088,8 @@ public class VideoCapturePlugin extends PluginCapture
 
 				ApplicationScreen.getGUIManager().lockControls = false;
 
-				PluginManager.getInstance()
-						.sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
+				PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST,
+						ApplicationInterface.MSG_CONTROL_UNLOCKED);
 			}
 
 			lastUseProfile = useProfile;
@@ -1966,7 +2180,8 @@ public class VideoCapturePlugin extends PluginCapture
 			Log.e("Video", "On shutter pressed " + e.getMessage());
 
 			ApplicationScreen.getGUIManager().lockControls = false;
-			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST,
+					ApplicationInterface.MSG_CONTROL_UNLOCKED);
 			releaseMediaRecorder(); // release the MediaRecorder object
 			camera.lock(); // take camera access back from MediaRecorder
 			camera.stopPreview();
@@ -1976,22 +2191,39 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 
 		// Step 4: Set output file
-		mMediaRecorder.setOutputFile(getOutputMediaFile().toString());
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+		{
+			DocumentFile file = getOutputMediaFileNew();
+			try
+			{
+				fileSavedNewFd = ApplicationScreen.instance.getContentResolver().openFileDescriptor(file.getUri(), "w");
+				FileDescriptor fileDescriptor = fileSavedNewFd.getFileDescriptor();
+				mMediaRecorder.setOutputFile(fileDescriptor);
+			} catch (FileNotFoundException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				mMediaRecorder.setOutputFile(getOutputMediaFile().toString());
+			}
+		} else
+		{
+			mMediaRecorder.setOutputFile(getOutputMediaFile().toString());
+		}
 
 		// Step 5: Set the preview output
 		mMediaRecorder.setPreviewDisplay(ApplicationScreen.getPreviewSurfaceHolder().getSurface());
 
 		if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
 		{
-			mMediaRecorder.setOrientationHint(ApplicationScreen.getWantLandscapePhoto() ? (ApplicationScreen.getGUIManager()
-					.getDisplayOrientation() + 180) % 360 : (ApplicationScreen.getGUIManager().getDisplayOrientation()) % 360);
+			mMediaRecorder.setOrientationHint(ApplicationScreen.getWantLandscapePhoto() ? (ApplicationScreen
+					.getGUIManager().getDisplayOrientation() + 180) % 360 : (ApplicationScreen.getGUIManager()
+					.getDisplayOrientation()) % 360);
 		} else
 		{
-			mMediaRecorder
-					.setOrientationHint(CameraController.isFrontCamera() ? (ApplicationScreen.getWantLandscapePhoto() ? ApplicationScreen
-							.getGUIManager().getDisplayOrientation() : (ApplicationScreen.getGUIManager()
-							.getDisplayOrientation() + 180) % 360)
-							: ApplicationScreen.getGUIManager().getDisplayOrientation());
+			mMediaRecorder.setOrientationHint(CameraController.isFrontCamera() ? (ApplicationScreen
+					.getWantLandscapePhoto() ? ApplicationScreen.getGUIManager().getDisplayOrientation()
+					: (ApplicationScreen.getGUIManager().getDisplayOrientation() + 180) % 360) : ApplicationScreen
+					.getGUIManager().getDisplayOrientation());
 		}
 
 		// Step 6: Prepare configured MediaRecorder
@@ -2011,7 +2243,8 @@ public class VideoCapturePlugin extends PluginCapture
 			Toast.makeText(ApplicationScreen.instance, "Failed to start video recording", Toast.LENGTH_LONG).show();
 
 			ApplicationScreen.getGUIManager().lockControls = false;
-			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST,
+					ApplicationInterface.MSG_CONTROL_UNLOCKED);
 			camera.lock(); // take camera access back from MediaRecorder
 			camera.stopPreview();
 			camera.startPreview();
@@ -2066,7 +2299,8 @@ public class VideoCapturePlugin extends PluginCapture
 		camera2Preference = prefs.getBoolean(
 				ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), false);
 		prefs.edit()
-				.putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
+				.putBoolean(
+						ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
 						false).commit();
 		CameraController.useHALv3(false);
 
@@ -2402,22 +2636,53 @@ public class VideoCapturePlugin extends PluginCapture
 			}
 
 			releaseMediaRecorder(); // release the MediaRecorder object
-			
-			File parent = fileSaved.getParentFile();
-			String path = parent.toString().toLowerCase();
-			String name = parent.getName().toLowerCase();
+
+			String name = "";
+			String data = "";
+
+			// This condition normally should be TRUE only for Android >= 5.
+			if (fileSavedNew != null)
+			{
+				if (fileSavedNewFd != null)
+				{
+					try
+					{
+						fileSavedNewFd.close();
+					} catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+				}
+				name = fileSavedNew.getName();
+				data = null;
+
+				// If we able to get File object, than get path from it. Gallery
+				// doesn't show file, if it's stored at phone memory and
+				// DATA field not set.
+				File file = Util.getFileFromDocumentFile(fileSavedNew);
+				if (file != null)
+				{
+					data = file.getAbsolutePath();
+				}
+				filesListNew.add(fileSavedNew);
+			} else
+			{
+				name = fileSaved.getName();
+				data = fileSaved.getAbsolutePath();
+				filesList.add(fileSaved);
+			}
 
 			values = new ContentValues();
-			values.put(VideoColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
-			values.put(VideoColumns.DISPLAY_NAME, fileSaved.getName());
+			values.put(VideoColumns.TITLE, name.substring(0, name.lastIndexOf(".")));
+			values.put(VideoColumns.DISPLAY_NAME, name);
 			values.put(VideoColumns.DATE_TAKEN, System.currentTimeMillis());
 			values.put(VideoColumns.MIME_TYPE, "video/mp4");
-			values.put(VideoColumns.BUCKET_ID, path.hashCode());
-			values.put(VideoColumns.BUCKET_DISPLAY_NAME, name);
-			values.put(VideoColumns.DATA, fileSaved.getAbsolutePath());
+			if (data != null)
+			{
+				values.put(VideoColumns.DATA, data);
+			}
 			values.put(VideoColumns.DURATION, timeStringToMillisecond(mRecordingTimeView.getText().toString()));
 
-			
 			if (lastUseProfile)
 			{
 				values.put(
@@ -2429,8 +2694,6 @@ public class VideoCapturePlugin extends PluginCapture
 				values.put(VideoColumns.RESOLUTION,
 						String.valueOf(lastSz.getWidth()) + "x" + String.valueOf(lastSz.getHeight()));
 			}
-
-			filesList.add(fileSaved);
 
 			lockPauseButton = false;
 
@@ -2447,45 +2710,108 @@ public class VideoCapturePlugin extends PluginCapture
 			// up the output file (delete the output file,
 			// for instance), since the output file is not properly constructed
 			// when this happens.
-			fileSaved.delete();
+			if (fileSavedNew != null)
+			{
+				fileSavedNew.delete();
+			} else
+			{
+				fileSaved.delete();
+			}
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Appends mp4 audio/video from {@code anotherFileDescriptor} to
+	 * {@code mainFileDescriptor}.
+	 */
+	public static DocumentFile appendNew(DocumentFile[] inputFiles)
+	{
+		try
+		{
+			DocumentFile targetFile = inputFiles[0];
+			int[] inputFilesFds = new int[inputFiles.length];
+			ArrayList<ParcelFileDescriptor> pfdsList = new ArrayList<ParcelFileDescriptor>();
+
+			int i = 0;
+			for (DocumentFile f : inputFiles)
+			{
+				ParcelFileDescriptor pfd = ApplicationScreen.instance.getContentResolver().openFileDescriptor(
+						f.getUri(), "rw");
+				pfdsList.add(pfd);
+				inputFilesFds[i] = pfd.getFd();
+				i++;
+			}
+
+			if (targetFile.exists() && targetFile.length() > 0)
+			{
+				String tmpFileName = targetFile.getName() + ".tmp";
+				DocumentFile tmpTargetFile = targetFile.getParentFile().createFile("video/mp4", tmpFileName);
+				ParcelFileDescriptor targetFilePfd = ApplicationScreen.instance.getContentResolver()
+						.openFileDescriptor(tmpTargetFile.getUri(), "rw");
+				
+				Mp4Editor.appendFds(inputFilesFds, targetFilePfd.getFd());
+
+				targetFilePfd.close();
+				for (ParcelFileDescriptor pfd : pfdsList)
+				{
+					pfd.close();
+				}
+
+				return tmpTargetFile;
+			}
+		} catch (Exception e)
+		{
+		}
+		return null;
 	}
 
 	/**
 	 * Appends mp4 audio/video from {@code anotherFileName} to
 	 * {@code mainFileName}.
 	 */
-	public static boolean append(String[] inputFiles)
+	public static File append(File[] inputFiles)
 	{
-		boolean rvalue = false;
 		try
 		{
-			File targetFile = new File(inputFiles[0]);
-			
-//			File targetFile = new File(mainFileName);
-//			File anotherFile = new File(anotherFileName);
-			if (targetFile.exists() && targetFile.length() > 0)
-			{ 
-				String tmpFileName = targetFile.getAbsolutePath() + ".tmp";
+			File targetFile = inputFiles[0];
+			int[] inputFilesFds = new int[inputFiles.length];
+			ArrayList<ParcelFileDescriptor> pfdsList = new ArrayList<ParcelFileDescriptor>();
 
-//				append(mainFileName, anotherFileName, tmpFileName);
-				Mp4Editor.append(inputFiles, tmpFileName);
-//				anotherFile.delete();
-				targetFile.delete();
-				new File(tmpFileName).renameTo(targetFile);
-				rvalue = true;
-			}
-			else if (targetFile.createNewFile())
+			int i = 0;
+			for (File f : inputFiles)
 			{
-				copyFile(inputFiles[1], inputFiles[0]);
-//				anotherFile.delete();
-				rvalue = true;
+				ParcelFileDescriptor pfd = ParcelFileDescriptor.open(f, ParcelFileDescriptor.MODE_READ_WRITE);
+				pfdsList.add(pfd);
+				inputFilesFds[i] = pfd.getFd();
+				i++;
+			}
+
+			if (targetFile.exists() && targetFile.length() > 0)
+			{
+				File tmpTargetFile = new File(targetFile.getAbsolutePath() + ".tmp");
+
+				ParcelFileDescriptor targetFilePfd = ParcelFileDescriptor.open(tmpTargetFile,
+						ParcelFileDescriptor.MODE_CREATE | ParcelFileDescriptor.MODE_READ_WRITE);
+				
+				Mp4Editor.appendFds(inputFilesFds, targetFilePfd.getFd());
+
+				targetFilePfd.close();
+				for (ParcelFileDescriptor pfd : pfdsList)
+				{
+					pfd.close();
+				}
+
+				return tmpTargetFile;
+			} else if (targetFile.createNewFile())
+			{
+				copyFile(inputFiles[1].getAbsolutePath(), inputFiles[0].getAbsolutePath());
+				return targetFile;
 			}
 		} catch (IOException e)
 		{
 		}
-		return rvalue;
+		return null;
 	}
 
 	public static void copyFile(final String from, final String destination) throws IOException
@@ -2604,7 +2930,8 @@ public class VideoCapturePlugin extends PluginCapture
 					measurementVal = np2.getValue();
 					interval = np.getValue();
 
-					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen
+							.getMainContext());
 					Editor editor = prefs.edit();
 					editor.putString("timelapseMeasurementVal", String.valueOf(measurementVal));
 					editor.putString("timelapseInterval", String.valueOf(interval));
@@ -2701,7 +3028,8 @@ public class VideoCapturePlugin extends PluginCapture
 
 	private void showHDRWarning(long fps)
 	{
-		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen
+				.getMainContext());
 		boolean showDroWarning = prefs.getBoolean("dontshowagainDroWarning", false);
 
 		if (showDroWarning)

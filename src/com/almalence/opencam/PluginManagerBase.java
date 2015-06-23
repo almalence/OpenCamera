@@ -100,6 +100,7 @@ import com.almalence.plugins.export.ExifDriver.Values.ValueNumber;
 import com.almalence.plugins.export.ExifDriver.Values.ValueRationals;
 import com.almalence.plugins.export.standard.GPSTagsConverter;
 import com.almalence.util.MLocation;
+import com.almalence.util.Util;
 import com.almalence.util.exifreader.imaging.jpeg.JpegMetadataReader;
 import com.almalence.util.exifreader.imaging.jpeg.JpegProcessingException;
 import com.almalence.util.exifreader.metadata.Directory;
@@ -1556,6 +1557,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		}
 	}
 
+	// save result pictures method for android < 5.0
 	public void saveResultPicture(long sessionID)
 	{
 		getPrefs();
@@ -1952,6 +1954,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		out.close();
 	}
 
+	// save result pictures method for android >= 5.0
 	public void saveResultPictureNew(long sessionID)
 	{
 		if (ApplicationScreen.getForceFilename() != null)
@@ -2222,18 +2225,12 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 				String fileName = file.getName();
 				boolean saveToPhone = false;
 				// If we able to get File object, than get path from it
-				try
-				{
-					File f = new File(URI.create(file.getUri().toString()));
-					fileName = f.getAbsolutePath();
+				File fileObject = Util.getFileFromDocumentFile(file);
+				if (fileObject != null) {
+					fileName = fileObject.getAbsolutePath();
 					saveToPhone = true;
 					values.put(ImageColumns.DATA, fileName);
-				} catch (Exception e)
-				{
-				} finally
-				{
 				}
-
 
 				if (!enableExifTagOrientation && !hasDNGResult)
 				{
