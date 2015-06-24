@@ -551,10 +551,20 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	public static void setCaptureFormat(int capture)
 	{
-		instance.captureFormat = capture;
-		
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-			CameraController.setCaptureFormat(capture);
+		if(CameraController.isCaptureFormatSupported(capture))
+		{
+			instance.captureFormat = capture;
+			
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+				CameraController.setCaptureFormat(capture);
+		}
+		else if(CameraController.isCaptureFormatSupported(CameraController.JPEG))
+		{
+			instance.captureFormat = CameraController.JPEG;
+			
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+				CameraController.setCaptureFormat(CameraController.JPEG);
+		}
 	}
 
 	public static int getPreviewSurfaceLayoutWidth()
@@ -765,9 +775,10 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 						guiManager.setCameraModeGUI(0);
 					}
 
+					CameraController.onResume();
 					ApplicationScreen.getGUIManager().onResume();
 					ApplicationScreen.getPluginManager().onResume();
-					CameraController.onResume();
+					
 					ApplicationScreen.instance.mPausing = false;
 
 					if (!CameraController.isRemoteCamera())

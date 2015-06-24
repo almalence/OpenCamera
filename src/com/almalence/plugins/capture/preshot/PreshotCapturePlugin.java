@@ -112,9 +112,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	public void onResume()
 	{
 		CameraController.setNeedPreviewFrame(true);
-		preferenceFocusMode = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getInt(
-				CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref : ApplicationScreen.sFrontFocusModePref,
-				CameraParameters.AF_MODE_AUTO);
+		preferenceFocusMode = ApplicationScreen.instance.getFocusModePref(CameraParameters.AF_MODE_AUTO);
 		ApplicationScreen.instance.muteShutter(false);
 		captureStarted = false;
 	}
@@ -127,8 +125,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		
-		prefs.edit().putInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
-						: ApplicationScreen.sFrontFocusModePref, preferenceFocusMode).commit();
+		ApplicationScreen.instance.setFocusModePref(preferenceFocusMode);
 		
 		prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), camera2Preference).commit();
 
@@ -235,12 +232,7 @@ public class PreshotCapturePlugin extends PluginCapture
 						CameraParameters.AF_MODE_CONTINUOUS_VIDEO))
 				{
 					CameraController.setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
-					PreferenceManager
-							.getDefaultSharedPreferences(ApplicationScreen.getMainContext())
-							.edit()
-							.putInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
-									: ApplicationScreen.sFrontFocusModePref, CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
-							.commit();
+					ApplicationScreen.instance.setFocusModePref(CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
 				}
 			} catch (Exception e)
 			{
@@ -255,12 +247,7 @@ public class PreshotCapturePlugin extends PluginCapture
 						CameraParameters.AF_MODE_CONTINUOUS_PICTURE))
 				{
 					CameraController.setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_PICTURE);
-					PreferenceManager
-							.getDefaultSharedPreferences(ApplicationScreen.getMainContext())
-							.edit()
-							.putInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
-									: ApplicationScreen.sFrontFocusModePref, CameraParameters.AF_MODE_CONTINUOUS_PICTURE)
-							.commit();
+					ApplicationScreen.instance.setFocusModePref(CameraParameters.AF_MODE_CONTINUOUS_PICTURE);
 				}
 			} catch (Exception e)
 			{

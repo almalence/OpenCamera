@@ -127,10 +127,13 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 		if (PluginManager.getInstance().getActiveModeID().equals("hdrmode"))
 			ApplicationScreen.setCaptureFormat(CameraController.YUV);
-		else if (captureRAW)
+		else if(captureRAW && CameraController.isRAWCaptureSupported())
 			ApplicationScreen.setCaptureFormat(CameraController.RAW);
 		else
+		{
+			captureRAW = false;
 			ApplicationScreen.setCaptureFormat(CameraController.JPEG);
+		}
 	}
 
 	@Override

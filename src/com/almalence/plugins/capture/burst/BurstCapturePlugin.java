@@ -101,10 +101,13 @@ public class BurstCapturePlugin extends PluginCapture
 		}
 
 		// refreshPreferences();
-		if (captureRAW)
+		if(captureRAW && CameraController.isRAWCaptureSupported())
 			ApplicationScreen.setCaptureFormat(CameraController.RAW);
 		else
+		{
+			captureRAW = false;
 			ApplicationScreen.setCaptureFormat(CameraController.JPEG);
+		}
 	}
 
 	@Override
