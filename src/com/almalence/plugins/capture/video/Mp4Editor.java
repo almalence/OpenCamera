@@ -20,7 +20,8 @@ package com.almalence.plugins.capture.video;
 
 public final class Mp4Editor
 {
-	public static synchronized native String append(String[] inputFiles, String newFile);
+//	public static synchronized native String append(String[] inputFiles, String newFile);
+	public static synchronized native String appendFds(int[] inputFilesDescriptors, int newFileDescriptor);
 
 	
 	static

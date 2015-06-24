@@ -60,6 +60,7 @@ public:
      * it cannot
      */
     static AP4_Result Create(const char* name, Mode mode, AP4_ByteStream*& stream);
+    static AP4_Result Create(int fd, Mode mode, AP4_ByteStream*& stream);
     
     // constructors
     AP4_FileByteStream(AP4_ByteStream* delegate) : m_Delegate(delegate) {}
@@ -69,6 +70,7 @@ public:
      * @deprecated
      */
     AP4_FileByteStream(const char* name, Mode mode);
+    AP4_FileByteStream(int fd, Mode mode);
 #endif
 
     // AP4_ByteStream methods

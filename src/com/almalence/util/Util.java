@@ -17,7 +17,9 @@
 package com.almalence.util;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -49,6 +51,7 @@ import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.os.StatFs;
 import android.provider.Settings;
+import android.support.v4.provider.DocumentFile;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.OrientationEventListener;
@@ -59,13 +62,13 @@ import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
+import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.cameracontroller.CameraController;
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 /**
@@ -838,5 +841,18 @@ public final class Util
 				|| (orientationProc == Configuration.ORIENTATION_LANDSCAPE && rotation == Surface.ROTATION_180)
 				|| (orientationProc == Configuration.ORIENTATION_PORTRAIT && rotation == Surface.ROTATION_90)
 				|| (orientationProc == Configuration.ORIENTATION_PORTRAIT && rotation == Surface.ROTATION_270);
+	}
+	
+	// Get File object from DocumentFile object.
+	// It's possible only if documentFile stored in phone memory, not SD-card.
+	public static File getFileFromDocumentFile(DocumentFile documentFile) {
+		try
+		{
+			File file = new File(URI.create(documentFile.getUri().toString()));
+			return file;
+		} catch (Exception e)
+		{
+			return null;
+		}
 	}
 }
