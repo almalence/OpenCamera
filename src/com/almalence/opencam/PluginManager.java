@@ -960,6 +960,8 @@ public class PluginManager extends PluginManagerBase
 			clearSharedMemory(sessionID);
 			break;
 		case ApplicationInterface.MSG_EXPORT_FINISHED:
+			getPrefs();
+			
 			// event from plugin that saving finished and memory can be freed
 			if (cntProcessing > 0)
 				cntProcessing--;
@@ -993,6 +995,8 @@ public class PluginManager extends PluginManagerBase
 			break;
 
 		case ApplicationInterface.MSG_EXPORT_FINISHED_IOEXCEPTION:
+			getPrefs();
+			
 			// event from plugin that saving finished and memory can be freed
 			if (cntProcessing > 0)
 				cntProcessing--;
@@ -1238,14 +1242,12 @@ public class PluginManager extends PluginManagerBase
 										}
 									};
 
-	private int			saveOption;
 	private boolean		photoTimeLapseActive;
 	private boolean		photoTimeLapseIsRunning;
 
 	private void getPrefs()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		saveOption = Integer.parseInt(prefs.getString(MainScreen.sExportNamePref, "2"));
 		photoTimeLapseActive = prefs.getBoolean(MainScreen.sPhotoTimeLapseActivePref, false);
 		photoTimeLapseIsRunning = prefs.getBoolean(MainScreen.sPhotoTimeLapseIsRunningPref, false);
 	}

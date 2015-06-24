@@ -21,6 +21,8 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
 
+import com.almalence.opencam.cameracontroller.CameraController;
+
 public class AlarmReceiver extends BroadcastReceiver
 {
 	private static final String		TAG							= "ALARM_RECIVER";
@@ -69,7 +71,7 @@ public class AlarmReceiver extends BroadcastReceiver
 
 		try
 		{
-			if (ApplicationScreen.instance == null || ApplicationScreen.getCameraController() == null || ApplicationScreen.getCameraController().getCamera() == null)
+			if (ApplicationScreen.instance == null || ApplicationScreen.getCameraController() == null || (CameraController.getCamera() == null && CameraController.getCamera2() == null))
 			{
 				Intent dialogIntent = new Intent(context, MainScreen.class);
 				dialogIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
