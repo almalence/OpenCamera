@@ -1094,9 +1094,10 @@ public class MainScreen extends ApplicationScreen
 						guiManager.setCameraModeGUI(0);
 					}
 
+					CameraController.onResume();
 					MainScreen.getGUIManager().onResume();
 					PluginManager.getInstance().onResume();
-					CameraController.onResume();
+					
 					MainScreen.thiz.mPausing = false;
 
 					if (!CameraController.isRemoteCamera())
@@ -1539,6 +1540,8 @@ public class MainScreen extends ApplicationScreen
 			// capture
 			if (CameraController.isRAWCaptureSupported())
 				surfaceList.add(mImageReaderRAW.getSurface());
+			else
+				captureFormat = CameraController.JPEG;
 		}
 
 		CameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());

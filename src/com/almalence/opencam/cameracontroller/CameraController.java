@@ -1173,6 +1173,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return isCameraCreatedHALv3();
 
 	}
+	
+	public static boolean isCaptureFormatSupported(int captureFormat)
+	{
+		if(isUseHALv3())
+			return HALv3.isCaptureFormatSupported(captureFormat);
+		else
+			return true;
+	}
 
 	@TargetApi(21)
 	public static void setCaptureFormat(int captureFormat)

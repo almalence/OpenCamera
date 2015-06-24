@@ -623,6 +623,26 @@ public class InfosetVFPlugin extends PluginViewfinder
 					Log.e("InfosetVFPlugin", "onBroadcast exception: " + e.getMessage());
 				}
 			}
+			
+			if (useCurrentExposureTimeMonitor && currentExposureTimeText != null)
+			{
+				long currentExposureTime = CameraController.getCameraExposureTime();
+				if (currentExposureTime != -1 && currentExposureTime != 0)
+				{
+					currentExposureTime = 1000000000 / currentExposureTime;
+					// Fix calculations.
+					if (currentExposureTime % 10 == 9)
+					{
+						currentExposureTime = currentExposureTime + 1;
+					}
+					String currentExposureTimeString = "1/" + currentExposureTime + " s";
+					currentExposureTimeText.setText(currentExposureTimeString);
+					currentExposureTimeText.setVisibility(View.VISIBLE);
+				} else
+				{
+					currentExposureTimeText.setVisibility(View.GONE);
+				}
+			}
 		} else if (arg1 == ApplicationInterface.MSG_SCENE_CHANGED)
 		{
 			if (this.useSceneMonitor && sceneInfoImage != null)
@@ -689,8 +709,19 @@ public class InfosetVFPlugin extends PluginViewfinder
 			
 			if (useCurrentSensitivityMonitor && currentSensitivityText != null)
 			{
-				if (iso != -1)
-					currentSensitivityText.setText(ApplicationScreen.getGUIManager().getISOName(iso));
+//				if (iso != -1)
+//					currentSensitivityText.setText(ApplicationScreen.getGUIManager().getISOName(iso));
+				int currentSensetivity = CameraController.getCurrentSensitivity();
+				if (currentSensetivity != -1 && currentSensetivity != 0)
+				{
+					String currentSensetivityString = "ISO " + currentSensetivity;
+					currentSensitivityText.setText(currentSensetivityString);
+				}
+				else
+				{
+					String currentSensetivityString = "ISO Auto";
+					currentSensitivityText.setText(currentSensetivityString);
+				}
 				
 				currentSensitivityText.setVisibility(View.VISIBLE);
 			}

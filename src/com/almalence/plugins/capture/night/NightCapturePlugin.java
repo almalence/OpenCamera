@@ -203,9 +203,8 @@ public class NightCapturePlugin extends PluginCapture
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		preferenceSceneMode = ApplicationScreen.instance.getSceneModePref();
-		preferenceFocusMode = prefs.getInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
-				: ApplicationScreen.sFrontFocusModePref, ApplicationScreen.sDefaultFocusValue);
-		preferenceFlashMode = prefs.getInt(ApplicationScreen.sFlashModePref, ApplicationScreen.sDefaultFlashValue);
+		preferenceFocusMode = ApplicationScreen.instance.getFocusModePref(ApplicationScreen.sDefaultFocusValue);
+		preferenceFlashMode = ApplicationScreen.instance.getFlashModePref(ApplicationScreen.sDefaultFlashValue);
 		
 		if(usingSuperMode)
 		{
@@ -229,13 +228,8 @@ public class NightCapturePlugin extends PluginCapture
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		ApplicationScreen.instance.setSceneModePref(preferenceSceneMode);
-		ApplicationScreen.instance.setFocusModePref(preferenceFocusMode);
 		if(!usingSuperMode)
-		{
-			prefs.edit()
-					.putInt(CameraController.isFrontCamera() ?ApplicationScreen.sRearFocusModePref
-							: ApplicationScreen.sFrontFocusModePref, preferenceFocusMode).commit();
-		}
+			ApplicationScreen.instance.setFocusModePref(preferenceFocusMode);
 		prefs.edit().putInt(ApplicationScreen.sFlashModePref, preferenceFlashMode).commit();
 		
 		CameraController.setCameraSceneMode(preferenceSceneMode);

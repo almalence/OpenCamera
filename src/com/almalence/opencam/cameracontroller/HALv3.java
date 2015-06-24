@@ -118,11 +118,13 @@ public class HALv3
 	protected static boolean			captureAllowed 				= false;
 	
 	protected static RggbChannelVector 	rggbVector					= null;
-//	protected static int[] 				colorTransformMatrix 		= new int[]{258, 128, -119, 128, -10, 128, -40, 128, 209, 128, -41, 128, -1, 128, -74, 128, 203, 128};
-	protected static int[] 				colorTransformMatrix 		= new int[]{227, 128, -98, 128, -1, 128, -33, 128, 193, 128, -32, 128, 0, 128, -93, 128, 221, 128};
-	protected static float				multiplierR					= 1.81f;
+	protected static int[] 				colorTransformMatrix 		= new int[]{258, 128, -119, 128, -10, 128, -40, 128, 209, 128, -41, 128, -1, 128, -74, 128, 203, 128};
+//	protected static int[] 				colorTransformMatrix 		= new int[]{227, 128, -98, 128, -1, 128, -33, 128, 193, 128, -32, 128, 0, 128, -93, 128, 221, 128};
+//	protected static float				multiplierR					= 1.81f;
+	protected static float				multiplierR					= 1.6f;
 	protected static float				multiplierG					= 1.0f;
-	protected static float				multiplierB					= 1.54f;
+//	protected static float				multiplierB					= 1.54f;
+	protected static float				multiplierB					= 2.4f;
 
 	private static boolean 				needPreviewFrame			= false;
 	
@@ -191,7 +193,6 @@ public class HALv3
 			}
 			HALv3.getInstance().camCharacter = HALv3.getInstance().manager
 					.getCameraCharacteristics(CameraController.cameraIdList[cameraIndex]);
-
 			return (HALv3.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED || HALv3
 					.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL);
 		} catch (CameraAccessException e)
@@ -336,6 +337,25 @@ public class HALv3
 	{
 		Log.e(TAG, "setupImageReadersHALv3(). Width = " + sz.getWidth() + " Height = " + sz.getHeight());
 		appInterface.createImageReaders(imageAvailableListener);
+	}
+	
+	public static boolean isCaptureFormatSupported(int captureFormat)
+	{
+		boolean isSupported = false;
+		try
+		{
+			CameraCharacteristics cc = HALv3.getInstance().manager.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
+			StreamConfigurationMap configMap = cc.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+			isSupported = configMap.isOutputSupportedFor(captureFormat);
+			Log.e(TAG, "Capture format " + captureFormat + " is supported? " + isSupported);
+			return isSupported;
+			
+		} catch (CameraAccessException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return isSupported;
+		}
 	}
 
 	public static void setCaptureFormat(int captureFormat)
@@ -2068,6 +2088,7 @@ public class HALv3
 			{
 				double tmpCalc = tmpKelvin - 60;
 		        tmpCalc = 329.698727446 * Math.pow(tmpCalc, -0.1332047592);
+//				tmpCalc = 300 * Math.pow(tmpCalc, -0.1332047592);
 		        R = (float)tmpCalc;
 		        if(R < 0) R = 0.0f;
 		        if(R > 255) R = 255;
@@ -2114,6 +2135,7 @@ public class HALv3
 //			{
 //				double tmpCalc = tmpKelvin - 10;
 //		        tmpCalc = 138.5177312231 * Math.log(tmpCalc) - 305.0447927307;
+////				tmpCalc = 300 * Math.log(tmpCalc) - 305.0447927307;
 //		        B = (float)tmpCalc;
 //		        if(B < 0) B = 0.0f;
 //		        if(B > 255) B = 255;
@@ -2130,11 +2152,25 @@ public class HALv3
 		        B = (float)tmpCalc;
 		        if(B < 0) B = 0;
 			}
+//			float X = 255;
+//			if(G_even > 0 && R > 0 && B > 0)
+//				X = Math.min(G_even, Math.min(R, B));
+//			else if(R > 0 && G_even > 0)
+//				X = Math.min(R, G_even);
 			
-			R = R/255 * multiplierR;
-			G_even = G_even/255 * multiplierG;
+//			if(R > 0)
+//				R = (float) (Math.pow(X/R, 2.2f) * multiplierR);
+//				R = (X/R) * multiplierR;
+				R = (R/255) * multiplierR;
+//			if(G_even > 0)
+//				G_even = (float) (Math.pow(X/G_even, 2.2f) * multiplierG);
+//				G_even = (X/G_even) * multiplierG;
+				G_even = (G_even/255) * multiplierG;
 			G_odd = G_even;
-			B = B/255 * multiplierB;
+//			if(B > 0)
+//				B = (float) (Math.pow(X/B, 2.2f) * multiplierB);
+//				B = (X/B) * multiplierB;
+				B = (B/255) * multiplierB;
 			
 			rggbVector = new RggbChannelVector(R, G_even, G_odd, B);
 //			RggbChannelVector rggb = new RggbChannelVector(R, 1.0f, 1.0f, B);
@@ -2362,6 +2398,9 @@ public class HALv3
 			// Note: not sure which units are used for exposure time (ms?)
 			 currentExposure = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
 			 currentSensitivity = result.get(CaptureResult.SENSOR_SENSITIVITY);
+			 
+			 ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_EV_CHANGED);
+			 ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_ISO_CHANGED);
 			
 			 if (request.get(CaptureRequest.SENSOR_SENSITIVITY) >= 50 && currentSensitivity != request.get(CaptureRequest.SENSOR_SENSITIVITY) && request.get(CaptureRequest.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_OFF && !resetInProgress) 
 			 {
@@ -2434,10 +2473,10 @@ public class HALv3
 				TotalCaptureResult result)
 		{
 			Log.e(TAG, "CAPTURE COMPLETED");
-//			RggbChannelVector rggb = result.get(CaptureResult.COLOR_CORRECTION_GAINS);
-//			ColorSpaceTransform transformMatrix = result.get(CaptureResult.COLOR_CORRECTION_TRANSFORM);
-//			Log.e(TAG, "RGGB = R: " + rggb.getRed() + " G_even: " + rggb.getGreenEven()+ " G_odd: " + rggb.getGreenOdd() + " B: " + rggb.getBlue());
-//			Log.e(TAG, "Transform Matrix: " + transformMatrix.toString());
+			RggbChannelVector rggb = result.get(CaptureResult.COLOR_CORRECTION_GAINS);
+			ColorSpaceTransform transformMatrix = result.get(CaptureResult.COLOR_CORRECTION_TRANSFORM);
+			Log.e(TAG, "RGGB = R: " + rggb.getRed() + " G_even: " + rggb.getGreenEven()+ " G_odd: " + rggb.getGreenOdd() + " B: " + rggb.getBlue());
+			Log.e(TAG, "Transform Matrix: " + transformMatrix.toString());
 			Log.e(TAG, "Exposure time = " + result.get(CaptureResult.SENSOR_EXPOSURE_TIME));
 			Log.e(TAG, "Frame duration = " + result.get(CaptureResult.SENSOR_FRAME_DURATION));
 			Log.e(TAG, "Sensor sensitivity = " + result.get(CaptureResult.SENSOR_SENSITIVITY));

@@ -211,9 +211,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private static final Integer							ICON_MANUAL_EXPOSURE_TIME	= R.drawable.gui_almalence_settings_shutter_speed_priority;
 	private static final Integer							ICON_FOCUS_DISTANCE			= R.drawable.gui_almalence_settings_focus_manual;
 
-	private static final int								FOCUS_AF_LOCK				= 10;
-	private static final int								FOCUS_MF					= 11;
-
 	// Lists of icons for camera parameters (scene mode, flash mode, focus mode,
 	// white balance, iso)
 	private static final Map<Integer, Integer>				ICONS_SCENE					= new HashMap<Integer, Integer>()
@@ -297,9 +294,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 																										R.drawable.gui_almalence_settings_focus_continiuousvideo);
 																								put(CameraParameters.AF_MODE_CONTINUOUS_PICTURE,
 																										R.drawable.gui_almalence_settings_focus_continiuouspicture);
-																								put(FOCUS_AF_LOCK,
+																								put(CameraParameters.AF_MODE_LOCK,
 																										R.drawable.gui_almalence_settings_focus_aflock);
-																								put(FOCUS_MF,
+																								put(CameraParameters.MF_MODE,
 																										R.drawable.gui_almalence_settings_focus_manual);
 																							}
 																						};
@@ -2193,13 +2190,16 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					if (temperatureBar != null)
 					{
 						int colorTemperature = preferences.getInt(MainScreen.sColorTemperaturePref, ApplicationScreen.iDefaultColorTemperatureValue);
+						int readableTemperature = ApplicationScreen.iMaxColorTemperatureValue - colorTemperature;
 						
 						temperatureBar.setMax(ApplicationScreen.iMaxColorTemperatureValue/100 - 10);
-						temperatureBar.setProgress(colorTemperature/100 - 10);
+//						temperatureBar.setProgress(colorTemperature/100 - 10);
+						temperatureBar.setProgress(readableTemperature/100);
 
 						TextView wbText = (TextView) guiView.findViewById(R.id.manualWBText);
 
-						wbText.setText(String.valueOf(colorTemperature) +"K");
+//						wbText.setText(String.valueOf(colorTemperature) +"K");
+						wbText.setText(String.valueOf(readableTemperature + 1000) +"K");
 
 //						mFocusDistance = colorTemperature;
 						temperatureBar.setOnSeekBarChangeListener(this);
@@ -2287,7 +2287,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 								Log.d("set AF-L failed", "icons_focus.get exception: " + e.getMessage());
 							}
 
-							mFocusMode = FOCUS_AF_LOCK;
+							mFocusMode = CameraParameters.AF_MODE_LOCK;
 
 							int afMode = -1;
 							if (CameraController.isModeAvailable(supported_focus, CameraParameters.AF_MODE_AUTO))
@@ -2314,9 +2314,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						}
 					});
 
-					focusModeButtons.put(FOCUS_AF_LOCK, paramMode);
-					activeFocus.add(focusModeButtons.get(FOCUS_AF_LOCK));
-					activeFocusNames.add(FOCUS_AF_LOCK);
+					focusModeButtons.put(CameraParameters.AF_MODE_LOCK, paramMode);
+					activeFocus.add(focusModeButtons.get(CameraParameters.AF_MODE_LOCK));
+					activeFocusNames.add(CameraParameters.AF_MODE_LOCK);
 				}
 
 				// Add Manual Focus control
@@ -2351,7 +2351,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 							guiView.findViewById(R.id.focusDistanceLayout).setVisibility(View.VISIBLE);
 
-							mFocusMode = FOCUS_MF;
+							mFocusMode = CameraParameters.MF_MODE;
 
 							preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref, false).commit();
 							float fDistValue = preferences.getFloat(MainScreen.sFocusDistancePref,
@@ -2377,13 +2377,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS,
 									CLOSE_MANUAL_CONTROLS_DELAY);
 
-							ApplicationScreen.instance.setFocusModePref(FOCUS_MF);
+							ApplicationScreen.instance.setFocusModePref(CameraParameters.MF_MODE);
 						}
 					});
 
-					focusModeButtons.put(FOCUS_MF, paramMode);
-					activeFocus.add(focusModeButtons.get(FOCUS_MF));
-					activeFocusNames.add(FOCUS_MF);
+					focusModeButtons.put(CameraParameters.MF_MODE, paramMode);
+					activeFocus.add(focusModeButtons.get(CameraParameters.MF_MODE));
+					activeFocusNames.add(CameraParameters.MF_MODE);
 
 					isAutoFocusDistance = preferences.getBoolean(MainScreen.sFocusDistanceModePref, true);
 
@@ -2437,7 +2437,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					}
 				}
 
-				if (mFocusMode == FOCUS_MF)
+				if (mFocusMode == CameraParameters.MF_MODE)
 				{
 					preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref, false).commit();
 
@@ -2455,7 +2455,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				}
 
 				mOriginalFocusMode = mFocusMode;
-				if (mFocusMode == FOCUS_AF_LOCK)
+				if (mFocusMode == CameraParameters.AF_MODE_LOCK)
 				{
 					int afMode = -1;
 					if (CameraController.isModeAvailable(supported_focus, CameraParameters.AF_MODE_AUTO))
@@ -2466,7 +2466,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						afMode = supported_focus[0];
 
 					CameraController.setCameraFocusMode(afMode);
-				} else if (mFocusMode == FOCUS_MF)
+				} else if (mFocusMode == CameraParameters.MF_MODE)
 				{
 					CameraController.setCameraFocusDistance(mFocusDistance);
 					ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
@@ -3420,9 +3420,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		case FOCUS:
 			try
 			{
-				if (mFocusMode == FOCUS_AF_LOCK)
+				if (mFocusMode == CameraParameters.AF_MODE_LOCK)
 					icon_id = R.drawable.gui_almalence_settings_focus_aflock;
-				else if (mFocusMode == FOCUS_MF)
+				else if (mFocusMode == CameraParameters.MF_MODE)
 					icon_id = R.drawable.gui_almalence_settings_focus_manual;
 				else
 					icon_id = ICONS_FOCUS.get(mFocusMode);
@@ -7340,12 +7340,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		}
 		else if (seekBar == (SeekBar) guiView.findViewById(R.id.manualWBSeekBar))
 		{
-			int iTemp = (progress + 10) * 100;
+			int iReadableTemp = (progress + 10) * 100;
+			int iTemp = ApplicationScreen.iMaxColorTemperatureValue - (progress * 100);
 			CameraController.setCameraColorTemperature(iTemp);
+//			CameraController.setCameraColorTemperature(iReadableTemp);
 			preferences.edit().putInt(MainScreen.sColorTemperaturePref, iTemp).commit();
-//				mFocusDistance = iDistance / 100;
+//			preferences.edit().putInt(MainScreen.sColorTemperaturePref, iReadableTemp).commit();
 			TextView wbText = (TextView) guiView.findViewById(R.id.manualWBText);
-			wbText.setText(String.valueOf(iTemp) +"K");
+			wbText.setText(String.valueOf(iReadableTemp) +"K");
 
 			manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 			manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
