@@ -737,7 +737,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		try
 		{
 			if (!(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService("camera") != null)
-					|| (!isFlex2() && !isNexus()))
+					|| (!isFlex2() && !isNexus() && !isAndroidOne()))
 			{
 				isHALv3 = false;
 				isHALv3Supported = false;
@@ -986,6 +986,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		return Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h959")
 				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-f510");
+	}
+	
+	public static boolean isAndroidOne()
+	{
+		return Build.MODEL.contains("Micromax AQ4501");
 	}
 
 	public static boolean isHALv3Supported()
@@ -2355,7 +2360,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static boolean getFocusModeSupported()
 	{
 		int[] supported_focus = getSupportedFocusModesInternal();
-		return (supported_focus != null && supported_focus.length > 0 && supported_focus[0] != CameraParameters.AF_MODE_OFF);
+		return (supported_focus != null && (supported_focus.length > 1 || (supported_focus.length == 1 && supported_focus[0] != CameraParameters.AF_MODE_OFF)));
 	}
 
 	public static boolean isFocusModeSupported()

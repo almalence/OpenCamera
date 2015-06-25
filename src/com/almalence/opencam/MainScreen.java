@@ -929,7 +929,7 @@ public class MainScreen extends ApplicationScreen
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 
 		boolean isHALv3 = prefs.getBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
-				(CameraController.isNexus() || CameraController.isFlex2()) ? true : false);
+				(CameraController.isNexus() || CameraController.isFlex2() || CameraController.isAndroidOne()) ? true : false);
 		CameraController.useHALv3(isHALv3);
 		prefs.edit()
 				.putBoolean(getResources().getString(R.string.Preference_UseHALv3Key), CameraController.isUseHALv3())
