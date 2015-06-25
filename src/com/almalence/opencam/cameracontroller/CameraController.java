@@ -44,6 +44,7 @@ import android.hardware.Camera.Area;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraDevice;
 import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -1779,6 +1780,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static Camera getCamera()
 	{
 		return camera;
+	}
+	
+	public static CameraDevice getCamera2()
+	{
+		return HALv3.getCamera2();
 	}
 
 	public static void setCamera(Camera cam)
