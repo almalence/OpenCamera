@@ -118,13 +118,13 @@ public class HALv3
 	protected static boolean			captureAllowed 				= false;
 	
 	protected static RggbChannelVector 	rggbVector					= null;
-	protected static int[] 				colorTransformMatrix 		= new int[]{258, 128, -119, 128, -10, 128, -40, 128, 209, 128, -41, 128, -1, 128, -74, 128, 203, 128};
-//	protected static int[] 				colorTransformMatrix 		= new int[]{227, 128, -98, 128, -1, 128, -33, 128, 193, 128, -32, 128, 0, 128, -93, 128, 221, 128};
+	protected static int[] 				colorTransformMatrix 		= new int[]{258, 128, -119, 128, -10, 128, -40, 128, 209, 128, -41, 128, -1, 128, -74, 128, 203, 128}; //Nexus 5
+//	protected static int[] 				colorTransformMatrix 		= new int[]{227, 128, -98, 128, -1, 128, -33, 128, 193, 128, -32, 128, 0, 128, -93, 128, 221, 128}; //Nexus 6
 //	protected static float				multiplierR					= 1.81f;
-	protected static float				multiplierR					= 1.6f;
+	protected static float				multiplierR					= 1.6f; //Nexus 5
 	protected static float				multiplierG					= 1.0f;
 //	protected static float				multiplierB					= 1.54f;
-	protected static float				multiplierB					= 2.4f;
+	protected static float				multiplierB					= 2.4f; //Nexus 5
 
 	private static boolean 				needPreviewFrame			= false;
 	
