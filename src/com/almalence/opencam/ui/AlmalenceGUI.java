@@ -2573,6 +2573,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				gridview.setAdapter(isoAdapter);
 
 				int initValue = preferences.getInt(ApplicationScreen.sISOPref, ApplicationScreen.sDefaultISOValue);
+				int meteringMode = preferences.getInt(ApplicationScreen.sMeteringModePref,
+						ApplicationScreen.sDefaultMeteringValue);
+				if (CameraController.isUseHALv3() && meteringMode == CameraParameters.meteringModeManual) {
+					// The default (AUTO) value of ISO and manual metering mode produce too dark image.
+					// Set ISO to 400, as default for manual metering mode.
+					initValue = CameraParameters.ISO_400;
+				}
 				if (!activeISONames.contains(initValue))
 				{
 					if (CameraController.isFrontCamera())
@@ -2580,6 +2587,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					else
 						initValue = ApplicationScreen.sDefaultISOValue;
 
+					
 					preferences.edit().putInt(ApplicationScreen.sISOPref, initValue).commit();
 				}
 				setButtonSelected(isoButtons, initValue);
@@ -2680,6 +2688,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, true, true, false);
 						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, true, false);
 						CameraController.setCameraExposureTime(mExposureTime);
+						
+						// The default (AUTO) value of ISO and manual metering mode produce too dark image.
+						// Set ISO to 400, as default for manual metering mode.
+						setISO(CameraParameters.ISO_400);
 
 						initSettingsMenu(true);
 						hideSecondaryMenus();
