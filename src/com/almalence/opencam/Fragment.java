@@ -70,6 +70,7 @@ import android.widget.Toast;
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.cameracontroller.CameraController.Size;
 import com.almalence.opencam.ui.SeekBarPreference;
+
 //-+- -->
 
 /***
@@ -239,6 +240,26 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 				public boolean onPreferenceChange(Preference preference, Object newValue)
 				{
 					initExportName(preference, newValue);
+					return true;
+				}
+			});
+		}
+
+		Preference sonyPreference = findPreference(MainScreen.sSonyCamerasPref);
+		if (sonyPreference != null)
+		{
+			sonyPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
+			{
+				@Override
+				public boolean onPreferenceChange(Preference preference, Object newValue)
+				{
+					boolean sonyCamerasAvailable = (Boolean) newValue;
+					if (sonyCamerasAvailable)
+					{
+						Toast.makeText(getActivity(),
+								getActivity().getString(R.string.pref_general_more_sonyCamera_available),
+								Toast.LENGTH_SHORT).show();
+					}
 					return true;
 				}
 			});
@@ -697,20 +718,23 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
-		if (requestCode == CHOOSE_FOLDER_CODE) {
+		if (requestCode == CHOOSE_FOLDER_CODE)
+		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.instance);
-			if (resultCode == Activity.RESULT_OK) {
-		        Uri treeUri = data.getData();
-		        
-		        getActivity().getContentResolver().takePersistableUriPermission(treeUri,
-		                Intent.FLAG_GRANT_READ_URI_PERMISSION |
-		                Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-		        
+			if (resultCode == Activity.RESULT_OK)
+			{
+				Uri treeUri = data.getData();
+
+				getActivity().getContentResolver().takePersistableUriPermission(treeUri,
+						Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
 				prefs.edit().putString(ApplicationScreen.sSavePathPref, treeUri.toString()).commit();
-		    } else {
-		    	prefs.edit().putString(ApplicationScreen.sSaveToPref, "0").commit();
-		    }
-		} else {
+			} else
+			{
+				prefs.edit().putString(ApplicationScreen.sSaveToPref, "0").commit();
+			}
+		} else
+		{
 			super.onActivityResult(requestCode, resultCode, data);
 		}
 	}
