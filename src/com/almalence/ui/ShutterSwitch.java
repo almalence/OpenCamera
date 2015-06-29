@@ -554,9 +554,7 @@ public class ShutterSwitch extends View
 
 		mTrackDrawable.getPadding(mTempRect);
 		int switchInnerLeft = switchLeft + mTempRect.left;
-		int switchInnerTop = switchTop + mTempRect.top;
 		int switchInnerRight = switchRight - mTempRect.right;
-		int switchInnerBottom = switchBottom - mTempRect.bottom;
 		canvas.clipRect(switchInnerLeft, switchTop, switchInnerRight, switchBottom);
 
 		mThumbDrawable.getPadding(mTempRect);

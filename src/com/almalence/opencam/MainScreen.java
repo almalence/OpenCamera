@@ -2722,7 +2722,7 @@ public class MainScreen extends ApplicationScreen
 
 				// /////////////////////////////////////////////////////
 				// juliusapp promotion
-				if (promo.equalsIgnoreCase("MONOMO") || promo.equalsIgnoreCase("RISPARMI"))
+				if (promo.equalsIgnoreCase("promo2015"))
 				{
 					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 					panoramaPurchased = true;
