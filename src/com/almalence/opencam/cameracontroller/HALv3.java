@@ -1045,7 +1045,15 @@ public class HALv3
 						.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_USE_SCENE_MODE);
 
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, mode);
-			HALv3.setRepeatingRequest();
+			
+			try
+			{
+				HALv3.getInstance().configurePreviewRequest(true);
+			} catch (CameraAccessException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		appInterface.setWBModePref(mode);

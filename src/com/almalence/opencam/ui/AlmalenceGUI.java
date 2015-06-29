@@ -2147,7 +2147,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 							guiView.findViewById(R.id.manualWBLayout).setVisibility(View.VISIBLE);
 
-							mWB = CameraParameters.WB_MODE_MANUAL;
+							mWB = CameraParameters.WB_MODE_OFF;
 
 //							preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref, false).commit();
 							int iColorTempValue = preferences.getInt(MainScreen.sColorTemperaturePref, ApplicationScreen.iDefaultColorTemperatureValue);
@@ -5632,6 +5632,19 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				setColorTemperature(MainScreen.getInstance().getColorTemperature());
 			}
 		}
+		
+		if(mWB != CameraParameters.WB_MODE_OFF)
+		{
+			guiView.findViewById(R.id.manualWBLayout).setVisibility(View.GONE);
+			
+			if (guiView.findViewById(R.id.exposureTimeLayout).getVisibility() == View.GONE && 
+					guiView.findViewById(R.id.focusDistanceLayout).getVisibility() == View.GONE)
+				{
+					guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
+					guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
+					manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
+				}
+		}
 
 		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_WB);
 		int icon_id = -1;
@@ -5761,7 +5774,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private void setMeteringMode(int newMode)
 	{
 		guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.GONE);
-		if(mWB != CameraParameters.WB_MODE_MANUAL)
+		if(mWB != CameraParameters.WB_MODE_OFF)
 		{
 			guiView.findViewById(R.id.manualWBLayout).setVisibility(View.GONE);
 			setWhiteBalance(mWB);

@@ -546,9 +546,9 @@ public class FocusVFPlugin extends PluginViewfinder
 			splitMode = true;
 			mHandler.removeMessages(START_TOUCH_FOCUS);
 
-			onTouchFocusArea(e);
 			onTouchMeteringArea(e);
-
+			onTouchFocusArea(e);
+			
 			return true;
 		}
 
