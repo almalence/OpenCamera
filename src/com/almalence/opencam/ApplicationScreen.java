@@ -1703,10 +1703,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	}
 
 	@Override
-	public Activity getMainActivity()
-	{
-		return instance;
-	}
+	abstract public Activity getMainActivity();
 
 	@Override
 	public void stopApplication()
