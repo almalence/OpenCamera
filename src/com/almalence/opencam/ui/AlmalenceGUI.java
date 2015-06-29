@@ -2786,7 +2786,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
 					}
 					guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.VISIBLE);
-					guiView.findViewById(R.id.manualWBLayout).setVisibility(View.VISIBLE);
+					if(mManualWhiteBalanceSupported)
+						guiView.findViewById(R.id.manualWBLayout).setVisibility(View.VISIBLE);
 
 					manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 
