@@ -340,7 +340,8 @@
             android:id="@+id/manualControlsLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="top"
+            android:layout_gravity="top|left"
+            android:layout_alignParentLeft="true"
             android:background="@drawable/ev_background"
             android:orientation="vertical"
             android:visibility="visible" >
@@ -352,8 +353,6 @@
                 android:layout_gravity="top"
                 android:layout_marginLeft="3dip"
                 android:orientation="horizontal"
-                android:paddingLeft="10dip"
-                android:paddingRight="10dip"
                 android:paddingTop="10dip"
                 android:visibility="gone" >
 
@@ -437,8 +436,6 @@
                 android:layout_gravity="bottom"
                 android:layout_marginLeft="3dip"
                 android:orientation="horizontal"
-                android:paddingLeft="10dip"
-                android:paddingRight="10dip"
                 android:paddingTop="10dip"
                 android:visibility="gone" >
 
@@ -455,7 +452,8 @@
                     android:textStyle="bold" />
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:id="@+id/manualWBSeekBarLayout"
+                    android:layout_width="@dimen/exposureSeekBarWidth"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" >
 
@@ -494,8 +492,6 @@
                 android:layout_gravity="bottom"
                 android:layout_marginLeft="3dip"
                 android:orientation="horizontal"
-                android:paddingLeft="10dip"
-                android:paddingRight="10dip"
                 android:paddingTop="10dip"
                 android:visibility="gone" >
 
@@ -512,7 +508,8 @@
                     android:textStyle="bold" />
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:id="@+id/manualFocusSeekBarLayout"
+                    android:layout_width="@dimen/exposureSeekBarWidth"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" >
 

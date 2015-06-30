@@ -46,7 +46,7 @@
    <dimen name="buttonsLayoutMarginTop">70dp</dimen>   
    
    <dimen name="exposureButtonSize">30dp</dimen>
-   <dimen name="exposureSeekBarWidth">150dp</dimen>
+   <dimen name="exposureSeekBarWidth">210dp</dimen>
    <dimen name="exposureTitleWidth">70dp</dimen>
    <dimen name="exposureCenterTitleWidth">70dp</dimen>
    <dimen name="exposureTitleSize">16sp</dimen>

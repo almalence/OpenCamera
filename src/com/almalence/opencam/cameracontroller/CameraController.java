@@ -738,7 +738,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		try
 		{
 			if (!(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService("camera") != null)
-					|| (!isFlex2() && !isNexus() && !isAndroidOne()))
+					|| (!isFlex2() && !isNexus() && !isAndroidOne() && !isSamsungS6()))
 			{
 				isHALv3 = false;
 				isHALv3Supported = false;
@@ -992,6 +992,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean isAndroidOne()
 	{
 		return Build.MODEL.contains("Micromax AQ4501");
+	}
+	
+	public static boolean isSamsungS6()
+	{
+		return Build.MODEL.contains("SM-G920") || Build.MODEL.contains("SM-G925") || Build.MODEL.contains("SM-G890");
 	}
 
 	public static boolean isHALv3Supported()
