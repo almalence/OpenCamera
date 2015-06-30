@@ -32,7 +32,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URI;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -85,6 +84,7 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.support.v4.provider.DocumentFile;
+import android.util.Log;
 import android.util.Size;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -93,6 +93,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.almalence.SwapHeap;
+import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.plugins.export.ExifDriver.ExifDriver;
 import com.almalence.plugins.export.ExifDriver.ExifManager;
 import com.almalence.plugins.export.ExifDriver.Values.ValueByteArray;
@@ -112,7 +113,6 @@ import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.cameracontroller.CameraController;
 
 //-+- -->
 
@@ -351,7 +351,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		onDestroy();
 
 		CameraController.resetNeedPreviewFrame();
-		
+
 		// clear lists and fill with new active plugins
 		activeVF.clear();
 		for (int i = 0; i < mode.VF.size(); i++)
@@ -1905,8 +1905,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		{
 			e.printStackTrace();
 			ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED);
-		}
-		finally
+		} finally
 		{
 			ApplicationScreen.setForceFilename(null);
 		}
@@ -2077,7 +2076,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 							e.printStackTrace();
 						}
 					}
-				} else if (format != null && format.equalsIgnoreCase("dng") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+				} else if (format != null && format.equalsIgnoreCase("dng")
+						&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
 				{
 					saveDNGPicture(i, sessionID, os, x, y, orientation, cameraMirrored);
 				} else
@@ -2222,14 +2222,24 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 					values.put(ImageColumns.ORIENTATION, String.valueOf(0));
 				}
 
-				String fileName = file.getName();
-				boolean saveToPhone = false;
-				// If we able to get File object, than get path from it
+				String filePath = file.getName();
+				boolean isDATAFieldInited = false;
+
+				// If we able to get File object, than get path from it.
+				// fileObject should not be null for files on phone memory.
 				File fileObject = Util.getFileFromDocumentFile(file);
-				if (fileObject != null) {
-					fileName = fileObject.getAbsolutePath();
-					saveToPhone = true;
-					values.put(ImageColumns.DATA, fileName);
+				if (fileObject != null)
+				{
+					filePath = fileObject.getAbsolutePath();
+					isDATAFieldInited = true;
+					values.put(ImageColumns.DATA, filePath);
+				} else
+				{
+					// This case should typically happen for files saved to SD
+					// card.
+					String documentPath = Util.getAbsolutePathFromDocumentFile(file);
+					values.put(ImageColumns.DATA, documentPath);
+					isDATAFieldInited = true;
 				}
 
 				if (!enableExifTagOrientation && !hasDNGResult)
@@ -2321,7 +2331,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 					bufFile.delete();
 				}
 
-				if (saveToPhone) {
+				if (isDATAFieldInited)
+				{
 					Uri uri = ApplicationScreen.instance.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI,
 							values);
 					broadcastNewPicture(uri);
@@ -3005,12 +3016,14 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		ContentValues values = null;
 		String resultOrientation = getFromSharedMem("frameorientation" + (i + 1) + Long.toString(SessionID));
-		if (resultOrientation == null) {
+		if (resultOrientation == null)
+		{
 			resultOrientation = getFromSharedMem("frameorientation" + i + Long.toString(SessionID));
 		}
-		
+
 		String resultMirrored = getFromSharedMem("framemirrored" + (i + 1) + Long.toString(SessionID));
-		if (resultMirrored == null) {
+		if (resultMirrored == null)
+		{
 			resultMirrored = getFromSharedMem("framemirrored" + i + Long.toString(SessionID));
 		}
 		Boolean cameraMirrored = false;
@@ -3018,10 +3031,11 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			cameraMirrored = Boolean.parseBoolean(resultMirrored);
 
 		int mDisplayOrientation = 0;
-		if (resultOrientation != null) {
+		if (resultOrientation != null)
+		{
 			mDisplayOrientation = Integer.parseInt(resultOrientation);
 		}
-		
+
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		boolean saveGeoInfo = prefs.getBoolean("useGeoTaggingPrefExport", false);
 
@@ -3048,7 +3062,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 		try
 		{
 			if (os != null)
@@ -3102,21 +3116,24 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		ContentValues values = null;
 		String resultOrientation = getFromSharedMem("frameorientation" + (i + 1) + Long.toString(SessionID));
-		if (resultOrientation == null) {
+		if (resultOrientation == null)
+		{
 			resultOrientation = getFromSharedMem("frameorientation" + i + Long.toString(SessionID));
 		}
-		
+
 		String resultMirrored = getFromSharedMem("framemirrored" + (i + 1) + Long.toString(SessionID));
-		if (resultMirrored == null) {
+		if (resultMirrored == null)
+		{
 			resultMirrored = getFromSharedMem("framemirrored" + i + Long.toString(SessionID));
 		}
-		
+
 		Boolean cameraMirrored = false;
 		if (resultMirrored != null)
 			cameraMirrored = Boolean.parseBoolean(resultMirrored);
 
 		int mDisplayOrientation = 0;
-		if (resultOrientation != null) {
+		if (resultOrientation != null)
+		{
 			mDisplayOrientation = Integer.parseInt(resultOrientation);
 		}
 
@@ -3274,10 +3291,10 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return displayOrientation;
 	}
-	
+
 	public void sendMessage(int what, String obj, int arg1, int arg2)
 	{
 		Message message = new Message();

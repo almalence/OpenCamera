@@ -1560,6 +1560,10 @@ public class VideoCapturePlugin extends PluginCapture
 			if (file != null)
 			{
 				data = file.getAbsolutePath();
+			} else {
+				// This case should typically happen for files saved to SD
+				// card.
+				data = Util.getAbsolutePathFromDocumentFile(fileSavedNew);
 			}
 		} else
 		{
@@ -1665,14 +1669,24 @@ public class VideoCapturePlugin extends PluginCapture
 						Video.Media.DISPLAY_NAME + "=?", args);
 			}
 			
+			String name = resultFile.getName();
+			String data = null;
 			// If we able to get File object, than get path from it. Gallery
 			// doesn't show the file, if it's stored at phone memory and
 			// we need insert new file to gallery manually.
 			File file = Util.getFileFromDocumentFile(resultFile);
 			if (file != null)
 			{
-				values.put(VideoColumns.DISPLAY_NAME, file.getName());
-				values.put(VideoColumns.DATA, file.getAbsolutePath());
+				data = file.getAbsolutePath();
+			} else {
+				// This case should typically happen for files saved to SD
+				// card.
+				data = Util.getAbsolutePathFromDocumentFile(resultFile);
+			}
+			
+			if (data != null) {
+				values.put(VideoColumns.DISPLAY_NAME, name);
+				values.put(VideoColumns.DATA, data);
 				Uri uri = ApplicationScreen.instance.getContentResolver().insert(Video.Media.EXTERNAL_CONTENT_URI,
 						values);
 				ApplicationScreen.getMainContext().sendBroadcast(new Intent(ACTION_NEW_VIDEO, uri));
@@ -1759,6 +1773,14 @@ public class VideoCapturePlugin extends PluginCapture
 						String args[] = { firstFile.getAbsolutePath() };
 						ApplicationScreen.instance.getContentResolver().delete(Video.Media.EXTERNAL_CONTENT_URI,
 								Video.Media.DATA + "=?", args);
+						
+						String data = Util.getAbsolutePathFromDocumentFile(outputFile);
+						if (data != null) {
+							values.put(VideoColumns.DATA, data);
+							Uri uri = ApplicationScreen.instance.getContentResolver().insert(Video.Media.EXTERNAL_CONTENT_URI,
+									values);
+							ApplicationScreen.getMainContext().sendBroadcast(new Intent(ACTION_NEW_VIDEO, uri));
+						}
 					} catch (Exception e)
 					{
 						e.printStackTrace();
@@ -2663,6 +2685,10 @@ public class VideoCapturePlugin extends PluginCapture
 				if (file != null)
 				{
 					data = file.getAbsolutePath();
+				} else {
+					// This case should typically happen for files saved to SD
+					// card.
+					data = Util.getAbsolutePathFromDocumentFile(fileSavedNew);
 				}
 				filesListNew.add(fileSavedNew);
 			} else
