@@ -1753,13 +1753,17 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			}
 		}
 		
+		RelativeLayout manualControlsLayout = (RelativeLayout) ApplicationScreen.instance.findViewById(R.id.manualControlsLayout);
+		RelativeLayout.LayoutParams pm = (RelativeLayout.LayoutParams)manualControlsLayout.getLayoutParams();
 		if(id > 0)
 		{
-			RelativeLayout manualControlsLayout = (RelativeLayout) ApplicationScreen.instance.findViewById(R.id.manualControlsLayout);
-			
-			RelativeLayout.LayoutParams pm = (RelativeLayout.LayoutParams)manualControlsLayout.getLayoutParams();		
 			pm.addRule(RelativeLayout.LEFT_OF, id);
-			
+			manualControlsLayout.setLayoutParams(pm);
+		}
+		else
+		{
+			float width = ApplicationScreen.instance.getResources().getDimension(R.dimen.exposureSeekBarWidth);
+			pm.width = (int)width;
 			manualControlsLayout.setLayoutParams(pm);
 		}
 
