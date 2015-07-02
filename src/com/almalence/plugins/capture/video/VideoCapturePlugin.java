@@ -1923,7 +1923,7 @@ public class VideoCapturePlugin extends PluginCapture
 			ApplicationScreen.getGUIManager().setupViewfinderPreviewSize(sz);
 			if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH && videoStabilization)
 				CameraController.setVideoStabilization(false);
-		}
+		}	
 		CameraController.startCameraPreview();
 
 		ApplicationScreen.getGUIManager().lockControls = false;
