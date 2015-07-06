@@ -132,6 +132,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 		boolean isNexus6 = Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
 				.contains("nexus6");
 
+		cameraIndex = 100;
 		// camera indexes in libalmalib corresponding to models
 		if (isNexus5)   cameraIndex = 100;
 		if (isNexus6)   cameraIndex = 103;

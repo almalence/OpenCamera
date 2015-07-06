@@ -898,4 +898,19 @@ public final class Util
 		}
 		return null;
 	}
+	
+	public static int getMaxImageSizeIndex(android.util.Size[] ImageSizes) {
+		int maxSizeIndex = 0;
+		long maxSize = ImageSizes[0].getWidth() * ImageSizes[0].getHeight();
+		for (int i = 1; i < ImageSizes.length; i++) {
+			long currentSize = ImageSizes[i].getWidth()
+					* ImageSizes[i].getHeight();
+			if (currentSize > maxSize) {
+				maxSizeIndex = i;
+				maxSize = currentSize;
+			}
+		}
+
+		return maxSizeIndex;
+	}
 }

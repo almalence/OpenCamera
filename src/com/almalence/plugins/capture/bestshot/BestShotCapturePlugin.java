@@ -73,7 +73,7 @@ public class BestShotCapturePlugin extends PluginCapture
 		inCapture = false;
 		aboutToTakePicture = false;
 
-		if (CameraController.isUseHALv3() && CameraController.isNexus())
+		if (CameraController.isUseHALv3() && CameraController.isNexus)
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 			preferenceFlashMode = prefs.getInt(ApplicationScreen.sFlashModePref, ApplicationScreen.sDefaultFlashValue);
@@ -93,7 +93,7 @@ public class BestShotCapturePlugin extends PluginCapture
 		{
 			int[] flashModes = CameraController.getSupportedFlashModes();
 			if (flashModes != null && flashModes.length > 0 && CameraController.isUseHALv3()
-					&& CameraController.isNexus())
+					&& CameraController.isNexus)
 			{
 				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
 
@@ -115,7 +115,7 @@ public class BestShotCapturePlugin extends PluginCapture
 				ApplicationScreen.getAppResources().getString(R.string.Bestshot_Help), R.drawable.plugin_help_bestshot,
 				"bestShotShowHelp");
 
-		if (CameraController.isUseHALv3() && CameraController.isNexus())
+		if (CameraController.isUseHALv3() && CameraController.isNexus)
 		{
 			ApplicationScreen.instance.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false, true);
 		}
@@ -129,7 +129,7 @@ public class BestShotCapturePlugin extends PluginCapture
 	@Override
 	public void onPause()
 	{
-		if (CameraController.isUseHALv3() && CameraController.isNexus()) {
+		if (CameraController.isUseHALv3() && CameraController.isNexus) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 			prefs.edit().putInt(ApplicationScreen.sFlashModePref, preferenceFlashMode).commit();
 			CameraController.setCameraFlashMode(preferenceFlashMode);

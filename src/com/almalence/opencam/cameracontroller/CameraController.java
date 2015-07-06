@@ -69,6 +69,7 @@ import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.PluginManagerInterface;
 import com.almalence.opencam.R;
+
 //-+- -->
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationInterface;
@@ -92,6 +93,59 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static final int							JPEG							= 0x100;
 
 	protected static final long						MPIX_1080						= 1920 * 1080;
+	
+	public static boolean	isNexus			= Build.MODEL.contains("Nexus 5") || Build.MODEL.contains("Nexus 6");
+
+	public static boolean	isFlex2			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h959")
+													|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
+															.contains("lg-f510");
+
+	public static boolean	isAndroidOne	= Build.MODEL.contains("Micromax AQ4501");
+
+	public static boolean	isGalaxyS6		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g925f")
+													|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
+															.contains("sm-g925t")
+													|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
+															.contains("sm-g925p")
+													|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
+															.contains("sm-g925v")
+													|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
+															.contains("sm-g925a")
+													|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
+															.contains("sm-g925r4")
+													|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
+															.contains("sm-g925w8")
+													|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
+															.contains("sm-g925i")
+													|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
+															.contains("sm-g925k")
+													|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
+															.contains("sm-g925l")
+													|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
+															.contains("sm-g925s")
+													|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
+															.contains("sm-g9250")
+													|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
+															.contains("sm-g920t")
+													|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
+															.contains("sm-g920a")
+													|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
+															.contains("sm-g920v")
+													|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
+															.contains("sm-g920r4")
+													|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
+															.contains("sm-g920p")
+													|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
+															.contains("sm-g920w8")
+													|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
+															.contains("sm-g920f")
+													|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
+															.contains("sm-g920i")
+													|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
+															.contains("sm-g920k")
+													|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
+															.contains("sm-g920l");
+
 
 	// Android camera parameters constants
 	private static String							sceneAuto;
@@ -738,7 +792,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		try
 		{
 			if (!(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService("camera") != null)
-					|| (!isFlex2() && !isNexus() && !isAndroidOne()))
+					|| (!isFlex2 && !isNexus && !isAndroidOne && !isGalaxyS6))
 			{
 				isHALv3 = false;
 				isHALv3Supported = false;
@@ -966,7 +1020,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			// hard-code to enable these only, as we have no profiles for
 			// other models at the moment
-			if (CameraController.isNexus() || CameraController.isFlex2())
+			if (CameraController.isNexus || CameraController.isFlex2 || CameraController.isGalaxyS6)
 				SuperModeOk = true;
 		}
 
@@ -976,22 +1030,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean isUseSuperMode()
 	{
 		return (isSuperModePossible() && isHALv3) || (isSuperModePossible() && isOldCameraOneModeLaunched);
-	}
-
-	public static boolean isNexus()
-	{
-		return Build.MODEL.contains("Nexus 5") || Build.MODEL.contains("Nexus 6");
-	}
-
-	public static boolean isFlex2()
-	{
-		return Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h959")
-				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-f510");
-	}
-	
-	public static boolean isAndroidOne()
-	{
-		return Build.MODEL.contains("Micromax AQ4501");
 	}
 
 	public static boolean isHALv3Supported()
@@ -1178,10 +1216,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return isCameraCreatedHALv3();
 
 	}
-	
+
 	public static boolean isCaptureFormatSupported(int captureFormat)
 	{
-		if(isUseHALv3())
+		if (isUseHALv3())
 			return HALv3.isCaptureFormatSupported(captureFormat);
 		else
 			return true;
@@ -1215,9 +1253,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				if (camera != null && camera.getParameters() != null)
 				{
 					List<Camera.Size> list = camera.getParameters().getSupportedPreviewSizes();
-					if (list != null) {
+					if (list != null)
+					{
 						for (Camera.Size sz : list)
-							CameraController.SupportedPreviewSizesList.add(new CameraController.Size(sz.width, sz.height));
+							CameraController.SupportedPreviewSizesList.add(new CameraController.Size(sz.width,
+									sz.height));
 					}
 				}
 			} else
@@ -1781,7 +1821,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		return camera;
 	}
-	
+
 	public static CameraDevice getCamera2()
 	{
 		return HALv3.getCamera2();
@@ -2780,8 +2820,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	}
 
 	/*
-	 * Manual sensor parameters: focus distance and exposure time + manual white balance. Available
-	 * only in Camera2 mode.
+	 * Manual sensor parameters: focus distance and exposure time + manual white
+	 * balance. Available only in Camera2 mode.
 	 */
 	public static boolean isManualWhiteBalanceSupported()
 	{
@@ -2790,7 +2830,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		else
 			return false;
 	}
-	
+
 	public static boolean isManualFocusDistanceSupported()
 	{
 		if (CameraController.isHALv3)
@@ -3149,7 +3189,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			SonyRemoteCamera.setWhiteBalanceRemote(CameraController.mode_wb_sony_remote.get(mode));
 		}
 	}
-	
+
 	@TargetApi(21)
 	public static void setCameraColorTemperature(int iTemp)
 	{
@@ -4043,20 +4083,20 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 
-	//plugin has to set it to TRUE if need preview frames
+	// plugin has to set it to TRUE if need preview frames
 	public static void setNeedPreviewFrame(boolean needPreviewFrame)
 	{
-		if(CameraController.isUseHALv3())
+		if (CameraController.isUseHALv3())
 			HALv3.setNeedPreviewFrame(needPreviewFrame);
 	}
-	
-	//should be reset on each changemode and on resume (call)
+
+	// should be reset on each changemode and on resume (call)
 	public static void resetNeedPreviewFrame()
 	{
-		if(CameraController.isUseHALv3())
+		if (CameraController.isUseHALv3())
 			HALv3.resetNeedPreviewFrame();
 	}
-	
+
 	// ^^^^^^^^^^^^^ CAPTURE AND FOCUS FUNCTION ----------------------------
 
 	// =============== Captured Image data manipulation ======================

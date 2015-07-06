@@ -26,6 +26,7 @@ package com.almalence.opencam.cameracontroller;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -45,6 +46,7 @@ import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
+import android.hardware.camera2.params.BlackLevelPattern;
 import android.hardware.camera2.params.ColorSpaceTransform;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.hardware.camera2.params.RggbChannelVector;
@@ -105,6 +107,10 @@ public class HALv3
 	private static long[]				exposureTime				= null;
 	private static long 				currentExposure 			= 0;
 	private static int 					currentSensitivity 			= 0;
+	private static int 					blevel			 			= 0;
+	private static int 					wlevel 						= 1024;
+	
+	private static RggbChannelVector 	rggbChannelVector 			= null;
 	
 	private static boolean				isManualExposureTime		= false;
 
@@ -113,6 +119,7 @@ public class HALv3
 	private static int					MAX_SUPPORTED_PREVIEW_SIZE	= 1920 * 1088;
 
 	protected static int				captureFormat				= CameraController.JPEG;
+	protected static int				lastCaptureFormat			= CameraController.JPEG;
 	
 	protected static boolean			playShutterSound			= false;
 	protected static boolean			captureAllowed 				= false;
@@ -317,6 +324,12 @@ public class HALv3
 
 		CameraController.mVideoStabilizationSupported = HALv3.getInstance().camCharacter
 				.get(CameraCharacteristics.CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES) == null ? false : true;
+		
+		BlackLevelPattern blackPatternLevel = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_BLACK_LEVEL_PATTERN);
+		if (blackPatternLevel != null) {
+			blevel = blackPatternLevel.getOffsetForIndex(0, 0);
+		}
+		wlevel = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_WHITE_LEVEL);
 
 		Log.d(TAG,
 				"HARWARE_SUPPORT_LEVEL = "
@@ -442,7 +455,9 @@ public class HALv3
 		StreamConfigurationMap configMap = params.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 		final Size[] cs = configMap.getOutputSizes(captureFormat);
 
-		return new CameraController.Size(cs[0].getWidth(), cs[0].getHeight());
+		int maxSizeIndex = Util.getMaxImageSizeIndex(cs);
+		
+		return new CameraController.Size(cs[maxSizeIndex].getWidth(), cs[maxSizeIndex].getHeight());
 	}
 
 	public static void populateCameraDimensionsHALv3()
@@ -1523,7 +1538,11 @@ public class HALv3
 			stillRequestBuilder.addTarget(appInterface.getJPEGImageSurface());
 		} else if (format == CameraController.YUV || format == CameraController.YUV_RAW)
 		{
-			stillRequestBuilder.addTarget(appInterface.getYUVImageSurface());
+			if (CameraController.isGalaxyS6) {
+				stillRequestBuilder.addTarget(appInterface.getRAWImageSurface());
+			} else {
+				stillRequestBuilder.addTarget(appInterface.getYUVImageSurface());
+			}
 		} else if (format == CameraController.RAW)
 		{
 			rawRequestBuilder.addTarget(appInterface.getRAWImageSurface());
@@ -1724,6 +1743,7 @@ public class HALv3
 			final int[] evRequested, final int[] gain, final long[] exposure, final boolean resInHeap, final boolean playShutter) {
 		try
 		{
+			lastCaptureFormat = format;
 			int requestID = -1;
 			CreateRequests(format);
 			
@@ -2420,6 +2440,9 @@ public class HALv3
 				}
 			 }
 			 
+			rggbChannelVector = result
+						.get(CaptureResult.COLOR_CORRECTION_GAINS); 
+			 
 			try {
 				int focusState = result.get(CaptureResult.CONTROL_AF_STATE);
 				if (focusState == CaptureResult.CONTROL_AF_STATE_PASSIVE_SCAN
@@ -2629,22 +2652,69 @@ public class HALv3
 					}
 				} else if (im.getFormat() == ImageFormat.RAW_SENSOR)
 				{
-					Log.e(TAG, "captured RAW");
-					ByteBuffer raw = im.getPlanes()[0].getBuffer();
+					if (lastCaptureFormat == CameraController.YUV_RAW && CameraController.isGalaxyS6) {
+						// This case is for SUPER mode on galaxy s6. And nothing more.
+						// It means we have RAW image and need to crop and convert it to YUV.
+						
+						ByteBuffer raw = im.getPlanes()[0].getBuffer();
 
-					frame_len = raw.limit();
-					frameData = new byte[frame_len];
-					raw.get(frameData, 0, frame_len);
+						if (!raw.isDirect())
+						{
+							Log.e(TAG,"Oops, YUV ByteBuffers isDirect failed");
+							im.close();
+							return;
+						}
+						
+						CameraController.Size imageSize = CameraController.getCameraImageSize();
+						CameraController.Size rawImageSize = CameraController.getMaxCameraImageSize(CameraController.RAW);
+						int status = YuvImage.CreateYUVImageFromRAW(
+								raw, 
+								im.getPlanes()[0].getPixelStride(), 
+								im.getPlanes()[0].getRowStride(), 
+								rawImageSize.getWidth(), 
+								rawImageSize.getHeight(), 
+								imageSize.getWidth(), 
+								imageSize.getHeight(), 
+								(int) (rggbChannelVector.getRed() * 256), 
+								(int) (rggbChannelVector.getBlue() * 256), 
+								blevel, 
+								wlevel, 
+								4, 
+								0);
 
-					if (resultInHeap)
-					{
-						frame = SwapHeap.SwapToHeap(frameData);
-						frameData = null;
+						if (status != 0)
+							Log.e(TAG, "Error while cropping: "	+ status);
+
+						pluginManager.collectExifData(null);
+						if (!resultInHeap)
+							frameData = YuvImage.GetByteFrame();
+						else
+							frame = YuvImage.GetFrame();
+
+						frame_len = imageSize.getWidth() * imageSize.getHeight() + imageSize.getWidth()	* ((imageSize.getHeight() + 1) / 2);
+
+						isYUV = true;
+						
+					} else {
+						Log.e(TAG, "captured RAW");
+						ByteBuffer raw = im.getPlanes()[0].getBuffer();
+						
+						frame_len = raw.limit();
+						frameData = new byte[frame_len];
+						raw.get(frameData, 0, frame_len);
+						
+						if (resultInHeap)
+						{
+							frame = SwapHeap.SwapToHeap(frameData);
+							frameData = null;
+						}
 					}
+					
 				}
 
-				if (im.getFormat() == ImageFormat.RAW_SENSOR)
+				if (im.getFormat() == ImageFormat.RAW_SENSOR && !(lastCaptureFormat == CameraController.YUV_RAW && CameraController.isGalaxyS6)) {
 					pluginManager.onImageTaken(frame, frameData, frame_len, CameraController.RAW);
+				}
 				else
 				{
 					ApplicationScreen.getPluginManager().onImageTaken(frame, frameData, frame_len, isYUV ? CameraController.YUV : CameraController.JPEG);

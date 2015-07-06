@@ -49,7 +49,7 @@ public class YuvImage
 	 * Number of bytes of temp storage we use for communicating between the
 	 * native compressor and the java OutputStream for multithreaded encoding.
 	 */
-	private static final int	WORKING_COMPRESS_STORAGE_MT	= 1024*512;
+	private static final int	WORKING_COMPRESS_STORAGE_MT	= 1024 * 512;
 
 	/**
 	 * The YUV format as defined in {@link PixelFormat}.
@@ -164,8 +164,8 @@ public class YuvImage
 		adjustRectangle(rectangle);
 		int[] offsets = calculateOffsets(rectangle.left, rectangle.top);
 
-		boolean res = SaveJpegFreeOutMT(mData, mFormat, rectangle.width(), rectangle.height(), offsets, mStrides, quality,
-					stream, new byte[WORKING_COMPRESS_STORAGE_MT]);
+		boolean res = SaveJpegFreeOutMT(mData, mFormat, rectangle.width(), rectangle.height(), offsets, mStrides,
+				quality, stream, new byte[WORKING_COMPRESS_STORAGE_MT]);
 		return res;
 	}
 
@@ -266,10 +266,10 @@ public class YuvImage
 
 	public static native boolean SaveJpegFreeOut(int oriYuv, int format, int width, int height, int[] offsets,
 			int[] strides, int quality, OutputStream stream, byte[] tempStorage);
-	
-	//Multithreaded version of SaveJpegFreeOut
+
+	// Multithreaded version of SaveJpegFreeOut
 	public static native boolean SaveJpegFreeOutMT(int oriYuv, int format, int width, int height, int[] offsets,
-			int[] strides, int quality, OutputStream stream, byte[] tempStorage);	
+			int[] strides, int quality, OutputStream stream, byte[] tempStorage);
 
 	// Return: pointer to the frame data in heap converted to int
 	public static synchronized native int GetFrame();
@@ -283,6 +283,10 @@ public class YuvImage
 	// Return: error status (0 = all ok)
 	public static synchronized native int CreateYUVImage(ByteBuffer Y, ByteBuffer U, ByteBuffer V, int pixelStrideY,
 			int rowStrideY, int pixelStrideU, int rowStrideU, int pixelStrideV, int rowStrideV, int sx, int sy);
+
+	// Return: error status (0 = all ok)
+	public static synchronized native int CreateYUVImageFromRAW(ByteBuffer buf, int pixelStride, int rowStride, int sx,
+			int sy, int w, int h, int kelvin1, int kelvin2, int blevel, int wlevel, int cameraIndex, int outputRGB);
 
 	public static synchronized native byte[] CreateYUVImageByteArray(ByteBuffer Y, ByteBuffer U, ByteBuffer V,
 			int pixelStrideY, int rowStrideY, int pixelStrideU, int rowStrideU, int pixelStrideV, int rowStrideV,

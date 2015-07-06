@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.onepf.oms.OpenIabHelper;
@@ -467,9 +468,11 @@ public class MainScreen extends ApplicationScreen
 			mImageReaderJPEG = ImageReader
 					.newInstance(imageSize.getWidth(), imageSize.getHeight(), ImageFormat.JPEG, 2);
 
+		
+		CameraController.Size rawImageSize = CameraController.getMaxCameraImageSize(CameraController.RAW);
 		// ImageReader for RAW still images
-		mImageReaderRAW = ImageReader.newInstance(imageSize.getWidth(), imageSize.getHeight(), ImageFormat.RAW_SENSOR,
-				2);
+		mImageReaderRAW = ImageReader.newInstance(rawImageSize.getWidth(), rawImageSize.getHeight(), ImageFormat.RAW_SENSOR,
+				3);
 
 		guiManager.setupViewfinderPreviewSize(new CameraController.Size(thiz.previewWidth, thiz.previewHeight));
 
@@ -929,7 +932,7 @@ public class MainScreen extends ApplicationScreen
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 
 		boolean isHALv3 = prefs.getBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
-				(CameraController.isNexus() || CameraController.isFlex2() || CameraController.isAndroidOne()) ? true : false);
+				(CameraController.isNexus || CameraController.isFlex2 || CameraController.isAndroidOne || CameraController.isGalaxyS6) ? true : false);
 		CameraController.useHALv3(isHALv3);
 		prefs.edit()
 				.putBoolean(getResources().getString(R.string.Preference_UseHALv3Key), CameraController.isUseHALv3())
@@ -1523,6 +1526,10 @@ public class MainScreen extends ApplicationScreen
 					"add mImageReaderYUV " + mImageReaderYUV.getWidth() + " x " + mImageReaderYUV.getHeight());
 			surfaceList.add(mImageReaderYUV.getSurface()); // surface for yuv
 															// image
+			
+			if (CameraController.isGalaxyS6) {
+				surfaceList.add(mImageReaderRAW.getSurface());
+			}
 			// capture
 		} else if (captureFormat == CameraController.JPEG)
 		{

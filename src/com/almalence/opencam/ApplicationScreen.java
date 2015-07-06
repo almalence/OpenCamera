@@ -26,6 +26,7 @@ package com.almalence.opencam;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -1180,6 +1181,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 							CameraController.startCameraPreview();
 						} catch (RuntimeException e)
 						{
+							e.printStackTrace();
 							Toast.makeText(ApplicationScreen.instance, "Unable to start camera", Toast.LENGTH_LONG)
 									.show();
 							return;
