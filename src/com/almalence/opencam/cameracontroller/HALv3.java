@@ -1812,22 +1812,25 @@ public class HALv3
 				SetupPerFrameParameters(evRequested == null ? selectedEvCompensation : evRequested[n], gain == null ? currentSensitivity : gain[n],
 						exposure == null ? 0 : exposure[n], isRAWCapture);
 
-				try
+				if(HALv3.getInstance().mCaptureSession != null)
 				{
-					requestID = HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
-							stillCaptureCallback, null);
-
-					pluginManager.addRequestID(n, requestID);
-					Log.e("HALv3", "mCaptureSession.capture. REQUEST ID = " + requestID);
-					// FixMe: Why aren't requestID assigned if there is request with ev's being adjusted??
-//						if (evRequested == null) requestID = tmp;
-					
-					if(isRAWCapture)
-						HALv3.getInstance().mCaptureSession.capture(rawRequestBuilder.build(),
+					try
+					{
+						requestID = HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
 								stillCaptureCallback, null);
-				} catch (CameraAccessException e)
-				{
-					e.printStackTrace();
+	
+						pluginManager.addRequestID(n, requestID);
+						Log.e("HALv3", "mCaptureSession.capture. REQUEST ID = " + requestID);
+						// FixMe: Why aren't requestID assigned if there is request with ev's being adjusted??
+	//						if (evRequested == null) requestID = tmp;
+						
+						if(isRAWCapture)
+							HALv3.getInstance().mCaptureSession.capture(rawRequestBuilder.build(),
+									stillCaptureCallback, null);
+					} catch (CameraAccessException e)
+					{
+						e.printStackTrace();
+					}
 				}
 			}
 		}
@@ -1856,22 +1859,25 @@ public class HALv3
 
 			if (checkHardwareLevel())
 			{
-				precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
-						CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
-				requestID = HALv3.getInstance().mCaptureSession.capture(precaptureRequestBuilder.build(),
-						new CameraCaptureSession.CaptureCallback()
-						{
-							@Override
-							public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request,
-									TotalCaptureResult result)
+				if(HALv3.getInstance().mCaptureSession != null)
+				{
+					precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+							CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
+					requestID = HALv3.getInstance().mCaptureSession.capture(precaptureRequestBuilder.build(),
+							new CameraCaptureSession.CaptureCallback()
 							{
-								precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
-										CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
-								
-								captureImageWithParamsHALv3Simple(nFrames, format, pause,
-										evRequested, gain, exposure, resInHeap, playShutter);
-							}
-						}, null);
+								@Override
+								public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request,
+										TotalCaptureResult result)
+								{
+									precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+											CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
+									
+									captureImageWithParamsHALv3Simple(nFrames, format, pause,
+											evRequested, gain, exposure, resInHeap, playShutter);
+								}
+							}, null);
+				}
 			} else
 			{
 				captureImageWithParamsHALv3Simple(nFrames, format, pause,
@@ -1895,13 +1901,17 @@ public class HALv3
 			captureAllowed = false;
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
 					CameraCharacteristics.CONTROL_AF_TRIGGER_START);
-			try
+			
+			if(HALv3.getInstance().mCaptureSession != null)
 			{
-				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
-						HALv3.previewRequestBuilder.build(), captureCallback, null);
-			} catch (CameraAccessException e)
-			{
-				e.printStackTrace();
+				try
+				{
+					CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
+							HALv3.previewRequestBuilder.build(), captureCallback, null);
+				} catch (CameraAccessException e)
+				{
+					e.printStackTrace();
+				}
 			}
 		} else {
 			captureAllowed = true;
@@ -1945,28 +1955,31 @@ public class HALv3
 
 				public void onFinish()
 				{
-					// play tick sound
-					appInterface.showCaptureIndication(playShutterSound);
-					try
+					if(HALv3.getInstance().mCaptureSession != null)
 					{
-						// FixMe: Why aren't requestID assigned if there is
-						// request with ev's being adjusted??
-						int requestID = HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
-								captureCallback, null);
-
-						pluginManager.addRequestID(frameIndex, requestID);
-						Log.e("HALv3", "NEXT mCaptureSession.capture. REQUEST ID = " + requestID);
-						if (isRAWCapture)
-							HALv3.getInstance().mCaptureSession.capture(rawRequestBuilder.build(), captureCallback,
-									null);
-					} catch (CameraAccessException e)
-					{
-						e.printStackTrace();
+						// play tick sound
+						appInterface.showCaptureIndication(playShutterSound);
+						try
+						{
+							// FixMe: Why aren't requestID assigned if there is
+							// request with ev's being adjusted??
+							int requestID = HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
+									captureCallback, null);
+	
+							pluginManager.addRequestID(frameIndex, requestID);
+							Log.e("HALv3", "NEXT mCaptureSession.capture. REQUEST ID = " + requestID);
+							if (isRAWCapture)
+								HALv3.getInstance().mCaptureSession.capture(rawRequestBuilder.build(), captureCallback,
+										null);
+						} catch (CameraAccessException e)
+						{
+							e.printStackTrace();
+						}
 					}
 				}
 			}.start();
 
-		} else
+		} else if(HALv3.getInstance().mCaptureSession != null)
 		{
 			// play tick sound
 			appInterface.showCaptureIndication(true);
@@ -2001,23 +2014,26 @@ public class HALv3
 			
 			if (checkHardwareLevel())
 			{
-				precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
-						CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
-				requestID = HALv3.getInstance().mCaptureSession.capture(precaptureRequestBuilder.build(),
-						new CameraCaptureSession.CaptureCallback()
-						{
-							@Override
-							public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request,
-									TotalCaptureResult result)
+				if(HALv3.getInstance().mCaptureSession != null)
+				{
+					precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+							CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
+					requestID = HALv3.getInstance().mCaptureSession.capture(precaptureRequestBuilder.build(),
+							new CameraCaptureSession.CaptureCallback()
 							{
-								Log.e(TAG, "TRIGER CAPTURE COMPLETED");
-								
-								precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
-										CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
-								
-								captureNextImageWithParamsSimple(format, frameIndex, pause, evRequested, gain, exposure);
-							}
-						}, null);
+								@Override
+								public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request,
+										TotalCaptureResult result)
+								{
+									Log.e(TAG, "TRIGER CAPTURE COMPLETED");
+									
+									precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+											CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
+									
+									captureNextImageWithParamsSimple(format, frameIndex, pause, evRequested, gain, exposure);
+								}
+							}, null);
+				}
 			} else
 			{
 				captureNextImageWithParamsSimple(format, frameIndex, pause, evRequested, gain, exposure);
@@ -2034,7 +2050,7 @@ public class HALv3
 	
 	public static void forceFocusHALv3()
 	{
-		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
+		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null && HALv3.getInstance().mCaptureSession != null)
 		{
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
 					CameraCharacteristics.CONTROL_AF_TRIGGER_START);
@@ -2052,7 +2068,7 @@ public class HALv3
 	public static boolean autoFocusHALv3()
 	{
 		Log.e(TAG, "HALv3.autoFocusHALv3");
-		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
+		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null && HALv3.getInstance().mCaptureSession != null)
 		{
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, af_regions);
 			
@@ -2081,7 +2097,7 @@ public class HALv3
 		Log.e(TAG, "HALv3.cancelAutoFocusHALv3");
 		int focusMode = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getInt(
 				CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref : ApplicationScreen.sFrontFocusModePref, -1);
-		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null && focusMode != CameraParameters.MF_MODE)
+		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null && focusMode != CameraParameters.MF_MODE && HALv3.getInstance().mCaptureSession != null)
 		{
 			if(HALv3.getInstance().mCaptureSession == null)
 				return;
@@ -2559,34 +2575,37 @@ public class HALv3
 		
 		private void resetCaptureCallback()
 		{
-			resetInProgress = true;
-			
-			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
-					CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
-			try
+			if(HALv3.getInstance().mCaptureSession != null)
 			{
-				Log.e(TAG,
-						"resetCaptureCallback. CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL");
-				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
-						HALv3.previewRequestBuilder.build(), captureCallback, null);
-			} catch (CameraAccessException e)
-			{
-				e.printStackTrace();
-			}
-			
-			// Force set IDLE to prevent canceling all the time.
-			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
-					CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE);
-			try
-			{
-//				Log.e(TAG,
-//						"resetCaptureCallback. CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE");
-				resetRequestId = HALv3.getInstance().mCaptureSession.capture(
-						HALv3.previewRequestBuilder.build(), captureCallback, null);
-				CameraController.iCaptureID = resetRequestId;
-			} catch (CameraAccessException e)
-			{
-				e.printStackTrace();
+				resetInProgress = true;
+				
+				HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
+						CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
+				try
+				{
+					Log.e(TAG,
+							"resetCaptureCallback. CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL");
+					CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
+							HALv3.previewRequestBuilder.build(), captureCallback, null);
+				} catch (CameraAccessException e)
+				{
+					e.printStackTrace();
+				}
+				
+				// Force set IDLE to prevent canceling all the time.
+				HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
+						CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE);
+				try
+				{
+	//				Log.e(TAG,
+	//						"resetCaptureCallback. CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE");
+					resetRequestId = HALv3.getInstance().mCaptureSession.capture(
+							HALv3.previewRequestBuilder.build(), captureCallback, null);
+					CameraController.iCaptureID = resetRequestId;
+				} catch (CameraAccessException e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 	};
