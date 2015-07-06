@@ -1438,14 +1438,14 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public void onClick(View v)
 	{
 		Log.e("ApplicationScreen", "onClick");
-		if (mApplicationStarted)
+		if (mApplicationStarted && mCameraStarted)
 			ApplicationScreen.getGUIManager().onClick(v);
 	}
 
 	@Override
 	public boolean onTouch(View view, MotionEvent event)
 	{
-		if (mApplicationStarted)
+		if (mApplicationStarted && mCameraStarted)
 			return ApplicationScreen.getGUIManager().onTouch(view, event);
 		return true;
 	}
@@ -1477,6 +1477,11 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public static boolean isApplicationStarted()
 	{
 		return mApplicationStarted;
+	}
+	
+	public static boolean isCameraStarted()
+	{
+		return mCameraStarted;
 	}
 
 	// >>Description

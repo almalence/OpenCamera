@@ -1569,7 +1569,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			@Override
 			public void onShutterClick()
 			{
-				onButtonClick(shutterButton);
+				if(ApplicationScreen.isCameraStarted())
+					onButtonClick(shutterButton);
 			}
 		});
 		
@@ -1578,7 +1579,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			@Override
 			public void onShutterChecked()
 			{
-				changeMode(videoModeView);
+				if(ApplicationScreen.isCameraStarted())
+					changeMode(videoModeView);
 			}
 		});
 

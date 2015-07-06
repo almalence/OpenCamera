@@ -932,7 +932,7 @@ public class MainScreen extends ApplicationScreen
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 
 		boolean isHALv3 = prefs.getBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
-				(CameraController.isNexus || CameraController.isFlex2 || CameraController.isAndroidOne || CameraController.isGalaxyS6) ? true : false);
+				(CameraController.isNexus || CameraController.isFlex2 || CameraController.isAndroidOne || CameraController.isGalaxyS6 || CameraController.isG4) ? true : false);
 		CameraController.useHALv3(isHALv3);
 		prefs.edit()
 				.putBoolean(getResources().getString(R.string.Preference_UseHALv3Key), CameraController.isUseHALv3())
@@ -1710,7 +1710,7 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	public boolean onKeyDownEvent(int keyCode, KeyEvent event)
 	{
-		if (!mApplicationStarted)
+		if (!mApplicationStarted || !mCameraStarted)
 			return true;
 
 		// menu button processing
@@ -1794,16 +1794,6 @@ public class MainScreen extends ApplicationScreen
 		// -+- -->
 
 		return false;
-	}
-
-	public static boolean isForceClose()
-	{
-		return isForceClose;
-	}
-
-	public static boolean isApplicationStarted()
-	{
-		return mApplicationStarted;
 	}
 
 	public void menuButtonPressed()

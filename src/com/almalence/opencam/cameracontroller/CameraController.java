@@ -107,6 +107,49 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																											Locale.US)
 																									.replace(" ", "")
 																									.contains("lg-f510");
+	
+	public static boolean							isG4							= Build.MANUFACTURER.contains("LGE")
+																							&&
+																							(Build.MODEL
+																							.toLowerCase(Locale.US)
+																							.replace(" ", "")
+																							.contains("H818")
+																							|| Build.MODEL
+																							.toLowerCase(
+																									Locale.US)
+																							.replace(" ", "")
+																							.contains("H815")
+																							|| Build.MODEL
+																									.toLowerCase(
+																											Locale.US)
+																									.replace(" ", "")
+																									.contains("H812")
+																							|| Build.MODEL
+																							.toLowerCase(
+																									Locale.US)
+																							.replace(" ", "")
+																							.contains("H810")
+																							|| Build.MODEL
+																							.toLowerCase(
+																									Locale.US)
+																							.replace(" ", "")
+																							.contains("H811")
+																							|| Build.MODEL
+																							.toLowerCase(
+																									Locale.US)
+																							.replace(" ", "")
+																							.contains("LS991")
+																							|| Build.MODEL
+																							.toLowerCase(
+																									Locale.US)
+																							.replace(" ", "")
+																							.contains("VS986")
+																							|| Build.MODEL
+																							.toLowerCase(
+																									Locale.US)
+																							.replace(" ", "")
+																							.contains("US991"));
+	
 
 	public static boolean							isAndroidOne					= Build.MODEL
 																							.contains("Micromax AQ4501");
@@ -887,7 +930,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		try
 		{
 			if (!(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService("camera") != null)
-					|| (!isFlex2 && !isNexus && !isAndroidOne && !isGalaxyS6))
+					|| (!isFlex2 && !isNexus && !isAndroidOne && !isGalaxyS6 && !isG4))
 			{
 				isHALv3 = false;
 				isHALv3Supported = false;
@@ -995,6 +1038,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						camera.release();
 						camera = null;
 					}
+//					CameraController.sendMessage(ApplicationInterface.MSG_CAMERA_STOPED, 0); //TODO: Issue 714
 				}
 			} else
 				HALv3.onPauseHALv3();
@@ -1118,7 +1162,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			// hard-code to enable these only, as we have no profiles for
 			// other models at the moment
-			if (CameraController.isNexus || CameraController.isFlex2 || CameraController.isGalaxyS6)
+			if (CameraController.isNexus || CameraController.isFlex2 || CameraController.isGalaxyS6 || CameraController.isG4)
 				SuperModeOk = true;
 		}
 
