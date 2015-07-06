@@ -78,6 +78,7 @@
     <string name="Preference_TimestampDateValue">Preference_TimestampDateValue</string>
     <string name="Preference_TimestampAbbreviationValue">Preference_TimestampAbbreviationValue</string>
     <string name="Preference_TimestampTimeValue">Preference_TimestampTimeValue</string>
+    <string name="Preference_TimestampGeoValue">Preference_TimestampGeoValue</string>
     <string name="Preference_TimestampSeparatorValue">Preference_TimestampSeparatorValue</string>
     <string name="Preference_TimestampCustomTextValue">Preference_TimestampCustomTextValue</string>
     <string name="Preference_TimestampColorValue">Preference_TimestampColorValue</string>
