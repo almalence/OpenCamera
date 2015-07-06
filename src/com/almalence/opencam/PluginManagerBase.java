@@ -76,6 +76,7 @@ import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -94,6 +95,7 @@ import android.widget.Toast;
 
 import com.almalence.SwapHeap;
 import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam.cameracontroller.HALv3;
 import com.almalence.plugins.export.ExifDriver.ExifDriver;
 import com.almalence.plugins.export.ExifDriver.ExifManager;
 import com.almalence.plugins.export.ExifDriver.Values.ValueByteArray;
@@ -330,6 +332,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	}
 
 	protected boolean	isRestart	= false;
+	protected boolean	switchToOldCameraInterface	= false;
 
 	public void setSwitchModeType(boolean restart)
 	{
@@ -340,9 +343,20 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	{
 		return isRestart;
 	}
-
-	public void switchMode(Mode mode)
+	
+	public boolean isSwitchToOldCameraInterface()
 	{
+		return switchToOldCameraInterface;
+	}
+
+	public void switchMode(final Mode mode)
+	{	
+		String modeName = mode.modeID;
+		if(modeName.equals("video") || (Build.MODEL.equals("Nexus 6") && (modeName.equals("panorama_augmented") || modeName.equals("preshot"))))
+			switchToOldCameraInterface = true;
+		else
+			switchToOldCameraInterface = false;
+		
 		// disable old plugins
 		ApplicationScreen.getGUIManager().onStop();
 		ApplicationScreen.instance.switchingMode(isRestart ? false : true);

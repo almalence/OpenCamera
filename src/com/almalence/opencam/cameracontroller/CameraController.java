@@ -864,6 +864,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(mainContext).edit();
 			prefEditor.putBoolean(mainContext.getResources().getString(R.string.Preference_UseHALv3Key), true).commit();
 		}
+		
+		if (!CameraController.isRemoteCamera() && CameraController.isHALv3)
+			HALv3.onStopHALv3();
 	}
 
 	public static void onDestroy()
@@ -2905,6 +2908,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static void setCameraImageSize(Size imgSize)
 	{
 		imageSize = imgSize;
+		if(CameraController.isUseHALv3())
+			HALv3.checkImageSize(imageSize);
 	}
 
 	public static Size getCameraImageSize()
