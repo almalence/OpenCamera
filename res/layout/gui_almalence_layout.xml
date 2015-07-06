@@ -174,6 +174,7 @@
                     android:paddingRight="0dp"
                     android:paddingTop="0dp"
                     android:scaleType="fitXY"
+                    android:visibility="gone"
                     android:src="@drawable/button_shutter" />
             </LinearLayout>
         </LinearLayout>
@@ -340,20 +341,19 @@
             android:id="@+id/manualControlsLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="top"
+            android:layout_gravity="top|left"
+            android:layout_alignParentLeft="true"
             android:background="@drawable/ev_background"
             android:orientation="vertical"
             android:visibility="visible" >
 
             <LinearLayout
                 android:id="@+id/exposureTimeLayout"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="top"
                 android:layout_marginLeft="3dip"
                 android:orientation="horizontal"
-                android:paddingLeft="10dip"
-                android:paddingRight="10dip"
                 android:paddingTop="10dip"
                 android:visibility="gone" >
 
@@ -371,7 +371,7 @@
 
                 <LinearLayout
                     android:id="@+id/exposureTimeSeekBarLayout"
-                    android:layout_width="@dimen/exposureSeekBarWidth"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="right"
                     android:orientation="vertical" >
@@ -387,19 +387,19 @@
                         android:textStyle="bold" />
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical" >
 
                         <SeekBar
                             android:id="@+id/exposureTimeSeekBar"
-                            android:layout_width="@dimen/exposureSeekBarWidth"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal" />
 
                         <RelativeLayout
                             android:id="@+id/exposureTimeTextLayout"
-                            android:layout_width="@dimen/exposureSeekBarWidth"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal" >
 
@@ -431,14 +431,12 @@
 
             <LinearLayout
                 android:id="@+id/manualWBLayout"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/exposureTimeLayout"
                 android:layout_gravity="bottom"
                 android:layout_marginLeft="3dip"
                 android:orientation="horizontal"
-                android:paddingLeft="10dip"
-                android:paddingRight="10dip"
                 android:paddingTop="10dip"
                 android:visibility="gone" >
 
@@ -455,19 +453,20 @@
                     android:textStyle="bold" />
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:id="@+id/manualWBSeekBarLayout"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" >
 
                     <SeekBar
                         android:id="@+id/manualWBSeekBar"
-                        android:layout_width="@dimen/exposureSeekBarWidth"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal" />
 
                     <RelativeLayout
                         android:id="@+id/manualWBTextLayout"
-                        android:layout_width="@dimen/exposureSeekBarWidth"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal" >
 
@@ -488,14 +487,12 @@
 
             <LinearLayout
                 android:id="@+id/focusDistanceLayout"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/manualWBLayout"
                 android:layout_gravity="bottom"
                 android:layout_marginLeft="3dip"
                 android:orientation="horizontal"
-                android:paddingLeft="10dip"
-                android:paddingRight="10dip"
                 android:paddingTop="10dip"
                 android:visibility="gone" >
 
@@ -512,19 +509,20 @@
                     android:textStyle="bold" />
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:id="@+id/manualFocusSeekBarLayout"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" >
 
                     <SeekBar
                         android:id="@+id/focusDistanceSeekBar"
-                        android:layout_width="@dimen/exposureSeekBarWidth"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal" />
 
                     <RelativeLayout
                         android:id="@+id/focusDistanceTextLayout"
-                        android:layout_width="@dimen/exposureSeekBarWidth"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal" >
 

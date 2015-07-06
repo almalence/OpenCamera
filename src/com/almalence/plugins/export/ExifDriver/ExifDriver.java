@@ -385,7 +385,10 @@ public class ExifDriver
 																// header
 		ifdStart = readIfd(ifd0, _data, ifdStart);
 		// Was there any IFD1 reference?
-		if (ifdStart > 0)
+		// Check pointer value is less then data.length, because sometimes
+		// it happens to be more. And it's cause exception.
+		// Actually problem is caused by bugs in android's ExifEnterface.
+		if (ifdStart > 0 && ifdStart < _data.length)
 		{
 			readIfd(ifd1, _data, ifdStart);
 			// Remember thumbnail info
@@ -511,6 +514,7 @@ public class ExifDriver
 				_ifd.put(tag, value);
 			}
 		}
+		
 		// Return the long value represented by 4B after the last entry
 		return readUInt(_data, _start + entriesNumber * 12 + 2, 4, originalAlign);
 	}

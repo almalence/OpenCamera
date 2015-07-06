@@ -67,6 +67,7 @@ import android.view.SurfaceHolder;
 import android.widget.Toast;
 import com.almalence.SwapHeap;
 import com.almalence.YuvImage;
+import com.almalence.util.ImageConversion;
 import com.almalence.util.Util;
 
 //<!-- -+-
@@ -120,6 +121,10 @@ public class HALv3
 
 	protected static int				captureFormat				= CameraController.JPEG;
 	protected static int				lastCaptureFormat			= CameraController.JPEG;
+	protected static int				originalCaptureFormat		= CameraController.JPEG;
+	
+	protected static Size				highestAvailableImageSize   = null;
+	protected static Size				highestCurrentImageSize   	= null;
 	
 	protected static boolean			playShutterSound			= false;
 	protected static boolean			captureAllowed 				= false;
@@ -259,6 +264,8 @@ public class HALv3
 					CameraController.isRAWCaptureSupported = true;
 				else if(key == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_MANUAL_SENSOR)
 					CameraController.isManualSensorSupported = true;
+			
+			originalCaptureFormat = CameraController.JPEG;
 		} catch (CameraAccessException e)
 		{
 			e.printStackTrace();
@@ -267,11 +274,48 @@ public class HALv3
 
 	public static void onPauseHALv3()
 	{
+		if(ApplicationScreen.getPluginManager().isSwitchToOldCameraInterface())
+			if (null != HALv3.getInstance().camDevice && null != HALv3.getInstance().mCaptureSession)
+			{
+				try
+				{
+					HALv3.getInstance().mCaptureSession.stopRepeating();
+	//				HALv3.getInstance().mCaptureSession.close();  //According to google docs isn't necessary to close session
+					HALv3.getInstance().mCaptureSession = null;
+				} catch (final CameraAccessException e)
+				{
+					// Doesn't matter, closing device anyway
+					e.printStackTrace();
+				} catch (final IllegalStateException e2)
+				{
+					// Doesn't matter, closing device anyway
+					e2.printStackTrace();
+				} finally
+				{
+					Log.wtf(TAG, "onPauseHALv3 try to camDevice.close()");
+					HALv3.getInstance().camDevice.close();
+					Log.wtf(TAG, "onPauseHALv3 camDevice.close()");
+					HALv3.getInstance().camDevice = null;
+				}
+			}
+	}
+	
+	public static void onStopHALv3()
+	{
+//		if (null != HALv3.getInstance().camDevice)
+//		{
+//			Log.wtf(TAG, "onStopHALv3 try to camDevice.close()");
+//			HALv3.getInstance().camDevice.close();
+//			Log.wtf(TAG, "onStopHALv3 camDevice closed)");
+//			HALv3.getInstance().camDevice = null;
+//		}
+		
 		if (null != HALv3.getInstance().camDevice && null != HALv3.getInstance().mCaptureSession)
+		{
 			try
 			{
 				HALv3.getInstance().mCaptureSession.stopRepeating();
-				HALv3.getInstance().mCaptureSession.close();
+//				HALv3.getInstance().mCaptureSession.close();  //According to google docs isn't necessary to close session
 				HALv3.getInstance().mCaptureSession = null;
 			} catch (final CameraAccessException e)
 			{
@@ -286,6 +330,7 @@ public class HALv3
 				HALv3.getInstance().camDevice.close();
 				HALv3.getInstance().camDevice = null;
 			}
+		}
 	}
 
 	public static void openCameraHALv3()
@@ -293,8 +338,30 @@ public class HALv3
 		Log.e(TAG, "openCameraHALv3()");
 		// HALv3 open camera
 		// -----------------------------------------------------------------
-		if (HALv3.getCamera2() == null)
+		if (HALv3.getCamera2() != null && HALv3.getInstance().mCaptureSession != null)
 		{
+			try
+			{
+				HALv3.getInstance().mCaptureSession.stopRepeating();
+				Log.wtf(TAG, "onPauseHALv3. mCaptureSession.stopRepeating()");
+//				HALv3.getInstance().mCaptureSession.close();
+//				Log.wtf(TAG, "onPauseHALv3 mCaptureSession.close()");
+				HALv3.getInstance().mCaptureSession = null;
+			} catch (final CameraAccessException e)
+			{
+				// Doesn't matter, closing device anyway
+				e.printStackTrace();
+			} catch (final IllegalStateException e2)
+			{
+				// Doesn't matter, closing device anyway
+				e2.printStackTrace();
+			} finally
+			{
+				HALv3.getInstance().camDevice.close();
+				HALv3.getInstance().camDevice = null;
+			}
+		}
+			
 			try
 			{
 				Log.e(TAG, "try to manager.openCamera");
@@ -318,7 +385,6 @@ public class HALv3
 				e.printStackTrace();
 				appInterface.stopApplication();
 			}
-		}
 
 		CameraController.CameraMirrored = (HALv3.getInstance().camCharacter.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT);
 
@@ -462,7 +528,6 @@ public class HALv3
 
 	public static void populateCameraDimensionsHALv3()
 	{
-		Log.e(TAG, "populateCameraDimensionsHALv3. USE captureFormat.");
 		CameraController.ResolutionsMPixList = new ArrayList<Long>();
 		CameraController.ResolutionsSizeList = new ArrayList<CameraController.Size>();
 		CameraController.ResolutionsIdxesList = new ArrayList<String>();
@@ -472,7 +537,16 @@ public class HALv3
 		int minMPIX = CameraController.MIN_MPIX_SUPPORTED;
 		CameraCharacteristics params = getCameraParameters2();
 		StreamConfigurationMap configMap = params.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-		final Size[] cs = configMap.getOutputSizes(captureFormat);
+		Size[] cs = configMap.getOutputSizes(captureFormat);
+		Size highestSize = cs[0];
+		if(captureFormat == CameraController.YUV)
+		{
+			Size[] jpegSize = configMap.getOutputSizes(CameraController.JPEG);
+			Size highestJPEGSize = jpegSize[0];
+			if(highestJPEGSize.getWidth() > highestSize.getWidth())
+				cs = jpegSize;
+		}
+		
 
 		int iHighestIndex = 0;
 		Size sHighest = cs[iHighestIndex];
@@ -646,6 +720,16 @@ public class HALv3
 		CameraCharacteristics camCharacter = HALv3.getInstance().camCharacter;
 		StreamConfigurationMap configMap = camCharacter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 		Size[] cs = configMap.getOutputSizes(captureFormat);
+		
+		if(captureFormat == CameraController.YUV)
+		{
+			HALv3.highestCurrentImageSize = cs[0];
+			Size[] jpegSize = configMap.getOutputSizes(CameraController.JPEG);
+			HALv3.highestAvailableImageSize = jpegSize[0];
+			if(HALv3.highestAvailableImageSize.getWidth() > HALv3.highestCurrentImageSize.getWidth())
+				cs = jpegSize;
+		}
+		
 		for (Size sz : cs)
 		{
 			pictureSizes.add(new CameraController.Size(sz.getWidth(), sz.getHeight()));
@@ -660,6 +744,19 @@ public class HALv3
 		for (Size sz : cs)
 		{
 			videoSizes.add(new CameraController.Size(sz.getWidth(), sz.getHeight()));
+		}
+	}
+	
+	
+	public static void checkImageSize(CameraController.Size imageSize)
+	{
+		if(captureFormat == CameraController.YUV)
+		{
+			if(imageSize.getWidth() > HALv3.highestCurrentImageSize.getWidth())
+			{
+				originalCaptureFormat = captureFormat;
+				ApplicationScreen.setCaptureFormat(CameraController.JPEG);
+			}
 		}
 	}
 	
@@ -1533,7 +1630,7 @@ public class HALv3
 		}
 		
 		
-		if (format == CameraController.JPEG)
+		if (format == CameraController.JPEG || captureFormat == CameraController.JPEG)
 		{
 			stillRequestBuilder.addTarget(appInterface.getJPEGImageSurface());
 		} else if (format == CameraController.YUV || format == CameraController.YUV_RAW)
@@ -2370,7 +2467,6 @@ public class HALv3
 				appInterface.stopApplication();
 			}
 		}
-
 	};
 
 	
@@ -2643,12 +2739,32 @@ public class HALv3
 					frame_len = jpeg.limit();
 					frameData = new byte[frame_len];
 					jpeg.get(frameData,	0, frame_len);
-
-					pluginManager.collectExifData(frameData);
-					if (resultInHeap)
+					
+					if(HALv3.originalCaptureFormat == ImageFormat.YUV_420_888)
 					{
-						frame = SwapHeap.SwapToHeap(frameData);
-						frameData = null;
+						isYUV = true;
+						CameraController.Size imageSize = CameraController.getCameraImageSize();
+						
+						frame = ImageConversion.JpegConvert(frameData, imageSize.getWidth(),
+								imageSize.getHeight(), false, false, 0);
+						frame_len = imageSize.getWidth() * imageSize.getHeight() + 2 * ((imageSize.getWidth() + 1) / 2)
+								* ((imageSize.getHeight() + 1) / 2);
+
+						pluginManager.collectExifData(null);
+						if (!resultInHeap)
+						{
+							frameData = SwapHeap.SwapFromHeap(frame, frame_len);
+							frame = 0;
+						}
+					}
+					else
+					{
+						pluginManager.collectExifData(frameData);
+						if (resultInHeap)
+						{
+							frame = SwapHeap.SwapToHeap(frameData);
+							frameData = null;
+						}
 					}
 				} else if (im.getFormat() == ImageFormat.RAW_SENSOR)
 				{

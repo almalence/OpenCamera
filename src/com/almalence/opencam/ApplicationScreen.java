@@ -239,6 +239,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public static String				sTimestampDate;
 	public static String				sTimestampAbbreviation;
 	public static String				sTimestampTime;
+	public static String				sTimestampGeo;
 	public static String				sTimestampSeparator;
 	public static String				sTimestampCustomText;
 	public static String				sTimestampColor;
@@ -322,6 +323,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		sTimestampDate = getResources().getString(R.string.Preference_TimestampDateValue);
 		sTimestampAbbreviation = getResources().getString(R.string.Preference_TimestampAbbreviationValue);
 		sTimestampTime = getResources().getString(R.string.Preference_TimestampTimeValue);
+		sTimestampGeo = getResources().getString(R.string.Preference_TimestampGeoValue);
 		sTimestampSeparator = getResources().getString(R.string.Preference_TimestampSeparatorValue);
 		sTimestampCustomText = getResources().getString(R.string.Preference_TimestampCustomTextValue);
 		sTimestampColor = getResources().getString(R.string.Preference_TimestampColorValue);

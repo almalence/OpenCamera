@@ -89,6 +89,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -1735,6 +1736,36 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				AlmalenceGUI.this.updateThumbnailButton();
 			}
 		});
+		
+		RelativeLayout specialLayout3 = (RelativeLayout) ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout3);
+		int id = 0;
+		for (int i = 0; i < specialLayout3.getChildCount(); i++)
+		{
+			View pluginView = specialLayout3.getChildAt(i);
+			RelativeLayout.LayoutParams pm = (RelativeLayout.LayoutParams)pluginView.getLayoutParams();
+			int[] rules = pm.getRules();
+			if(rules[RelativeLayout.ALIGN_PARENT_TOP] == -1 && rules[RelativeLayout.ALIGN_PARENT_RIGHT] == -1)
+			{
+				String name = pluginView.getClass().getName();
+				String nameSwitch = com.almalence.ui.Switch.Switch.class.getName();
+				if(name.equals(nameSwitch))
+					id = pluginView.getId();
+			}
+		}
+		
+		RelativeLayout manualControlsLayout = (RelativeLayout) ApplicationScreen.instance.findViewById(R.id.manualControlsLayout);
+		RelativeLayout.LayoutParams pm = (RelativeLayout.LayoutParams)manualControlsLayout.getLayoutParams();
+		if(id > 0)
+		{
+			pm.addRule(RelativeLayout.LEFT_OF, id);
+			manualControlsLayout.setLayoutParams(pm);
+		}
+		else
+		{
+			float width = ApplicationScreen.instance.getResources().getDimension(R.dimen.exposureSeekBarWidth);
+			pm.width = (int)width;
+			manualControlsLayout.setLayoutParams(pm);
+		}
 
 		final View blockingLayout = guiView.findViewById(R.id.blockingLayout);
 		final View postProcessingLayout = guiView.findViewById(R.id.postprocessingLayout);

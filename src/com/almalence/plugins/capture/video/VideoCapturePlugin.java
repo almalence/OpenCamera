@@ -850,7 +850,7 @@ public class VideoCapturePlugin extends PluginCapture
 		{
 			if (!isRecording && (orientation == 90 || orientation == 270))
 			{
-				startrotateAnimation();
+				startRotateAnimation();
 				rotatorLayout.findViewById(R.id.rotatorImageView).setVisibility(View.VISIBLE);
 				rotatorLayout.findViewById(R.id.rotatorInnerImageView).setVisibility(View.VISIBLE);
 			} else
@@ -876,7 +876,7 @@ public class VideoCapturePlugin extends PluginCapture
 		return true;
 	}
 
-	public void startrotateAnimation()
+	private void startRotateAnimation()
 	{
 		try
 		{
@@ -890,6 +890,27 @@ public class VideoCapturePlugin extends PluginCapture
 			rotation.setInterpolator(new DecelerateInterpolator());
 
 			rotateToLandscapeNotifier.startAnimation(rotation);
+		} catch (Exception e)
+		{
+		}
+	}
+	
+	private void stopRotateAnimation()
+	{
+		try
+		{
+			if (rotateToLandscapeNotifier != null && rotateToLandscapeNotifier.getVisibility() == View.VISIBLE)
+				return;
+
+			if (rotatorLayout != null && showLandscapeNotification)
+			{
+				rotatorLayout.findViewById(R.id.rotatorInnerImageView).setVisibility(View.GONE);
+				rotatorLayout.findViewById(R.id.rotatorImageView).setVisibility(View.GONE);
+				if (rotateToLandscapeNotifier != null)
+				{
+					rotateToLandscapeNotifier.clearAnimation();
+				}
+			}
 		} catch (Exception e)
 		{
 		}
@@ -1435,7 +1456,7 @@ public class VideoCapturePlugin extends PluginCapture
 				this.startRecording();
 			}
 		} else
-		{
+		{//Sony camera
 			pauseVideoButton.setVisibility(View.GONE);
 			if (isRecording)
 			{
@@ -1820,6 +1841,8 @@ public class VideoCapturePlugin extends PluginCapture
 		if (shutterOff)
 			return;
 
+		stopRotateAnimation();
+		
 		if (!swChecked)
 		{
 			// RotateImageView additionalButton = (RotateImageView)
@@ -1923,7 +1946,7 @@ public class VideoCapturePlugin extends PluginCapture
 			ApplicationScreen.getGUIManager().setupViewfinderPreviewSize(sz);
 			if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH && videoStabilization)
 				CameraController.setVideoStabilization(false);
-		}
+		}	
 		CameraController.startCameraPreview();
 
 		ApplicationScreen.getGUIManager().lockControls = false;

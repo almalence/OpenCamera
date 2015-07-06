@@ -76,6 +76,7 @@ import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -94,6 +95,7 @@ import android.widget.Toast;
 
 import com.almalence.SwapHeap;
 import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam.cameracontroller.HALv3;
 import com.almalence.plugins.export.ExifDriver.ExifDriver;
 import com.almalence.plugins.export.ExifDriver.ExifManager;
 import com.almalence.plugins.export.ExifDriver.Values.ValueByteArray;
@@ -330,6 +332,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	}
 
 	protected boolean	isRestart	= false;
+	protected boolean	switchToOldCameraInterface	= false;
 
 	public void setSwitchModeType(boolean restart)
 	{
@@ -340,9 +343,20 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	{
 		return isRestart;
 	}
-
-	public void switchMode(Mode mode)
+	
+	public boolean isSwitchToOldCameraInterface()
 	{
+		return switchToOldCameraInterface;
+	}
+
+	public void switchMode(final Mode mode)
+	{	
+		String modeName = mode.modeID;
+		if(modeName.equals("video") || (Build.MODEL.equals("Nexus 6") && (modeName.equals("panorama_augmented") || modeName.equals("preshot"))))
+			switchToOldCameraInterface = true;
+		else
+			switchToOldCameraInterface = false;
+		
 		// disable old plugins
 		ApplicationScreen.getGUIManager().onStop();
 		ApplicationScreen.instance.switchingMode(isRestart ? false : true);
@@ -2661,15 +2675,27 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 
 			int dateFormat = Integer.parseInt(prefs.getString(ApplicationScreen.sTimestampDate, "0"));
 			boolean abbreviation = prefs.getBoolean(ApplicationScreen.sTimestampAbbreviation, false);
+			boolean saveGeo = prefs.getBoolean(ApplicationScreen.sTimestampGeo, false);
 			int timeFormat = Integer.parseInt(prefs.getString(ApplicationScreen.sTimestampTime, "0"));
 			int separator = Integer.parseInt(prefs.getString(ApplicationScreen.sTimestampSeparator, "0"));
 			String customText = prefs.getString(ApplicationScreen.sTimestampCustomText, "");
 			int color = Integer.parseInt(prefs.getString(ApplicationScreen.sTimestampColor, "1"));
 			int fontSizeC = Integer.parseInt(prefs.getString(ApplicationScreen.sTimestampFontSize, "80"));
 
-			if (dateFormat == 0 && timeFormat == 0 && customText.equals(""))
+			String formattedCurrentDate="";
+			if (dateFormat == 0 && timeFormat == 0 && customText.equals("") && !saveGeo)
 				return;
+	
+			String geoText = "";
+			//show geo data on time stamp
+			if (saveGeo)
+			{
+				Location l = MLocation.getLocation(ApplicationScreen.getMainContext());
 
+				if (l != null)
+					geoText= "lat:" + l.getLatitude() + "\nlng:" + l.getLongitude();
+			}
+			
 			String dateFormatString = "";
 			String timeFormatString = "";
 			String separatorString = ".";
@@ -2720,13 +2746,13 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			Date currentDate = Calendar.getInstance().getTime();
 			java.text.SimpleDateFormat simpleDateFormat = new java.text.SimpleDateFormat(dateFormatString
 					+ timeFormatString);
-			String formattedCurrentDate = simpleDateFormat.format(currentDate);
+			formattedCurrentDate = simpleDateFormat.format(currentDate);
 
-			formattedCurrentDate = formattedCurrentDate + "\n" + customText;
-
+			formattedCurrentDate += (customText.isEmpty()?"":("\n" + customText)) + (geoText.isEmpty()?"":("\n" + geoText));
+			
 			if (formattedCurrentDate.equals(""))
 				return;
-
+			
 			Bitmap sourceBitmap;
 			Bitmap bitmap;
 
@@ -2782,14 +2808,10 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 
 			if (width > height)
 			{
-				p.setTextSize(height / fontSizeC * scale + 0.5f); // convert dps
-																	// to
-				// pixels
+				p.setTextSize(height / fontSizeC * scale + 0.5f); // convert dps to pixels
 			} else
 			{
-				p.setTextSize(width / fontSizeC * scale + 0.5f); // convert dps
-																	// to
-				// pixels
+				p.setTextSize(width / fontSizeC * scale + 0.5f); // convert dps to pixels
 			}
 			p.setTextAlign(Align.RIGHT);
 			drawTextWithBackground(canvas, p, formattedCurrentDate, color, Color.BLACK, width, height);
@@ -2929,11 +2951,11 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			textWidth = (int) width;
 		}
 
-		text_bounds.left = imageWidth - textWidth - 2 * padding;
+		text_bounds.left = imageWidth - textWidth - resText.length * padding;
 		text_bounds.right = imageWidth - padding;
 		if (resText.length > 1)
 		{
-			text_bounds.top = imageHeight - 2 * padding - 2 * textHeight - textHeight;
+			text_bounds.top = imageHeight - resText.length * padding - resText.length * textHeight - textHeight;
 		} else
 		{
 			text_bounds.top = imageHeight - 2 * padding - textHeight;
@@ -2944,11 +2966,19 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		paint.setColor(foreground);
 		if (resText.length > 0)
 		{
-			canvas.drawText(resText[0], imageWidth - 5 * padding, imageHeight - 2 * textHeight, paint);
+			canvas.drawText(resText[0], imageWidth - 5 * padding, imageHeight - resText.length * textHeight-textHeight/2, paint);
 		}
 		if (resText.length > 1)
 		{
-			canvas.drawText(resText[1], imageWidth - 5 * padding, imageHeight - textHeight / 2, paint);
+			canvas.drawText(resText[1], imageWidth - 5 * padding, imageHeight - (resText.length-1) *textHeight, paint);
+		}
+		if (resText.length > 2)
+		{
+			canvas.drawText(resText[2], imageWidth - 5 * padding, imageHeight - (resText.length-2) *textHeight+textHeight/2, paint);
+		}
+		if (resText.length > 3)
+		{
+			canvas.drawText(resText[3], imageWidth - 5 * padding, imageHeight - textHeight/4, paint);
 		}
 	}
 
