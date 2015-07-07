@@ -205,8 +205,8 @@ public class HALv3
 			}
 			HALv3.getInstance().camCharacter = HALv3.getInstance().manager
 					.getCameraCharacteristics(CameraController.cameraIdList[cameraIndex]);
-			return (HALv3.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED || HALv3
-					.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL);
+			int level = HALv3.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL);
+			return (level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED || level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL);
 		} catch (CameraAccessException e)
 		{
 			e.printStackTrace();
@@ -280,7 +280,7 @@ public class HALv3
 				try
 				{
 					HALv3.getInstance().mCaptureSession.stopRepeating();
-	//				HALv3.getInstance().mCaptureSession.close();  //According to google docs isn't necessary to close session
+					HALv3.getInstance().mCaptureSession.close();  //According to google docs isn't necessary to close session
 					HALv3.getInstance().mCaptureSession = null;
 				} catch (final CameraAccessException e)
 				{
@@ -292,9 +292,7 @@ public class HALv3
 					e2.printStackTrace();
 				} finally
 				{
-					Log.wtf(TAG, "onPauseHALv3 try to camDevice.close()");
 					HALv3.getInstance().camDevice.close();
-					Log.wtf(TAG, "onPauseHALv3 camDevice.close()");
 					HALv3.getInstance().camDevice = null;
 				}
 			}
@@ -343,9 +341,7 @@ public class HALv3
 			try
 			{
 				HALv3.getInstance().mCaptureSession.stopRepeating();
-				Log.wtf(TAG, "onPauseHALv3. mCaptureSession.stopRepeating()");
 //				HALv3.getInstance().mCaptureSession.close();
-//				Log.wtf(TAG, "onPauseHALv3 mCaptureSession.close()");
 				HALv3.getInstance().mCaptureSession = null;
 			} catch (final CameraAccessException e)
 			{
@@ -1635,8 +1631,9 @@ public class HALv3
 			stillRequestBuilder.addTarget(appInterface.getJPEGImageSurface());
 		} else if (format == CameraController.YUV || format == CameraController.YUV_RAW)
 		{
-			if (CameraController.isGalaxyS6) {
-				stillRequestBuilder.addTarget(appInterface.getRAWImageSurface());
+			if (CameraController.isGalaxyS6 && format == CameraController.YUV_RAW)
+			{
+				stillRequestBuilder.addTarget(appInterface.getRAWImageSurface()); //Used only for Super mode
 			} else {
 				stillRequestBuilder.addTarget(appInterface.getYUVImageSurface());
 			}
@@ -1712,7 +1709,7 @@ public class HALv3
 		// explicitly disable AWB for the duration of still/burst capture to get
 		// full burst with the same WB
 		// WB does not apply to RAW, so no need for this in rawRequestBuilder
-		if (!Build.MODEL.contains("G925F"))
+		if (!Build.MODEL.contains("G925") && !Build.MODEL.contains("G920"))
 		{
 			stillRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_OFF);
 			precaptureRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_OFF);
