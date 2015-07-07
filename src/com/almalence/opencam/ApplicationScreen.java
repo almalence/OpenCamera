@@ -1437,35 +1437,31 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	@Override
 	public void onClick(View v)
 	{
-		Log.e("ApplicationScreen", "onClick");
-		if (mApplicationStarted && mCameraStarted)
+		if (mApplicationStarted)
 			ApplicationScreen.getGUIManager().onClick(v);
 	}
 
 	@Override
 	public boolean onTouch(View view, MotionEvent event)
 	{
-		if (mApplicationStarted && mCameraStarted)
+		if (mApplicationStarted)
 			return ApplicationScreen.getGUIManager().onTouch(view, event);
 		return true;
 	}
 
 	public boolean onTouchSuper(View view, MotionEvent event)
 	{
-		Log.e("ApplicationScreen", "onTouchSuper");
 		return super.onTouchEvent(event);
 	}
 
 	public void onButtonClick(View v)
 	{
-		Log.e("ApplicationScreen", "onButtonClick");
 		ApplicationScreen.getGUIManager().onButtonClick(v);
 	}
 
 	@Override
 	public void onShutter()
 	{
-		Log.e("ApplicationScreen", "onShutter");
 		ApplicationScreen.getPluginManager().onShutter();
 	}
 
@@ -1479,11 +1475,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		return mApplicationStarted;
 	}
 	
-	public static boolean isCameraStarted()
-	{
-		return mCameraStarted;
-	}
-
 	// >>Description
 	// message processor
 	//

@@ -1038,7 +1038,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						camera.release();
 						camera = null;
 					}
-//					CameraController.sendMessage(ApplicationInterface.MSG_CAMERA_STOPED, 0); //TODO: Issue 714
 				}
 			} else
 				HALv3.onPauseHALv3();

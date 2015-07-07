@@ -1710,7 +1710,7 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	public boolean onKeyDownEvent(int keyCode, KeyEvent event)
 	{
-		if (!mApplicationStarted || !mCameraStarted)
+		if (!mApplicationStarted)
 			return true;
 
 		// menu button processing

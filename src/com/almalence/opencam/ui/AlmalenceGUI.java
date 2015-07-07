@@ -1381,6 +1381,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		guiView.findViewById(R.id.buttonSelectMode).setEnabled(true);
 		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
 				ApplicationInterface.MSG_CONTROL_UNLOCKED);
+		
+		if(this.shutterSwitch != null)
+		{
+			this.shutterSwitch.setEnabled(false);
+			this.shutterSwitch.setOnShutterClickListener(null);
+			this.shutterSwitch.setOnShutterCheckedListener(null);
+		}
 	}
 
 	@Override
@@ -1564,25 +1571,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		shutterButton.setOnLongClickListener(this);
 		
 		shutterSwitch = ((ShutterSwitch) guiView.findViewById(R.id.switchShutter));
-		shutterSwitch.setOnShutterClickListener(new OnShutterClickListener()
-		{
-			@Override
-			public void onShutterClick()
-			{
-				if(ApplicationScreen.isCameraStarted())
-					onButtonClick(shutterButton);
-			}
-		});
-		
-		shutterSwitch.setOnShutterCheckedListener(new OnShutterCheckedListener()
-		{
-			@Override
-			public void onShutterChecked()
-			{
-				if(ApplicationScreen.isCameraStarted())
-					changeMode(videoModeView);
-			}
-		});
+		shutterSwitch.setEnabled(false);
+		shutterSwitch.setOnShutterClickListener(null);
+		shutterSwitch.setOnShutterCheckedListener(null);
 
 		imageSizeQuickSetting = new ImageSizeQuickSetting(MainScreen.getInstance());
 		collorEffectQuickSetting = new ColorEffectQuickSetting(MainScreen.getInstance());
@@ -3025,6 +3016,28 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
 					ApplicationInterface.MSG_EV_CHANGED);
+		}
+		
+		if(shutterSwitch != null)
+		{
+			this.shutterSwitch.setEnabled(true);
+			shutterSwitch.setOnShutterClickListener(new OnShutterClickListener()
+			{
+				@Override
+				public void onShutterClick()
+				{
+						onButtonClick(shutterButton);
+				}
+			});
+			
+			shutterSwitch.setOnShutterCheckedListener(new OnShutterCheckedListener()
+			{
+				@Override
+				public void onShutterChecked()
+				{					
+						changeMode(videoModeView);
+				}
+			});
 		}
 
 	}
