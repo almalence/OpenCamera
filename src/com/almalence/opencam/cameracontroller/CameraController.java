@@ -1032,9 +1032,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				if (camera != null)
 				{
 					camera.setPreviewCallback(null);
-					camera.stopPreview();
+					if (Build.BRAND.contains("sony"))
+						camera.stopPreview();
 					if (!isModeSwitching)
 					{
+						if (!Build.BRAND.contains("sony"))
+							camera.stopPreview();
 						camera.release();
 						camera = null;
 					}
