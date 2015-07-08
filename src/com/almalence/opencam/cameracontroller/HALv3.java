@@ -262,7 +262,7 @@ public class HALv3
 			CameraController.isRAWCaptureSupported = false;
 			CameraController.isManualSensorSupported = false;
 			for (int key : keys)
-				if (key == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_RAW)
+				if (key == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_RAW && !CameraController.isGalaxyS6)
 					CameraController.isRAWCaptureSupported = true;
 				else if(key == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_MANUAL_SENSOR)
 					CameraController.isManualSensorSupported = true;
@@ -276,13 +276,14 @@ public class HALv3
 
 	public static void onPauseHALv3()
 	{
-		if(ApplicationScreen.getPluginManager().isSwitchToOldCameraInterface())
+//		if(ApplicationScreen.getPluginManager().isSwitchToOldCameraInterface())
 			if (null != HALv3.getInstance().camDevice && null != HALv3.getInstance().mCaptureSession)
 			{
 				try
 				{
+					Log.wtf(TAG, "onPauseHALv3. mCaptureSession.stopRepeating()");
 					HALv3.getInstance().mCaptureSession.stopRepeating();
-					HALv3.getInstance().mCaptureSession.close();  //According to google docs isn't necessary to close session
+//					HALv3.getInstance().mCaptureSession.close();  //According to google docs isn't necessary to close session
 					HALv3.getInstance().mCaptureSession = null;
 				} catch (final CameraAccessException e)
 				{
@@ -294,41 +295,51 @@ public class HALv3
 					e2.printStackTrace();
 				} finally
 				{
-					HALv3.getInstance().camDevice.close();
-					HALv3.getInstance().camDevice = null;
+					if(ApplicationScreen.getPluginManager().isSwitchToOldCameraInterface())
+					{
+						Log.wtf(TAG, "onPauseHALv3. camDevice.close()");
+						HALv3.getInstance().camDevice.close();
+						HALv3.getInstance().camDevice = null;	
+					}
+					
+//					Log.wtf(TAG, "onPauseHALv3. camDevice.close()");
+//					HALv3.getInstance().camDevice.close();
+//					HALv3.getInstance().camDevice = null;
 				}
 			}
 	}
 	
 	public static void onStopHALv3()
 	{
-//		if (null != HALv3.getInstance().camDevice)
-//		{
-//			HALv3.getInstance().camDevice.close();
-//			HALv3.getInstance().camDevice = null;
-//		}
-		
-		if (null != HALv3.getInstance().camDevice && null != HALv3.getInstance().mCaptureSession)
+		if (null != HALv3.getInstance().camDevice)
 		{
-			try
-			{
-				HALv3.getInstance().mCaptureSession.stopRepeating();
-//				HALv3.getInstance().mCaptureSession.close();  //According to google docs isn't necessary to close session
-				HALv3.getInstance().mCaptureSession = null;
-			} catch (final CameraAccessException e)
-			{
-				// Doesn't matter, closing device anyway
-				e.printStackTrace();
-			} catch (final IllegalStateException e2)
-			{
-				// Doesn't matter, closing device anyway
-				e2.printStackTrace();
-			} finally
-			{
-				HALv3.getInstance().camDevice.close();
-				HALv3.getInstance().camDevice = null;
-			}
+			Log.wtf(TAG, "onStopHALv3. camDevice.close()");
+			HALv3.getInstance().camDevice.close();
+			HALv3.getInstance().camDevice = null;
 		}
+		
+//		if (null != HALv3.getInstance().camDevice && null != HALv3.getInstance().mCaptureSession)
+//		{
+//			try
+//			{
+//				HALv3.getInstance().mCaptureSession.stopRepeating();
+//				HALv3.getInstance().mCaptureSession.close();  //According to google docs isn't necessary to close session
+//				HALv3.getInstance().mCaptureSession = null;
+//			} catch (final CameraAccessException e)
+//			{
+//				// Doesn't matter, closing device anyway
+//				e.printStackTrace();
+//			} catch (final IllegalStateException e2)
+//			{
+//				// Doesn't matter, closing device anyway
+//				e2.printStackTrace();
+//			} finally
+//			{
+//				Log.wtf(TAG, "onStopHALv3. camDevice.close()");
+//				HALv3.getInstance().camDevice.close();
+//				HALv3.getInstance().camDevice = null;
+//			}
+//		}
 	}
 
 	public static void openCameraHALv3()
@@ -336,28 +347,38 @@ public class HALv3
 		Log.e(TAG, "openCameraHALv3()");
 		// HALv3 open camera
 		// -----------------------------------------------------------------
-		if (HALv3.getCamera2() != null && HALv3.getInstance().mCaptureSession != null)
+		if (HALv3.getCamera2() != null)
 		{
-			try
-			{
-				HALv3.getInstance().mCaptureSession.stopRepeating();
-//				HALv3.getInstance().mCaptureSession.close();
-				HALv3.getInstance().mCaptureSession = null;
-			} catch (final CameraAccessException e)
-			{
-				// Doesn't matter, closing device anyway
-				e.printStackTrace();
-			} catch (final IllegalStateException e2)
-			{
-				// Doesn't matter, closing device anyway
-				e2.printStackTrace();
-			} finally
-			{
-				HALv3.getInstance().camDevice.close();
-				HALv3.getInstance().camDevice = null;
-			}
+			Log.wtf(TAG, "openCameraHALv3. camDevice.close()");
+			HALv3.getInstance().camDevice.close();
+			HALv3.getInstance().camDevice = null;
 		}
-			
+		
+//		if (HALv3.getCamera2() != null && HALv3.getInstance().mCaptureSession != null)
+//		{
+//			try
+//			{
+//				HALv3.getInstance().mCaptureSession.stopRepeating();
+//				HALv3.getInstance().mCaptureSession.close();
+//				HALv3.getInstance().mCaptureSession = null;
+//			} catch (final CameraAccessException e)
+//			{
+//				// Doesn't matter, closing device anyway
+//				e.printStackTrace();
+//			} catch (final IllegalStateException e2)
+//			{
+//				// Doesn't matter, closing device anyway
+//				e2.printStackTrace();
+//			} finally
+//			{
+//				Log.wtf(TAG, "openCameraHALv3. camDevice.close()");
+//				HALv3.getInstance().camDevice.close();
+//				HALv3.getInstance().camDevice = null;
+//			}
+//		}
+		
+		if(HALv3.getCamera2() == null)
+		{
 			try
 			{
 				Log.e(TAG, "try to manager.openCamera");
@@ -381,6 +402,7 @@ public class HALv3
 				e.printStackTrace();
 				appInterface.stopApplication();
 			}
+		}
 
 		CameraController.CameraMirrored = (HALv3.getInstance().camCharacter.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT);
 
@@ -2445,7 +2467,7 @@ public class HALv3
 		
 		
 		//Disable Image Reader for Nexus 6 according to slow focusing issue
-		if (!Build.MODEL.equals("Nexus 6") && captureFormat != CameraController.RAW)
+		if (!CameraController.isNexus6  && captureFormat != CameraController.RAW)
 			previewRequestBuilder.addTarget(appInterface.getPreviewYUVImageSurface());
 		
 		if(needZoom)
@@ -2528,15 +2550,17 @@ public class HALv3
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
-				if (CameraController.isCameraRelaunch())
+				finally
 				{
-					CameraController.needCameraRelaunch(false);
-					appInterface.relaunchCamera();
-				} else
-				{
-					Log.e(TAG, "session.setRepeatingRequest success. Session configured");
-					CameraController.sendMessage(ApplicationInterface.MSG_CAMERA_CONFIGURED, 0);
+					if (CameraController.isCameraRelaunch())
+					{
+						CameraController.needCameraRelaunch(false);
+						appInterface.relaunchCamera();
+					} else
+					{
+						Log.e(TAG, "Session.onConfigured");
+						CameraController.sendMessage(ApplicationInterface.MSG_CAMERA_CONFIGURED, 0);
+					}
 				}
 			} catch (final Exception e)
 			{

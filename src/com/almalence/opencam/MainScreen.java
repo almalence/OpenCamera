@@ -469,17 +469,21 @@ public class MainScreen extends ApplicationScreen
 					.newInstance(imageSize.getWidth(), imageSize.getHeight(), ImageFormat.JPEG, 2);
 
 		
-		CameraController.Size rawImageSize = CameraController.getMaxCameraImageSize(CameraController.RAW);
-		// ImageReader for RAW still images
-		mImageReaderRAW = ImageReader.newInstance(rawImageSize.getWidth(), rawImageSize.getHeight(), ImageFormat.RAW_SENSOR,
-				3);
+		if(CameraController.isCaptureFormatSupported(CameraController.RAW))
+		{
+			CameraController.Size rawImageSize = CameraController.getMaxCameraImageSize(CameraController.RAW);
+			// ImageReader for RAW still images
+			mImageReaderRAW = ImageReader.newInstance(rawImageSize.getWidth(), rawImageSize.getHeight(), ImageFormat.RAW_SENSOR,
+					3);
+		}
 
 		guiManager.setupViewfinderPreviewSize(new CameraController.Size(thiz.previewWidth, thiz.previewHeight));
 
 		mImageReaderPreviewYUV.setOnImageAvailableListener(imageAvailableListener, null);
 		mImageReaderYUV.setOnImageAvailableListener(imageAvailableListener, null);
 		mImageReaderJPEG.setOnImageAvailableListener(imageAvailableListener, null);
-		mImageReaderRAW.setOnImageAvailableListener(imageAvailableListener, null);
+		if(mImageReaderRAW != null)
+			mImageReaderRAW.setOnImageAvailableListener(imageAvailableListener, null);
 	}
 
 	@TargetApi(19)
@@ -1524,11 +1528,14 @@ public class MainScreen extends ApplicationScreen
 		{
 			Log.d("MainScreen",
 					"add mImageReaderYUV " + mImageReaderYUV.getWidth() + " x " + mImageReaderYUV.getHeight());
-			surfaceList.add(mImageReaderYUV.getSurface()); // surface for yuv
-															// image
+//			surfaceList.add(mImageReaderYUV.getSurface()); // surface for yuv
+//															// image
 			
-			if (CameraController.isGalaxyS6)
+			String modeName = PluginManager.getInstance().getActiveModeID();
+			if (CameraController.isGalaxyS6 && modeName.contains("night"))
 				surfaceList.add(mImageReaderRAW.getSurface());
+			else
+				surfaceList.add(mImageReaderYUV.getSurface());
 			// capture
 		} else if (captureFormat == CameraController.JPEG)
 		{

@@ -132,11 +132,23 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 		boolean isNexus6 = Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
 				.contains("nexus6");
 
+		boolean	isG4 = Build.MANUFACTURER.contains("LGE")&&
+				(
+						Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H818")|| 
+						Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H815")|| 
+						Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H812")|| 
+						Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H810")|| 
+						Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H811")|| 
+						Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("LS991")|| 
+						Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("VS986")|| 
+						Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("US991")
+				);
+		
 		cameraIndex = 100;
 		// camera indexes in libalmalib corresponding to models
 		if (isNexus5)   cameraIndex = 100;
 		if (isNexus6)   cameraIndex = 103;
-		if (isLGgflex2) cameraIndex = 507;
+		if (isLGgflex2||isG4) cameraIndex = 507;
 
 		AlmaShotNight.Initialize();
 
