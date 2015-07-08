@@ -123,6 +123,8 @@ public class HALv3
 	protected static int				lastCaptureFormat			= CameraController.JPEG;
 	protected static int				originalCaptureFormat		= CameraController.JPEG;
 	
+	protected static Size[] 			allJpegSizes				= null;
+	protected static Size[] 			allYUVSizes					= null;
 	protected static Size				highestAvailableImageSize   = null;
 	protected static Size				highestCurrentImageSize   	= null;
 	
@@ -302,9 +304,7 @@ public class HALv3
 	{
 //		if (null != HALv3.getInstance().camDevice)
 //		{
-//			Log.wtf(TAG, "onStopHALv3 try to camDevice.close()");
 //			HALv3.getInstance().camDevice.close();
-//			Log.wtf(TAG, "onStopHALv3 camDevice closed)");
 //			HALv3.getInstance().camDevice = null;
 //		}
 		
@@ -422,7 +422,7 @@ public class HALv3
 			CameraCharacteristics cc = HALv3.getInstance().manager.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
 			StreamConfigurationMap configMap = cc.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 			isSupported = configMap.isOutputSupportedFor(captureFormat);
-			Log.e(TAG, "Capture format " + captureFormat + " is supported? " + isSupported);
+			Log.d(TAG, "Capture format " + captureFormat + " is supported? " + isSupported);
 			return isSupported;
 			
 		} catch (CameraAccessException e)
@@ -534,11 +534,15 @@ public class HALv3
 		CameraCharacteristics params = getCameraParameters2();
 		StreamConfigurationMap configMap = params.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 		Size[] cs = configMap.getOutputSizes(captureFormat);
-		Size highestSize = cs[0];
+		Size highestSize = findMaximumSize(cs);
+		/*
+		 * In case when device supports capturing YUV less maximum size than JPEG
+		 * give users available JPEG sizes instead
+		 */
 		if(captureFormat == CameraController.YUV)
 		{
 			Size[] jpegSize = configMap.getOutputSizes(CameraController.JPEG);
-			Size highestJPEGSize = jpegSize[0];
+			Size highestJPEGSize = findMaximumSize(jpegSize);
 			if(highestJPEGSize.getWidth() > highestSize.getWidth())
 				cs = jpegSize;
 		}
@@ -717,19 +721,47 @@ public class HALv3
 		StreamConfigurationMap configMap = camCharacter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 		Size[] cs = configMap.getOutputSizes(captureFormat);
 		
+		/*
+		 * In case when device supports capturing YUV less maximum size than JPEG
+		 * give users available JPEG sizes instead
+		 */
 		if(captureFormat == CameraController.YUV)
 		{
-			HALv3.highestCurrentImageSize = cs[0];
-			Size[] jpegSize = configMap.getOutputSizes(CameraController.JPEG);
-			HALv3.highestAvailableImageSize = jpegSize[0];
+			allYUVSizes = cs;
+			allJpegSizes = configMap.getOutputSizes(CameraController.JPEG);
+			
+			HALv3.highestCurrentImageSize = findMaximumSize(cs);			
+			HALv3.highestAvailableImageSize = findMaximumSize(allJpegSizes);
 			if(HALv3.highestAvailableImageSize.getWidth() > HALv3.highestCurrentImageSize.getWidth())
-				cs = jpegSize;
+				cs = allJpegSizes;
 		}
 		
 		for (Size sz : cs)
 		{
 			pictureSizes.add(new CameraController.Size(sz.getWidth(), sz.getHeight()));
 		}
+	}
+	
+	//Search maximum size in array by comparing width and size in megapixels
+	protected static Size findMaximumSize(Size[] sizes)
+	{
+		if(sizes.length > 0)
+		{
+			Size maxSize = sizes[0];
+			int maxMPix = maxSize.getWidth() * maxSize.getHeight();
+			for(Size sz : sizes)
+			{
+				int currentMPix = sz.getWidth() * sz.getHeight();
+				if(currentMPix > maxMPix)
+				{
+					maxSize = sz;
+					maxMPix = currentMPix;
+				}
+			}
+			return maxSize;
+		}
+		else
+			return new Size(0, 0);
 	}
 
 	public static void fillVideoSizeList(List<CameraController.Size> videoSizes)
@@ -744,17 +776,50 @@ public class HALv3
 	}
 	
 	
+	//Check size chosen by application. Related to case when plugin wants to capture YUV but chosen size available only for JPEG capturing
 	public static void checkImageSize(CameraController.Size imageSize)
 	{
 		if(captureFormat == CameraController.YUV)
 		{
-			if(imageSize.getWidth() > HALv3.highestCurrentImageSize.getWidth())
+			if(!isSizeAvailable(imageSize, captureFormat) && isSizeAvailable(imageSize, CameraController.JPEG))
 			{
 				originalCaptureFormat = captureFormat;
 				ApplicationScreen.setCaptureFormat(CameraController.JPEG);
 			}
 		}
 	}
+	
+	
+	//Utility method to determine whether size is available for capture format
+	//Used only for JPEG and YUV formats. Don't use that method for RAW format!
+	public static boolean isSizeAvailable(CameraController.Size sz, int format)
+	{
+		boolean isSizeSupported = false;
+		
+		int width = sz.getWidth();
+		int MPix  = sz.getWidth() * sz.getHeight();
+		
+		Size[] allSizes = null;
+		if(format == CameraController.YUV)
+			allSizes = allYUVSizes;
+		else if(format == CameraController.JPEG)
+			allSizes = allJpegSizes;
+		else
+			isSizeSupported = true;
+		
+		for(Size systemSize : allSizes)
+		{
+			int systemMPix = systemSize.getWidth() * systemSize.getHeight();
+			int systemWidth = systemSize.getWidth();
+			
+			if(systemMPix == MPix && systemWidth == width)
+				isSizeSupported = true;
+		}
+		
+		return isSizeSupported;
+	}
+	
+	
 	
 	public static CameraDevice getCamera2()
 	{
@@ -1629,15 +1694,15 @@ public class HALv3
 		if (format == CameraController.JPEG || captureFormat == CameraController.JPEG)
 		{
 			stillRequestBuilder.addTarget(appInterface.getJPEGImageSurface());
-		} else if (format == CameraController.YUV || format == CameraController.YUV_RAW)
+		}
+		else if (format == CameraController.YUV || format == CameraController.YUV_RAW)
 		{
 			if (CameraController.isGalaxyS6 && format == CameraController.YUV_RAW)
-			{
 				stillRequestBuilder.addTarget(appInterface.getRAWImageSurface()); //Used only for Super mode
-			} else {
+			else
 				stillRequestBuilder.addTarget(appInterface.getYUVImageSurface());
-			}
-		} else if (format == CameraController.RAW)
+		}
+		else if (format == CameraController.RAW)
 		{
 			rawRequestBuilder.addTarget(appInterface.getRAWImageSurface());
 			stillRequestBuilder.addTarget(appInterface.getJPEGImageSurface());
