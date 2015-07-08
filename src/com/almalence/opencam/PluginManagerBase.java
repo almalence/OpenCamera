@@ -41,6 +41,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -69,6 +70,8 @@ import android.graphics.Rect;
 import android.hardware.Camera;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.DngCreator;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -2675,7 +2678,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 
 			int dateFormat = Integer.parseInt(prefs.getString(ApplicationScreen.sTimestampDate, "0"));
 			boolean abbreviation = prefs.getBoolean(ApplicationScreen.sTimestampAbbreviation, false);
-			boolean saveGeo = prefs.getBoolean(ApplicationScreen.sTimestampGeo, false);
+			int saveGeo = Integer.parseInt(prefs.getString(ApplicationScreen.sTimestampGeo, "0"));
 			int timeFormat = Integer.parseInt(prefs.getString(ApplicationScreen.sTimestampTime, "0"));
 			int separator = Integer.parseInt(prefs.getString(ApplicationScreen.sTimestampSeparator, "0"));
 			String customText = prefs.getString(ApplicationScreen.sTimestampCustomText, "");
@@ -2683,17 +2686,41 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			int fontSizeC = Integer.parseInt(prefs.getString(ApplicationScreen.sTimestampFontSize, "80"));
 
 			String formattedCurrentDate="";
-			if (dateFormat == 0 && timeFormat == 0 && customText.equals("") && !saveGeo)
+			if (dateFormat == 0 && timeFormat == 0 && customText.equals("") && saveGeo==0)
 				return;
 	
 			String geoText = "";
 			//show geo data on time stamp
-			if (saveGeo)
+			if (saveGeo!=0)
 			{
 				Location l = MLocation.getLocation(ApplicationScreen.getMainContext());
 
 				if (l != null)
-					geoText= "lat:" + l.getLatitude() + "\nlng:" + l.getLongitude();
+				{
+					if (saveGeo==2)
+					{
+						Geocoder geocoder = new Geocoder(MainScreen.getMainContext(), Locale.getDefault());
+						List<Address> list = geocoder.getFromLocation(l.getLatitude(), l.getLongitude(), 1);
+						if (!list.isEmpty())
+						{
+							String country = list.get(0).getCountryName();
+							String locality = list.get(0).getLocality();
+							String adminArea = list.get(0).getSubAdminArea();//city localized
+							String street = list.get(0).getThoroughfare();//street localized
+							String address = list.get(0).getAddressLine(0);
+							
+							//replace street and city with localized name
+							if (street!=null)
+								address = street;							
+							if (adminArea!=null)
+								locality = adminArea;
+							
+							geoText=  (country!=null?country:"") + (locality!=null?(", "+locality):"") + (address!=null?(", \n"+address):"");
+						}
+					}
+					else
+						geoText= "lat:" + l.getLatitude() + "\nlng:" + l.getLongitude();
+				}
 			}
 			
 			String dateFormatString = "";
