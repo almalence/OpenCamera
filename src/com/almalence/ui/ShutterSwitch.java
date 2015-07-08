@@ -23,6 +23,7 @@ package com.almalence.ui;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.R;
+import com.almalence.util.Util;
 //-+- -->
 import android.content.Context;
 import android.content.res.Resources;
@@ -41,6 +42,11 @@ public class ShutterSwitch extends View
 	private static final int			TOUCH_MODE_IDLE		= 0;
 	private static final int			TOUCH_MODE_DOWN		= 1;
 	private static final int			TOUCH_MODE_DRAGGING	= 2;
+
+	public static final int				STATE_PHOTO_ACTIVE	= 0;
+	public static final int				STATE_VIDEO_ACTIVE	= 1;
+
+	private int							state				= STATE_VIDEO_ACTIVE;
 
 	private Drawable					mThumbDrawable;
 	private Drawable					mTrackDrawable;
@@ -70,13 +76,13 @@ public class ShutterSwitch extends View
 
 	private OnShutterClickListener		onShutterClickListener;
 	private OnShutterCheckedListener	onShutterCheckedListener;
-	private long 						mTouchTimeStart;
-	private boolean 					mThumbMoved;
+	private long						mTouchTimeStart;
+	private boolean						mThumbMoved;
 
 	private final Rect					mTempRect			= new Rect();
 
-	private static final int[] STATE_PRESSED = {android.R.attr.state_pressed};
-	private static final int[] STATE_DEFAULT = {};
+	private static final int[]			STATE_PRESSED		= { android.R.attr.state_pressed };
+	private static final int[]			STATE_DEFAULT		= {};
 
 	/**
 	 * Construct a new Switch with default styling.
@@ -139,8 +145,24 @@ public class ShutterSwitch extends View
 
 		// Refresh display with current params
 		refreshDrawableState();
+		
+		setThumbPositionDefault();
 	}
 
+	public void setState(int newState)
+	{
+		state = newState;
+		setThumbPositionDefault();
+		if (state == STATE_PHOTO_ACTIVE) {
+			setThumbResource(R.drawable.button_shutter);
+			setTrackResource(R.drawable.gui_almalence_shutter_switch_bg_1);
+		} else {
+			setThumbResource(R.drawable.gui_almalence_shutter_video_off);
+			setTrackResource(R.drawable.gui_almalence_shutter_switch_bg_2);
+		}
+		invalidate();
+	}
+	
 	/**
 	 * Set the minimum width of the switch in pixels. The switch's width will be
 	 * the maximum of this value and its measured width as determined by the
@@ -309,11 +331,11 @@ public class ShutterSwitch extends View
 	}
 
 	@Override
-	protected void onVisibilityChanged(View changedView, int visibility) {
-		mThumbPosition = 0.0f;
-		mThumbPositionTemp = 0.0f;
+	protected void onVisibilityChanged(View changedView, int visibility)
+	{
+		setThumbPositionDefault();
 	};
-	
+
 	@Override
 	public void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
 	{
@@ -321,6 +343,8 @@ public class ShutterSwitch extends View
 		mSwitchWidth = getWidth();
 		mSwitchHeight = getHeight();
 		mThumbWidth = mSwitchHeight;
+		
+		setThumbPositionDefault();
 	}
 
 	/**
@@ -352,8 +376,7 @@ public class ShutterSwitch extends View
 				{
 					mTouchMode = TOUCH_MODE_DOWN;
 					mThumbDrawable.setState(STATE_PRESSED);
-					mThumbPositionTemp = 0.f;
-					mThumbPosition = 0.f;
+					setThumbPositionDefault();
 					mTouchX = x;
 					mTouchY = y;
 					invalidate();
@@ -390,14 +413,32 @@ public class ShutterSwitch extends View
 					{
 						final float x = ev.getX();
 						final float dx = x - mTouchX;
-						float newPos = Math.max(0, Math.min(mThumbPositionTemp + dx, getThumbScrollRange()));
+						
+						float newPos = 0.f;
+						if (state == STATE_PHOTO_ACTIVE) {
+							newPos = Math.max(0, Math.min(mThumbPositionTemp + dx, getThumbScrollRange()));
+						} else {
+							newPos = Math.min(mSwitchWidth, Math.min(mThumbPositionTemp + dx, getThumbScrollRange()));
+						}
+						
+						newPos = Util.clamp(newPos, 0.f, mSwitchWidth);
+						
+						
 						if (newPos != mThumbPositionTemp)
 						{
 							mThumbPositionTemp = newPos;
-							if (mThumbPositionTemp >= 20.f || mThumbPositionTemp < mThumbPosition)
-							{
-								mThumbPosition = mThumbPositionTemp;
-								mThumbMoved = true;
+							if (state == STATE_PHOTO_ACTIVE) {
+								if (mThumbPositionTemp >= 20.f || mThumbPositionTemp < mThumbPosition)
+								{
+									mThumbPosition = mThumbPositionTemp;
+									mThumbMoved = true;
+								}
+							} else {
+								if (mThumbPositionTemp <= mSwitchWidth - 20.f || mThumbPositionTemp > mThumbPosition)
+								{
+									mThumbPosition = mThumbPositionTemp;
+									mThumbMoved = true;
+								}
 							}
 							mTouchX = x;
 							invalidate();
@@ -466,7 +507,7 @@ public class ShutterSwitch extends View
 			float xvel = mVelocityTracker.getXVelocity();
 			if (Math.abs(xvel) > mMinFlingVelocity)
 			{
-				newState = xvel > 0;
+				newState = state == STATE_PHOTO_ACTIVE ? xvel > 0 : xvel < 0;
 			} else
 			{
 				newState = getTargetCheckedState();
@@ -474,28 +515,46 @@ public class ShutterSwitch extends View
 
 			if (newState)
 			{
+				// Change state of switch
+				if (state == STATE_PHOTO_ACTIVE) {
+					setState(STATE_VIDEO_ACTIVE);
+				} else {
+					setState(STATE_PHOTO_ACTIVE);
+				}
+				
 				// if "Checked", notify onChecked listener.
 				if (onShutterCheckedListener != null)
 				{
-					onShutterCheckedListener.onShutterChecked();
+					onShutterCheckedListener.onShutterChecked(state);
 				}
 			} else
 			{
 				// else notify onClick listener if it wasn't longClick.
-				if (onShutterClickListener != null && !mThumbMoved && System.currentTimeMillis() - mTouchTimeStart < 1000)
+				if (onShutterClickListener != null && !mThumbMoved
+						&& System.currentTimeMillis() - mTouchTimeStart < 1000)
 				{
 					onShutterClickListener.onShutterClick();
 				}
-				mThumbPosition = 0.0f;
-				mThumbPositionTemp = 0.0f;
+			
+				setThumbPositionDefault();
 				invalidate();
 			}
 		}
 	}
 
+	private void setThumbPositionDefault() {
+		if (state == STATE_PHOTO_ACTIVE) {
+			mThumbPosition = 0.0f;
+			mThumbPositionTemp = 0.0f;
+		} else {
+			mThumbPosition = mSwitchWidth - mThumbWidth;
+			mThumbPositionTemp = mSwitchWidth - mThumbWidth;
+		}
+	}
+	
 	private boolean getTargetCheckedState()
 	{
-		return mThumbPosition >= getThumbScrollRange() / 2;
+		return state == STATE_PHOTO_ACTIVE ? mThumbPosition >= getThumbScrollRange() / 2 : mThumbPosition <= getThumbScrollRange() / 2;
 	}
 
 	@Override
@@ -616,6 +675,6 @@ public class ShutterSwitch extends View
 
 	public interface OnShutterCheckedListener
 	{
-		public void onShutterChecked();
+		public void onShutterChecked(int newState);
 	}
 }

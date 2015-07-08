@@ -21,6 +21,7 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam.ui;
+
 //-+- -->
 
 import java.io.IOException;
@@ -117,6 +118,7 @@ import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginType;
 import com.almalence.opencam.Preferences;
 import com.almalence.opencam.R;
+
 //-+- -->
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
@@ -175,14 +177,15 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	// Mode selector layout
 	private ElementAdapter									modeAdapter;
 	private List<View>										modeViews;
-	private View 											videoModeView;
+	private View											videoModeView;
+	private View											lastPhotoModeView;
 	private ViewGroup										activeMode					= null;
 	private boolean											modeSelectorVisible			= false;
 	// If quick settings layout is showing now
 
 	private AlmalenceStore									store;
 	private ImageSizeQuickSetting							imageSizeQuickSetting;
-	private ColorEffectQuickSetting						collorEffectQuickSetting;
+	private ColorEffectQuickSetting							collorEffectQuickSetting;
 
 	private SonyCameraDeviceExplorer						sonyCameraDeviceExplorer;
 
@@ -973,7 +976,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	private long											mExposureTime				= -1;
 	private float											mFocusDistance				= -1;
-	private int												mOriginalFocusMode			= -1;// Remember auto focus mode while using manual focus.
+	private int												mOriginalFocusMode			= -1;														// Remember
+																																					// auto
+																																					// focus
+																																					// mode
+																																					// while
+																																					// using
+																																					// manual
+																																					// focus.
 
 	private int												iExposureTimeIndexRange		= 0;
 	private int												iExposureTimeMinIndex		= 0;
@@ -991,7 +1001,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	// indicates if it's first launch - to show hint layer.
 	private boolean											isFirstLaunch				= true;
 
-	private static int										iScreenType					= MainScreen.getAppResources().getInteger(R.integer.screen_type);
+	private static int										iScreenType					= MainScreen
+																								.getAppResources()
+																								.getInteger(
+																										R.integer.screen_type);
 
 	private Handler											manualControlsHandler;
 	private static final int								CLOSE_MANUAL_CONTROLS		= 0;
@@ -1129,8 +1142,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		else
 			return -1;
 	}
-	
-	//Methods to get readable camera parameters names
+
+	// Methods to get readable camera parameters names
 	public String getSceneName(int sceneMode)
 	{
 		if (NAMES_SCENE.containsKey(sceneMode))
@@ -1381,8 +1394,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		guiView.findViewById(R.id.buttonSelectMode).setEnabled(true);
 		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
 				ApplicationInterface.MSG_CONTROL_UNLOCKED);
-		
-		if(this.shutterSwitch != null)
+
+		if (this.shutterSwitch != null)
 		{
 			this.shutterSwitch.setEnabled(false);
 			this.shutterSwitch.setOnShutterClickListener(null);
@@ -1414,24 +1427,36 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		sonyCameraDeviceExplorer.hideExplorer();
 	}
 
-	private void initShutterButton() {
+	private void initShutterButton()
+	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		boolean switchShutterOn = prefs.getBoolean(MainScreen.sFastSwitchShutterOn, true);
 		String modeID = ApplicationScreen.getPluginManager().getActiveModeID();
-		if (!switchShutterOn || modeID.equals("video")) {
-			shutterButton.setVisibility(View.VISIBLE);
-			shutterSwitch.setVisibility(View.GONE);
-		} else {
+
+		if (switchShutterOn)
+		{
 			shutterButton.setVisibility(View.GONE);
 			shutterSwitch.setVisibility(View.VISIBLE);
+
+			if (modeID.equals("video"))
+			{
+				shutterSwitch.setState(ShutterSwitch.STATE_VIDEO_ACTIVE);
+			} else
+			{
+				shutterSwitch.setState(ShutterSwitch.STATE_PHOTO_ACTIVE);
+			}
+		} else
+		{
+			shutterButton.setVisibility(View.VISIBLE);
+			shutterSwitch.setVisibility(View.GONE);
 		}
 	}
-	
+
 	@Override
 	public void onResume()
 	{
 		initShutterButton();
-		
+
 		ApplicationScreen.instance.runOnUiThread(new Runnable()
 		{
 			@Override
@@ -1492,7 +1517,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	}
 
 	@Override
-	public void onDestroy()	{}
+	public void onDestroy()
+	{
+	}
 
 	@Override
 	public void createInitialGUI()
@@ -1569,7 +1596,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		shutterButton = ((RotateImageView) guiView.findViewById(R.id.buttonShutter));
 		shutterButton.setOnLongClickListener(this);
-		
+
 		shutterSwitch = ((ShutterSwitch) guiView.findViewById(R.id.switchShutter));
 		shutterSwitch.setEnabled(false);
 		shutterSwitch.setOnShutterClickListener(null);
@@ -1729,34 +1756,35 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				AlmalenceGUI.this.updateThumbnailButton();
 			}
 		});
-		
-		RelativeLayout specialLayout3 = (RelativeLayout) ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout3);
+
+		RelativeLayout specialLayout3 = (RelativeLayout) ApplicationScreen.instance
+				.findViewById(R.id.specialPluginsLayout3);
 		int id = 0;
 		for (int i = 0; i < specialLayout3.getChildCount(); i++)
 		{
 			View pluginView = specialLayout3.getChildAt(i);
-			RelativeLayout.LayoutParams pm = (RelativeLayout.LayoutParams)pluginView.getLayoutParams();
+			RelativeLayout.LayoutParams pm = (RelativeLayout.LayoutParams) pluginView.getLayoutParams();
 			int[] rules = pm.getRules();
-			if(rules[RelativeLayout.ALIGN_PARENT_TOP] == -1 && rules[RelativeLayout.ALIGN_PARENT_RIGHT] == -1)
+			if (rules[RelativeLayout.ALIGN_PARENT_TOP] == -1 && rules[RelativeLayout.ALIGN_PARENT_RIGHT] == -1)
 			{
 				String name = pluginView.getClass().getName();
 				String nameSwitch = com.almalence.ui.Switch.Switch.class.getName();
-				if(name.equals(nameSwitch))
+				if (name.equals(nameSwitch))
 					id = pluginView.getId();
 			}
 		}
-		
-		RelativeLayout manualControlsLayout = (RelativeLayout) ApplicationScreen.instance.findViewById(R.id.manualControlsLayout);
-		RelativeLayout.LayoutParams pm = (RelativeLayout.LayoutParams)manualControlsLayout.getLayoutParams();
-		if(id > 0)
+
+		RelativeLayout manualControlsLayout = (RelativeLayout) ApplicationScreen.instance
+				.findViewById(R.id.manualControlsLayout);
+		RelativeLayout.LayoutParams pm = (RelativeLayout.LayoutParams) manualControlsLayout.getLayoutParams();
+		if (id > 0)
 		{
 			pm.addRule(RelativeLayout.LEFT_OF, id);
 			manualControlsLayout.setLayoutParams(pm);
-		}
-		else
+		} else
 		{
 			float width = ApplicationScreen.instance.getResources().getDimension(R.dimen.exposureSeekBarWidth);
-			pm.width = (int)width;
+			pm.width = (int) width;
 			manualControlsLayout.setLayoutParams(pm);
 		}
 
@@ -2138,7 +2166,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			if (!activeWBNames.isEmpty())
 			{
 				mWBSupported = true;
-				
+
 				// Add Manual Focus control
 				if (CameraController.isManualWhiteBalanceSupported())
 				{
@@ -2173,12 +2201,16 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 							mWB = CameraParameters.WB_MODE_OFF;
 
-//							preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref, false).commit();
-							int iColorTempValue = preferences.getInt(MainScreen.sColorTemperaturePref, ApplicationScreen.iDefaultColorTemperatureValue);
+							// preferences.edit().putBoolean(MainScreen.sFocusDistanceModePref,
+							// false).commit();
+							int iColorTempValue = preferences.getInt(MainScreen.sColorTemperaturePref,
+									ApplicationScreen.iDefaultColorTemperatureValue);
 
-//							mOriginalFocusMode = preferences.getInt(
-//									CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-//											: MainScreen.sFrontFocusModePref, MainScreen.sDefaultFocusValue);
+							// mOriginalFocusMode = preferences.getInt(
+							// CameraController.isFrontCamera() ?
+							// MainScreen.sRearFocusModePref
+							// : MainScreen.sFrontFocusModePref,
+							// MainScreen.sDefaultFocusValue);
 							CameraController.setCameraWhiteBalance(CameraParameters.WB_MODE_OFF);
 							CameraController.setCameraColorTemperature(iColorTempValue);
 
@@ -2197,10 +2229,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS,
 									CLOSE_MANUAL_CONTROLS_DELAY);
 
-//							preferences
-//									.edit()
-//									.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-//											: MainScreen.sFrontFocusModePref, FOCUS_MF).commit();
+							// preferences
+							// .edit()
+							// .putInt(CameraController.isFrontCamera() ?
+							// MainScreen.sRearFocusModePref
+							// : MainScreen.sFrontFocusModePref,
+							// FOCUS_MF).commit();
 						}
 					});
 
@@ -2208,24 +2242,29 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					activeWB.add(wbModeButtons.get(CameraParameters.WB_MODE_MANUAL));
 					activeWBNames.add(CameraParameters.WB_MODE_MANUAL);
 
-//					isAutoFocusDistance = preferences.getBoolean(MainScreen.sFocusDistanceModePref, true);
+					// isAutoFocusDistance =
+					// preferences.getBoolean(MainScreen.sFocusDistanceModePref,
+					// true);
 
 					SeekBar temperatureBar = (SeekBar) guiView.findViewById(R.id.manualWBSeekBar);
 					if (temperatureBar != null)
 					{
-						int colorTemperature = preferences.getInt(MainScreen.sColorTemperaturePref, ApplicationScreen.iDefaultColorTemperatureValue);
+						int colorTemperature = preferences.getInt(MainScreen.sColorTemperaturePref,
+								ApplicationScreen.iDefaultColorTemperatureValue);
 						int readableTemperature = ApplicationScreen.iMaxColorTemperatureValue - colorTemperature;
-						
-						temperatureBar.setMax(ApplicationScreen.iMaxColorTemperatureValue/100 - 10);
-//						temperatureBar.setProgress(colorTemperature/100 - 10);
-						temperatureBar.setProgress(readableTemperature/100);
+
+						temperatureBar.setMax(ApplicationScreen.iMaxColorTemperatureValue / 100 - 10);
+						// temperatureBar.setProgress(colorTemperature/100 -
+						// 10);
+						temperatureBar.setProgress(readableTemperature / 100);
 
 						TextView wbText = (TextView) guiView.findViewById(R.id.manualWBText);
 
-//						wbText.setText(String.valueOf(colorTemperature) +"K");
-						wbText.setText(String.valueOf(readableTemperature + 1000) +"K");
+						// wbText.setText(String.valueOf(colorTemperature)
+						// +"K");
+						wbText.setText(String.valueOf(readableTemperature + 1000) + "K");
 
-//						mFocusDistance = colorTemperature;
+						// mFocusDistance = colorTemperature;
 						temperatureBar.setOnSeekBarChangeListener(this);
 					}
 				} else
@@ -2381,7 +2420,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							float fDistValue = preferences.getFloat(MainScreen.sFocusDistancePref,
 									CameraController.getMinimumFocusDistance());
 
-							mOriginalFocusMode = ApplicationScreen.instance.getFocusModePref(MainScreen.sDefaultFocusValue);
+							mOriginalFocusMode = ApplicationScreen.instance
+									.getFocusModePref(MainScreen.sDefaultFocusValue);
 							CameraController.setCameraFocusDistance(fDistValue);
 							ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
 									ApplicationInterface.MSG_FOCUS_LOCKED);
@@ -2599,8 +2639,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				int initValue = preferences.getInt(ApplicationScreen.sISOPref, ApplicationScreen.sDefaultISOValue);
 				int meteringMode = preferences.getInt(ApplicationScreen.sMeteringModePref,
 						ApplicationScreen.sDefaultMeteringValue);
-				if (CameraController.isUseHALv3() && meteringMode == CameraParameters.meteringModeManual) {
-					// The default (AUTO) value of ISO and manual metering mode produce too dark image.
+				if (CameraController.isUseHALv3() && meteringMode == CameraParameters.meteringModeManual)
+				{
+					// The default (AUTO) value of ISO and manual metering mode
+					// produce too dark image.
 					// Set ISO to 400, as default for manual metering mode.
 					initValue = CameraParameters.ISO_400;
 				}
@@ -2611,7 +2653,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					else
 						initValue = ApplicationScreen.sDefaultISOValue;
 
-					
 					preferences.edit().putInt(ApplicationScreen.sISOPref, initValue).commit();
 				}
 				setButtonSelected(isoButtons, initValue);
@@ -2695,7 +2736,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 						guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 						guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.VISIBLE);
-						if(mManualWhiteBalanceSupported)
+						if (mManualWhiteBalanceSupported)
 							guiView.findViewById(R.id.manualWBLayout).setVisibility(View.VISIBLE);
 
 						mMeteringMode = CameraParameters.meteringModeManual;
@@ -2712,8 +2753,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, true, true, false);
 						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, true, false);
 						CameraController.setCameraExposureTime(mExposureTime);
-						
-						// The default (AUTO) value of ISO and manual metering mode produce too dark image.
+
+						// The default (AUTO) value of ISO and manual metering
+						// mode produce too dark image.
 						// Set ISO to 400, as default for manual metering mode.
 						setISO(CameraParameters.ISO_400);
 
@@ -2810,12 +2852,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
 					}
 					guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.VISIBLE);
-					if(mManualWhiteBalanceSupported)
+					if (mManualWhiteBalanceSupported)
 						guiView.findViewById(R.id.manualWBLayout).setVisibility(View.VISIBLE);
 
 					manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 
-					// Trigger focus to lock AF, before CONTROL_AE_MODE will be set to OFF
+					// Trigger focus to lock AF, before CONTROL_AE_MODE will be
+					// set to OFF
 					CameraController.forceFocus();
 					preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, false).commit();
 					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, true, true, false);
@@ -2830,7 +2873,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				} else
 				{
 					guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.GONE);
-					if(mWB != CameraParameters.WB_MODE_OFF)
+					if (mWB != CameraParameters.WB_MODE_OFF)
 						guiView.findViewById(R.id.manualWBLayout).setVisibility(View.GONE);
 
 					if (CameraController.isUseHALv3())
@@ -2856,7 +2899,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			this.mMeteringMode = -1;
 		}
 
-		if (!PluginManager.getInstance().getActiveModeID().equals("video") && !(PluginManager.getInstance().getActiveModeID().equals("nightmode") && CameraController.isUseHALv3()))
+		if (!PluginManager.getInstance().getActiveModeID().equals("video")
+				&& !(PluginManager.getInstance().getActiveModeID().equals("nightmode") && CameraController.isUseHALv3()))
 		{
 			RotateImageView buttonImageSize = (RotateImageView) topMenuButtons.get(MODE_IMAGE_SIZE);
 			buttonImageSize.setImageResource(ICON_IMAGE_SIZE);
@@ -2869,10 +2913,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			int initValue = 0;
 			try
 			{
-				initValue = Integer.parseInt(preferences.getString(
-						CameraController.isFrontCamera() ? MainScreen.sRearColorEffectPref
-								: MainScreen.sFrontColorEffectPref, String
-								.valueOf(MainScreen.sDefaultColorEffectValue)));
+				initValue = Integer
+						.parseInt(preferences.getString(
+								CameraController.isFrontCamera() ? MainScreen.sRearColorEffectPref
+										: MainScreen.sFrontColorEffectPref, String
+										.valueOf(MainScreen.sDefaultColorEffectValue)));
 			} catch (Exception e)
 			{
 				initValue = (preferences.getInt(CameraController.isFrontCamera() ? MainScreen.sRearColorEffectPref
@@ -3017,8 +3062,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
 					ApplicationInterface.MSG_EV_CHANGED);
 		}
-		
-		if(shutterSwitch != null)
+
+		if (shutterSwitch != null)
 		{
 			this.shutterSwitch.setEnabled(true);
 			shutterSwitch.setOnShutterClickListener(new OnShutterClickListener()
@@ -3026,16 +3071,20 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				@Override
 				public void onShutterClick()
 				{
-						onButtonClick(shutterButton);
+					onButtonClick(shutterButton);
 				}
 			});
-			
+
 			shutterSwitch.setOnShutterCheckedListener(new OnShutterCheckedListener()
 			{
 				@Override
-				public void onShutterChecked()
-				{					
+				public void onShutterChecked(int newState)
+				{
+					if (newState == ShutterSwitch.STATE_VIDEO_ACTIVE) {
 						changeMode(videoModeView);
+					} else {
+						changeMode(lastPhotoModeView);
+					}
 				}
 			});
 		}
@@ -3174,7 +3223,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			case MODE_SELF_TIMER:
 				return true;
 			case MODE_IMAGE_SIZE:
-				if (PluginManager.getInstance().getActiveModeID().equals("video") || (PluginManager.getInstance().getActiveModeID().equals("nightmode") && CameraController.isUseHALv3()))
+				if (PluginManager.getInstance().getActiveModeID().equals("video")
+						|| (PluginManager.getInstance().getActiveModeID().equals("nightmode") && CameraController
+								.isUseHALv3()))
 				{
 					return false;
 				}
@@ -3246,7 +3297,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			correctTopMenuButtonBackground(topMenuView, !bDisable);
 
-			if (bInitMenu) {
+			if (bInitMenu)
+			{
 				initSettingsMenu(true);
 			}
 		}
@@ -3387,7 +3439,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			int endDegree = AlmalenceGUI.mDeviceOrientation == 0 ? 0 : 360 - AlmalenceGUI.mDeviceOrientation;
 
 			int diff = endDegree - startDegree;
-			//Make it in range [-179, 180]. That's the shorted distance between the two angles
+			// Make it in range [-179, 180]. That's the shorted distance between
+			// the two angles
 			endDegree = diff > 180 ? endDegree - 360 : diff < -180 && endDegree == 0 ? 360 : endDegree;
 
 			if (modeSelectorVisible)
@@ -3531,7 +3584,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			icon_text = MainScreen.getAppResources().getString(R.string.settings_mode_self_timer);
 			break;
 		case IMAGE_SIZE:
-			if (!PluginManager.getInstance().getActiveModeID().equals("video") && !(PluginManager.getInstance().getActiveModeID().equals("nightmode") && CameraController.isUseHALv3()))
+			if (!PluginManager.getInstance().getActiveModeID().equals("video")
+					&& !(PluginManager.getInstance().getActiveModeID().equals("nightmode") && CameraController
+							.isUseHALv3()))
 			{
 				String selectedSize = "";
 				final String modeId = PluginManager.getInstance().getActiveModeID();
@@ -3539,9 +3594,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				{
 					PanoramaAugmentedCapturePlugin.onDefaultSelectResolutons();
 					int currentIdx = PanoramaAugmentedCapturePlugin.prefResolution;
-					
+
 					selectedSize = PanoramaAugmentedCapturePlugin.getResolutionsPictureNamesList().get(0);
-					
+
 					List<String> cs = PanoramaAugmentedCapturePlugin.getResolutionsPictureIndexesList();
 					int ii = 0;
 					for (String s : cs)
@@ -3553,16 +3608,15 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						}
 						ii++;
 					}
-					
+
 				} else if (modeId.equals("nightmode") || modeId.equals("multishot"))
 				{
 					int currentIdx = Integer.parseInt(CameraController.MultishotResolutionsIdxesList.get(MainScreen
 							.selectImageDimensionMultishot()));
-					
-					selectedSize = getSizeName(CameraController.getMultishotResolutionsNamesList(), 
-											   CameraController.getMultishotResolutionsSizeList(), 
-											   CameraController.getMultishotResolutionsIdxesList(), 
-											   currentIdx);
+
+					selectedSize = getSizeName(CameraController.getMultishotResolutionsNamesList(),
+							CameraController.getMultishotResolutionsSizeList(),
+							CameraController.getMultishotResolutionsIdxesList(), currentIdx);
 
 				} else
 				{
@@ -3571,11 +3625,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					{
 						currentIdx = 0;
 					}
-					
-					selectedSize = getSizeName(CameraController.getResolutionsNamesList(), 
-											   CameraController.getResolutionsSizeList(), 
-											   CameraController.getResolutionsIdxesList(), 
-											   currentIdx);
+
+					selectedSize = getSizeName(CameraController.getResolutionsNamesList(),
+							CameraController.getResolutionsSizeList(), CameraController.getResolutionsIdxesList(),
+							currentIdx);
 				}
 				icon_id = ICON_IMAGE_SIZE;
 				icon_text = selectedSize;
@@ -3693,12 +3746,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			settingsViews.add(settingView);
 	}
 
-	private String getSizeName(List<String> listNames, List<CameraController.Size> listSizes, List<String> listIdxes, int currentIdx)
+	private String getSizeName(List<String> listNames, List<CameraController.Size> listSizes, List<String> listIdxes,
+			int currentIdx)
 	{
 		if (listNames == null)
 			return "";
 		String selectedSize = listNames.get(0);
-		
+
 		List<CameraController.Size> cs = listSizes;
 		int ii = 0;
 		for (CameraController.Size s : cs)
@@ -3712,7 +3766,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		}
 		return selectedSize;
 	}
-	
+
 	private void addPluginQuickSetting(Plugin plugin, boolean isQuickControl)
 	{
 		int iconID = plugin.getQuickControlIconID();
@@ -3794,13 +3848,16 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				addQuickSetting(SettingsType.SELF_TIMER, true);
 				break;
 			case R.id.imageSizeButton:
-				if (!PluginManager.getInstance().getActiveModeID().equals("video") && !(PluginManager.getInstance().getActiveModeID().equals("nightmode") && CameraController.isUseHALv3()))
+				if (!PluginManager.getInstance().getActiveModeID().equals("video")
+						&& !(PluginManager.getInstance().getActiveModeID().equals("nightmode") && CameraController
+								.isUseHALv3()))
 				{
 					addQuickSetting(SettingsType.IMAGE_SIZE, true);
 				}
 				break;
 			case R.id.colorEffectButton:
-				if (mCollorEffectsSupported) {
+				if (mCollorEffectsSupported)
+				{
 					addQuickSetting(SettingsType.COLLOR_EFFECT, true);
 				}
 				break;
@@ -4176,7 +4233,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		Iterator<Integer> it = keys.iterator();
 		while (it.hasNext())
 		{
-			// If such camera feature is supported then add a button to settings menu
+			// If such camera feature is supported then add a button to settings
+			// menu
 			Integer id = it.next();
 			switch (id)
 			{
@@ -4216,13 +4274,16 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				addQuickSetting(SettingsType.SELF_TIMER, false);
 				break;
 			case R.id.imageSizeButton:
-				if (!PluginManager.getInstance().getActiveModeID().equals("video") && !(PluginManager.getInstance().getActiveModeID().equals("nightmode") && CameraController.isUseHALv3()))
+				if (!PluginManager.getInstance().getActiveModeID().equals("video")
+						&& !(PluginManager.getInstance().getActiveModeID().equals("nightmode") && CameraController
+								.isUseHALv3()))
 				{
 					addQuickSetting(SettingsType.IMAGE_SIZE, false);
 				}
 				break;
 			case R.id.colorEffectButton:
-				if (mCollorEffectsSupported) {
+				if (mCollorEffectsSupported)
+				{
 					addQuickSetting(SettingsType.COLLOR_EFFECT, false);
 				}
 				break;
@@ -4451,10 +4512,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				int iCamerasSupported = CameraController.getNumberOfCameras();
 				if (iCamerasSupported > 0)
 				{
-					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen
+							.getMainContext());
 					boolean sonyCamerasSettingOn = prefs.getBoolean(MainScreen.sSonyCamerasPref, false);
 					String modeName = ApplicationScreen.getPluginManager().getActiveModeID();
-					if (!sonyCamerasSettingOn || (iCamerasSupported > 2 && !(modeName.contains("video") || modeName.contains("single"))))
+					if (!sonyCamerasSettingOn
+							|| (iCamerasSupported > 2 && !(modeName.contains("video") || modeName.contains("single"))))
 					{
 						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
 						setCameraMode((CameraController.getCameraIndex() + 1) % 2);
@@ -4661,11 +4724,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 			@Override
 			public void onAnimationRepeat(Animation animation)
-			{}
+			{
+			}
 
 			@Override
 			public void onAnimationStart(Animation animation)
-			{}
+			{
+			}
 		});
 
 		modeSelectorVisible = false;
@@ -4810,11 +4875,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 			@Override
 			public void onAnimationRepeat(Animation animation)
-			{}
+			{
+			}
 
 			@Override
 			public void onAnimationStart(Animation animation)
-			{}
+			{
+			}
 		});
 
 		lrinvisible.setAnimationListener(new AnimationListener()
@@ -4827,11 +4894,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 			@Override
 			public void onAnimationRepeat(Animation animation)
-			{}
+			{
+			}
 
 			@Override
 			public void onAnimationStart(Animation animation)
-			{}
+			{
+			}
 		});
 
 		// checks preferences
@@ -5442,9 +5511,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				// camera.
 				int iCamerasSupported = CameraController.getNumberOfCameras();
 				String modeName = ApplicationScreen.getPluginManager().getActiveModeID();
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen
+						.getMainContext());
 				boolean sonyCamerasSettingOn = prefs.getBoolean(MainScreen.sSonyCamerasPref, false);
-				if (!sonyCamerasSettingOn || (iCamerasSupported > 2 && !(modeName.contains("video") || modeName.contains("single"))))
+				if (!sonyCamerasSettingOn
+						|| (iCamerasSupported > 2 && !(modeName.contains("video") || modeName.contains("single"))))
 				{
 					setCameraMode((CameraController.getCameraIndex() + 1) % 2);
 					return;
@@ -5672,24 +5743,24 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			setButtonSelected(wbModeButtons, mWB);
 
 			ApplicationScreen.instance.setWBModePref(newMode);
-			
-			if(newMode == CameraParameters.WB_MODE_OFF)
+
+			if (newMode == CameraParameters.WB_MODE_OFF)
 			{
 				setColorTemperature(MainScreen.getInstance().getColorTemperature());
 			}
 		}
-		
-		if(mWB != CameraParameters.WB_MODE_OFF)
+
+		if (mWB != CameraParameters.WB_MODE_OFF)
 		{
 			guiView.findViewById(R.id.manualWBLayout).setVisibility(View.GONE);
-			
-			if (guiView.findViewById(R.id.exposureTimeLayout).getVisibility() == View.GONE && 
-					guiView.findViewById(R.id.focusDistanceLayout).getVisibility() == View.GONE)
-				{
-					guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
-					guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
-					manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
-				}
+
+			if (guiView.findViewById(R.id.exposureTimeLayout).getVisibility() == View.GONE
+					&& guiView.findViewById(R.id.focusDistanceLayout).getVisibility() == View.GONE)
+			{
+				guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
+				guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
+				manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
+			}
 		}
 
 		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_WB);
@@ -5707,7 +5778,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
 				ApplicationInterface.MSG_WB_CHANGED);
 	}
-	
+
 	private void setColorTemperature(int iTemp)
 	{
 		CameraController.setCameraColorTemperature(iTemp);
@@ -5744,8 +5815,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		final LinearLayout seekBarLayout = (LinearLayout) guiView.findViewById(R.id.focusDistanceLayout);
 		seekBarLayout.setVisibility(View.GONE);
 		// CameraController.resetCameraFocusDistance();
-		if (guiView.findViewById(R.id.exposureTimeLayout).getVisibility() == View.GONE && 
-			guiView.findViewById(R.id.manualWBLayout).getVisibility() == View.GONE)
+		if (guiView.findViewById(R.id.exposureTimeLayout).getVisibility() == View.GONE
+				&& guiView.findViewById(R.id.manualWBLayout).getVisibility() == View.GONE)
 		{
 			guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
 			guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
@@ -5803,7 +5874,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			setButtonSelected(isoButtons, mISO);
 
 			preferences.edit().putInt(ApplicationScreen.sISOPref, newMode).commit();
-			
+
 			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
 					ApplicationInterface.MSG_ISO_CHANGED);
 		}
@@ -5820,14 +5891,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private void setMeteringMode(int newMode)
 	{
 		guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.GONE);
-		if(mWB != CameraParameters.WB_MODE_OFF)
+		if (mWB != CameraParameters.WB_MODE_OFF)
 		{
 			guiView.findViewById(R.id.manualWBLayout).setVisibility(View.GONE);
 			setWhiteBalance(mWB);
 		}
-		
-		if (guiView.findViewById(R.id.focusDistanceLayout).getVisibility() == View.GONE &&
-			guiView.findViewById(R.id.manualWBLayout).getVisibility() == View.GONE	)
+
+		if (guiView.findViewById(R.id.focusDistanceLayout).getVisibility() == View.GONE
+				&& guiView.findViewById(R.id.manualWBLayout).getVisibility() == View.GONE)
 		{
 			guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
 			guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
@@ -5838,15 +5909,16 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		if (isEVInitEnabled)
 			disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, false, true, false);
-		
+
 		if (isIsoInitEnabled && !CameraController.isUseHALv3())
 			disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, false, true, false);
-		else {
+		else
+		{
 			mISO = CameraParameters.ISO_AUTO;
 			setISO(mISO);
 			disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true, false);
 		}
-		
+
 		if (isWBInitEnabled)
 			disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, false, true, false);
 		if (isFlashInitEnabled)
@@ -6391,9 +6463,15 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				});
 				buttonModeViewAssoc.put(mode, tmp.modeID);
 				modeViews.add(mode);
-				
-				if (tmp.modeID.equals("video")) {
+
+				if (tmp.modeID.equals("video"))
+				{
 					videoModeView = mode;
+				}
+				
+				// Default is Single.
+				if (tmp.modeID.equals("single")) {
+					lastPhotoModeView = mode;
 				}
 
 				// select active mode in grid with frame
@@ -6403,6 +6481,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							R.drawable.thumbnail_background_selected_inner);
 
 					activeMode = (ViewGroup) mode;
+					
+					if (!tmp.modeID.equals("video")) {
+						lastPhotoModeView = mode;
+					}
 				}
 				mode_number++;
 			} catch (Exception e)
@@ -6445,6 +6527,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				ApplicationScreen.instance.startActivity(intent);
 				return true;
 			}
+		} else {
+			lastPhotoModeView = v;
 		}
 
 		// <!-- -+-
@@ -6576,11 +6660,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 					@Override
 					public void onAnimationRepeat(Animation animation)
-					{}
+					{
+					}
 
 					@Override
 					public void onAnimationStart(Animation animation)
-					{}
+					{
+					}
 				});
 
 				invisible_alpha.setAnimationListener(new AnimationListener()
@@ -6593,11 +6679,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 					@Override
 					public void onAnimationRepeat(Animation animation)
-					{}
+					{
+					}
 
 					@Override
 					public void onAnimationStart(Animation animation)
-					{}
+					{
+					}
 				});
 
 				modeLayout.setRotation(-mDeviceOrientation);
@@ -7106,10 +7194,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		// to possibly slide-out top panel
 		if (view == ApplicationScreen.getPreviewSurfaceView()
-				|| view == (View) ApplicationScreen.instance.findViewById(R.id.mainLayout1)) {
+				|| view == (View) ApplicationScreen.instance.findViewById(R.id.mainLayout1))
+		{
 			((Panel) guiView.findViewById(R.id.topPanel)).touchListener.onTouch(view, event);
-		}
-		else if (view.getParent() == (View) ApplicationScreen.instance.findViewById(R.id.paramsLayout)
+		} else if (view.getParent() == (View) ApplicationScreen.instance.findViewById(R.id.paramsLayout)
 				&& !quickControlsChangeVisible)
 		{
 
@@ -7382,8 +7470,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
 					ApplicationInterface.MSG_EV_CHANGED);
-		} 
-		else if (seekBar == (SeekBar) guiView.findViewById(R.id.exposureTimeSeekBar))
+		} else if (seekBar == (SeekBar) guiView.findViewById(R.id.exposureTimeSeekBar))
 		{
 			if (mMeteringMode == CameraParameters.meteringModeManual)
 			{
@@ -7400,8 +7487,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 				manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
 			}
-		}
-		else if (seekBar == (SeekBar) guiView.findViewById(R.id.focusDistanceSeekBar))
+		} else if (seekBar == (SeekBar) guiView.findViewById(R.id.focusDistanceSeekBar))
 		{
 			int iDistance = progress;
 			CameraController.setCameraFocusDistance(iDistance / 100);
@@ -7410,17 +7496,17 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 			manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 			manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
-		}
-		else if (seekBar == (SeekBar) guiView.findViewById(R.id.manualWBSeekBar))
+		} else if (seekBar == (SeekBar) guiView.findViewById(R.id.manualWBSeekBar))
 		{
 			int iReadableTemp = (progress + 10) * 100;
 			int iTemp = ApplicationScreen.iMaxColorTemperatureValue - (progress * 100);
 			CameraController.setCameraColorTemperature(iTemp);
-//			CameraController.setCameraColorTemperature(iReadableTemp);
+			// CameraController.setCameraColorTemperature(iReadableTemp);
 			preferences.edit().putInt(MainScreen.sColorTemperaturePref, iTemp).commit();
-//			preferences.edit().putInt(MainScreen.sColorTemperaturePref, iReadableTemp).commit();
+			// preferences.edit().putInt(MainScreen.sColorTemperaturePref,
+			// iReadableTemp).commit();
 			TextView wbText = (TextView) guiView.findViewById(R.id.manualWBText);
-			wbText.setText(String.valueOf(iReadableTemp) +"K");
+			wbText.setText(String.valueOf(iReadableTemp) + "K");
 
 			manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 			manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
@@ -7741,7 +7827,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			new CountDownTimer(10, 10)
 			{
 				public void onTick(long millisUntilFinished)
-				{}
+				{
+				}
 
 				public void onFinish()
 				{
@@ -7806,7 +7893,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		new CountDownTimer(1000, 1000)
 		{
 			public void onTick(long millisUntilFinished)
-			{}
+			{
+			}
 
 			public void onFinish()
 			{
@@ -7832,7 +7920,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		@Override
 		protected void onPreExecute()
-		{}
+		{
+		}
 
 		@Override
 		protected Void doInBackground(Void... params)
@@ -7933,7 +8022,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		new CountDownTimer(200, 200)
 		{
 			public void onTick(long millisUntilFinished)
-			{}
+			{
+			}
 
 			public void onFinish()
 			{
@@ -8001,7 +8091,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				{
 					((RotateImageView) guiView.findViewById(R.id.buttonShutter))
 							.setImageResource(R.drawable.button_shutter);
-					
+
 					shutterSwitch.setThumbResource(R.drawable.button_shutter);
 				}
 
@@ -8011,23 +8101,28 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	@Override
 	public void onCameraSetup()
-	{}
+	{
+	}
 
 	@Override
 	public void menuButtonPressed()
-	{}
+	{
+	}
 
 	@Override
 	public void addMode(View mode)
-	{}
+	{
+	}
 
 	@Override
 	public void SetModeSelected(View v)
-	{}
+	{
+	}
 
 	@Override
 	public void hideModes()
-	{}
+	{
+	}
 
 	@Override
 	public int getMaxModeViewWidth()
@@ -8044,7 +8139,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	@Override
 	@TargetApi(14)
 	public void setFocusParameters()
-	{}
+	{
+	}
 
 	// mode help procedure
 	@Override
