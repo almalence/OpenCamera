@@ -6776,7 +6776,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			break;
 		case VIEWFINDER_ZONE_FULLSCREEN:
 			{
-				Log.e("GUI", "VIEWFINDER_ZONE_FULLSCREEN");
 				currParams.width = ApplicationScreen.instance.getPreviewSize() != null ? ApplicationScreen.instance
 						.getPreviewSize().getWidth() : 0;
 				currParams.height = ApplicationScreen.instance.getPreviewSize() != null ? ApplicationScreen.instance
