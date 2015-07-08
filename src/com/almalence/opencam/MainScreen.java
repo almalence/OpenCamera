@@ -1527,9 +1527,8 @@ public class MainScreen extends ApplicationScreen
 			surfaceList.add(mImageReaderYUV.getSurface()); // surface for yuv
 															// image
 			
-			if (CameraController.isGalaxyS6) {
+			if (CameraController.isGalaxyS6)
 				surfaceList.add(mImageReaderRAW.getSurface());
-			}
 			// capture
 		} else if (captureFormat == CameraController.JPEG)
 		{
