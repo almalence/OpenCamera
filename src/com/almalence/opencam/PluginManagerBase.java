@@ -903,6 +903,10 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 
 		case ApplicationInterface.MSG_CAPTURE_FINISHED:
 
+			/*
+			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more details
+			 */
+//			CameraController.onCaptureFinished();
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onCaptureFinished();
 
@@ -926,6 +930,10 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 
 		case ApplicationInterface.MSG_CAPTURE_FINISHED_NORESULT:
 
+			/*
+			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more details
+			 */
+//			CameraController.onCaptureFinished();
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onCaptureFinished();
 

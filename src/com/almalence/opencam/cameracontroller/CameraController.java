@@ -1069,6 +1069,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static void onDestroy()
 	{
 	}
+	
+	/*
+	 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more details
+	 */
+//	public static void onCaptureFinished()
+//	{
+//		if(CameraController.isHALv3)
+//			HALv3.onCaptureFinished();
+//	}
 
 	/* Get different list and maps of camera parameters */
 	public static List<Integer> getIsoValuesList()
@@ -1166,7 +1175,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			// hard-code to enable these only, as we have no profiles for
 			// other models at the moment
-			if (CameraController.isNexus || CameraController.isFlex2 || CameraController.isGalaxyS6 || CameraController.isG4)
+			if (CameraController.isNexus || CameraController.isFlex2/* || CameraController.isGalaxyS6 */|| CameraController.isG4)
 				SuperModeOk = true;
 		}
 
