@@ -110,9 +110,10 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 		// add clones of the sample descriptions to the new sample table
 		for (unsigned int j=0; ;j++)
 		{
-			AP4_SampleDescription* sample_description = sample_video->GetSampleDescription(j);
-			if (sample_description == NULL) break;
-			sample_video_table->AddSampleDescription(sample_description->Clone());
+			AP4_SampleDescription* sample_descriptionVideo = sample_video->GetSampleDescription(j);
+			if (sample_descriptionVideo == NULL) break;
+			sample_video_table->AddSampleDescription(sample_descriptionVideo->Clone());
+			break;
 		}
 
 
@@ -148,9 +149,10 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 		// add clones of the sample descriptions to the new sample table
 		for (unsigned int k=0; ;k++)
 		{
-			AP4_SampleDescription* sample_description = sample_audio->GetSampleDescription(k);
-			if (sample_description == NULL) break;
-			sample_audio_table->AddSampleDescription(sample_description->Clone());
+			AP4_SampleDescription* sample_descriptionAudio = sample_audio->GetSampleDescription(k);
+			if (sample_descriptionAudio == NULL) break;
+			sample_audio_table->AddSampleDescription(sample_descriptionAudio->Clone());
+			break;
 		}
 
 		index = 0;
@@ -207,6 +209,8 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 	brands.Append(AP4_FILE_BRAND_ISOM);
 	brands.Append(AP4_FILE_BRAND_ISO2);
 	brands.Append(AP4_FILE_BRAND_AVC1);
+	brands.Append(AP4_FILE_BRAND_3GP4);
+
 
 	// set the file type
 	file.SetFileType(AP4_FILE_BRAND_ISOM, 0, &brands[0], brands.ItemCount());

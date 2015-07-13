@@ -150,7 +150,9 @@
                 android:gravity="center"
                 android:orientation="vertical" >
 
-                <com.almalence.ui.ShutterSwitch
+                
+                <!-- -+-  -->
+				<com.almalence.ui.ShutterSwitch
                     xmlns:app="http://schemas.android.com/apk/res/com.almalence.opencam"
                     android:id="@+id/switchShutter"
                     android:layout_width="@dimen/shutterSwitchWidth"
@@ -162,6 +164,21 @@
                     android:paddingTop="0dp"
                     app:thumb="@drawable/button_shutter"
                     app:track="@drawable/gui_almalence_shutter_switch_bg_1" />
+			    <!--  -+- -->
+		    	<!-- +++
+				<com.almalence.ui.ShutterSwitch
+                    xmlns:app="http://schemas.android.com/apk/res/com.almalence.opencam_plus"
+                    android:id="@+id/switchShutter"
+                    android:layout_width="@dimen/shutterSwitchWidth"
+                    android:layout_height="@dimen/shutterSwitchHeight"
+                    android:background="@android:color/transparent"
+                    android:paddingBottom="0dp"
+                    android:paddingLeft="0dp"
+                    android:paddingRight="0dp"
+                    android:paddingTop="0dp"
+                    app:thumb="@drawable/button_shutter"
+                    app:track="@drawable/gui_almalence_shutter_switch_bg_1" />
+				+++ -->
 
                 <com.almalence.ui.RotateImageView
                     android:id="@+id/buttonShutter"
@@ -675,24 +692,6 @@
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:onClick="onButtonClick" />
-        <!--
-            <com.almalence.ui.RotateImageView android:id="@+id/exposureTimeButton"
-					android:background="@android:color/transparent"
-					android:layout_height="match_parent"
-					android:layout_width="0dip"
-					android:layout_weight="1"
-			   		android:layout_gravity="center"
-			   		android:layout_margin="7dip"
-			   		android:onClick="onButtonClick"/>
-			<com.almalence.ui.RotateImageView android:id="@+id/focusDistanceButton"
-					android:background="@android:color/transparent"
-					android:layout_height="match_parent"
-					android:layout_width="0dip"
-					android:layout_weight="1"
-			   		android:layout_gravity="center"
-			   		android:layout_margin="7dip"
-			   		android:onClick="onButtonClick"/>
-        -->
     </LinearLayout>
 
     <RelativeLayout
@@ -757,7 +756,7 @@
         </RelativeLayout>
     </RelativeLayout>
 
-    <!-- -+- -->
+    <!-- -+-  -->
 
     <com.almalence.ui.Panel
         xmlns:my="http://schemas.android.com/apk/res/com.almalence.opencam"
@@ -792,9 +791,8 @@
             <include layout="@layout/gui_almalence_panel" />
         </LinearLayout>
     </com.almalence.ui.Panel>
-    <!-- -+- -->
-    <!--
-+++
+    <!--  -+- -->
+    <!-- +++
 	<com.almalence.ui.Panel
 	    xmlns:my="http://schemas.android.com/apk/res/com.almalence.opencam_plus"
 		android:layout_width="fill_parent"
@@ -829,8 +827,7 @@
 			layout="@layout/gui_almalence_panel" />
 		</LinearLayout>
 	</com.almalence.ui.Panel>
-+++
-    -->
++++ -->
 
     <RelativeLayout
         android:id="@+id/buttonsLayout"

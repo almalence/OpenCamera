@@ -21,7 +21,12 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
 
+/* <!-- +++
+import com.almalence.opencam_plus.cameracontroller.CameraController;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
+//-+- -->
 
 public class AlarmReceiver extends BroadcastReceiver
 {

@@ -97,8 +97,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.almalence.SwapHeap;
-import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.cameracontroller.HALv3;
+
 import com.almalence.plugins.export.ExifDriver.ExifDriver;
 import com.almalence.plugins.export.ExifDriver.ExifManager;
 import com.almalence.plugins.export.ExifDriver.Values.ValueByteArray;
@@ -118,7 +117,7 @@ import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 //<!-- -+-
-
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 /***
