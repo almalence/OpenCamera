@@ -156,136 +156,137 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean							isAndroidOne					= Build.MODEL
 																							.contains("Micromax AQ4501");
 
-	public static boolean							isGalaxyS6						= Build.MODEL
-																							.toLowerCase(Locale.US)
-																							.replace(" ", "")
-																							.contains("sm-g925f")
-																							|| Build.MODEL
-																									.toLowerCase(
-																											Locale.US)
-																									.replace(" ", "")
-																									.contains(
-																											"sm-g925t")
-																							|| Build.MODEL
-																									.toLowerCase(
-																											Locale.US)
-																									.replace(" ", "")
-																									.contains(
-																											"sm-g925p")
-																							|| Build.MODEL
-																									.toLowerCase(
-																											Locale.US)
-																									.replace(" ", "")
-																									.contains(
-																											"sm-g925v")
-																							|| Build.MODEL
-																									.toLowerCase(
-																											Locale.US)
-																									.replace(" ", "")
-																									.contains(
-																											"sm-g925a")
-																							|| Build.MODEL
-																									.toLowerCase(
-																											Locale.US)
-																									.replace(" ", "")
-																									.contains(
-																											"sm-g925r4")
-																							|| Build.MODEL
-																									.toLowerCase(
-																											Locale.US)
-																									.replace(" ", "")
-																									.contains(
-																											"sm-g925w8")
-																							|| Build.MODEL
-																									.toLowerCase(
-																											Locale.US)
-																									.replace(" ", "")
-																									.contains(
-																											"sm-g925i")
-																							|| Build.MODEL
-																									.toLowerCase(
-																											Locale.US)
-																									.replace(" ", "")
-																									.contains(
-																											"sm-g925k")
-																							|| Build.MODEL
-																									.toLowerCase(
-																											Locale.US)
-																									.replace(" ", "")
-																									.contains(
-																											"sm-g925l")
-																							|| Build.MODEL
-																									.toLowerCase(
-																											Locale.US)
-																									.replace(" ", "")
-																									.contains(
-																											"sm-g925s")
-																							|| Build.MODEL
-																									.toLowerCase(
-																											Locale.US)
-																									.replace(" ", "")
-																									.contains(
-																											"sm-g9250")
-																							|| Build.MODEL
-																									.toLowerCase(
-																											Locale.US)
-																									.replace(" ", "")
-																									.contains(
-																											"sm-g920t")
-																							|| Build.MODEL
-																									.toLowerCase(
-																											Locale.US)
-																									.replace(" ", "")
-																									.contains(
-																											"sm-g920a")
-																							|| Build.MODEL
-																									.toLowerCase(
-																											Locale.US)
-																									.replace(" ", "")
-																									.contains(
-																											"sm-g920v")
-																							|| Build.MODEL
-																									.toLowerCase(
-																											Locale.US)
-																									.replace(" ", "")
-																									.contains(
-																											"sm-g920r4")
-																							|| Build.MODEL
-																									.toLowerCase(
-																											Locale.US)
-																									.replace(" ", "")
-																									.contains(
-																											"sm-g920p")
-																							|| Build.MODEL
-																									.toLowerCase(
-																											Locale.US)
-																									.replace(" ", "")
-																									.contains(
-																											"sm-g920w8")
-																							|| Build.MODEL
-																									.toLowerCase(
-																											Locale.US)
-																									.replace(" ", "")
-																									.contains(
-																											"sm-g920f")
-																							|| Build.MODEL
-																									.toLowerCase(
-																											Locale.US)
-																									.replace(" ", "")
-																									.contains(
-																											"sm-g920i")
-																							|| Build.MODEL
-																									.toLowerCase(
-																											Locale.US)
-																									.replace(" ", "")
-																									.contains(
-																											"sm-g920k")
-																							|| Build.MODEL
-																									.toLowerCase(
-																											Locale.US)
-																									.replace(" ", "")
-																									.contains(
-																											"sm-g920l");
+	public static boolean							isGalaxyS6						= false;
+//																					  Build.MODEL
+//																							.toLowerCase(Locale.US)
+//																							.replace(" ", "")
+//																							.contains("sm-g925f")
+//																							|| Build.MODEL
+//																									.toLowerCase(
+//																											Locale.US)
+//																									.replace(" ", "")
+//																									.contains(
+//																											"sm-g925t")
+//																							|| Build.MODEL
+//																									.toLowerCase(
+//																											Locale.US)
+//																									.replace(" ", "")
+//																									.contains(
+//																											"sm-g925p")
+//																							|| Build.MODEL
+//																									.toLowerCase(
+//																											Locale.US)
+//																									.replace(" ", "")
+//																									.contains(
+//																											"sm-g925v")
+//																							|| Build.MODEL
+//																									.toLowerCase(
+//																											Locale.US)
+//																									.replace(" ", "")
+//																									.contains(
+//																											"sm-g925a")
+//																							|| Build.MODEL
+//																									.toLowerCase(
+//																											Locale.US)
+//																									.replace(" ", "")
+//																									.contains(
+//																											"sm-g925r4")
+//																							|| Build.MODEL
+//																									.toLowerCase(
+//																											Locale.US)
+//																									.replace(" ", "")
+//																									.contains(
+//																											"sm-g925w8")
+//																							|| Build.MODEL
+//																									.toLowerCase(
+//																											Locale.US)
+//																									.replace(" ", "")
+//																									.contains(
+//																											"sm-g925i")
+//																							|| Build.MODEL
+//																									.toLowerCase(
+//																											Locale.US)
+//																									.replace(" ", "")
+//																									.contains(
+//																											"sm-g925k")
+//																							|| Build.MODEL
+//																									.toLowerCase(
+//																											Locale.US)
+//																									.replace(" ", "")
+//																									.contains(
+//																											"sm-g925l")
+//																							|| Build.MODEL
+//																									.toLowerCase(
+//																											Locale.US)
+//																									.replace(" ", "")
+//																									.contains(
+//																											"sm-g925s")
+//																							|| Build.MODEL
+//																									.toLowerCase(
+//																											Locale.US)
+//																									.replace(" ", "")
+//																									.contains(
+//																											"sm-g9250")
+//																							|| Build.MODEL
+//																									.toLowerCase(
+//																											Locale.US)
+//																									.replace(" ", "")
+//																									.contains(
+//																											"sm-g920t")
+//																							|| Build.MODEL
+//																									.toLowerCase(
+//																											Locale.US)
+//																									.replace(" ", "")
+//																									.contains(
+//																											"sm-g920a")
+//																							|| Build.MODEL
+//																									.toLowerCase(
+//																											Locale.US)
+//																									.replace(" ", "")
+//																									.contains(
+//																											"sm-g920v")
+//																							|| Build.MODEL
+//																									.toLowerCase(
+//																											Locale.US)
+//																									.replace(" ", "")
+//																									.contains(
+//																											"sm-g920r4")
+//																							|| Build.MODEL
+//																									.toLowerCase(
+//																											Locale.US)
+//																									.replace(" ", "")
+//																									.contains(
+//																											"sm-g920p")
+//																							|| Build.MODEL
+//																									.toLowerCase(
+//																											Locale.US)
+//																									.replace(" ", "")
+//																									.contains(
+//																											"sm-g920w8")
+//																							|| Build.MODEL
+//																									.toLowerCase(
+//																											Locale.US)
+//																									.replace(" ", "")
+//																									.contains(
+//																											"sm-g920f")
+//																							|| Build.MODEL
+//																									.toLowerCase(
+//																											Locale.US)
+//																									.replace(" ", "")
+//																									.contains(
+//																											"sm-g920i")
+//																							|| Build.MODEL
+//																									.toLowerCase(
+//																											Locale.US)
+//																									.replace(" ", "")
+//																									.contains(
+//																											"sm-g920k")
+//																							|| Build.MODEL
+//																									.toLowerCase(
+//																											Locale.US)
+//																									.replace(" ", "")
+//																									.contains(
+//																											"sm-g920l");
 
 	// Android camera parameters constants
 	private static String							sceneAuto;
@@ -932,7 +933,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		try
 		{
 			if (!(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService("camera") != null)
-					|| (!isFlex2 && !isNexus && !isAndroidOne && !isGalaxyS6 && !isG4))
+					|| (!isFlex2 && !isNexus && !isAndroidOne /*&& !isGalaxyS6*/ && !isG4))
 			{
 				isHALv3 = false;
 				isHALv3Supported = false;
