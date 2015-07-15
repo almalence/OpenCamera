@@ -142,6 +142,8 @@ public class HALv3
 
 	private static boolean 				needPreviewFrame			= false;
 	
+//	private static boolean 				inCapture					= false; Debug variable. Used in logic to capture RAW in Super mode on Galaxy S6
+	 
 	public static HALv3 getInstance()
 	{
 		if (instance == null)
@@ -268,6 +270,8 @@ public class HALv3
 					CameraController.isManualSensorSupported = true;
 			
 			originalCaptureFormat = CameraController.JPEG;
+			
+//			inCapture = false; Debug variable. Used in logic to capture RAW in Super mode on Galaxy S6
 		} catch (CameraAccessException e)
 		{
 			e.printStackTrace();
@@ -281,7 +285,7 @@ public class HALv3
 			{
 				try
 				{
-					Log.wtf(TAG, "onPauseHALv3. mCaptureSession.stopRepeating()");
+//					Log.wtf(TAG, "onPauseHALv3. mCaptureSession.stopRepeating()");
 					HALv3.getInstance().mCaptureSession.stopRepeating();
 //					HALv3.getInstance().mCaptureSession.close();  //According to google docs isn't necessary to close session
 					HALv3.getInstance().mCaptureSession = null;
@@ -297,7 +301,7 @@ public class HALv3
 				{
 					if(ApplicationScreen.getPluginManager().isSwitchToOldCameraInterface())
 					{
-						Log.wtf(TAG, "onPauseHALv3. camDevice.close()");
+//						Log.wtf(TAG, "onPauseHALv3. camDevice.close()");
 						HALv3.getInstance().camDevice.close();
 						HALv3.getInstance().camDevice = null;	
 					}
@@ -313,7 +317,7 @@ public class HALv3
 	{
 		if (null != HALv3.getInstance().camDevice)
 		{
-			Log.wtf(TAG, "onStopHALv3. camDevice.close()");
+//			Log.wtf(TAG, "onStopHALv3. camDevice.close()");
 			HALv3.getInstance().camDevice.close();
 			HALv3.getInstance().camDevice = null;
 		}
@@ -349,7 +353,7 @@ public class HALv3
 		// -----------------------------------------------------------------
 		if (HALv3.getCamera2() != null)
 		{
-			Log.wtf(TAG, "openCameraHALv3. camDevice.close()");
+//			Log.wtf(TAG, "openCameraHALv3. camDevice.close()");
 			HALv3.getInstance().camDevice.close();
 			HALv3.getInstance().camDevice = null;
 		}
@@ -725,6 +729,9 @@ public class HALv3
 		StreamConfigurationMap configMap = HALv3.getInstance().camCharacter
 				.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 		Size[] cs = configMap.getOutputSizes(SurfaceHolder.class);
+		//Only with such preview size Galaxy S6 isn't crashed in camera2 mode
+		if(CameraController.isGalaxyS6)
+			cs = new Size[]{new Size(1920, 1080)};
 		if (cs != null) {
 			for (Size sz : cs)
 				if (sz.getWidth() * sz.getHeight() <= MAX_SUPPORTED_PREVIEW_SIZE)
@@ -1531,7 +1538,8 @@ public class HALv3
 	
 	public static void setRepeatingRequest()
 	{
-		if(HALv3.getInstance().mCaptureSession == null)
+		//Second part of operator if is experimental. Used only for RAW capturing in Super mode on Galaxy S6
+		if(HALv3.getInstance().mCaptureSession == null/* || (inCapture == true && lastCaptureFormat == CameraController.YUV_RAW && CameraController.isGalaxyS6)*/)
 			return;
 
 		try
@@ -1719,9 +1727,10 @@ public class HALv3
 		}
 		else if (format == CameraController.YUV || format == CameraController.YUV_RAW)
 		{
-			if (CameraController.isGalaxyS6 && format == CameraController.YUV_RAW)
-				stillRequestBuilder.addTarget(appInterface.getRAWImageSurface()); //Used only for Super mode
-			else
+			//Temporary disable super mode for Galaxy S6
+//			if (CameraController.isGalaxyS6 && format == CameraController.YUV_RAW)
+//				stillRequestBuilder.addTarget(appInterface.getRAWImageSurface()); //Used only for Super mode
+//			else
 				stillRequestBuilder.addTarget(appInterface.getYUVImageSurface());
 		}
 		else if (format == CameraController.RAW)
@@ -1890,6 +1899,24 @@ public class HALv3
 		{
 			pauseBetweenShots = new int[totalFrames];
 			appInterface.showCaptureIndication(playShutterSound);
+			
+			/*
+			 * Debug code for Galaxy S6. Trying to capture RAW with stopped preview (coz it hangs while capturing RAW)
+			 */
+//			if(HALv3.getInstance().mCaptureSession != null)
+//			{
+//				if(CameraController.isGalaxyS6/* && nFrames > 1*/)
+//					try 
+//					{
+//						HALv3.getInstance().mCaptureSession.stopRepeating();
+//						Log.wtf(TAG, "Capture SUPER. stop preview!");
+//					}
+//					catch (CameraAccessException e1)
+//					{
+//						Log.e(TAG, "Can't stop preview");
+//						e1.printStackTrace();
+//					}
+//			}
 
 			for (int n = 0; n < nFrames; ++n)
 			{
@@ -1979,6 +2006,7 @@ public class HALv3
 	public static int captureImageWithParamsHALv3(final int nFrames, final int format, final int[] pause,
 			final int[] evRequested, final int[] gain, final long[] exposure, final boolean resInHeap, final boolean playShutter)
 	{
+//		inCapture = true; Debug variable. Used in logic to capture RAW in Super mode on Galaxy S6
 		int requestID = -1;
 
 		if (CameraController.getFocusMode() == CameraParameters.AF_MODE_CONTINUOUS_PICTURE) {
@@ -2470,7 +2498,7 @@ public class HALv3
 		if (!CameraController.isNexus6  && captureFormat != CameraController.RAW)
 			previewRequestBuilder.addTarget(appInterface.getPreviewYUVImageSurface());
 		
-		if(needZoom)
+		if(needZoom && zoomCropPreview != null)
 			previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
 
 		setRepeatingRequest();
@@ -2958,6 +2986,32 @@ public class HALv3
 			im.close();
 		}
 	};
+	
+	
+	/*
+	 * Debug code for Galaxy S6. Trying to capture RAW with stopped preview (coz it hangs while capturing RAW)
+	 * At this point we try to resume preview. But now works only full camera re-launch
+	 */
+//	public static void onCaptureFinished()
+//	{
+//		inCapture = false;
+//		if(lastCaptureFormat == CameraController.YUV_RAW && CameraController.isGalaxyS6)
+////		{
+////			ApplicationScreen.getGUIManager().setCameraModeGUI(0);
+////			ApplicationScreen.instance.pauseMain();
+////			ApplicationScreen.instance.switchingMode(false);
+////			ApplicationScreen.instance.resumeMain();
+////		}
+//			try
+//			{
+//				HALv3.getInstance().configurePreviewRequest(false);
+//			} catch (CameraAccessException e)
+//			{
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+////			appInterface.relaunchCamera();
+//	}
 	// ^^ HALv3 code
 	// --------------------------------------------------------------
 	// camera-related Callbacks

@@ -854,6 +854,11 @@ public class PluginManager extends PluginManagerBase
 
 		case ApplicationInterface.MSG_CAPTURE_FINISHED:
 			shutterRelease = true;
+			
+			/*
+			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more details
+			 */
+//			CameraController.onCaptureFinished();
 
 			if (CameraController.getFocusMode() == CameraParameters.AF_MODE_CONTINUOUS_PICTURE)
 			{
@@ -903,6 +908,11 @@ public class PluginManager extends PluginManagerBase
 		case ApplicationInterface.MSG_CAPTURE_FINISHED_NORESULT:
 			shutterRelease = true;
 
+			/*
+			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more details
+			 */
+//			CameraController.onCaptureFinished();
+			
 			if (CameraController.getFocusMode() == CameraParameters.AF_MODE_CONTINUOUS_PICTURE)
 			{
 				CameraController.cancelAutoFocus();

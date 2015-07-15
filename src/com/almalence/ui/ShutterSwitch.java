@@ -23,8 +23,9 @@ package com.almalence.ui;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.R;
-import com.almalence.util.Util;
 //-+- -->
+
+import com.almalence.util.Util;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;

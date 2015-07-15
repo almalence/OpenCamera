@@ -46,6 +46,8 @@ import com.google.zxing.common.HybridBinarizer;
  import com.almalence.opencam_plus.PluginViewfinder;
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.SoundPlayer;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
+
  +++ --> */
 //<!-- -+-
 import com.almalence.opencam.ApplicationScreen;
@@ -54,8 +56,8 @@ import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
 import com.almalence.opencam.SoundPlayer;
-//-+- -->
 import com.almalence.opencam.cameracontroller.CameraController;
+//-+- -->
 
 public class BarcodeScannerVFPlugin extends PluginViewfinder
 {

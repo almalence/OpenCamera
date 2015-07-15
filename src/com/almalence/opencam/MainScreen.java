@@ -1528,14 +1528,18 @@ public class MainScreen extends ApplicationScreen
 		{
 			Log.d("MainScreen",
 					"add mImageReaderYUV " + mImageReaderYUV.getWidth() + " x " + mImageReaderYUV.getHeight());
-//			surfaceList.add(mImageReaderYUV.getSurface()); // surface for yuv
-//															// image
+			surfaceList.add(mImageReaderYUV.getSurface());
 			
-			String modeName = PluginManager.getInstance().getActiveModeID();
-			if (CameraController.isGalaxyS6 && modeName.contains("night"))
-				surfaceList.add(mImageReaderRAW.getSurface());
-			else
-				surfaceList.add(mImageReaderYUV.getSurface());
+			//Temporary disable RAW capturing on Galaxy S6 in all modes, including Super mode
+//			String modeName = PluginManager.getInstance().getActiveModeID();
+//			if (CameraController.isGalaxyS6 && modeName.contains("nightmode"))
+//				surfaceList.add(mImageReaderRAW.getSurface());
+//			else
+//			{
+//				Log.d("MainScreen",
+//						"add mImageReaderYUV " + mImageReaderYUV.getWidth() + " x " + mImageReaderYUV.getHeight());
+//				surfaceList.add(mImageReaderYUV.getSurface());
+//			}
 			// capture
 		} else if (captureFormat == CameraController.JPEG)
 		{
