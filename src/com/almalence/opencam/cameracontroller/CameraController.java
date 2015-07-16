@@ -2081,6 +2081,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	@TargetApi(15)
 	public static boolean getVideoStabilizationSupported()
 	{
+		try{
 		if (!CameraController.isRemoteCamera())
 		{
 			if (!CameraController.isHALv3)
@@ -2095,6 +2096,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			return false;
 		}
+		}catch(Exception e){e.printStackTrace();return false;}
 	}
 
 	public static boolean isVideoStabilizationSupported()
@@ -2104,6 +2106,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static boolean isExposureLockSupported()
 	{
+		try{
 		if (!CameraController.isRemoteCamera())
 		{
 			if (!CameraController.isHALv3)
@@ -2118,10 +2121,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			return false;
 		}
+		}catch(Exception e){e.printStackTrace();return false;}
 	}
 
 	public static boolean isExposureLock()
 	{
+		try{
 		if (!CameraController.isRemoteCamera())
 		{
 			if (!CameraController.isHALv3)
@@ -2136,10 +2141,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			return false;
 		}
+		}catch(Exception e){e.printStackTrace();return false;}
 	}
 
 	public static void setAutoExposureLock(boolean lock)
 	{
+		try{
 		if (!CameraController.isRemoteCamera())
 		{
 			if (!CameraController.isHALv3)
@@ -2153,10 +2160,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			} else
 				HALv3.setAutoExposureLock(lock);
 		}
+		}catch(Exception e){e.printStackTrace();}
 	}
 
 	public static boolean isWhiteBalanceLockSupported()
 	{
+		try{
 		if (!CameraController.isRemoteCamera())
 		{
 			if (!CameraController.isHALv3)
@@ -2171,10 +2180,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			return false;
 		}
+		}catch(Exception e){e.printStackTrace();return false;}
 	}
 
 	public static boolean isWhiteBalanceLock()
 	{
+		try{
 		if (!CameraController.isRemoteCamera())
 		{
 			if (!CameraController.isHALv3)
@@ -2190,10 +2201,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			return false;
 		}
+		}catch(Exception e){e.printStackTrace();return false;}
 	}
 
 	public static void setAutoWhiteBalanceLock(boolean lock)
 	{
+		try{
 		if (!CameraController.isRemoteCamera())
 		{
 			if (!CameraController.isHALv3)
@@ -2207,10 +2220,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			} else
 				HALv3.setAutoWhiteBalanceLock(lock);
 		}
+		}catch(Exception e){e.printStackTrace();}
 	}
 
 	public static boolean isZoomSupported()
 	{
+		try{
 		if (!CameraController.isRemoteCamera())
 		{
 			if (!CameraController.isHALv3)
@@ -2227,12 +2242,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			return SonyRemoteCamera.isZoomAvailable();
 		}
+		}catch(Exception e){e.printStackTrace();return false;}
 	}
 
 	public static int getMaxZoom()
 	{
 		if (!CameraController.isRemoteCamera())
 		{
+			try{
 			if (!CameraController.isHALv3)
 			{
 				if (null == camera || camera.getParameters() == null)
@@ -2244,6 +2261,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				float maxZoom = HALv3.getMaxZoomHALv3();
 				return (int) (maxZoom - 10.0f);
 			}
+			}catch(Exception e){e.printStackTrace();return 0;}
 		} else
 		{
 			return 0;
@@ -2297,6 +2315,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static boolean isLumaAdaptationSupported()
 	{
+		try{
 		if (!CameraController.isRemoteCamera())
 		{
 			if (!CameraController.isHALv3)
@@ -2315,6 +2334,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			return false;
 		}
+		}catch(Exception e){e.printStackTrace();return false;}
 	}
 
 	// Used to initialize internal variable
@@ -2369,6 +2389,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static float getExposureCompensation()
 	{
+		try{
 		if (!CameraController.isRemoteCamera())
 		{
 			if (!CameraController.isHALv3)
@@ -2387,10 +2408,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return SonyRemoteCamera.getExposureCompensationRemote()
 					* SonyRemoteCamera.getExposureCompensationStepRemote();
 		}
+		}catch(Exception e){e.printStackTrace();return 0;}
 	}
 
 	public static void resetExposureCompensation()
 	{
+		try{
 		if (!CameraController.isRemoteCamera())
 		{
 			if (!CameraController.isHALv3)
@@ -2406,6 +2429,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			} else
 				HALv3.resetExposureCompensationHALv3();
 		}
+		}catch(Exception e){e.printStackTrace();}
 	}
 
 	private static boolean getSceneModeSupported()

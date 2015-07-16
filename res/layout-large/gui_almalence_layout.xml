@@ -1082,8 +1082,7 @@
         </LinearLayout>
     </com.almalence.ui.Panel>
     <!--  -+- -->
-    <!--
-+++
+    <!-- +++
 	<com.almalence.ui.Panel
 	    xmlns:my="http://schemas.android.com/apk/res/com.almalence.opencam_plus"
 		android:layout_width="fill_parent"
@@ -1118,8 +1117,7 @@
 			layout="@layout/gui_almalence_panel" />
 		</LinearLayout>
 	</com.almalence.ui.Panel>
-+++
-    -->
++++ -->
 
     <LinearLayout
         android:id="@+id/hintLayout"
