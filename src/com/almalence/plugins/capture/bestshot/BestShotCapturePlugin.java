@@ -138,10 +138,8 @@ public class BestShotCapturePlugin extends PluginCapture
 
 	public void takePicture()
 	{
-		int[] pause = new int[imageAmount];
-		Arrays.fill(pause, 50);
 		createRequestIDList(imageAmount);
-		CameraController.captureImagesWithParams(imageAmount, CameraController.YUV, pause, null, null, null, true, true);
+		CameraController.captureImagesWithParams(imageAmount, CameraController.YUV, null, null, null, null, true, true);
 	}
 
 	@Override
