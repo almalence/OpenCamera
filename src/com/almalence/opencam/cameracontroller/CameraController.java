@@ -1406,6 +1406,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			CameraController.SupportedPreviewSizesList = new ArrayList<CameraController.Size>();
 			if (!isHALv3)
 			{
+				try{
 				if (camera != null && camera.getParameters() != null)
 				{
 					List<Camera.Size> list = camera.getParameters().getSupportedPreviewSizes();
@@ -1415,7 +1416,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 							CameraController.SupportedPreviewSizesList.add(new CameraController.Size(sz.width,
 									sz.height));
 					}
-				}
+				}}catch(Exception e){e.printStackTrace();return;};
 			} else
 				CameraController.SupportedPreviewSizesList = HALv3.fillPreviewSizeList();
 		} else
