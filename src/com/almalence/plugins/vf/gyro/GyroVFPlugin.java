@@ -8,7 +8,6 @@ import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PorterDuff.Mode;
-import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Handler;
@@ -26,16 +25,17 @@ import com.almalence.plugins.capture.panoramaaugmented.VfGyroSensor;
 import com.almalence.ui.RotateImageView;
 
 /* <!-- +++
- import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.PluginViewfinder;
- import com.almalence.opencam_plus.R;
- import com.almalence.opencam_plus.cameracontroller.CameraController;
- +++ --> */
-// <!-- -+-
+import com.almalence.opencam_plus.ApplicationScreen;
+import com.almalence.opencam_plus.PluginViewfinder;
+import com.almalence.opencam_plus.R;
+import com.almalence.opencam_plus.cameracontroller.CameraController;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
+
 //-+- -->
 
 public class GyroVFPlugin extends PluginViewfinder
@@ -167,13 +167,12 @@ public class GyroVFPlugin extends PluginViewfinder
 		mGyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 		mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 		mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		
-		//to see if it helps to fix "can't load library error"
+
+		// to see if it helps to fix "can't load library error"
 		try
 		{
 			mVfGyroscope = new VfGyroSensor(null);
-		}
-		catch(Exception e)
+		} catch (Exception e)
 		{
 			e.printStackTrace();
 		}
@@ -229,8 +228,11 @@ public class GyroVFPlugin extends PluginViewfinder
 		if (!this.mPrefHardwareGyroscope)
 		{
 			this.mVfGyroscope.NewData(data);
+			if (mSurfacePreviewAugmented != null)
+			{
+				mSurfacePreviewAugmented.onDrawFrame();
+			}
 		}
-
 	}
 
 	@Override
