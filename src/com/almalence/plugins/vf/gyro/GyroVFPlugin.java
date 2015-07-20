@@ -89,21 +89,16 @@ public class GyroVFPlugin extends PluginViewfinder
 	{
 		this.checkCoordinatesRemapRequired();
 
-		final Camera.Parameters cp = CameraController.getCameraParameters();
-		if (cp == null)
-		{
-			return;
-		}
-		this.pictureWidth = cp.getPictureSize().width;
-		this.pictureHeight = cp.getPictureSize().height;
+		this.pictureWidth = CameraController.getCameraImageSize().getWidth();
+		this.pictureHeight = CameraController.getCameraImageSize().getHeight();
 
-		this.previewWidth = cp.getPreviewSize().width;
-		this.previewHeight = cp.getPreviewSize().height;
+		this.previewWidth = ApplicationScreen.getPreviewWidth();
+		this.previewHeight = ApplicationScreen.getPreviewHeight();
 
 		try
 		{
-			this.viewAngleX = cp.getHorizontalViewAngle();
-			this.viewAngleY = cp.getVerticalViewAngle();
+			this.viewAngleX = CameraController.getHorizontalViewAngle();
+			this.viewAngleY = CameraController.getVerticalViewAngle();
 		} catch (final Exception e)
 		{
 			// Some bugged camera drivers pop ridiculous exception here, use
