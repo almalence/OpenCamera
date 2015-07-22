@@ -147,14 +147,14 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	protected List<String>						activeVF;
 	protected String							activeCapture;
 	protected String							activeProcessing;
-	protected List<String>						activeFilter;
+//	protected List<String>						activeFilter;
 	protected String							activeExport;
 
 	// list of plugins by type
 	protected List<Plugin>						listVF;
 	protected List<Plugin>						listCapture;
 	protected List<Plugin>						listProcessing;
-	protected List<Plugin>						listFilter;
+//	protected List<Plugin>						listFilter;
 	protected List<Plugin>						listExport;
 
 	// counter indicating amout of processing tasks running
@@ -194,12 +194,12 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			createRAWCaptureResultHashtable();
 
 		activeVF = new ArrayList<String>();
-		activeFilter = new ArrayList<String>();
+//		activeFilter = new ArrayList<String>();
 
 		listVF = new ArrayList<Plugin>();
 		listCapture = new ArrayList<Plugin>();
 		listProcessing = new ArrayList<Plugin>();
-		listFilter = new ArrayList<Plugin>();
+//		listFilter = new ArrayList<Plugin>();
 		listExport = new ArrayList<Plugin>();
 
 		createPlugins();
@@ -251,9 +251,9 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			activeVF.add(mode.VF.get(i));
 		activeCapture = mode.Capture;
 		activeProcessing = mode.Processing;
-		for (int i = 0; i < mode.Filter.size(); i++)
-			activeFilter.add(mode.Filter.get(i));
-		activeFilter.clear();
+//		for (int i = 0; i < mode.Filter.size(); i++)
+//			activeFilter.add(mode.Filter.get(i));
+//		activeFilter.clear();
 		activeExport = mode.Export;
 	}
 
@@ -308,8 +308,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			pluginList.get(activeCapture).onCreate();
 		if (null != pluginList.get(activeProcessing))
 			pluginList.get(activeProcessing).onCreate();
-		for (int i = 0; i < activeFilter.size(); i++)
-			pluginList.get(i).onCreate();
+//		for (int i = 0; i < activeFilter.size(); i++)
+//			pluginList.get(i).onCreate();
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onCreate();
 
@@ -374,9 +374,9 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			activeVF.add(mode.VF.get(i));
 		activeCapture = mode.Capture;
 		activeProcessing = mode.Processing;
-		activeFilter.clear();
-		for (int i = 0; i < mode.Filter.size(); i++)
-			activeFilter.add(mode.Filter.get(i));
+//		activeFilter.clear();
+//		for (int i = 0; i < mode.Filter.size(); i++)
+//			activeFilter.add(mode.Filter.get(i));
 		activeExport = mode.Export;
 
 		// set mode as default for future starts
@@ -408,12 +408,12 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		case Processing:
 			activePlugins.add(pluginList.get(activeProcessing));
 			break;
-		case Filter:
-			{
-				for (int i = 0; i < activeFilter.size(); i++)
-					activePlugins.add(pluginList.get(i));
-			}
-			break;
+//		case Filter:
+//			{
+//				for (int i = 0; i < activeFilter.size(); i++)
+//					activePlugins.add(pluginList.get(i));
+//			}
+//			break;
 		case Export:
 			activePlugins.add(pluginList.get(activeExport));
 			break;
@@ -433,8 +433,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			pluginList.get(activeCapture).onStart();
 		if (null != pluginList.get(activeProcessing))
 			pluginList.get(activeProcessing).onStart();
-		for (int i = 0; i < activeFilter.size(); i++)
-			pluginList.get(i).onStart();
+//		for (int i = 0; i < activeFilter.size(); i++)
+//			pluginList.get(i).onStart();
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onStart();
 	}
@@ -448,8 +448,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			pluginList.get(activeCapture).onStop();
 		if (null != pluginList.get(activeProcessing))
 			pluginList.get(activeProcessing).onStop();
-		for (int i = 0; i < activeFilter.size(); i++)
-			pluginList.get(i).onStop();
+//		for (int i = 0; i < activeFilter.size(); i++)
+//			pluginList.get(i).onStop();
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onStop();
 	}
@@ -463,8 +463,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			pluginList.get(activeCapture).onDestroy();
 		if (null != pluginList.get(activeProcessing))
 			pluginList.get(activeProcessing).onDestroy();
-		for (int i = 0; i < activeFilter.size(); i++)
-			pluginList.get(i).onDestroy();
+//		for (int i = 0; i < activeFilter.size(); i++)
+//			pluginList.get(i).onDestroy();
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onDestroy();
 	}
@@ -478,8 +478,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			pluginList.get(activeCapture).onResume();
 		if (null != pluginList.get(activeProcessing))
 			pluginList.get(activeProcessing).onResume();
-		for (int i = 0; i < activeFilter.size(); i++)
-			pluginList.get(i).onResume();
+//		for (int i = 0; i < activeFilter.size(); i++)
+//			pluginList.get(i).onResume();
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onResume();
 	}
@@ -493,8 +493,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			pluginList.get(activeCapture).onPause();
 		if (null != pluginList.get(activeProcessing))
 			pluginList.get(activeProcessing).onPause();
-		for (int i = 0; i < activeFilter.size(); i++)
-			pluginList.get(i).onPause();
+//		for (int i = 0; i < activeFilter.size(); i++)
+//			pluginList.get(i).onPause();
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onPause();
 	}
@@ -515,8 +515,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			pluginList.get(activeCapture).onShowPreferences();
 		if (null != pluginList.get(activeProcessing))
 			pluginList.get(activeProcessing).onShowPreferences();
-		for (int i = 0; i < activeFilter.size(); i++)
-			pluginList.get(i).onShowPreferences();
+//		for (int i = 0; i < activeFilter.size(); i++)
+//			pluginList.get(i).onShowPreferences();
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onShowPreferences();
 	}
@@ -529,8 +529,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			pluginList.get(activeCapture).onGUICreate();
 		if (null != pluginList.get(activeProcessing))
 			pluginList.get(activeProcessing).onGUICreate();
-		for (int i = 0; i < activeFilter.size(); i++)
-			pluginList.get(i).onGUICreate();
+//		for (int i = 0; i < activeFilter.size(); i++)
+//			pluginList.get(i).onGUICreate();
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onGUICreate();
 
@@ -668,8 +668,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			pluginList.get(activeCapture).onOrientationChanged(orientation);
 		if (null != pluginList.get(activeProcessing))
 			pluginList.get(activeProcessing).onOrientationChanged(orientation);
-		for (int i = 0; i < activeFilter.size(); i++)
-			pluginList.get(i).onOrientationChanged(orientation);
+//		for (int i = 0; i < activeFilter.size(); i++)
+//			pluginList.get(i).onOrientationChanged(orientation);
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onOrientationChanged(orientation);
 	}
@@ -686,8 +686,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			res += pluginList.get(activeCapture).onKeyDown(keyCode, event) ? 1 : 0;
 		if (null != pluginList.get(activeProcessing))
 			res += pluginList.get(activeProcessing).onKeyDown(keyCode, event) ? 1 : 0;
-		for (int i = 0; i < activeFilter.size(); i++)
-			res += pluginList.get(i).onKeyDown(keyCode, event) ? 1 : 0;
+//		for (int i = 0; i < activeFilter.size(); i++)
+//			res += pluginList.get(i).onKeyDown(keyCode, event) ? 1 : 0;
 		if (null != pluginList.get(activeExport))
 			res += pluginList.get(activeExport).onKeyDown(keyCode, event) ? 1 : 0;
 		return (res > 0 ? true : false);
@@ -871,12 +871,12 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			if (res)
 				return;
 		}
-		for (int i = 0; i < activeFilter.size(); i++)
-		{
-			res = pluginList.get(i).onBroadcast(arg1, arg2);
-			if (res)
-				return;
-		}
+//		for (int i = 0; i < activeFilter.size(); i++)
+//		{
+//			res = pluginList.get(i).onBroadcast(arg1, arg2);
+//			if (res)
+//				return;
+//		}
 		if (null != pluginList.get(activeExport))
 		{
 			res = pluginList.get(activeExport).onBroadcast(arg1, arg2);

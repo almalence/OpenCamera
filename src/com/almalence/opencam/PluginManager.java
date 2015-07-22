@@ -153,12 +153,12 @@ public class PluginManager extends PluginManagerBase
 			createRAWCaptureResultHashtable();
 
 		activeVF = new ArrayList<String>();
-		activeFilter = new ArrayList<String>();
+//		activeFilter = new ArrayList<String>();
 
 		listVF = new ArrayList<Plugin>();
 		listCapture = new ArrayList<Plugin>();
 		listProcessing = new ArrayList<Plugin>();
-		listFilter = new ArrayList<Plugin>();
+//		listFilter = new ArrayList<Plugin>();
 		listExport = new ArrayList<Plugin>();
 
 		// init plugins and add to pluginList
@@ -326,8 +326,8 @@ public class PluginManager extends PluginManagerBase
 			pluginList.get(activeCapture).onPause();
 		if (null != pluginList.get(activeProcessing))
 			pluginList.get(activeProcessing).onPause();
-		for (int i = 0; i < activeFilter.size(); i++)
-			pluginList.get(i).onPause();
+//		for (int i = 0; i < activeFilter.size(); i++)
+//			pluginList.get(i).onPause();
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onPause();
 	}
@@ -350,8 +350,8 @@ public class PluginManager extends PluginManagerBase
 			pluginList.get(activeCapture).onGUICreate();
 		if (null != pluginList.get(activeProcessing))
 			pluginList.get(activeProcessing).onGUICreate();
-		for (int i = 0; i < activeFilter.size(); i++)
-			pluginList.get(i).onGUICreate();
+//		for (int i = 0; i < activeFilter.size(); i++)
+//			pluginList.get(i).onGUICreate();
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onGUICreate();
 
@@ -636,16 +636,16 @@ public class PluginManager extends PluginManagerBase
 			AddModeSettings("bestshotmode", pf);
 		} else if ("saving_settings".equals(settings))
 		{
-			for (int i = 0; i < listFilter.size(); i++)
-			{
-				Plugin pg = listFilter.get(i);
-				if (activeFilter.contains(pg.getID()))
-					activePlugins.add(pg);
-				else
-					inactivePlugins.add(pg);
-			}
-			if (activePlugins.size() != listFilter.size() && isPreferenecesAvailable(inactivePlugins, false))
-				hasInactive = true;
+//			for (int i = 0; i < listFilter.size(); i++)
+//			{
+//				Plugin pg = listFilter.get(i);
+//				if (activeFilter.contains(pg.getID()))
+//					activePlugins.add(pg);
+//				else
+//					inactivePlugins.add(pg);
+//			}
+//			if (activePlugins.size() != listFilter.size() && isPreferenecesAvailable(inactivePlugins, false))
+//				hasInactive = true;
 			addHeadersContent(pf, activePlugins, false);
 
 			activePlugins.clear();
@@ -666,12 +666,12 @@ public class PluginManager extends PluginManagerBase
 				pf.addPreferencesFromResource(R.xml.preferences_saving_inactive);
 		} else if ("saving_inactive_settings".equals(settings))
 		{
-			for (int i = 0; i < listFilter.size(); i++)
-			{
-				Plugin pg = listFilter.get(i);
-				if (!activeFilter.contains(pg.getID()))
-					inactivePlugins.add(pg);
-			}
+//			for (int i = 0; i < listFilter.size(); i++)
+//			{
+//				Plugin pg = listFilter.get(i);
+//				if (!activeFilter.contains(pg.getID()))
+//					inactivePlugins.add(pg);
+//			}
 			addHeadersContent(pf, inactivePlugins, false);
 
 			activePlugins.clear();
@@ -728,14 +728,14 @@ public class PluginManager extends PluginManagerBase
 
 			activePlugins.clear();
 			inactivePlugins.clear();
-			for (int i = 0; i < listFilter.size(); i++)
-			{
-				Plugin pg = listFilter.get(i);
-				if (activeFilter.contains(pg.getID()))
-					activePlugins.add(pg);
-				else
-					inactivePlugins.add(pg);
-			}
+//			for (int i = 0; i < listFilter.size(); i++)
+//			{
+//				Plugin pg = listFilter.get(i);
+//				if (activeFilter.contains(pg.getID()))
+//					activePlugins.add(pg);
+//				else
+//					inactivePlugins.add(pg);
+//			}
 			if (isPreferenecesAvailable(inactivePlugins, true))
 				hasInactive = true;
 			addHeadersContent(pf, activePlugins, true);
@@ -785,12 +785,12 @@ public class PluginManager extends PluginManagerBase
 			addHeadersContent(pf, inactivePlugins, true);
 
 			inactivePlugins.clear();
-			for (int i = 0; i < listFilter.size(); i++)
-			{
-				Plugin pg = listFilter.get(i);
-				if (!activeFilter.contains(pg.getID()))
-					inactivePlugins.add(pg);
-			}
+//			for (int i = 0; i < listFilter.size(); i++)
+//			{
+//				Plugin pg = listFilter.get(i);
+//				if (!activeFilter.contains(pg.getID()))
+//					inactivePlugins.add(pg);
+//			}
 			addHeadersContent(pf, inactivePlugins, true);
 
 			inactivePlugins.clear();
