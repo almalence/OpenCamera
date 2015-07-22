@@ -2810,6 +2810,7 @@ public class VideoCapturePlugin extends PluginCapture
 			}
 		} catch (Exception e)
 		{
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -2858,6 +2859,7 @@ public class VideoCapturePlugin extends PluginCapture
 			}
 		} catch (IOException e)
 		{
+			e.printStackTrace();
 		}
 		return null;
 	}
