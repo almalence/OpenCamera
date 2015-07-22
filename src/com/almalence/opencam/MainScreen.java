@@ -221,6 +221,8 @@ public class MainScreen extends ApplicationScreen
 	public static String		sExportNamePrefixPref;
 	public static String		sExportNamePostfixPref;
 	public static String		sSaveToPref;
+	
+	public static String		sLastPhotoModePref;
 
 	// Camera parameters info
 	int							cameraId;
@@ -307,6 +309,8 @@ public class MainScreen extends ApplicationScreen
 		
 		sSavePathPref = getResources().getString(R.string.Preference_SavePathValue);
 		sSaveToPref = getResources().getString(R.string.Preference_SaveToValue);
+		
+		sLastPhotoModePref = getResources().getString(R.string.Preference_LastPhotoModeValue);
 
 		Intent intent = this.getIntent();
 		String mode = intent.getStringExtra(EXTRA_ITEM);
@@ -1898,6 +1902,24 @@ public class MainScreen extends ApplicationScreen
 			return true;
 	}
 
+	public void setLastPhotoModePref(String mode)
+	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
+		Editor prefsEditor = prefs.edit();
+		prefsEditor.putString(MainScreen.sLastPhotoModePref, mode);
+		prefsEditor.commit();
+	}
+
+	public String getLastPhotoModePref()
+	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
+		if (true == prefs.contains(MainScreen.sLastPhotoModePref))
+		{
+			return prefs.getString(MainScreen.sLastPhotoModePref, "single");
+		} else
+			return "single";
+	}
+	
 	public static boolean getWantLandscapePhoto()
 	{
 		return wantLandscapePhoto;

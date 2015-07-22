@@ -1834,13 +1834,42 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		DisplayMetrics metrics = new DisplayMetrics();
 		ApplicationScreen.instance.getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		int screen_height = metrics.heightPixels;
+		int screen_width = metrics.widthPixels;
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		if (prefs.getBoolean("changePreviewProportions", false))
 		{
-			lp.width = previewSize.getHeight();
-			lp.height = previewSize.getWidth();
-			lp.topMargin = (screen_height - lp.height) / 2;
+			// If preview size is smaller then surface size, we need to extend preview to fit surface. 
+			if (previewSize.getHeight() < previewSurfaceWidth && previewSize.getWidth() < previewSurfaceHeight) {
+				// If aspect ratios are different, only one dimension (width or height) will fit.
+				if (Math.abs(surfaceAspect - cameraAspect) > 0.05d) {
+					double diffRatio = (double) previewSurfaceWidth / previewSize.getHeight();
+					lp.width = previewSurfaceWidth;
+					lp.height = (int) (previewSize.getWidth() * diffRatio);
+					
+					// If we extend preview width to fit surface width and calculated height is lower or equals to surface height,
+					// then everything is ok, and we just calculate topMargin.
+					if (lp.height <= previewSurfaceHeight) {
+						lp.topMargin = (screen_height - lp.height) / 2;
+					} else {
+						// Else if calculated height is greater then surface height, then we extend height to fit surface,
+						// and calculate width and leftMargin.
+						diffRatio = (double) previewSurfaceHeight / previewSize.getWidth();
+						lp.height = previewSurfaceHeight;
+						lp.width = (int) (previewSize.getHeight() * diffRatio);
+						lp.leftMargin = (screen_width - lp.width) / 2;
+					}
+				} else {
+					// If aspect ratios are equals, then just use surface size values.
+					lp.width = previewSurfaceWidth;
+					lp.height = previewSurfaceHeight;
+				}
+			} else {
+				// If preview size is greater or equals than surface, then just use preview size values.
+				lp.width = previewSize.getHeight();
+				lp.height = previewSize.getWidth();
+				lp.topMargin = (screen_height - lp.height) / 2;
+			}
 		} else
 		{
 			lp.width = previewSurfaceWidth;
@@ -6469,8 +6498,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					videoModeView = mode;
 				}
 				
-				// Default is Single.
-				if (tmp.modeID.equals("single")) {
+				String lastPhotoModePref = MainScreen.getInstance().getLastPhotoModePref();
+				if (tmp.modeID.equals(lastPhotoModePref)) {
 					lastPhotoModeView = mode;
 				}
 
@@ -6528,6 +6557,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				return true;
 			}
 		} else {
+			MainScreen.getInstance().setLastPhotoModePref(mode.modeID);
 			lastPhotoModeView = v;
 		}
 
