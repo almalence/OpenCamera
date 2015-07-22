@@ -65,6 +65,7 @@
     <string name="Preference_SavePathLollipopValue">Preference_SavePathLollipopValue</string>
     <string name="Preference_ExportNameValue">Preference_ExportName</string>
     <string name="Preference_SaveToValue">Preference_SaveToValue</string>
+    <string name="Preference_LastPhotoModeValue">Preference_LastPhotoModeValue</string>
     <string name="Preference_SortByDataValue">Preference_SortByDataValue</string>
     <string name="Preference_SavePathPrefixValue">Preference_SavePathPrefixValue</string>
     <string name="Preference_SavePathPostfixValue">Preference_SavePathPostfixValue</string>
