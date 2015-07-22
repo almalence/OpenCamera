@@ -854,15 +854,23 @@ public class PluginManager extends PluginManagerBase
 
 		case ApplicationInterface.MSG_CAPTURE_FINISHED:
 			shutterRelease = true;
-			
+
 			/*
-			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more details
+			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more
+			 * details
 			 */
-//			CameraController.onCaptureFinished();
+			// CameraController.onCaptureFinished();
 
 			if (CameraController.getFocusMode() == CameraParameters.AF_MODE_CONTINUOUS_PICTURE)
 			{
 				CameraController.cancelAutoFocus();
+			}
+
+			if (ApplicationScreen.instance.getFlashModePref(ApplicationScreen.sDefaultFlashValue) == CameraParameters.FLASH_MODE_CAPTURE_TORCH)
+			{
+				// If flashMode == FLASH_MODE_CAPTURE_TORCH, then turn off torch
+				// after capturing completed.
+				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
 			}
 
 			for (int i = 0; i < activeVF.size(); i++)
@@ -874,8 +882,11 @@ public class PluginManager extends PluginManagerBase
 			// Returns actual flash mode if it was changed during capturing.
 			if (!CameraController.isUseHALv3())
 			{
-				CameraController.setCameraFlashMode(PreferenceManager.getDefaultSharedPreferences(
-						MainScreen.getMainContext()).getInt(MainScreen.sFlashModePref, -1));
+				int flashMode = ApplicationScreen.instance.getFlashModePref(ApplicationScreen.sDefaultFlashValue);
+				if (flashMode != CameraParameters.FLASH_MODE_CAPTURE_TORCH)
+				{
+					CameraController.setCameraFlashMode(flashMode);
+				}
 			}
 
 			int id = ApplicationScreen.getAppResources().getIdentifier(getActiveMode().modeName, "string",
@@ -909,15 +920,23 @@ public class PluginManager extends PluginManagerBase
 			shutterRelease = true;
 
 			/*
-			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more details
+			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more
+			 * details
 			 */
-//			CameraController.onCaptureFinished();
-			
+			// CameraController.onCaptureFinished();
+
 			if (CameraController.getFocusMode() == CameraParameters.AF_MODE_CONTINUOUS_PICTURE)
 			{
 				CameraController.cancelAutoFocus();
 			}
 
+			if (ApplicationScreen.instance.getFlashModePref(ApplicationScreen.sDefaultFlashValue) == CameraParameters.FLASH_MODE_CAPTURE_TORCH)
+			{
+				// If flashMode == FLASH_MODE_CAPTURE_TORCH, then turn off torch
+				// after capturing completed.
+				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
+			}
+			
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onCaptureFinished();
 
@@ -971,7 +990,7 @@ public class PluginManager extends PluginManagerBase
 			break;
 		case ApplicationInterface.MSG_EXPORT_FINISHED:
 			getPrefs();
-			
+
 			// event from plugin that saving finished and memory can be freed
 			if (cntProcessing > 0)
 				cntProcessing--;
@@ -1006,7 +1025,7 @@ public class PluginManager extends PluginManagerBase
 
 		case ApplicationInterface.MSG_EXPORT_FINISHED_IOEXCEPTION:
 			getPrefs();
-			
+
 			// event from plugin that saving finished and memory can be freed
 			if (cntProcessing > 0)
 				cntProcessing--;

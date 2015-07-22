@@ -906,6 +906,14 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more details
 			 */
 //			CameraController.onCaptureFinished();
+			
+			if (ApplicationScreen.instance.getFlashModePref(ApplicationScreen.sDefaultFlashValue) == CameraParameters.FLASH_MODE_CAPTURE_TORCH)
+			{
+				// If flashMode == FLASH_MODE_CAPTURE_TORCH, then turn off torch
+				// after capturing completed.
+				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
+			}
+			
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onCaptureFinished();
 
@@ -933,6 +941,14 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more details
 			 */
 //			CameraController.onCaptureFinished();
+			
+			if (ApplicationScreen.instance.getFlashModePref(ApplicationScreen.sDefaultFlashValue) == CameraParameters.FLASH_MODE_CAPTURE_TORCH)
+			{
+				// If flashMode == FLASH_MODE_CAPTURE_TORCH, then turn off torch
+				// after capturing completed.
+				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
+			}
+			
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onCaptureFinished();
 

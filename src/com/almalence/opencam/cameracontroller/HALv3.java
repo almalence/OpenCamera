@@ -1293,7 +1293,7 @@ public class HALv3
 	{
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 		{
-			int currentFlash = appInterface.getFlashModePref(CameraParameters.FLASH_MODE_AUTO);
+			int currentFlash = appInterface.getFlashModePref(ApplicationScreen.sDefaultFlashValue);
 
 			int previewFlash = mode;
 			if (mode != CameraParameters.FLASH_MODE_TORCH && currentFlash == CameraParameters.FLASH_MODE_TORCH)
@@ -1325,8 +1325,6 @@ public class HALv3
 				HALv3.setRepeatingRequest();
 			}
 		}
-
-		appInterface.setFlashModePref(mode);
 	}
 
 	public static void setCameraISOModeHALv3(int mode)
@@ -1760,8 +1758,11 @@ public class HALv3
 			}
 		}
 		
-		int flashMode = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getInt(
-				ApplicationScreen.sFlashModePref, -1);
+		int flashMode = appInterface.getFlashModePref(ApplicationScreen.sDefaultFlashValue);
+		if (flashMode == CameraParameters.FLASH_MODE_CAPTURE_TORCH) {
+			// If flashMode == FLASH_MODE_CAPTURE_TORCH, then turn on torch for captureRequests.
+			flashMode = CameraParameters.FLASH_MODE_TORCH;
+		}
 		
 		if(isAutoExTime)
 		{

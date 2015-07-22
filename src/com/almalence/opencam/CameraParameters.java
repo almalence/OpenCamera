@@ -82,6 +82,7 @@ public final class CameraParameters
 	public static final int		FLASH_MODE_SINGLE				= 1;
 	public static final int		FLASH_MODE_REDEYE				= 4;
 	public static final int		FLASH_MODE_TORCH				= 2;
+	public static final int		FLASH_MODE_CAPTURE_TORCH		= 5;
 
 	// ISO
 	public static final int		ISO_AUTO						= 0;

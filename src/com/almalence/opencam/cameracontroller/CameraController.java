@@ -97,7 +97,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean							isNexus							= Build.MODEL.contains("Nexus 5")
 																							|| Build.MODEL
 																									.contains("Nexus 6");
-	
+
 	public static boolean							isNexus6						= Build.MODEL.contains("Nexus 6");
 
 	public static boolean							isFlex2							= Build.MODEL
@@ -109,184 +109,201 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																											Locale.US)
 																									.replace(" ", "")
 																									.contains("lg-f510");
-	
-	public static boolean							isG4							= Build.MANUFACTURER.contains("LGE")
-																							&&
-																							(Build.MODEL
-																							.toLowerCase(Locale.US)
-																							.replace(" ", "")
-																							.contains("H818")
-																							|| Build.MODEL
-																							.toLowerCase(
-																									Locale.US)
-																							.replace(" ", "")
-																							.contains("H815")
-																							|| Build.MODEL
+
+	public static boolean							isG4							= Build.MANUFACTURER
+																							.contains("LGE")
+																							&& (Build.MODEL
 																									.toLowerCase(
 																											Locale.US)
 																									.replace(" ", "")
-																									.contains("H812")
-																							|| Build.MODEL
-																							.toLowerCase(
-																									Locale.US)
-																							.replace(" ", "")
-																							.contains("H810")
-																							|| Build.MODEL
-																							.toLowerCase(
-																									Locale.US)
-																							.replace(" ", "")
-																							.contains("H811")
-																							|| Build.MODEL
-																							.toLowerCase(
-																									Locale.US)
-																							.replace(" ", "")
-																							.contains("LS991")
-																							|| Build.MODEL
-																							.toLowerCase(
-																									Locale.US)
-																							.replace(" ", "")
-																							.contains("VS986")
-																							|| Build.MODEL
-																							.toLowerCase(
-																									Locale.US)
-																							.replace(" ", "")
-																							.contains("US991"));
-	
+																									.contains("H818")
+																									|| Build.MODEL
+																											.toLowerCase(
+																													Locale.US)
+																											.replace(
+																													" ",
+																													"")
+																											.contains(
+																													"H815")
+																									|| Build.MODEL
+																											.toLowerCase(
+																													Locale.US)
+																											.replace(
+																													" ",
+																													"")
+																											.contains(
+																													"H812")
+																									|| Build.MODEL
+																											.toLowerCase(
+																													Locale.US)
+																											.replace(
+																													" ",
+																													"")
+																											.contains(
+																													"H810")
+																									|| Build.MODEL
+																											.toLowerCase(
+																													Locale.US)
+																											.replace(
+																													" ",
+																													"")
+																											.contains(
+																													"H811")
+																									|| Build.MODEL
+																											.toLowerCase(
+																													Locale.US)
+																											.replace(
+																													" ",
+																													"")
+																											.contains(
+																													"LS991")
+																									|| Build.MODEL
+																											.toLowerCase(
+																													Locale.US)
+																											.replace(
+																													" ",
+																													"")
+																											.contains(
+																													"VS986") || Build.MODEL
+																									.toLowerCase(
+																											Locale.US)
+																									.replace(" ", "")
+																									.contains("US991"));
 
 	public static boolean							isAndroidOne					= Build.MODEL
 																							.contains("Micromax AQ4501");
 
 	public static boolean							isGalaxyS6						= false;
-//																					  Build.MODEL
-//																							.toLowerCase(Locale.US)
-//																							.replace(" ", "")
-//																							.contains("sm-g925f")
-//																							|| Build.MODEL
-//																									.toLowerCase(
-//																											Locale.US)
-//																									.replace(" ", "")
-//																									.contains(
-//																											"sm-g925t")
-//																							|| Build.MODEL
-//																									.toLowerCase(
-//																											Locale.US)
-//																									.replace(" ", "")
-//																									.contains(
-//																											"sm-g925p")
-//																							|| Build.MODEL
-//																									.toLowerCase(
-//																											Locale.US)
-//																									.replace(" ", "")
-//																									.contains(
-//																											"sm-g925v")
-//																							|| Build.MODEL
-//																									.toLowerCase(
-//																											Locale.US)
-//																									.replace(" ", "")
-//																									.contains(
-//																											"sm-g925a")
-//																							|| Build.MODEL
-//																									.toLowerCase(
-//																											Locale.US)
-//																									.replace(" ", "")
-//																									.contains(
-//																											"sm-g925r4")
-//																							|| Build.MODEL
-//																									.toLowerCase(
-//																											Locale.US)
-//																									.replace(" ", "")
-//																									.contains(
-//																											"sm-g925w8")
-//																							|| Build.MODEL
-//																									.toLowerCase(
-//																											Locale.US)
-//																									.replace(" ", "")
-//																									.contains(
-//																											"sm-g925i")
-//																							|| Build.MODEL
-//																									.toLowerCase(
-//																											Locale.US)
-//																									.replace(" ", "")
-//																									.contains(
-//																											"sm-g925k")
-//																							|| Build.MODEL
-//																									.toLowerCase(
-//																											Locale.US)
-//																									.replace(" ", "")
-//																									.contains(
-//																											"sm-g925l")
-//																							|| Build.MODEL
-//																									.toLowerCase(
-//																											Locale.US)
-//																									.replace(" ", "")
-//																									.contains(
-//																											"sm-g925s")
-//																							|| Build.MODEL
-//																									.toLowerCase(
-//																											Locale.US)
-//																									.replace(" ", "")
-//																									.contains(
-//																											"sm-g9250")
-//																							|| Build.MODEL
-//																									.toLowerCase(
-//																											Locale.US)
-//																									.replace(" ", "")
-//																									.contains(
-//																											"sm-g920t")
-//																							|| Build.MODEL
-//																									.toLowerCase(
-//																											Locale.US)
-//																									.replace(" ", "")
-//																									.contains(
-//																											"sm-g920a")
-//																							|| Build.MODEL
-//																									.toLowerCase(
-//																											Locale.US)
-//																									.replace(" ", "")
-//																									.contains(
-//																											"sm-g920v")
-//																							|| Build.MODEL
-//																									.toLowerCase(
-//																											Locale.US)
-//																									.replace(" ", "")
-//																									.contains(
-//																											"sm-g920r4")
-//																							|| Build.MODEL
-//																									.toLowerCase(
-//																											Locale.US)
-//																									.replace(" ", "")
-//																									.contains(
-//																											"sm-g920p")
-//																							|| Build.MODEL
-//																									.toLowerCase(
-//																											Locale.US)
-//																									.replace(" ", "")
-//																									.contains(
-//																											"sm-g920w8")
-//																							|| Build.MODEL
-//																									.toLowerCase(
-//																											Locale.US)
-//																									.replace(" ", "")
-//																									.contains(
-//																											"sm-g920f")
-//																							|| Build.MODEL
-//																									.toLowerCase(
-//																											Locale.US)
-//																									.replace(" ", "")
-//																									.contains(
-//																											"sm-g920i")
-//																							|| Build.MODEL
-//																									.toLowerCase(
-//																											Locale.US)
-//																									.replace(" ", "")
-//																									.contains(
-//																											"sm-g920k")
-//																							|| Build.MODEL
-//																									.toLowerCase(
-//																											Locale.US)
-//																									.replace(" ", "")
-//																									.contains(
-//																											"sm-g920l");
+	// Build.MODEL
+	// .toLowerCase(Locale.US)
+	// .replace(" ", "")
+	// .contains("sm-g925f")
+	// || Build.MODEL
+	// .toLowerCase(
+	// Locale.US)
+	// .replace(" ", "")
+	// .contains(
+	// "sm-g925t")
+	// || Build.MODEL
+	// .toLowerCase(
+	// Locale.US)
+	// .replace(" ", "")
+	// .contains(
+	// "sm-g925p")
+	// || Build.MODEL
+	// .toLowerCase(
+	// Locale.US)
+	// .replace(" ", "")
+	// .contains(
+	// "sm-g925v")
+	// || Build.MODEL
+	// .toLowerCase(
+	// Locale.US)
+	// .replace(" ", "")
+	// .contains(
+	// "sm-g925a")
+	// || Build.MODEL
+	// .toLowerCase(
+	// Locale.US)
+	// .replace(" ", "")
+	// .contains(
+	// "sm-g925r4")
+	// || Build.MODEL
+	// .toLowerCase(
+	// Locale.US)
+	// .replace(" ", "")
+	// .contains(
+	// "sm-g925w8")
+	// || Build.MODEL
+	// .toLowerCase(
+	// Locale.US)
+	// .replace(" ", "")
+	// .contains(
+	// "sm-g925i")
+	// || Build.MODEL
+	// .toLowerCase(
+	// Locale.US)
+	// .replace(" ", "")
+	// .contains(
+	// "sm-g925k")
+	// || Build.MODEL
+	// .toLowerCase(
+	// Locale.US)
+	// .replace(" ", "")
+	// .contains(
+	// "sm-g925l")
+	// || Build.MODEL
+	// .toLowerCase(
+	// Locale.US)
+	// .replace(" ", "")
+	// .contains(
+	// "sm-g925s")
+	// || Build.MODEL
+	// .toLowerCase(
+	// Locale.US)
+	// .replace(" ", "")
+	// .contains(
+	// "sm-g9250")
+	// || Build.MODEL
+	// .toLowerCase(
+	// Locale.US)
+	// .replace(" ", "")
+	// .contains(
+	// "sm-g920t")
+	// || Build.MODEL
+	// .toLowerCase(
+	// Locale.US)
+	// .replace(" ", "")
+	// .contains(
+	// "sm-g920a")
+	// || Build.MODEL
+	// .toLowerCase(
+	// Locale.US)
+	// .replace(" ", "")
+	// .contains(
+	// "sm-g920v")
+	// || Build.MODEL
+	// .toLowerCase(
+	// Locale.US)
+	// .replace(" ", "")
+	// .contains(
+	// "sm-g920r4")
+	// || Build.MODEL
+	// .toLowerCase(
+	// Locale.US)
+	// .replace(" ", "")
+	// .contains(
+	// "sm-g920p")
+	// || Build.MODEL
+	// .toLowerCase(
+	// Locale.US)
+	// .replace(" ", "")
+	// .contains(
+	// "sm-g920w8")
+	// || Build.MODEL
+	// .toLowerCase(
+	// Locale.US)
+	// .replace(" ", "")
+	// .contains(
+	// "sm-g920f")
+	// || Build.MODEL
+	// .toLowerCase(
+	// Locale.US)
+	// .replace(" ", "")
+	// .contains(
+	// "sm-g920i")
+	// || Build.MODEL
+	// .toLowerCase(
+	// Locale.US)
+	// .replace(" ", "")
+	// .contains(
+	// "sm-g920k")
+	// || Build.MODEL
+	// .toLowerCase(
+	// Locale.US)
+	// .replace(" ", "")
+	// .contains(
+	// "sm-g920l");
 
 	// Android camera parameters constants
 	private static String							sceneAuto;
@@ -337,6 +354,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static String							flashOff;
 	private static String							flashRedEye;
 	private static String							flashTorch;
+	private static String							flashCaptureTorch;
 
 	private static String							isoAuto;
 	private static String							iso50;
@@ -589,6 +607,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		flashOff = mainContext.getResources().getString(R.string.flashOffSystem);
 		flashRedEye = mainContext.getResources().getString(R.string.flashRedEyeSystem);
 		flashTorch = mainContext.getResources().getString(R.string.flashTorchSystem);
+		flashCaptureTorch = mainContext.getResources().getString(R.string.flashCaptureTorchSystem);
 
 		isoAuto = mainContext.getResources().getString(R.string.isoAutoSystem);
 		iso50 = mainContext.getResources().getString(R.string.iso50System);
@@ -760,6 +779,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				put(CameraParameters.FLASH_MODE_SINGLE, flashOn);
 				put(CameraParameters.FLASH_MODE_REDEYE, flashRedEye);
 				put(CameraParameters.FLASH_MODE_TORCH, flashTorch);
+				put(CameraParameters.FLASH_MODE_CAPTURE_TORCH, flashCaptureTorch);
 			}
 		};
 
@@ -771,6 +791,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				put(flashOn, CameraParameters.FLASH_MODE_SINGLE);
 				put(flashRedEye, CameraParameters.FLASH_MODE_REDEYE);
 				put(flashTorch, CameraParameters.FLASH_MODE_TORCH);
+				put(flashCaptureTorch, CameraParameters.FLASH_MODE_CAPTURE_TORCH);
 			}
 		};
 
@@ -933,7 +954,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		try
 		{
 			if (!(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService("camera") != null)
-					|| (!isFlex2 && !isNexus && !isAndroidOne /*&& !isGalaxyS6*/ && !isG4))
+					|| (!isFlex2 && !isNexus && !isAndroidOne /* && !isGalaxyS6 */&& !isG4))
 			{
 				isHALv3 = false;
 				isHALv3Supported = false;
@@ -1070,15 +1091,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static void onDestroy()
 	{
 	}
-	
+
 	/*
 	 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more details
 	 */
-//	public static void onCaptureFinished()
-//	{
-//		if(CameraController.isHALv3)
-//			HALv3.onCaptureFinished();
-//	}
+	// public static void onCaptureFinished()
+	// {
+	// if(CameraController.isHALv3)
+	// HALv3.onCaptureFinished();
+	// }
 
 	/* Get different list and maps of camera parameters */
 	public static List<Integer> getIsoValuesList()
@@ -1176,7 +1197,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			// hard-code to enable these only, as we have no profiles for
 			// other models at the moment
-			if (CameraController.isNexus || CameraController.isFlex2/* || CameraController.isGalaxyS6 */|| CameraController.isG4)
+			if (CameraController.isNexus || CameraController.isFlex2/*
+																	 * ||
+																	 * CameraController
+																	 * .
+																	 * isGalaxyS6
+																	 */|| CameraController.isG4)
 				SuperModeOk = true;
 		}
 
@@ -1406,17 +1432,24 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			CameraController.SupportedPreviewSizesList = new ArrayList<CameraController.Size>();
 			if (!isHALv3)
 			{
-				try{
-				if (camera != null && camera.getParameters() != null)
+				try
 				{
-					List<Camera.Size> list = camera.getParameters().getSupportedPreviewSizes();
-					if (list != null)
+					if (camera != null && camera.getParameters() != null)
 					{
-						for (Camera.Size sz : list)
-							CameraController.SupportedPreviewSizesList.add(new CameraController.Size(sz.width,
-									sz.height));
+						List<Camera.Size> list = camera.getParameters().getSupportedPreviewSizes();
+						if (list != null)
+						{
+							for (Camera.Size sz : list)
+								CameraController.SupportedPreviewSizesList.add(new CameraController.Size(sz.width,
+										sz.height));
+						}
 					}
-				}}catch(Exception e){e.printStackTrace();return;};
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+					return;
+				}
+				;
 			} else
 				CameraController.SupportedPreviewSizesList = HALv3.fillPreviewSizeList();
 		} else
@@ -2082,22 +2115,27 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	@TargetApi(15)
 	public static boolean getVideoStabilizationSupported()
 	{
-		try{
-		if (!CameraController.isRemoteCamera())
+		try
 		{
-			if (!CameraController.isHALv3)
+			if (!CameraController.isRemoteCamera())
 			{
-				if (camera == null || (camera != null && camera.getParameters() == null))
-					return false;
+				if (!CameraController.isHALv3)
+				{
+					if (camera == null || (camera != null && camera.getParameters() == null))
+						return false;
 
-				return camera.getParameters().isVideoStabilizationSupported();
+					return camera.getParameters().isVideoStabilizationSupported();
+				} else
+					return false;
 			} else
+			{
 				return false;
-		} else
+			}
+		} catch (Exception e)
 		{
+			e.printStackTrace();
 			return false;
 		}
-		}catch(Exception e){e.printStackTrace();return false;}
 	}
 
 	public static boolean isVideoStabilizationSupported()
@@ -2107,162 +2145,200 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static boolean isExposureLockSupported()
 	{
-		try{
-		if (!CameraController.isRemoteCamera())
+		try
 		{
-			if (!CameraController.isHALv3)
+			if (!CameraController.isRemoteCamera())
 			{
-				if (camera == null || (camera != null && camera.getParameters() == null))
-					return false;
+				if (!CameraController.isHALv3)
+				{
+					if (camera == null || (camera != null && camera.getParameters() == null))
+						return false;
 
-				return camera.getParameters().isAutoExposureLockSupported();
+					return camera.getParameters().isAutoExposureLockSupported();
+				} else
+					return true;
 			} else
-				return true;
-		} else
+			{
+				return false;
+			}
+		} catch (Exception e)
 		{
+			e.printStackTrace();
 			return false;
 		}
-		}catch(Exception e){e.printStackTrace();return false;}
 	}
 
 	public static boolean isExposureLock()
 	{
-		try{
-		if (!CameraController.isRemoteCamera())
+		try
 		{
-			if (!CameraController.isHALv3)
+			if (!CameraController.isRemoteCamera())
 			{
-				if (camera == null || (camera != null && camera.getParameters() == null))
-					return false;
+				if (!CameraController.isHALv3)
+				{
+					if (camera == null || (camera != null && camera.getParameters() == null))
+						return false;
 
-				return camera.getParameters().getAutoExposureLock();
+					return camera.getParameters().getAutoExposureLock();
+				} else
+					return true;
 			} else
-				return true;
-		} else
+			{
+				return false;
+			}
+		} catch (Exception e)
 		{
+			e.printStackTrace();
 			return false;
 		}
-		}catch(Exception e){e.printStackTrace();return false;}
 	}
 
 	public static void setAutoExposureLock(boolean lock)
 	{
-		try{
-		if (!CameraController.isRemoteCamera())
+		try
 		{
-			if (!CameraController.isHALv3)
+			if (!CameraController.isRemoteCamera())
 			{
-				if (camera == null || (camera != null && camera.getParameters() == null))
-					return;
+				if (!CameraController.isHALv3)
+				{
+					if (camera == null || (camera != null && camera.getParameters() == null))
+						return;
 
-				Camera.Parameters params = camera.getParameters();
-				params.setAutoExposureLock(lock);
-				camera.setParameters(params);
-			} else
-				HALv3.setAutoExposureLock(lock);
+					Camera.Parameters params = camera.getParameters();
+					params.setAutoExposureLock(lock);
+					camera.setParameters(params);
+				} else
+					HALv3.setAutoExposureLock(lock);
+			}
+		} catch (Exception e)
+		{
+			e.printStackTrace();
 		}
-		}catch(Exception e){e.printStackTrace();}
 	}
 
 	public static boolean isWhiteBalanceLockSupported()
 	{
-		try{
-		if (!CameraController.isRemoteCamera())
+		try
 		{
-			if (!CameraController.isHALv3)
+			if (!CameraController.isRemoteCamera())
 			{
-				if (camera == null || (camera != null && camera.getParameters() == null))
-					return false;
+				if (!CameraController.isHALv3)
+				{
+					if (camera == null || (camera != null && camera.getParameters() == null))
+						return false;
 
-				return camera.getParameters().isAutoWhiteBalanceLockSupported();
+					return camera.getParameters().isAutoWhiteBalanceLockSupported();
+				} else
+					return true;
 			} else
-				return true;
-		} else
+			{
+				return false;
+			}
+		} catch (Exception e)
 		{
+			e.printStackTrace();
 			return false;
 		}
-		}catch(Exception e){e.printStackTrace();return false;}
 	}
 
 	public static boolean isWhiteBalanceLock()
 	{
-		try{
-		if (!CameraController.isRemoteCamera())
+		try
 		{
-			if (!CameraController.isHALv3)
+			if (!CameraController.isRemoteCamera())
 			{
-				if (camera == null || (camera != null && camera.getParameters() == null))
-					return false;
+				if (!CameraController.isHALv3)
+				{
+					if (camera == null || (camera != null && camera.getParameters() == null))
+						return false;
 
-				return camera.getParameters().getAutoWhiteBalanceLock();
+					return camera.getParameters().getAutoWhiteBalanceLock();
+				} else
+					return PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext())
+							.getBoolean(ApplicationScreen.sAWBLockPref, false);
 			} else
-				return PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getBoolean(
-						ApplicationScreen.sAWBLockPref, false);
-		} else
+			{
+				return false;
+			}
+		} catch (Exception e)
 		{
+			e.printStackTrace();
 			return false;
 		}
-		}catch(Exception e){e.printStackTrace();return false;}
 	}
 
 	public static void setAutoWhiteBalanceLock(boolean lock)
 	{
-		try{
-		if (!CameraController.isRemoteCamera())
+		try
 		{
-			if (!CameraController.isHALv3)
+			if (!CameraController.isRemoteCamera())
 			{
-				if (camera == null || (camera != null && camera.getParameters() == null))
-					return;
+				if (!CameraController.isHALv3)
+				{
+					if (camera == null || (camera != null && camera.getParameters() == null))
+						return;
 
-				Camera.Parameters params = camera.getParameters();
-				params.setAutoWhiteBalanceLock(lock);
-				camera.setParameters(params);
-			} else
-				HALv3.setAutoWhiteBalanceLock(lock);
+					Camera.Parameters params = camera.getParameters();
+					params.setAutoWhiteBalanceLock(lock);
+					camera.setParameters(params);
+				} else
+					HALv3.setAutoWhiteBalanceLock(lock);
+			}
+		} catch (Exception e)
+		{
+			e.printStackTrace();
 		}
-		}catch(Exception e){e.printStackTrace();}
 	}
 
 	public static boolean isZoomSupported()
 	{
-		try{
-		if (!CameraController.isRemoteCamera())
+		try
 		{
-			if (!CameraController.isHALv3)
+			if (!CameraController.isRemoteCamera())
 			{
-				if (null == camera || camera.getParameters() == null)
-					return false;
+				if (!CameraController.isHALv3)
+				{
+					if (null == camera || camera.getParameters() == null)
+						return false;
 
-				return camera.getParameters().isZoomSupported();
+					return camera.getParameters().isZoomSupported();
+				} else
+				{
+					return HALv3.isZoomSupportedHALv3();
+				}
 			} else
 			{
-				return HALv3.isZoomSupportedHALv3();
+				return SonyRemoteCamera.isZoomAvailable();
 			}
-		} else
+		} catch (Exception e)
 		{
-			return SonyRemoteCamera.isZoomAvailable();
+			e.printStackTrace();
+			return false;
 		}
-		}catch(Exception e){e.printStackTrace();return false;}
 	}
 
 	public static int getMaxZoom()
 	{
 		if (!CameraController.isRemoteCamera())
 		{
-			try{
-			if (!CameraController.isHALv3)
+			try
 			{
-				if (null == camera || camera.getParameters() == null)
-					return 1;
+				if (!CameraController.isHALv3)
+				{
+					if (null == camera || camera.getParameters() == null)
+						return 1;
 
-				return camera.getParameters().getMaxZoom();
-			} else
+					return camera.getParameters().getMaxZoom();
+				} else
+				{
+					float maxZoom = HALv3.getMaxZoomHALv3();
+					return (int) (maxZoom - 10.0f);
+				}
+			} catch (Exception e)
 			{
-				float maxZoom = HALv3.getMaxZoomHALv3();
-				return (int) (maxZoom - 10.0f);
+				e.printStackTrace();
+				return 0;
 			}
-			}catch(Exception e){e.printStackTrace();return 0;}
 		} else
 		{
 			return 0;
@@ -2316,26 +2392,31 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static boolean isLumaAdaptationSupported()
 	{
-		try{
-		if (!CameraController.isRemoteCamera())
+		try
 		{
-			if (!CameraController.isHALv3)
+			if (!CameraController.isRemoteCamera())
 			{
-				if (null == camera || camera.getParameters() == null)
-					return false;
-				Camera.Parameters cp = CameraController.getCameraParameters();
+				if (!CameraController.isHALv3)
+				{
+					if (null == camera || camera.getParameters() == null)
+						return false;
+					Camera.Parameters cp = CameraController.getCameraParameters();
 
-				String luma = cp.get("luma-adaptation");
-				return luma != null;
+					String luma = cp.get("luma-adaptation");
+					return luma != null;
+				} else
+				{
+					return false;
+				}
 			} else
 			{
 				return false;
 			}
-		} else
+		} catch (Exception e)
 		{
+			e.printStackTrace();
 			return false;
 		}
-		}catch(Exception e){e.printStackTrace();return false;}
 	}
 
 	// Used to initialize internal variable
@@ -2390,47 +2471,57 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static float getExposureCompensation()
 	{
-		try{
-		if (!CameraController.isRemoteCamera())
+		try
 		{
-			if (!CameraController.isHALv3)
+			if (!CameraController.isRemoteCamera())
 			{
-				if (camera != null && camera.getParameters() != null)
+				if (!CameraController.isHALv3)
 				{
-					Camera.Parameters cameraParameters = CameraController.getCamera().getParameters();
+					if (camera != null && camera.getParameters() != null)
+					{
+						Camera.Parameters cameraParameters = CameraController.getCamera().getParameters();
 
-					return cameraParameters.getExposureCompensation() * cameraParameters.getExposureCompensationStep();
+						return cameraParameters.getExposureCompensation()
+								* cameraParameters.getExposureCompensationStep();
+					} else
+						return 0;
 				} else
-					return 0;
+					return appInterface.getEVPref() * HALv3.getExposureCompensationStepHALv3();
 			} else
-				return appInterface.getEVPref() * HALv3.getExposureCompensationStepHALv3();
-		} else
+			{
+				return SonyRemoteCamera.getExposureCompensationRemote()
+						* SonyRemoteCamera.getExposureCompensationStepRemote();
+			}
+		} catch (Exception e)
 		{
-			return SonyRemoteCamera.getExposureCompensationRemote()
-					* SonyRemoteCamera.getExposureCompensationStepRemote();
+			e.printStackTrace();
+			return 0;
 		}
-		}catch(Exception e){e.printStackTrace();return 0;}
 	}
 
 	public static void resetExposureCompensation()
 	{
-		try{
-		if (!CameraController.isRemoteCamera())
+		try
 		{
-			if (!CameraController.isHALv3)
+			if (!CameraController.isRemoteCamera())
 			{
-				if (camera != null && camera.getParameters() != null)
+				if (!CameraController.isHALv3)
 				{
-					if (!isExposureCompensationSupported())
-						return;
-					Camera.Parameters params = camera.getParameters();
-					params.setExposureCompensation(0);
-					setCameraParameters(params);
-				}
-			} else
-				HALv3.resetExposureCompensationHALv3();
+					if (camera != null && camera.getParameters() != null)
+					{
+						if (!isExposureCompensationSupported())
+							return;
+						Camera.Parameters params = camera.getParameters();
+						params.setExposureCompensation(0);
+						setCameraParameters(params);
+					}
+				} else
+					HALv3.resetExposureCompensationHALv3();
+			}
+		} catch (Exception e)
+		{
+			e.printStackTrace();
 		}
-		}catch(Exception e){e.printStackTrace();}
 	}
 
 	private static boolean getSceneModeSupported()
@@ -2698,12 +2789,13 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				if (isFlashModeSupported())
 				{
-					int[] flash = new int[5];
+					int[] flash = new int[6];
 					flash[0] = CameraParameters.FLASH_MODE_AUTO;
 					flash[1] = CameraParameters.FLASH_MODE_OFF;
 					flash[2] = CameraParameters.FLASH_MODE_SINGLE;
 					flash[3] = CameraParameters.FLASH_MODE_REDEYE;
 					flash[4] = CameraParameters.FLASH_MODE_TORCH;
+					flash[5] = CameraParameters.FLASH_MODE_CAPTURE_TORCH;
 					return flash;
 				}
 			} else
@@ -2716,6 +2808,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				} else
 				{
 					flashModes = camera.getParameters().getSupportedFlashModes();
+				}
+
+				if (flashModes.contains(CameraController.mode_flash.get(CameraParameters.FLASH_MODE_TORCH)))
+				{
+					// If TORCH mode is available, then also enable CAPTURE_TORCH.
+					flashModes.add(CameraController.mode_flash.get(CameraParameters.FLASH_MODE_CAPTURE_TORCH));
 				}
 
 				if (camera != null && flashModes != null)
@@ -3425,6 +3523,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						if (params != null)
 						{
 							String currentFlash = params.getFlashMode();
+
+							// Nothing to do, if newMode and currentMode are
+							// equals.
+							if (currentFlash.equals(CameraController.mode_flash.get(mode)))
+							{
+								return;
+							}
+
 							if (currentFlash.equals(flashTorch))
 							{
 								params.setFlashMode(flashOff);
@@ -3878,6 +3984,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		if (!isRemoteCamera())
 		{
+			if (appInterface.getFlashModePref(ApplicationScreen.sDefaultFlashValue) == CameraParameters.FLASH_MODE_CAPTURE_TORCH)
+			{
+				// If current flash mode is FLASH_MODE_CAPTURE_TORCH, then turn on torch before capturing.
+				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_TORCH);
+			}
+
 			if (!CameraController.isHALv3)
 			{
 				takeYUVFrame = (format == CameraController.YUV) || (format == CameraController.YUV_RAW);

@@ -97,6 +97,7 @@
     <string name="flashOff">выкл</string>
     <string name="flashRedEye">red-eye</string>
     <string name="flashTorch">фонарик</string>
+    <string name="flashCaptureTorch">фонарик для съемки</string>
     
     <string name="isoAuto">авто</string> 
     

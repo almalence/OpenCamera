@@ -318,6 +318,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 																										R.drawable.gui_almalence_settings_flash_redeye);
 																								put(CameraParameters.FLASH_MODE_TORCH,
 																										R.drawable.gui_almalence_settings_flash_torch);
+																								put(CameraParameters.FLASH_MODE_CAPTURE_TORCH,
+																										R.drawable.gui_almalence_settings_flash_torch);
 																							}
 																						};
 
@@ -682,6 +684,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 																												.getResources()
 																												.getString(
 																														R.string.flashTorch));
+																								put(CameraParameters.FLASH_MODE_CAPTURE_TORCH,
+																										MainScreen
+																												.getInstance()
+																												.getResources()
+																												.getString(
+																														R.string.flashCaptureTorch));
 																							}
 																						};
 	private static final Map<Integer, String>				NAMES_ISO					= new HashMap<Integer, String>()
@@ -2603,8 +2611,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				GridView gridview = (GridView) guiView.findViewById(R.id.flashmodeGrid);
 				gridview.setAdapter(flashmodeAdapter);
 
-				int initValue = preferences.getInt(ApplicationScreen.sFlashModePref,
-						ApplicationScreen.sDefaultFlashValue);
+				int initValue = ApplicationScreen.instance.getFlashModePref(ApplicationScreen.sDefaultFlashValue);
 				if (!activeFlashNames.contains(initValue))
 				{
 					if (CameraController.isFrontCamera())
@@ -5729,7 +5736,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			but = (RotateImageView) topMenuButtons.get(MODE_FLASH);
 			icon_id = ICONS_FLASH.get(mFlashMode);
 			but.setImageResource(icon_id);
-			preferences.edit().putInt(ApplicationScreen.sFlashModePref, mFlashMode).commit();
+			ApplicationScreen.instance.setFlashModePref(mFlashMode);
 
 			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
 					ApplicationInterface.MSG_FLASH_CHANGED);
@@ -5876,7 +5883,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			mFlashMode = newMode;
 			setButtonSelected(flashModeButtons, mFlashMode);
 
-			preferences.edit().putInt(ApplicationScreen.sFlashModePref, newMode).commit();
+			ApplicationScreen.instance.setFlashModePref(newMode);
 		}
 
 		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_FLASH);
