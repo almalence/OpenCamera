@@ -160,10 +160,6 @@ public class MainScreen extends ApplicationScreen
 
 	// private boolean keepScreenOn = false;
 
-	private String				saveToPath;
-	private String				saveToPreference;
-	private boolean				sortByDataPreference;
-
 	private static boolean		maxScreenBrightnessPreference;
 
 	// >>Description
@@ -321,6 +317,7 @@ public class MainScreen extends ApplicationScreen
 		resetOrSaveSettings();
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SavingService.initSavingPrefs(getApplicationContext());
 
 		if (null != mode)
 			prefs.edit().putString("defaultModeName", mode).commit();
@@ -556,24 +553,6 @@ public class MainScreen extends ApplicationScreen
 	public static void setShowHelp(boolean show)
 	{
 		MainScreen.getInstance().showHelp = show;
-	}
-
-	@Override
-	public String getSaveToPath()
-	{
-		return MainScreen.getInstance().saveToPath;
-	}
-
-	@Override
-	public String getSaveTo()
-	{
-		return MainScreen.getInstance().saveToPreference;
-	}
-
-	@Override
-	public boolean isSortByData()
-	{
-		return MainScreen.getInstance().sortByDataPreference;
 	}
 
 	/*
@@ -1084,11 +1063,6 @@ public class MainScreen extends ApplicationScreen
 					updatePreferences();
 
 					captureFormat = CameraController.JPEG;
-
-					saveToPath = prefs.getString(sSavePathPref, Environment.getExternalStorageDirectory()
-							.getAbsolutePath());
-					saveToPreference = prefs.getString(MainScreen.sSaveToPref, "0");
-					sortByDataPreference = prefs.getBoolean(MainScreen.sSortByDataPref, false);
 
 					maxScreenBrightnessPreference = prefs.getBoolean("maxScreenBrightnessPref", false);
 					setScreenBrightness(maxScreenBrightnessPreference);

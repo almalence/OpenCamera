@@ -128,6 +128,23 @@
 		<receiver android:name="com.almalence.opencam.AlarmReceiver"></receiver>
 		<!--  -+- -->
 
+		<!-- +++
+		<service
+            android:name="com.almalence.opencam_plus.ProcessingService"
+            android:exported="false"/>
+		<service
+            android:name="com.almalence.opencam_plus.SavingService"
+            android:exported="false"/>
+		+++ -->
+		<!-- -+-  -->
+		<service
+            android:name="com.almalence.opencam.ProcessingService"
+            android:exported="false"/>
+		<service
+            android:name="com.almalence.opencam.SavingService"
+            android:exported="false"/>
+		<!--  -+- -->
+
 		<!-- Uncomment for Amazon market 1st part 
 		<receiver android:name="com.amazon.inapp.purchasing.ResponseReceiver">
 	    	<intent-filter>

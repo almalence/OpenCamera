@@ -72,11 +72,7 @@ public class ExportPlugin extends PluginExport
 				"ResultFromProcessingPlugin" + sessionID));
 
 		
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			ApplicationScreen.getPluginManager().saveResultPictureNew(sessionID);
-		} else {
-			ApplicationScreen.getPluginManager().saveResultPicture(sessionID);
-		}
+		ApplicationScreen.getPluginManager().saveResultPicture(sessionID);
 	}
 
 	private void getPrefs()
