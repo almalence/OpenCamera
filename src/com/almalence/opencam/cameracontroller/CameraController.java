@@ -170,10 +170,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																									.replace(" ", "")
 																									.contains("US991"));
 
-	public static boolean							isAndroidOne					= Build.MODEL
-																							.contains("Micromax AQ4501");
+	public static boolean							isAndroidOne					= Build.MODEL.toLowerCase(Locale.US)
+																								 .replace(" ", "")
+																								 .contains("Micromax AQ4501");
 
-	public static boolean							isGalaxyS6						= false;
+	public static boolean							isGalaxyS6						= Build.MODEL.contains("SM-G920") ||
+ 																					  Build.MODEL.contains("SM-G925");
+	
+	public static boolean							isGalaxyS5						= Build.MODEL.contains("SM-G900");
+	
+	public static boolean							isGalaxyNote4					= Build.MODEL.contains("SM-N910");
 	// Build.MODEL
 	// .toLowerCase(Locale.US)
 	// .replace(" ", "")
@@ -954,7 +960,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		try
 		{
 			if (!(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService("camera") != null)
-					|| (!isFlex2 && !isNexus && !isAndroidOne /* && !isGalaxyS6 */&& !isG4))
+					|| (!isFlex2 && !isNexus && !isAndroidOne  && /*!isGalaxyS6 &&*/ !isG4))
 			{
 				isHALv3 = false;
 				isHALv3Supported = false;

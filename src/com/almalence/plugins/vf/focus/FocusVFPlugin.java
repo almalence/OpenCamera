@@ -399,6 +399,25 @@ public class FocusVFPlugin extends PluginViewfinder
 			else if (mState == STATE_FAIL)
 				ApplicationScreen.getGUIManager().lockControls = false;
 		}
+		else
+		{
+			int focusMode = getFocusMode();
+			if(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE &&
+					(CameraController.isGalaxyS6 || CameraController.isGalaxyS5 || CameraController.isGalaxyNote4))
+			{
+				final int[] supported_focus = CameraController.getSupportedFocusModes();
+				int afMode = -1;
+				if (CameraController.isModeAvailable(supported_focus, CameraParameters.AF_MODE_AUTO))
+					afMode = CameraParameters.AF_MODE_AUTO;
+				else if (CameraController.isModeAvailable(supported_focus, CameraParameters.AF_MODE_MACRO))
+					afMode = CameraParameters.AF_MODE_MACRO;
+				else
+					afMode = supported_focus[0];
+	
+				CameraController.setCameraFocusMode(afMode);
+				ApplicationScreen.instance.setAutoFocusLock(true);
+			}
+		}
 	}
 
 	@Override
@@ -433,6 +452,7 @@ public class FocusVFPlugin extends PluginViewfinder
 	@Override
 	public void onAutoFocusMoving(boolean start)
 	{
+		Log.wtf(TAG, "FOCUS MOVING!");
 		if (!splitMode)
 			return;
 

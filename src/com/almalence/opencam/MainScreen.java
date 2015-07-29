@@ -928,6 +928,20 @@ public class MainScreen extends ApplicationScreen
 			else
 				fp.setEnabled(false);
 		}
+		
+		//Real exposure preference should be available only in Camera2 mode
+		CheckBoxPreference realExposurePf = (CheckBoxPreference) prefActivity.findPreference(MainScreen.sRealExposureTimeOnPreviewPref);
+		if(realExposurePf != null)
+		{
+			boolean isCamera2 = PreferenceManager.getDefaultSharedPreferences(
+					MainScreen.getMainContext()).getBoolean(getResources().getString(R.string.Preference_UseHALv3Key), false);
+			if (!isCamera2)
+			{
+				realExposurePf.setEnabled(false);
+			}
+			else
+				realExposurePf.setEnabled(true);
+		}
 
 		setColorEffectOptions(prefActivity);
 	}

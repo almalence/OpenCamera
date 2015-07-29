@@ -548,6 +548,8 @@ public class PluginManager extends PluginManagerBase
 
 			if (activePlugins.size() != listVF.size() && isPreferenecesAvailable(inactivePlugins, false))
 				pf.addPreferencesFromResource(R.xml.preferences_vf_inactive);
+			
+			ApplicationScreen.instance.onAdvancePreferenceCreate(pf); //Some vf advance preferences may be related to entire application instead of some special vf plugin
 		} else if ("vf_inactive_settings".equals(settings))
 		{
 			for (int i = 0; i < listVF.size(); i++)
