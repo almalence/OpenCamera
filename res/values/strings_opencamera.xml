@@ -81,4 +81,7 @@
     
     <string name="string_appoftheday">You have now the Pro version, thanks to App of the Day</string>
     
+    <string name="string_processing_image">Image processing...</string>
+    <string name="string_saving_image">Image saving...</string>
+    
 </resources>

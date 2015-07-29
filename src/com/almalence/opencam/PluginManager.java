@@ -146,6 +146,7 @@ public class PluginManager extends PluginManagerBase
 	protected void createPlugins()
 	{
 		pluginList = new Hashtable<String, Plugin>();
+		processingPluginList = new HashMap<Long, Plugin>();
 
 		sharedMemory = new Hashtable<String, String>();
 
@@ -153,12 +154,12 @@ public class PluginManager extends PluginManagerBase
 			createRAWCaptureResultHashtable();
 
 		activeVF = new ArrayList<String>();
-//		activeFilter = new ArrayList<String>();
+		// activeFilter = new ArrayList<String>();
 
 		listVF = new ArrayList<Plugin>();
 		listCapture = new ArrayList<Plugin>();
 		listProcessing = new ArrayList<Plugin>();
-//		listFilter = new ArrayList<Plugin>();
+		// listFilter = new ArrayList<Plugin>();
 		listExport = new ArrayList<Plugin>();
 
 		// init plugins and add to pluginList
@@ -326,8 +327,8 @@ public class PluginManager extends PluginManagerBase
 			pluginList.get(activeCapture).onPause();
 		if (null != pluginList.get(activeProcessing))
 			pluginList.get(activeProcessing).onPause();
-//		for (int i = 0; i < activeFilter.size(); i++)
-//			pluginList.get(i).onPause();
+		// for (int i = 0; i < activeFilter.size(); i++)
+		// pluginList.get(i).onPause();
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onPause();
 	}
@@ -350,8 +351,8 @@ public class PluginManager extends PluginManagerBase
 			pluginList.get(activeCapture).onGUICreate();
 		if (null != pluginList.get(activeProcessing))
 			pluginList.get(activeProcessing).onGUICreate();
-//		for (int i = 0; i < activeFilter.size(); i++)
-//			pluginList.get(i).onGUICreate();
+		// for (int i = 0; i < activeFilter.size(); i++)
+		// pluginList.get(i).onGUICreate();
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onGUICreate();
 
@@ -638,16 +639,17 @@ public class PluginManager extends PluginManagerBase
 			AddModeSettings("bestshotmode", pf);
 		} else if ("saving_settings".equals(settings))
 		{
-//			for (int i = 0; i < listFilter.size(); i++)
-//			{
-//				Plugin pg = listFilter.get(i);
-//				if (activeFilter.contains(pg.getID()))
-//					activePlugins.add(pg);
-//				else
-//					inactivePlugins.add(pg);
-//			}
-//			if (activePlugins.size() != listFilter.size() && isPreferenecesAvailable(inactivePlugins, false))
-//				hasInactive = true;
+			// for (int i = 0; i < listFilter.size(); i++)
+			// {
+			// Plugin pg = listFilter.get(i);
+			// if (activeFilter.contains(pg.getID()))
+			// activePlugins.add(pg);
+			// else
+			// inactivePlugins.add(pg);
+			// }
+			// if (activePlugins.size() != listFilter.size() &&
+			// isPreferenecesAvailable(inactivePlugins, false))
+			// hasInactive = true;
 			addHeadersContent(pf, activePlugins, false);
 
 			activePlugins.clear();
@@ -668,12 +670,12 @@ public class PluginManager extends PluginManagerBase
 				pf.addPreferencesFromResource(R.xml.preferences_saving_inactive);
 		} else if ("saving_inactive_settings".equals(settings))
 		{
-//			for (int i = 0; i < listFilter.size(); i++)
-//			{
-//				Plugin pg = listFilter.get(i);
-//				if (!activeFilter.contains(pg.getID()))
-//					inactivePlugins.add(pg);
-//			}
+			// for (int i = 0; i < listFilter.size(); i++)
+			// {
+			// Plugin pg = listFilter.get(i);
+			// if (!activeFilter.contains(pg.getID()))
+			// inactivePlugins.add(pg);
+			// }
 			addHeadersContent(pf, inactivePlugins, false);
 
 			activePlugins.clear();
@@ -730,14 +732,14 @@ public class PluginManager extends PluginManagerBase
 
 			activePlugins.clear();
 			inactivePlugins.clear();
-//			for (int i = 0; i < listFilter.size(); i++)
-//			{
-//				Plugin pg = listFilter.get(i);
-//				if (activeFilter.contains(pg.getID()))
-//					activePlugins.add(pg);
-//				else
-//					inactivePlugins.add(pg);
-//			}
+			// for (int i = 0; i < listFilter.size(); i++)
+			// {
+			// Plugin pg = listFilter.get(i);
+			// if (activeFilter.contains(pg.getID()))
+			// activePlugins.add(pg);
+			// else
+			// inactivePlugins.add(pg);
+			// }
 			if (isPreferenecesAvailable(inactivePlugins, true))
 				hasInactive = true;
 			addHeadersContent(pf, activePlugins, true);
@@ -787,12 +789,12 @@ public class PluginManager extends PluginManagerBase
 			addHeadersContent(pf, inactivePlugins, true);
 
 			inactivePlugins.clear();
-//			for (int i = 0; i < listFilter.size(); i++)
-//			{
-//				Plugin pg = listFilter.get(i);
-//				if (!activeFilter.contains(pg.getID()))
-//					inactivePlugins.add(pg);
-//			}
+			// for (int i = 0; i < listFilter.size(); i++)
+			// {
+			// Plugin pg = listFilter.get(i);
+			// if (!activeFilter.contains(pg.getID()))
+			// inactivePlugins.add(pg);
+			// }
 			addHeadersContent(pf, inactivePlugins, true);
 
 			inactivePlugins.clear();
@@ -897,11 +899,25 @@ public class PluginManager extends PluginManagerBase
 			addToSharedMem("mode_name" + (String) msg.obj, modeName);
 			// start async task for further processing
 			cntProcessing++;
-			ProcessingTask task = new ProcessingTask(ApplicationScreen.instance);
-			task.SessionID = Long.valueOf((String) msg.obj);
-			task.processing = pluginList.get(activeProcessing);
-			task.export = pluginList.get(activeExport);
-			task.execute();
+
+			// Map sessionID and processing plugin, because active plugin may be
+			// changed before image processing will start (Mode was switched).
+			// We don't map export plugin, because it's the same for all modes.
+			processingPluginList.put(Long.valueOf((String) msg.obj), pluginList.get(activeProcessing));
+
+			Intent mServiceIntent = new Intent(ApplicationScreen.instance, ProcessingService.class);
+
+			// Pass to Service sessionID and some other parameters, that may be required.
+			mServiceIntent.putExtra("sessionID", Long.valueOf((String) msg.obj));
+			CameraController.Size imageSize = CameraController.getCameraImageSize();
+			mServiceIntent.putExtra("imageWidth", imageSize.getWidth());
+			mServiceIntent.putExtra("imageHeight", imageSize.getHeight());
+			mServiceIntent.putExtra("wantLandscapePhoto", ApplicationScreen.getWantLandscapePhoto());
+			mServiceIntent.putExtra("cameraMirrored", CameraController.isFrontCamera());
+			
+			// Start processing service with current sessionID.
+			ApplicationScreen.instance.startService(mServiceIntent);
+
 			ApplicationScreen.instance.muteShutter(false);
 
 			// <!-- -+-
@@ -938,7 +954,7 @@ public class PluginManager extends PluginManagerBase
 				// after capturing completed.
 				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
 			}
-			
+
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onCaptureFinished();
 
@@ -983,12 +999,15 @@ public class PluginManager extends PluginManagerBase
 					ApplicationInterface.MSG_CONTROL_UNLOCKED);
 
 			ApplicationScreen.getGUIManager().onPostProcessingFinished();
-			if (null != pluginList.get(activeExport) && 0 != sessionID)
+			if (null != pluginList.get(activeExport) && 0 != sessionID) 
+			{
 				pluginList.get(activeExport).onExportActive(sessionID);
+			}
 			else
+			{
 				ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED);
-
-			clearSharedMemory(sessionID);
+				clearSharedMemory(sessionID);
+			}
 			break;
 		case ApplicationInterface.MSG_EXPORT_FINISHED:
 			getPrefs();

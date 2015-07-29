@@ -258,8 +258,8 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public static int					iMinColorTemperatureValue		= 1000;
 	public static int					iMaxColorTemperatureValue		= 10000;
 
-	private File						forceFilename				= null;
-	private Uri							forceFilenameUri;
+	private static File					forceFilename				= null;
+	private static Uri					forceFilenameUri;
 
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -607,12 +607,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	abstract public boolean isShutterSoundEnabled();
 
 	abstract public int isShotOnTap();
-
-	abstract public String getSaveToPath();
-
-	abstract public String getSaveTo();
-
-	abstract public boolean isSortByData();
 
 	public static int getOrientation()
 	{
@@ -1897,17 +1891,17 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	public static Uri getForceFilenameURI()
 	{
-		return ApplicationScreen.instance.forceFilenameUri;
+		return ApplicationScreen.forceFilenameUri;
 	}
 
 	public static File getForceFilename()
 	{
-		return ApplicationScreen.instance.forceFilename;
+		return ApplicationScreen.forceFilename;
 	}
 
 	public static void setForceFilename(File fileName)
 	{
-		ApplicationScreen.instance.forceFilename = fileName;
+		ApplicationScreen.forceFilename = fileName;
 	}
 
 	public void sonyCameraSelected()

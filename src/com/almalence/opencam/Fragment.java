@@ -689,7 +689,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 			about_string.append("None");
 		}
 
-		String save_location = ApplicationScreen.instance.getSaveToPath();
+		String save_location = SavingService.getSaveToPath();
 		about_string.append("\nSave Location: " + save_location);
 
 		if (MainScreen.getInstance().flattenParamteters != null

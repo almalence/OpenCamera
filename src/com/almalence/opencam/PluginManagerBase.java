@@ -118,6 +118,7 @@ import com.almalence.util.exifreader.metadata.exif.ExifSubIFDDirectory;
  +++ --> */
 //<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
+
 //-+- -->
 
 /***
@@ -142,19 +143,20 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	// of types we can have just simple int variables or create a list, but it's
 	// more complicated)
 	protected Map<String, Plugin>				pluginList;
+	protected Map<Long, Plugin>					processingPluginList;
 
 	// active plugins IDs
 	protected List<String>						activeVF;
 	protected String							activeCapture;
 	protected String							activeProcessing;
-//	protected List<String>						activeFilter;
+	// protected List<String> activeFilter;
 	protected String							activeExport;
 
 	// list of plugins by type
 	protected List<Plugin>						listVF;
 	protected List<Plugin>						listCapture;
 	protected List<Plugin>						listProcessing;
-//	protected List<Plugin>						listFilter;
+	// protected List<Plugin> listFilter;
 	protected List<Plugin>						listExport;
 
 	// counter indicating amout of processing tasks running
@@ -187,6 +189,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	protected PluginManagerBase()
 	{
 		pluginList = new Hashtable<String, Plugin>();
+		processingPluginList = new HashMap<Long, Plugin>();
 
 		sharedMemory = new Hashtable<String, String>();
 
@@ -194,12 +197,12 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			createRAWCaptureResultHashtable();
 
 		activeVF = new ArrayList<String>();
-//		activeFilter = new ArrayList<String>();
+		// activeFilter = new ArrayList<String>();
 
 		listVF = new ArrayList<Plugin>();
 		listCapture = new ArrayList<Plugin>();
 		listProcessing = new ArrayList<Plugin>();
-//		listFilter = new ArrayList<Plugin>();
+		// listFilter = new ArrayList<Plugin>();
 		listExport = new ArrayList<Plugin>();
 
 		createPlugins();
@@ -251,9 +254,9 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			activeVF.add(mode.VF.get(i));
 		activeCapture = mode.Capture;
 		activeProcessing = mode.Processing;
-//		for (int i = 0; i < mode.Filter.size(); i++)
-//			activeFilter.add(mode.Filter.get(i));
-//		activeFilter.clear();
+		// for (int i = 0; i < mode.Filter.size(); i++)
+		// activeFilter.add(mode.Filter.get(i));
+		// activeFilter.clear();
 		activeExport = mode.Export;
 	}
 
@@ -308,8 +311,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			pluginList.get(activeCapture).onCreate();
 		if (null != pluginList.get(activeProcessing))
 			pluginList.get(activeProcessing).onCreate();
-//		for (int i = 0; i < activeFilter.size(); i++)
-//			pluginList.get(i).onCreate();
+		// for (int i = 0; i < activeFilter.size(); i++)
+		// pluginList.get(i).onCreate();
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onCreate();
 
@@ -333,7 +336,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		}
 	}
 
-	protected boolean	isRestart	= false;
+	protected boolean	isRestart					= false;
 	protected boolean	switchToOldCameraInterface	= false;
 
 	public void setSwitchModeType(boolean restart)
@@ -345,20 +348,22 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	{
 		return isRestart;
 	}
-	
+
 	public boolean isSwitchToOldCameraInterface()
 	{
 		return switchToOldCameraInterface;
 	}
 
 	public void switchMode(final Mode mode)
-	{	
+	{
 		String modeName = mode.modeID;
-		if(modeName.equals("video") || (Build.MODEL.equals("Nexus 6") && (modeName.equals("panorama_augmented") || modeName.equals("preshot"))))
+		if (modeName.equals("video")
+				|| (Build.MODEL.equals("Nexus 6") && (modeName.equals("panorama_augmented") || modeName
+						.equals("preshot"))))
 			switchToOldCameraInterface = true;
 		else
 			switchToOldCameraInterface = false;
-		
+
 		// disable old plugins
 		ApplicationScreen.getGUIManager().onStop();
 		ApplicationScreen.instance.switchingMode(isRestart ? false : true);
@@ -374,9 +379,9 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			activeVF.add(mode.VF.get(i));
 		activeCapture = mode.Capture;
 		activeProcessing = mode.Processing;
-//		activeFilter.clear();
-//		for (int i = 0; i < mode.Filter.size(); i++)
-//			activeFilter.add(mode.Filter.get(i));
+		// activeFilter.clear();
+		// for (int i = 0; i < mode.Filter.size(); i++)
+		// activeFilter.add(mode.Filter.get(i));
 		activeExport = mode.Export;
 
 		// set mode as default for future starts
@@ -408,12 +413,12 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		case Processing:
 			activePlugins.add(pluginList.get(activeProcessing));
 			break;
-//		case Filter:
-//			{
-//				for (int i = 0; i < activeFilter.size(); i++)
-//					activePlugins.add(pluginList.get(i));
-//			}
-//			break;
+		// case Filter:
+		// {
+		// for (int i = 0; i < activeFilter.size(); i++)
+		// activePlugins.add(pluginList.get(i));
+		// }
+		// break;
 		case Export:
 			activePlugins.add(pluginList.get(activeExport));
 			break;
@@ -433,8 +438,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			pluginList.get(activeCapture).onStart();
 		if (null != pluginList.get(activeProcessing))
 			pluginList.get(activeProcessing).onStart();
-//		for (int i = 0; i < activeFilter.size(); i++)
-//			pluginList.get(i).onStart();
+		// for (int i = 0; i < activeFilter.size(); i++)
+		// pluginList.get(i).onStart();
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onStart();
 	}
@@ -448,8 +453,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			pluginList.get(activeCapture).onStop();
 		if (null != pluginList.get(activeProcessing))
 			pluginList.get(activeProcessing).onStop();
-//		for (int i = 0; i < activeFilter.size(); i++)
-//			pluginList.get(i).onStop();
+		// for (int i = 0; i < activeFilter.size(); i++)
+		// pluginList.get(i).onStop();
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onStop();
 	}
@@ -463,8 +468,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			pluginList.get(activeCapture).onDestroy();
 		if (null != pluginList.get(activeProcessing))
 			pluginList.get(activeProcessing).onDestroy();
-//		for (int i = 0; i < activeFilter.size(); i++)
-//			pluginList.get(i).onDestroy();
+		// for (int i = 0; i < activeFilter.size(); i++)
+		// pluginList.get(i).onDestroy();
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onDestroy();
 	}
@@ -478,8 +483,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			pluginList.get(activeCapture).onResume();
 		if (null != pluginList.get(activeProcessing))
 			pluginList.get(activeProcessing).onResume();
-//		for (int i = 0; i < activeFilter.size(); i++)
-//			pluginList.get(i).onResume();
+		// for (int i = 0; i < activeFilter.size(); i++)
+		// pluginList.get(i).onResume();
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onResume();
 	}
@@ -493,8 +498,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			pluginList.get(activeCapture).onPause();
 		if (null != pluginList.get(activeProcessing))
 			pluginList.get(activeProcessing).onPause();
-//		for (int i = 0; i < activeFilter.size(); i++)
-//			pluginList.get(i).onPause();
+		// for (int i = 0; i < activeFilter.size(); i++)
+		// pluginList.get(i).onPause();
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onPause();
 	}
@@ -515,8 +520,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			pluginList.get(activeCapture).onShowPreferences();
 		if (null != pluginList.get(activeProcessing))
 			pluginList.get(activeProcessing).onShowPreferences();
-//		for (int i = 0; i < activeFilter.size(); i++)
-//			pluginList.get(i).onShowPreferences();
+		// for (int i = 0; i < activeFilter.size(); i++)
+		// pluginList.get(i).onShowPreferences();
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onShowPreferences();
 	}
@@ -529,8 +534,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			pluginList.get(activeCapture).onGUICreate();
 		if (null != pluginList.get(activeProcessing))
 			pluginList.get(activeProcessing).onGUICreate();
-//		for (int i = 0; i < activeFilter.size(); i++)
-//			pluginList.get(i).onGUICreate();
+		// for (int i = 0; i < activeFilter.size(); i++)
+		// pluginList.get(i).onGUICreate();
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onGUICreate();
 
@@ -668,8 +673,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			pluginList.get(activeCapture).onOrientationChanged(orientation);
 		if (null != pluginList.get(activeProcessing))
 			pluginList.get(activeProcessing).onOrientationChanged(orientation);
-//		for (int i = 0; i < activeFilter.size(); i++)
-//			pluginList.get(i).onOrientationChanged(orientation);
+		// for (int i = 0; i < activeFilter.size(); i++)
+		// pluginList.get(i).onOrientationChanged(orientation);
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onOrientationChanged(orientation);
 	}
@@ -686,8 +691,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			res += pluginList.get(activeCapture).onKeyDown(keyCode, event) ? 1 : 0;
 		if (null != pluginList.get(activeProcessing))
 			res += pluginList.get(activeProcessing).onKeyDown(keyCode, event) ? 1 : 0;
-//		for (int i = 0; i < activeFilter.size(); i++)
-//			res += pluginList.get(i).onKeyDown(keyCode, event) ? 1 : 0;
+		// for (int i = 0; i < activeFilter.size(); i++)
+		// res += pluginList.get(i).onKeyDown(keyCode, event) ? 1 : 0;
 		if (null != pluginList.get(activeExport))
 			res += pluginList.get(activeExport).onKeyDown(keyCode, event) ? 1 : 0;
 		return (res > 0 ? true : false);
@@ -871,12 +876,12 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			if (res)
 				return;
 		}
-//		for (int i = 0; i < activeFilter.size(); i++)
-//		{
-//			res = pluginList.get(i).onBroadcast(arg1, arg2);
-//			if (res)
-//				return;
-//		}
+		// for (int i = 0; i < activeFilter.size(); i++)
+		// {
+		// res = pluginList.get(i).onBroadcast(arg1, arg2);
+		// if (res)
+		// return;
+		// }
 		if (null != pluginList.get(activeExport))
 		{
 			res = pluginList.get(activeExport).onBroadcast(arg1, arg2);
@@ -903,17 +908,18 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		case ApplicationInterface.MSG_CAPTURE_FINISHED:
 
 			/*
-			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more details
+			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more
+			 * details
 			 */
-//			CameraController.onCaptureFinished();
-			
+			// CameraController.onCaptureFinished();
+
 			if (ApplicationScreen.instance.getFlashModePref(ApplicationScreen.sDefaultFlashValue) == CameraParameters.FLASH_MODE_CAPTURE_TORCH)
 			{
 				// If flashMode == FLASH_MODE_CAPTURE_TORCH, then turn off torch
 				// after capturing completed.
 				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
 			}
-			
+
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onCaptureFinished();
 
@@ -926,11 +932,26 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			addToSharedMem("mode_name" + (String) msg.obj, modeName);
 			// start async task for further processing
 			cntProcessing++;
-			ProcessingTask task = new ProcessingTask(ApplicationScreen.instance);
-			task.SessionID = Long.valueOf((String) msg.obj);
-			task.processing = pluginList.get(activeProcessing);
-			task.export = pluginList.get(activeExport);
-			task.execute();
+
+			// Map sessionID and processing plugin, because active plugin may be
+			// changed before image processing will start.
+			// We don't map export plugin, because it's the same for all modes.
+			processingPluginList.put(Long.valueOf((String) msg.obj), pluginList.get(activeProcessing));
+
+			Intent mServiceIntent = new Intent(ApplicationScreen.instance, ProcessingService.class);
+
+			// Pass to Service sessionID and some other parameters, that may be
+			// required.
+			mServiceIntent.putExtra("sessionID", Long.valueOf((String) msg.obj));
+			CameraController.Size imageSize = CameraController.getCameraImageSize();
+			mServiceIntent.putExtra("imageWidth", imageSize.getWidth());
+			mServiceIntent.putExtra("imageHeight", imageSize.getHeight());
+			mServiceIntent.putExtra("wantLandscapePhoto", ApplicationScreen.getWantLandscapePhoto());
+			mServiceIntent.putExtra("cameraMirrored", CameraController.isFrontCamera());
+
+			// Start processing service with current sessionID.
+			ApplicationScreen.instance.startService(mServiceIntent);
+
 			ApplicationScreen.instance.muteShutter(false);
 
 			break;
@@ -938,17 +959,18 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		case ApplicationInterface.MSG_CAPTURE_FINISHED_NORESULT:
 
 			/*
-			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more details
+			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more
+			 * details
 			 */
-//			CameraController.onCaptureFinished();
-			
+			// CameraController.onCaptureFinished();
+
 			if (ApplicationScreen.instance.getFlashModePref(ApplicationScreen.sDefaultFlashValue) == CameraParameters.FLASH_MODE_CAPTURE_TORCH)
 			{
 				// If flashMode == FLASH_MODE_CAPTURE_TORCH, then turn off torch
 				// after capturing completed.
 				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
 			}
-			
+
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onCaptureFinished();
 
@@ -990,12 +1012,16 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
 
 			ApplicationScreen.getGUIManager().onPostProcessingFinished();
-			if (null != pluginList.get(activeExport) && 0 != sessionID)
+			if (null != pluginList.get(activeExport) && 0 != sessionID) 
+			{
 				pluginList.get(activeExport).onExportActive(sessionID);
+			}
 			else
+			{
 				ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED);
+				clearSharedMemory(sessionID);
+			}
 
-			clearSharedMemory(sessionID);
 			break;
 		case ApplicationInterface.MSG_EXPORT_FINISHED:
 			// event from plugin that saving finished and memory can be freed
@@ -1244,7 +1270,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	}
 
 	@TargetApi(21)
-	private CaptureResult getFromRAWCaptureResults(String key)
+	public CaptureResult getFromRAWCaptureResults(String key)
 	{
 		return rawCaptureResults.get(key);
 	}
@@ -1360,59 +1386,6 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			pluginList.get(activeCapture).onGLDrawFrame(gl);
 	}
 
-	// ////////////////////////////
-	// processing&Filter&Export task
-	// ////////////////////////////
-	protected class ProcessingTask extends AsyncTask<Void, Void, Void>
-	{
-		public long	SessionID	= 0;	// id to identify data flow
-
-		Plugin		processing	= null;
-		Plugin		export		= null;
-
-		public ProcessingTask(Context context)
-		{
-		}
-
-		@Override
-		protected Void doInBackground(Void... params)
-		{
-			android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_DEFAULT);
-			// if post rpocessing not needed - save few values
-			// from main screen to shared memory for current session
-			if (null != processing)
-				if (!processing.isPostProcessingNeeded())
-				{
-					CameraController.Size imageSize = CameraController.getCameraImageSize();
-					addToSharedMem("imageHeight" + SessionID, String.valueOf(imageSize.getHeight()));
-					addToSharedMem("imageWidth" + SessionID, String.valueOf(imageSize.getWidth()));
-					addToSharedMem("wantLandscapePhoto" + SessionID,
-							String.valueOf(ApplicationScreen.getWantLandscapePhoto()));
-					addToSharedMem("CameraMirrored" + SessionID, String.valueOf(CameraController.isFrontCamera()));
-				}
-
-			if (null != processing)
-			{
-				processing.onStartProcessing(SessionID);
-				if (processing.isPostProcessingNeeded())
-				{
-					ApplicationScreen.getMessageHandler().sendEmptyMessage(
-							ApplicationInterface.MSG_START_POSTPROCESSING);
-					return null;
-				}
-			}
-
-			if (null != export)
-				export.onExportActive(SessionID);
-			else
-				ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED);
-
-			clearSharedMemory(SessionID);
-			return null;
-		}
-
-	}
-
 	// /////////////////////////////////////
 	// Utils
 	// /////////////////////////////////////
@@ -1422,1666 +1395,39 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		return cntProcessing;
 	}
 
-	protected static final String[]	MEMCARD_DIR_PATH		= new String[] { "/storage", "/mnt", "", "/storage",
-			"/Removable", "/storage", "/storage", "", "/mnt", "/" };
-
-	protected static final String[]	MEMCARD_DIR_PATH_NAMES	= new String[] { "sdcard1", "extSdCard", "external_sd",
-			"external_SD", "MicroSD", "emulated", "sdcard0", "sdcard-ext", "sdcard-ext", "sdcard" };
-
-	protected static final String[]	SAVEDIR_DIR_PATH_NAMES	= new String[] { "sdcard1/DCIM/", "extSdCard/DCIM/",
-			"external_sd/DCIM/", "external_SD/DCIM/", "MicroSD/DCIM/", "emulated/0/DCIM/", "sdcard0/DCIM/",
-			"sdcard-ext/DCIM/", "sdcard-ext/DCIM/", "sdcard/DCIM/" };
-
-	// get file saving directory
-	// toInternalMemory - should be true only if force save to internal
-	public static File getSaveDir(boolean forceSaveToInternalMemory)
-	{
-		File dcimDir, saveDir = null, memcardDir;
-		boolean usePhoneMem = true;
-
-		String abcDir = "Camera";
-		if (ApplicationScreen.instance.isSortByData())
-		{
-			Calendar rightNow = Calendar.getInstance();
-			abcDir = String.format("%tF", rightNow);
-		}
-
-		if (Integer.parseInt(ApplicationScreen.instance.getSaveTo()) == 1)
-		{
-			dcimDir = Environment.getExternalStorageDirectory();
-
-			for (int i = 0; i < SAVEDIR_DIR_PATH_NAMES.length; i++)
-			{
-				if (MEMCARD_DIR_PATH[i].isEmpty())
-				{
-					memcardDir = new File(dcimDir, MEMCARD_DIR_PATH_NAMES[i]);
-					if (memcardDir.exists())
-					{
-						saveDir = new File(dcimDir, SAVEDIR_DIR_PATH_NAMES[i] + abcDir);
-						usePhoneMem = false;
-						break;
-					}
-				} else
-				{
-					memcardDir = new File(MEMCARD_DIR_PATH[i], MEMCARD_DIR_PATH_NAMES[i]);
-					if (memcardDir.exists())
-					{
-						saveDir = new File(MEMCARD_DIR_PATH[i], SAVEDIR_DIR_PATH_NAMES[i] + abcDir);
-						usePhoneMem = false;
-						break;
-					}
-				}
-			}
-		} else if ((Integer.parseInt(ApplicationScreen.instance.getSaveTo()) == 2))
-		{
-			if (ApplicationScreen.instance.isSortByData())
-			{
-				saveDir = new File(ApplicationScreen.instance.getSaveToPath(), abcDir);
-			} else
-			{
-				saveDir = new File(ApplicationScreen.instance.getSaveToPath());
-			}
-			usePhoneMem = false;
-		}
-
-		if (usePhoneMem || forceSaveToInternalMemory) // phone memory (internal
-														// sd card)
-		{
-			dcimDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-			saveDir = new File(dcimDir, abcDir);
-		}
-		if (!saveDir.exists())
-			saveDir.mkdirs();
-
-		// if creation failed - try to switch to phone mem
-		if (!saveDir.exists())
-		{
-			dcimDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-			saveDir = new File(dcimDir, abcDir);
-
-			if (!saveDir.exists())
-				saveDir.mkdirs();
-		}
-		return saveDir;
-	}
-
-	// get file saving directory
-	// toInternalMemory - should be true only if force save to internal
-	@TargetApi(19)
-	public static DocumentFile getSaveDirNew(boolean forceSaveToInternalMemory)
-	{
-		DocumentFile saveDir = null;
-		boolean usePhoneMem = true;
-
-		String abcDir = "Camera";
-		if (ApplicationScreen.instance.isSortByData())
-		{
-			Calendar rightNow = Calendar.getInstance();
-			abcDir = String.format("%tF", rightNow);
-		}
-
-		int saveToValue = Integer.parseInt(ApplicationScreen.instance.getSaveTo());
-		if (saveToValue == 1 || saveToValue == 2)
-		{
-			boolean canWrite = false;
-			String uri = ApplicationScreen.instance.getSaveToPath();
-			try
-			{
-				saveDir = DocumentFile.fromTreeUri(ApplicationScreen.instance, Uri.parse(uri));
-			} catch (Exception e)
-			{
-				saveDir = null;
-			}
-			List<UriPermission> perms = ApplicationScreen.instance.getContentResolver().getPersistedUriPermissions();
-			for (UriPermission p : perms)
-			{
-				if (p.getUri().toString().equals(uri.toString()) && p.isWritePermission())
-				{
-					canWrite = true;
-					break;
-				}
-			}
-
-			if (saveDir != null && canWrite && saveDir.exists())
-			{
-				if (ApplicationScreen.instance.isSortByData())
-				{
-					DocumentFile dateFolder = saveDir.findFile(abcDir);
-					if (dateFolder == null)
-					{
-						dateFolder = saveDir.createDirectory(abcDir);
-					}
-					saveDir = dateFolder;
-				}
-				usePhoneMem = false;
-			}
-		}
-
-		if (usePhoneMem || forceSaveToInternalMemory) // phone memory (internal
-														// sd card)
-		{
-			saveDir = DocumentFile.fromFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM));
-			DocumentFile abcFolder = saveDir.findFile(abcDir);
-			if (abcFolder == null || !abcFolder.exists())
-			{
-				abcFolder = saveDir.createDirectory(abcDir);
-			}
-			saveDir = abcFolder;
-		}
-
-		return saveDir;
-	}
-
-	private void getPrefs()
-	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		saveOption = Integer.parseInt(prefs.getString(ApplicationScreen.sExportNamePref, "2"));
-		useGeoTaggingPrefExport = prefs.getBoolean("useGeoTaggingPrefExport", false);
-		enableExifTagOrientation = prefs.getBoolean(ApplicationScreen.sEnableExifOrientationTagPref, true);
-		additionalRotation = Integer.parseInt(prefs.getString(ApplicationScreen.sAdditionalRotationPref, "0"));
-
-		switch (additionalRotation)
-		{
-		case 0:
-			additionalRotationValue = 0;
-			break;
-		case 1:
-			additionalRotationValue = -90;
-			break;
-		case 2:
-			additionalRotationValue = 90;
-			break;
-		case 3:
-			additionalRotationValue = 180;
-			break;
-		}
-	}
-
-	// save result pictures method for android < 5.0
-	public void saveResultPicture(long sessionID)
-	{
-		getPrefs();
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		// save fused result
-		try
-		{
-			File saveDir = getSaveDir(false);
-
-			Calendar d = Calendar.getInstance();
-
-			int imagesAmount = Integer.parseInt(getFromSharedMem("amountofresultframes" + Long.toString(sessionID)));
-
-			if (imagesAmount == 0)
-				imagesAmount = 1;
-
-			int imageIndex = 0;
-			String sImageIndex = getFromSharedMem("resultframeindex" + Long.toString(sessionID));
-			if (sImageIndex != null)
-				imageIndex = Integer.parseInt(getFromSharedMem("resultframeindex" + Long.toString(sessionID)));
-
-			if (imageIndex != 0)
-				imagesAmount = 1;
-
-			ContentValues values = null;
-
-			boolean hasDNGResult = false;
-			for (int i = 1; i <= imagesAmount; i++)
-			{
-				hasDNGResult = false;
-				String format = getFromSharedMem("resultframeformat" + i + Long.toString(sessionID));
-
-				if (format != null && format.equalsIgnoreCase("dng"))
-					hasDNGResult = true;
-
-				String idx = "";
-
-				if (imagesAmount != 1)
-					idx += "_"
-							+ ((format != null && !format.equalsIgnoreCase("dng") && hasDNGResult) ? i - imagesAmount
-									/ 2 : i);
-
-				String modeName = getFromSharedMem("modeSaveName" + Long.toString(sessionID));
-				// define file name format. from settings!
-				String fileFormat = getExportFileName(modeName);
-				fileFormat += idx + ((format != null && format.equalsIgnoreCase("dng")) ? ".dng" : ".jpg");
-
-				File file;
-				if (ApplicationScreen.getForceFilename() == null)
-				{
-					file = new File(saveDir, fileFormat);
-				} else
-				{
-					file = ApplicationScreen.getForceFilename();
-				}
-
-				OutputStream os = null;
-				if (ApplicationScreen.getForceFilename() != null)
-				{
-					os = ApplicationScreen.instance.getContentResolver().openOutputStream(
-							ApplicationScreen.getForceFilenameURI());
-				} else
-				{
-					try
-					{
-						os = new FileOutputStream(file);
-					} catch (Exception e)
-					{
-						// save always if not working saving to sdcard
-						e.printStackTrace();
-						saveDir = getSaveDir(true);
-						if (ApplicationScreen.getForceFilename() == null)
-						{
-							file = new File(saveDir, fileFormat);
-						} else
-						{
-							file = ApplicationScreen.getForceFilename();
-						}
-						os = new FileOutputStream(file);
-					}
-				}
-
-				// Take only one result frame from several results
-				// Used for PreShot plugin that may decide which result to save
-				if (imagesAmount == 1 && imageIndex != 0)
-					i = imageIndex;
-
-				String resultOrientation = getFromSharedMem("resultframeorientation" + i + Long.toString(sessionID));
-				int orientation = 0;
-				if (resultOrientation != null)
-					orientation = Integer.parseInt(resultOrientation);
-
-				String resultMirrored = getFromSharedMem("resultframemirrored" + i + Long.toString(sessionID));
-				Boolean cameraMirrored = false;
-				if (resultMirrored != null)
-					cameraMirrored = Boolean.parseBoolean(resultMirrored);
-
-				int x = Integer.parseInt(getFromSharedMem("saveImageHeight" + Long.toString(sessionID)));
-				int y = Integer.parseInt(getFromSharedMem("saveImageWidth" + Long.toString(sessionID)));
-				if (orientation == 0 || orientation == 180 || (format != null && format.equalsIgnoreCase("dng")))
-				{
-					x = Integer.valueOf(getFromSharedMem("saveImageWidth" + Long.toString(sessionID)));
-					y = Integer.valueOf(getFromSharedMem("saveImageHeight" + Long.toString(sessionID)));
-				}
-
-				Boolean writeOrientationTag = true;
-				String writeOrientTag = getFromSharedMem("writeorientationtag" + Long.toString(sessionID));
-				if (writeOrientTag != null)
-					writeOrientationTag = Boolean.parseBoolean(writeOrientTag);
-
-				if (format != null && format.equalsIgnoreCase("jpeg"))
-				{// if result in jpeg format
-
-					if (os != null)
-					{
-						byte[] frame = SwapHeap.SwapFromHeap(
-								Integer.parseInt(getFromSharedMem("resultframe" + i + Long.toString(sessionID))),
-								Integer.parseInt(getFromSharedMem("resultframelen" + i + Long.toString(sessionID))));
-						os.write(frame);
-						try
-						{
-							os.close();
-						} catch (Exception e)
-						{
-							e.printStackTrace();
-						}
-					}
-				} else if (format != null && format.equalsIgnoreCase("dng"))
-				{
-					saveDNGPicture(i, sessionID, os, x, y, orientation, cameraMirrored);
-				} else
-				{// if result in nv21 format
-					int yuv = Integer.parseInt(getFromSharedMem("resultframe" + i + Long.toString(sessionID)));
-					com.almalence.YuvImage out = new com.almalence.YuvImage(yuv, ImageFormat.NV21, x, y, null);
-					Rect r;
-
-					String res = getFromSharedMem("resultfromshared" + Long.toString(sessionID));
-					if ((null == res) || "".equals(res) || "true".equals(res))
-					{
-						// to avoid problems with SKIA
-						int cropHeight = out.getHeight() - out.getHeight() % 16;
-						r = new Rect(0, 0, out.getWidth(), cropHeight);
-					} else
-					{
-						if (null == getFromSharedMem("resultcrop0" + Long.toString(sessionID)))
-						{
-							// to avoid problems with SKIA
-							int cropHeight = out.getHeight() - out.getHeight() % 16;
-							r = new Rect(0, 0, out.getWidth(), cropHeight);
-						} else
-						{
-							int crop0 = Integer.parseInt(getFromSharedMem("resultcrop0" + Long.toString(sessionID)));
-							int crop1 = Integer.parseInt(getFromSharedMem("resultcrop1" + Long.toString(sessionID)));
-							int crop2 = Integer.parseInt(getFromSharedMem("resultcrop2" + Long.toString(sessionID)));
-							int crop3 = Integer.parseInt(getFromSharedMem("resultcrop3" + Long.toString(sessionID)));
-
-							r = new Rect(crop0, crop1, crop0 + crop2, crop1 + crop3);
-
-						}
-					}
-
-					jpegQuality = Integer.parseInt(prefs.getString(ApplicationScreen.sJPEGQualityPref, "95"));
-					if (!out.compressToJpeg(r, jpegQuality, os))
-					{
-						ApplicationScreen.getMessageHandler().sendEmptyMessage(
-								ApplicationInterface.MSG_EXPORT_FINISHED_IOEXCEPTION);
-						return;
-					}
-					SwapHeap.FreeFromHeap(yuv);
-				}
-
-				String orientation_tag = String.valueOf(0);
-				int sensorOrientation = CameraController.getSensorOrientation();
-				int displayOrientation = CameraController.getDisplayOrientation();
-				sensorOrientation = (360 + sensorOrientation + (cameraMirrored ? -displayOrientation
-						: displayOrientation)) % 360;
-
-				if (Build.MODEL.equals("Nexus 6") && cameraMirrored)
-					orientation = (orientation + 180) % 360;
-
-				switch (orientation)
-				{
-				default:
-				case 0:
-					orientation_tag = String.valueOf(0);
-					break;
-				case 90:
-					orientation_tag = cameraMirrored ? String.valueOf(270) : String.valueOf(90);
-					break;
-				case 180:
-					orientation_tag = String.valueOf(180);
-					break;
-				case 270:
-					orientation_tag = cameraMirrored ? String.valueOf(90) : String.valueOf(270);
-					break;
-				}
-
-				int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-				if (writeOrientationTag)
-				{
-					switch ((orientation + 360) % 360)
-					{
-					default:
-					case 0:
-						exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-						break;
-					case 90:
-						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
-								: ExifInterface.ORIENTATION_ROTATE_90;
-						break;
-					case 180:
-						exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
-						break;
-					case 270:
-						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
-								: ExifInterface.ORIENTATION_ROTATE_270;
-						break;
-					}
-				} else
-				{
-					switch ((additionalRotationValue + 360) % 360)
-					{
-					default:
-					case 0:
-						exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-						break;
-					case 90:
-						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
-								: ExifInterface.ORIENTATION_ROTATE_90;
-						break;
-					case 180:
-						exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
-						break;
-					case 270:
-						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
-								: ExifInterface.ORIENTATION_ROTATE_270;
-						break;
-					}
-				}
-
-				if (!enableExifTagOrientation)
-					exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-
-				File parent = file.getParentFile();
-				String path = parent.toString().toLowerCase();
-				String name = parent.getName().toLowerCase();
-
-				values = new ContentValues();
-				values.put(
-						ImageColumns.TITLE,
-						file.getName().substring(
-								0,
-								file.getName().lastIndexOf(".") >= 0 ? file.getName().lastIndexOf(".") : file.getName()
-										.length()));
-				values.put(ImageColumns.DISPLAY_NAME, file.getName());
-				values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
-				values.put(ImageColumns.MIME_TYPE, "image/jpeg");
-
-				if (enableExifTagOrientation)
-				{
-					if (writeOrientationTag)
-					{
-						values.put(ImageColumns.ORIENTATION, String.valueOf((Integer.parseInt(orientation_tag)
-								+ additionalRotationValue + 360) % 360));
-					} else
-					{
-						values.put(ImageColumns.ORIENTATION, String.valueOf((additionalRotationValue + 360) % 360));
-					}
-				} else
-				{
-					values.put(ImageColumns.ORIENTATION, String.valueOf(0));
-				}
-
-				values.put(ImageColumns.BUCKET_ID, path.hashCode());
-				values.put(ImageColumns.BUCKET_DISPLAY_NAME, name);
-				values.put(ImageColumns.DATA, file.getAbsolutePath());
-
-				File tmpFile;
-				if (ApplicationScreen.getForceFilename() == null)
-				{
-					tmpFile = file;
-				} else
-				{
-					tmpFile = new File(ApplicationScreen.instance.getFilesDir(), "buffer.jpeg");
-					tmpFile.createNewFile();
-					copyFromForceFileName(tmpFile);
-				}
-
-				if (!enableExifTagOrientation)
-				{
-					Matrix matrix = new Matrix();
-					if (writeOrientationTag && (orientation + additionalRotationValue) != 0)
-					{
-						matrix.postRotate((orientation + additionalRotationValue + 360) % 360);
-						rotateImage(tmpFile, matrix);
-					} else if (!writeOrientationTag && additionalRotationValue != 0)
-					{
-						matrix.postRotate((additionalRotationValue + 360) % 360);
-						rotateImage(tmpFile, matrix);
-					}
-				}
-
-				if (useGeoTaggingPrefExport)
-				{
-					Location l = MLocation.getLocation(ApplicationScreen.getMainContext());
-					if (l != null)
-					{
-						double lat = l.getLatitude();
-						double lon = l.getLongitude();
-						boolean hasLatLon = (lat != 0.0d) || (lon != 0.0d);
-						if (hasLatLon)
-						{
-							values.put(ImageColumns.LATITUDE, l.getLatitude());
-							values.put(ImageColumns.LONGITUDE, l.getLongitude());
-						}
-					}
-				}
-
-				File modifiedFile = saveExifTags(tmpFile, sessionID, i, x, y, exif_orientation,
-						useGeoTaggingPrefExport, enableExifTagOrientation);
-				if (ApplicationScreen.getForceFilename() == null)
-				{
-					file.delete();
-					modifiedFile.renameTo(file);
-				} else
-				{
-					copyToForceFileName(modifiedFile);
-					tmpFile.delete();
-					modifiedFile.delete();
-				}
-
-				Uri uri = ApplicationScreen.instance.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI,
-						values);
-				broadcastNewPicture(uri);
-			}
-
-			ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED);
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-			ApplicationScreen.getMessageHandler()
-					.sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED_IOEXCEPTION);
-			return;
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED);
-		} finally
-		{
-			ApplicationScreen.setForceFilename(null);
-		}
-	}
-
-	public static void broadcastNewPicture(Uri uri)
-	{
-		ApplicationScreen.instance.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
-		ApplicationScreen.getMainContext().sendBroadcast(new Intent("android.hardware.action.NEW_PICTURE", uri));
-		// Keep compatibility
-		ApplicationScreen.getMainContext().sendBroadcast(new Intent("com.android.camera.NEW_PICTURE", uri));
-	}
-
-	public void copyFromForceFileName(File dst) throws IOException
-	{
-		InputStream in = ApplicationScreen.instance.getContentResolver().openInputStream(
-				ApplicationScreen.getForceFilenameURI());
-		OutputStream out = new FileOutputStream(dst);
-
-		// Transfer bytes from in to out
-		byte[] buf = new byte[1024];
-		int len;
-		while ((len = in.read(buf)) > 0)
-		{
-			out.write(buf, 0, len);
-		}
-		in.close();
-		out.close();
-	}
-
-	public void copyToForceFileName(File src) throws IOException
-	{
-		InputStream in = new FileInputStream(src);
-		OutputStream out = ApplicationScreen.instance.getContentResolver().openOutputStream(
-				ApplicationScreen.getForceFilenameURI());
-
-		// Transfer bytes from in to out
-		byte[] buf = new byte[1024];
-		int len;
-		while ((len = in.read(buf)) > 0)
-		{
-			out.write(buf, 0, len);
-		}
-		in.close();
-		out.close();
-	}
-
-	// save result pictures method for android >= 5.0
-	public void saveResultPictureNew(long sessionID)
-	{
-		if (ApplicationScreen.getForceFilename() != null)
-		{
-			saveResultPicture(sessionID);
-			return;
-		}
-
-		getPrefs();
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		// save fused result
-		try
-		{
-			DocumentFile saveDir = getSaveDirNew(false);
-
-			int imagesAmount = Integer.parseInt(getFromSharedMem("amountofresultframes" + Long.toString(sessionID)));
-
-			if (imagesAmount == 0)
-				imagesAmount = 1;
-
-			int imageIndex = 0;
-			String sImageIndex = getFromSharedMem("resultframeindex" + Long.toString(sessionID));
-			if (sImageIndex != null)
-				imageIndex = Integer.parseInt(getFromSharedMem("resultframeindex" + Long.toString(sessionID)));
-
-			if (imageIndex != 0)
-				imagesAmount = 1;
-
-			ContentValues values = null;
-
-			boolean hasDNGResult = false;
-			for (int i = 1; i <= imagesAmount; i++)
-			{
-				hasDNGResult = false;
-				String format = getFromSharedMem("resultframeformat" + i + Long.toString(sessionID));
-
-				if (format != null && format.equalsIgnoreCase("dng"))
-					hasDNGResult = true;
-
-				String idx = "";
-
-				if (imagesAmount != 1)
-					idx += "_"
-							+ ((format != null && !format.equalsIgnoreCase("dng") && hasDNGResult) ? i - imagesAmount
-									/ 2 : i);
-
-				String modeName = getFromSharedMem("modeSaveName" + Long.toString(sessionID));
-				// define file name format. from settings!
-				String fileFormat = getExportFileName(modeName);
-				fileFormat += idx;
-
-				DocumentFile file = null;
-				if (ApplicationScreen.getForceFilename() == null)
-				{
-					if (hasDNGResult)
-					{
-						file = saveDir.createFile("image/x-adobe-dng", fileFormat + ".dng");
-					} else
-					{
-						file = saveDir.createFile("image/jpeg", fileFormat);
-					}
-				} else
-				{
-					file = DocumentFile.fromFile(ApplicationScreen.getForceFilename());
-				}
-
-				// Create buffer image to deal with exif tags.
-				OutputStream os = null;
-				File bufFile = new File(ApplicationScreen.instance.getFilesDir(), "buffer.jpeg");
-				try
-				{
-					os = new FileOutputStream(bufFile);
-				} catch (Exception e)
-				{
-					e.printStackTrace();
-				}
-
-				// Take only one result frame from several results
-				// Used for PreShot plugin that may decide which result to save
-				if (imagesAmount == 1 && imageIndex != 0)
-					i = imageIndex;
-
-				String resultOrientation = getFromSharedMem("resultframeorientation" + i + Long.toString(sessionID));
-				int orientation = 0;
-				if (resultOrientation != null)
-					orientation = Integer.parseInt(resultOrientation);
-
-				String resultMirrored = getFromSharedMem("resultframemirrored" + i + Long.toString(sessionID));
-				Boolean cameraMirrored = false;
-				if (resultMirrored != null)
-					cameraMirrored = Boolean.parseBoolean(resultMirrored);
-
-				int x = Integer.parseInt(getFromSharedMem("saveImageHeight" + Long.toString(sessionID)));
-				int y = Integer.parseInt(getFromSharedMem("saveImageWidth" + Long.toString(sessionID)));
-				if (orientation == 0 || orientation == 180 || (format != null && format.equalsIgnoreCase("dng")))
-				{
-					x = Integer.valueOf(getFromSharedMem("saveImageWidth" + Long.toString(sessionID)));
-					y = Integer.valueOf(getFromSharedMem("saveImageHeight" + Long.toString(sessionID)));
-				}
-
-				Boolean writeOrientationTag = true;
-				String writeOrientTag = getFromSharedMem("writeorientationtag" + Long.toString(sessionID));
-				if (writeOrientTag != null)
-					writeOrientationTag = Boolean.parseBoolean(writeOrientTag);
-
-				if (format != null && format.equalsIgnoreCase("jpeg"))
-				{// if result in jpeg format
-
-					if (os != null)
-					{
-						byte[] frame = SwapHeap.SwapFromHeap(
-								Integer.parseInt(getFromSharedMem("resultframe" + i + Long.toString(sessionID))),
-								Integer.parseInt(getFromSharedMem("resultframelen" + i + Long.toString(sessionID))));
-						os.write(frame);
-						try
-						{
-							os.close();
-						} catch (Exception e)
-						{
-							e.printStackTrace();
-						}
-					}
-				} else if (format != null && format.equalsIgnoreCase("dng")
-						&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-				{
-					saveDNGPicture(i, sessionID, os, x, y, orientation, cameraMirrored);
-				} else
-				{// if result in nv21 format
-					int yuv = Integer.parseInt(getFromSharedMem("resultframe" + i + Long.toString(sessionID)));
-					com.almalence.YuvImage out = new com.almalence.YuvImage(yuv, ImageFormat.NV21, x, y, null);
-					Rect r;
-
-					String res = getFromSharedMem("resultfromshared" + Long.toString(sessionID));
-					if ((null == res) || "".equals(res) || "true".equals(res))
-					{
-						// to avoid problems with SKIA
-						int cropHeight = out.getHeight() - out.getHeight() % 16;
-						r = new Rect(0, 0, out.getWidth(), cropHeight);
-					} else
-					{
-						if (null == getFromSharedMem("resultcrop0" + Long.toString(sessionID)))
-						{
-							// to avoid problems with SKIA
-							int cropHeight = out.getHeight() - out.getHeight() % 16;
-							r = new Rect(0, 0, out.getWidth(), cropHeight);
-						} else
-						{
-							int crop0 = Integer.parseInt(getFromSharedMem("resultcrop0" + Long.toString(sessionID)));
-							int crop1 = Integer.parseInt(getFromSharedMem("resultcrop1" + Long.toString(sessionID)));
-							int crop2 = Integer.parseInt(getFromSharedMem("resultcrop2" + Long.toString(sessionID)));
-							int crop3 = Integer.parseInt(getFromSharedMem("resultcrop3" + Long.toString(sessionID)));
-
-							r = new Rect(crop0, crop1, crop0 + crop2, crop1 + crop3);
-						}
-					}
-
-					jpegQuality = Integer.parseInt(prefs.getString(ApplicationScreen.sJPEGQualityPref, "95"));
-					if (!out.compressToJpeg(r, jpegQuality, os))
-					{
-						ApplicationScreen.getMessageHandler().sendEmptyMessage(
-								ApplicationInterface.MSG_EXPORT_FINISHED_IOEXCEPTION);
-						return;
-					}
-					SwapHeap.FreeFromHeap(yuv);
-				}
-
-				String orientation_tag = String.valueOf(0);
-				int sensorOrientation = CameraController.getSensorOrientation();
-				int displayOrientation = CameraController.getDisplayOrientation();
-				sensorOrientation = (360 + sensorOrientation + (cameraMirrored ? -displayOrientation
-						: displayOrientation)) % 360;
-
-				if (Build.MODEL.equals("Nexus 6") && cameraMirrored)
-					orientation = (orientation + 180) % 360;
-
-				switch (orientation)
-				{
-				default:
-				case 0:
-					orientation_tag = String.valueOf(0);
-					break;
-				case 90:
-					orientation_tag = cameraMirrored ? String.valueOf(270) : String.valueOf(90);
-					break;
-				case 180:
-					orientation_tag = String.valueOf(180);
-					break;
-				case 270:
-					orientation_tag = cameraMirrored ? String.valueOf(90) : String.valueOf(270);
-					break;
-				}
-
-				int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-				if (writeOrientationTag)
-				{
-					switch ((orientation + 360) % 360)
-					{
-					default:
-					case 0:
-						exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-						break;
-					case 90:
-						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
-								: ExifInterface.ORIENTATION_ROTATE_90;
-						break;
-					case 180:
-						exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
-						break;
-					case 270:
-						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
-								: ExifInterface.ORIENTATION_ROTATE_270;
-						break;
-					}
-				} else
-				{
-					switch ((additionalRotationValue + 360) % 360)
-					{
-					default:
-					case 0:
-						exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-						break;
-					case 90:
-						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
-								: ExifInterface.ORIENTATION_ROTATE_90;
-						break;
-					case 180:
-						exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
-						break;
-					case 270:
-						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
-								: ExifInterface.ORIENTATION_ROTATE_270;
-						break;
-					}
-				}
-
-				if (!enableExifTagOrientation)
-					exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-
-				DocumentFile parent = file.getParentFile();
-				String path = parent.toString().toLowerCase();
-				String name = parent.getName().toLowerCase();
-
-				values = new ContentValues();
-				values.put(
-						ImageColumns.TITLE,
-						file.getName().substring(
-								0,
-								file.getName().lastIndexOf(".") >= 0 ? file.getName().lastIndexOf(".") : file.getName()
-										.length()));
-				values.put(ImageColumns.DISPLAY_NAME, file.getName());
-				values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
-				values.put(ImageColumns.MIME_TYPE, "image/jpeg");
-
-				if (enableExifTagOrientation)
-				{
-					if (writeOrientationTag)
-					{
-						values.put(ImageColumns.ORIENTATION, String.valueOf((Integer.parseInt(orientation_tag)
-								+ additionalRotationValue + 360) % 360));
-					} else
-					{
-						values.put(ImageColumns.ORIENTATION, String.valueOf((additionalRotationValue + 360) % 360));
-					}
-				} else
-				{
-					values.put(ImageColumns.ORIENTATION, String.valueOf(0));
-				}
-
-				String filePath = file.getName();
-				boolean isDATAFieldInited = false;
-
-				// If we able to get File object, than get path from it.
-				// fileObject should not be null for files on phone memory.
-				File fileObject = Util.getFileFromDocumentFile(file);
-				if (fileObject != null)
-				{
-					filePath = fileObject.getAbsolutePath();
-					isDATAFieldInited = true;
-					values.put(ImageColumns.DATA, filePath);
-				} else
-				{
-					// This case should typically happen for files saved to SD
-					// card.
-					String documentPath = Util.getAbsolutePathFromDocumentFile(file);
-					values.put(ImageColumns.DATA, documentPath);
-					isDATAFieldInited = true;
-				}
-
-				if (!enableExifTagOrientation && !hasDNGResult)
-				{
-					Matrix matrix = new Matrix();
-					if (writeOrientationTag && (orientation + additionalRotationValue) != 0)
-					{
-						matrix.postRotate((orientation + additionalRotationValue + 360) % 360);
-						rotateImage(bufFile, matrix);
-					} else if (!writeOrientationTag && additionalRotationValue != 0)
-					{
-						matrix.postRotate((additionalRotationValue + 360) % 360);
-						rotateImage(bufFile, matrix);
-					}
-				}
-
-				if (useGeoTaggingPrefExport)
-				{
-					Location l = MLocation.getLocation(ApplicationScreen.getMainContext());
-					if (l != null)
-					{
-						double lat = l.getLatitude();
-						double lon = l.getLongitude();
-						boolean hasLatLon = (lat != 0.0d) || (lon != 0.0d);
-						if (hasLatLon)
-						{
-							values.put(ImageColumns.LATITUDE, l.getLatitude());
-							values.put(ImageColumns.LONGITUDE, l.getLongitude());
-						}
-					}
-				}
-
-				File modifiedFile = null;
-				if (!hasDNGResult)
-				{
-					modifiedFile = saveExifTags(bufFile, sessionID, i, x, y, exif_orientation, useGeoTaggingPrefExport,
-							enableExifTagOrientation);
-				}
-				if (modifiedFile != null)
-				{
-					bufFile.delete();
-
-					if (ApplicationScreen.getForceFilename() == null)
-					{
-						// Copy buffer image with exif tags into result file.
-						InputStream is = null;
-						int len;
-						byte[] buf = new byte[4096];
-						try
-						{
-							os = ApplicationScreen.instance.getContentResolver().openOutputStream(file.getUri());
-							is = new FileInputStream(modifiedFile);
-							while ((len = is.read(buf)) > 0)
-							{
-								os.write(buf, 0, len);
-							}
-							is.close();
-							os.close();
-						} catch (Exception e)
-						{
-							e.printStackTrace();
-						}
-					} else
-					{
-						copyToForceFileName(modifiedFile);
-					}
-
-					modifiedFile.delete();
-				} else
-				{
-					// Copy buffer image into result file.
-					InputStream is = null;
-					int len;
-					byte[] buf = new byte[4096];
-					try
-					{
-						os = ApplicationScreen.instance.getContentResolver().openOutputStream(file.getUri());
-						is = new FileInputStream(bufFile);
-						while ((len = is.read(buf)) > 0)
-						{
-							os.write(buf, 0, len);
-						}
-						is.close();
-						os.close();
-					} catch (Exception e)
-					{
-						e.printStackTrace();
-					}
-					bufFile.delete();
-				}
-
-				if (isDATAFieldInited)
-				{
-					Uri uri = ApplicationScreen.instance.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI,
-							values);
-					broadcastNewPicture(uri);
-				}
-			}
-
-			ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED);
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-			ApplicationScreen.getMessageHandler()
-					.sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED_IOEXCEPTION);
-			return;
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED);
-		}
-	}
-
-	protected File saveExifTags(File file, long sessionID, int i, int x, int y, int exif_orientation,
-			boolean useGeoTaggingPrefExport, boolean enableExifTagOrientation)
-	{
-		addTimestamp(file, exif_orientation);
-
-		// Set tag_model using ExifInterface.
-		// If we try set tag_model using ExifDriver, then standard
-		// gallery of android (Nexus 4) will crash on this file.
-		// Can't figure out why, other Exif tools work fine.
-		try
-		{
-			ExifInterface ei = new ExifInterface(file.getAbsolutePath());
-			String tag_model = getFromSharedMem("exiftag_model" + Long.toString(sessionID));
-			String tag_make = getFromSharedMem("exiftag_make" + Long.toString(sessionID));
-			if (tag_model != null)
-			{
-				ei.setAttribute(ExifInterface.TAG_MODEL, tag_model);
-				ei.setAttribute(ExifInterface.TAG_MAKE, tag_make);
-				ei.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(exif_orientation));
-			}
-			ei.saveAttributes();
-		} catch (IOException e1)
-		{
-			e1.printStackTrace();
-		}
-
-		// Open ExifDriver.
-		ExifDriver exifDriver = ExifDriver.getInstance(file.getAbsolutePath());
-		ExifManager exifManager = null;
-		if (exifDriver != null)
-		{
-			exifManager = new ExifManager(exifDriver, ApplicationScreen.instance);
-		}
-
-		if (useGeoTaggingPrefExport)
-		{
-			Location l = MLocation.getLocation(ApplicationScreen.getMainContext());
-
-			if (l != null)
-			{
-				double lat = l.getLatitude();
-				double lon = l.getLongitude();
-				boolean hasLatLon = (lat != 0.0d) || (lon != 0.0d);
-
-				if (hasLatLon)
-				{
-					exifManager.setGPSLocation(l.getLatitude(), l.getLongitude(), l.getAltitude());
-				}
-
-				String GPSDateString = new SimpleDateFormat("yyyy:MM:dd").format(new Date(l.getTime()));
-				if (GPSDateString != null)
-				{
-					ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
-					value.setBytes(GPSDateString.getBytes());
-					exifDriver.getIfdGps().put(ExifDriver.TAG_GPS_DATE_STAMP, value);
-				}
-			}
-		}
-
-		String tag_exposure_time = getFromSharedMem("exiftag_exposure_time" + Long.toString(sessionID));
-		String tag_aperture = getFromSharedMem("exiftag_aperture" + Long.toString(sessionID));
-		String tag_flash = getFromSharedMem("exiftag_flash" + Long.toString(sessionID));
-		String tag_focal_length = getFromSharedMem("exiftag_focal_lenght" + Long.toString(sessionID));
-		String tag_iso = getFromSharedMem("exiftag_iso" + Long.toString(sessionID));
-		String tag_white_balance = getFromSharedMem("exiftag_white_balance" + Long.toString(sessionID));
-		String tag_spectral_sensitivity = getFromSharedMem("exiftag_spectral_sensitivity" + Long.toString(sessionID));
-		String tag_version = getFromSharedMem("exiftag_version" + Long.toString(sessionID));
-		String tag_scene = getFromSharedMem("exiftag_scene_capture_type" + Long.toString(sessionID));
-		String tag_metering_mode = getFromSharedMem("exiftag_metering_mode" + Long.toString(sessionID));
-
-		if (exifDriver != null)
-		{
-			if (tag_exposure_time != null)
-			{
-				int[][] ratValue = ExifManager.stringToRational(tag_exposure_time);
-				if (ratValue != null)
-				{
-					ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
-					value.setRationals(ratValue);
-					exifDriver.getIfdExif().put(ExifDriver.TAG_EXPOSURE_TIME, value);
-				}
-			} else
-			{ // hack for expo bracketing
-				tag_exposure_time = getFromSharedMem("exiftag_exposure_time" + Integer.toString(i)
-						+ Long.toString(sessionID));
-				if (tag_exposure_time != null)
-				{
-					int[][] ratValue = ExifManager.stringToRational(tag_exposure_time);
-					if (ratValue != null)
-					{
-						ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
-						value.setRationals(ratValue);
-						exifDriver.getIfdExif().put(ExifDriver.TAG_EXPOSURE_TIME, value);
-					}
-				}
-			}
-			if (tag_aperture != null)
-			{
-				int[][] ratValue = ExifManager.stringToRational(tag_aperture);
-				if (ratValue != null)
-				{
-					ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
-					value.setRationals(ratValue);
-					exifDriver.getIfdExif().put(ExifDriver.TAG_APERTURE_VALUE, value);
-				}
-			}
-			if (tag_flash != null)
-			{
-				ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_flash));
-				exifDriver.getIfdExif().put(ExifDriver.TAG_FLASH, value);
-			}
-			if (tag_focal_length != null)
-			{
-				int[][] ratValue = ExifManager.stringToRational(tag_focal_length);
-				if (ratValue != null)
-				{
-					ValueRationals value = new ValueRationals(ExifDriver.FORMAT_UNSIGNED_RATIONAL);
-					value.setRationals(ratValue);
-					exifDriver.getIfdExif().put(ExifDriver.TAG_FOCAL_LENGTH, value);
-				}
-			}
-			try
-			{
-				if (tag_iso != null)
-				{
-					if (tag_iso.indexOf("ISO") > 0)
-					{
-						tag_iso = tag_iso.substring(0, 2);
-					}
-					ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_iso));
-					exifDriver.getIfdExif().put(ExifDriver.TAG_ISO_SPEED_RATINGS, value);
-				}
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-			if (tag_scene != null)
-			{
-				ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, Integer.parseInt(tag_scene));
-				exifDriver.getIfdExif().put(ExifDriver.TAG_SCENE_CAPTURE_TYPE, value);
-			} else
-			{
-				int sceneMode = CameraController.getSceneMode();
-
-				int sceneModeVal = 0;
-				if (sceneMode == CameraParameters.SCENE_MODE_LANDSCAPE)
-				{
-					sceneModeVal = 1;
-				} else if (sceneMode == CameraParameters.SCENE_MODE_PORTRAIT)
-				{
-					sceneModeVal = 2;
-				} else if (sceneMode == CameraParameters.SCENE_MODE_NIGHT)
-				{
-					sceneModeVal = 3;
-				}
-
-				ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, sceneModeVal);
-				exifDriver.getIfdExif().put(ExifDriver.TAG_SCENE_CAPTURE_TYPE, value);
-			}
-			if (tag_white_balance != null)
-			{
-				exifDriver.getIfd0().remove(ExifDriver.TAG_LIGHT_SOURCE);
-
-				ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT,
-						Integer.parseInt(tag_white_balance));
-				exifDriver.getIfdExif().put(ExifDriver.TAG_WHITE_BALANCE, value);
-				exifDriver.getIfdExif().put(ExifDriver.TAG_LIGHT_SOURCE, value);
-			} else
-			{
-				exifDriver.getIfd0().remove(ExifDriver.TAG_LIGHT_SOURCE);
-
-				int whiteBalance = CameraController.getWBMode();
-				int whiteBalanceVal = 0;
-				int lightSourceVal = 0;
-				if (whiteBalance == CameraParameters.WB_MODE_AUTO)
-				{
-					whiteBalanceVal = 0;
-					lightSourceVal = 0;
-				} else
-				{
-					whiteBalanceVal = 1;
-					lightSourceVal = 0;
-				}
-
-				if (whiteBalance == CameraParameters.WB_MODE_DAYLIGHT)
-				{
-					lightSourceVal = 1;
-				} else if (whiteBalance == CameraParameters.WB_MODE_FLUORESCENT)
-				{
-					lightSourceVal = 2;
-				} else if (whiteBalance == CameraParameters.WB_MODE_WARM_FLUORESCENT)
-				{
-					lightSourceVal = 2;
-				} else if (whiteBalance == CameraParameters.WB_MODE_INCANDESCENT)
-				{
-					lightSourceVal = 3;
-				} else if (whiteBalance == CameraParameters.WB_MODE_TWILIGHT)
-				{
-					lightSourceVal = 3;
-				} else if (whiteBalance == CameraParameters.WB_MODE_CLOUDY_DAYLIGHT)
-				{
-					lightSourceVal = 10;
-				} else if (whiteBalance == CameraParameters.WB_MODE_SHADE)
-				{
-					lightSourceVal = 11;
-				}
-
-				ValueNumber valueWB = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, whiteBalanceVal);
-				exifDriver.getIfdExif().put(ExifDriver.TAG_WHITE_BALANCE, valueWB);
-
-				ValueNumber valueLS = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, lightSourceVal);
-				exifDriver.getIfdExif().put(ExifDriver.TAG_LIGHT_SOURCE, valueLS);
-			}
-			if (tag_spectral_sensitivity != null)
-			{
-				ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
-				value.setBytes(tag_spectral_sensitivity.getBytes());
-				exifDriver.getIfd0().put(ExifDriver.TAG_SPECTRAL_SENSITIVITY, value);
-			}
-			if (tag_version != null && !tag_version.equals("48 50 50 48"))
-			{
-				ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
-				value.setBytes(tag_version.getBytes());
-				exifDriver.getIfd0().put(ExifDriver.TAG_EXIF_VERSION, value);
-			} else
-			{
-				ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
-				byte[] version = { (byte) 48, (byte) 50, (byte) 50, (byte) 48 };
-				value.setBytes(version);
-				exifDriver.getIfd0().put(ExifDriver.TAG_EXIF_VERSION, value);
-			}
-			if (tag_metering_mode != null && !tag_metering_mode.equals("")
-					&& Integer.parseInt(tag_metering_mode) <= 255)
-			{
-				ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT,
-						Integer.parseInt(tag_metering_mode));
-				exifDriver.getIfdExif().put(ExifDriver.TAG_METERING_MODE, value);
-				exifDriver.getIfd0().put(ExifDriver.TAG_METERING_MODE, value);
-			} else
-			{
-				ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, 0);
-				exifDriver.getIfdExif().put(ExifDriver.TAG_METERING_MODE, value);
-				exifDriver.getIfd0().put(ExifDriver.TAG_METERING_MODE, value);
-			}
-
-			ValueNumber xValue = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_LONG, x);
-			exifDriver.getIfdExif().put(ExifDriver.TAG_IMAGE_WIDTH, xValue);
-
-			ValueNumber yValue = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_LONG, y);
-			exifDriver.getIfdExif().put(ExifDriver.TAG_IMAGE_HEIGHT, yValue);
-
-			String dateString = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").format(new Date());
-			if (dateString != null)
-			{
-				ValueByteArray value = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
-				// Date string length is 19 bytes. But exif tag
-				// specification length is 20 bytes.
-				// That's why we add "empty" byte (0x00) in the end.
-				byte[] bytes = dateString.getBytes();
-				byte[] res = new byte[20];
-				for (int ii = 0; ii < bytes.length; ii++)
-				{
-					res[ii] = bytes[ii];
-				}
-				res[19] = 0x00;
-				value.setBytes(res);
-				exifDriver.getIfd0().put(ExifDriver.TAG_DATETIME, value);
-				exifDriver.getIfdExif().put(ExifDriver.TAG_DATETIME_DIGITIZED, value);
-				exifDriver.getIfdExif().put(ExifDriver.TAG_DATETIME_ORIGINAL, value);
-			}
-
-			// extract mode name
-			String tag_modename = getFromSharedMem("mode_name" + Long.toString(sessionID));
-			if (tag_modename == null)
-				tag_modename = "";
-			String softwareString = ApplicationScreen.getAppResources().getString(R.string.app_name) + ", "
-					+ tag_modename;
-			ValueByteArray softwareValue = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
-			softwareValue.setBytes(softwareString.getBytes());
-			exifDriver.getIfd0().put(ExifDriver.TAG_SOFTWARE, softwareValue);
-
-			if (enableExifTagOrientation)
-			{
-				ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, exif_orientation);
-				exifDriver.getIfd0().put(ExifDriver.TAG_ORIENTATION, value);
-			} else
-			{
-				ValueNumber value = new ValueNumber(ExifDriver.FORMAT_UNSIGNED_SHORT, ExifInterface.ORIENTATION_NORMAL);
-				exifDriver.getIfd0().put(ExifDriver.TAG_ORIENTATION, value);
-			}
-
-			// Save exif info to new file, and replace old file with new
-			// one.
-			File modifiedFile = new File(file.getAbsolutePath() + ".tmp");
-			exifDriver.save(modifiedFile.getAbsolutePath());
-			return modifiedFile;
-		}
-		return null;
-	}
-
-	protected void addTimestamp(File file, int exif_orientation)
-	{
-		try
-		{
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-
-			int dateFormat = Integer.parseInt(prefs.getString(ApplicationScreen.sTimestampDate, "0"));
-			boolean abbreviation = prefs.getBoolean(ApplicationScreen.sTimestampAbbreviation, false);
-			int saveGeo = Integer.parseInt(prefs.getString(ApplicationScreen.sTimestampGeo, "0"));
-			int timeFormat = Integer.parseInt(prefs.getString(ApplicationScreen.sTimestampTime, "0"));
-			int separator = Integer.parseInt(prefs.getString(ApplicationScreen.sTimestampSeparator, "0"));
-			String customText = prefs.getString(ApplicationScreen.sTimestampCustomText, "");
-			int color = Integer.parseInt(prefs.getString(ApplicationScreen.sTimestampColor, "1"));
-			int fontSizeC = Integer.parseInt(prefs.getString(ApplicationScreen.sTimestampFontSize, "80"));
-
-			String formattedCurrentDate="";
-			if (dateFormat == 0 && timeFormat == 0 && customText.equals("") && saveGeo==0)
-				return;
-	
-			String geoText = "";
-			//show geo data on time stamp
-			if (saveGeo!=0)
-			{
-				Location l = MLocation.getLocation(ApplicationScreen.getMainContext());
-
-				if (l != null)
-				{
-					if (saveGeo==2)
-					{
-						Geocoder geocoder = new Geocoder(MainScreen.getMainContext(), Locale.getDefault());
-						List<Address> list = geocoder.getFromLocation(l.getLatitude(), l.getLongitude(), 1);
-						if (!list.isEmpty())
-						{
-							String country = list.get(0).getCountryName();
-							String locality = list.get(0).getLocality();
-							String adminArea = list.get(0).getSubAdminArea();//city localized
-							String street = list.get(0).getThoroughfare();//street localized
-							String address = list.get(0).getAddressLine(0);
-							
-							//replace street and city with localized name
-							if (street!=null)
-								address = street;							
-							if (adminArea!=null)
-								locality = adminArea;
-							
-							geoText=  (country!=null?country:"") + (locality!=null?(", "+locality):"") + (address!=null?(", \n"+address):"");
-						}
-					}
-					else
-						geoText= "lat:" + l.getLatitude() + "\nlng:" + l.getLongitude();
-				}
-			}
-			
-			String dateFormatString = "";
-			String timeFormatString = "";
-			String separatorString = ".";
-			String monthString = abbreviation ? "MMMM" : "MM";
-
-			switch (separator)
-			{
-			case 0:
-				separatorString = "/";
-				break;
-			case 1:
-				separatorString = ".";
-				break;
-			case 2:
-				separatorString = "-";
-				break;
-			case 3:
-				separatorString = " ";
-				break;
-			default:
-			}
-
-			switch (dateFormat)
-			{
-			case 1:
-				dateFormatString = "yyyy" + separatorString + monthString + separatorString + "dd";
-				break;
-			case 2:
-				dateFormatString = "dd" + separatorString + monthString + separatorString + "yyyy";
-				break;
-			case 3:
-				dateFormatString = monthString + separatorString + "dd" + separatorString + "yyyy";
-				break;
-			default:
-			}
-
-			switch (timeFormat)
-			{
-			case 1:
-				timeFormatString = " hh:mm:ss a";
-				break;
-			case 2:
-				timeFormatString = " HH:mm:ss";
-				break;
-			default:
-			}
-
-			Date currentDate = Calendar.getInstance().getTime();
-			java.text.SimpleDateFormat simpleDateFormat = new java.text.SimpleDateFormat(dateFormatString
-					+ timeFormatString);
-			formattedCurrentDate = simpleDateFormat.format(currentDate);
-
-			formattedCurrentDate += (customText.isEmpty()?"":("\n" + customText)) + (geoText.isEmpty()?"":("\n" + geoText));
-			
-			if (formattedCurrentDate.equals(""))
-				return;
-			
-			Bitmap sourceBitmap;
-			Bitmap bitmap;
-
-			int rotation = 0;
-			Matrix matrix = new Matrix();
-			if (exif_orientation == ExifInterface.ORIENTATION_ROTATE_90)
-			{
-				rotation = 90;
-			} else if (exif_orientation == ExifInterface.ORIENTATION_ROTATE_180)
-			{
-				rotation = 180;
-			} else if (exif_orientation == ExifInterface.ORIENTATION_ROTATE_270)
-			{
-				rotation = 270;
-			}
-			matrix.postRotate(rotation);
-
-			BitmapFactory.Options options = new BitmapFactory.Options();
-			options.inMutable = true;
-
-			sourceBitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
-			bitmap = Bitmap.createBitmap(sourceBitmap, 0, 0, sourceBitmap.getWidth(), sourceBitmap.getHeight(), matrix,
-					false);
-
-			sourceBitmap.recycle();
-
-			int width = bitmap.getWidth();
-			int height = bitmap.getHeight();
-
-			Paint p = new Paint();
-
-			Canvas canvas = new Canvas(bitmap);
-
-			final float scale = ApplicationScreen.instance.getResources().getDisplayMetrics().density;
-
-			p.setColor(Color.WHITE);
-			switch (color)
-			{
-			case 0:
-				color = Color.BLACK;
-				p.setColor(Color.BLACK);
-				break;
-			case 1:
-				color = Color.WHITE;
-				p.setColor(Color.WHITE);
-				break;
-			case 2:
-				color = Color.YELLOW;
-				p.setColor(Color.YELLOW);
-				break;
-
-			}
-
-			if (width > height)
-			{
-				p.setTextSize(height / fontSizeC * scale + 0.5f); // convert dps to pixels
-			} else
-			{
-				p.setTextSize(width / fontSizeC * scale + 0.5f); // convert dps to pixels
-			}
-			p.setTextAlign(Align.RIGHT);
-			drawTextWithBackground(canvas, p, formattedCurrentDate, color, Color.BLACK, width, height);
-
-			Matrix matrix2 = new Matrix();
-			matrix2.postRotate(360 - rotation);
-			sourceBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix2, false);
-
-			bitmap.recycle();
-
-			FileOutputStream outStream;
-			outStream = new FileOutputStream(file);
-			sourceBitmap.compress(Bitmap.CompressFormat.JPEG, jpegQuality, outStream);
-			sourceBitmap.recycle();
-			outStream.flush();
-			outStream.close();
-		} catch (FileNotFoundException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-		} catch (OutOfMemoryError e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	@TargetApi(21)
-	private void saveDNGPicture(int frameNum, long sessionID, OutputStream os, int width, int height, int orientation,
-			boolean cameraMirrored)
-	{
-		DngCreator creator = new DngCreator(CameraController.getCameraCharacteristics(),
-				this.getFromRAWCaptureResults("captureResult" + frameNum + sessionID));
-		byte[] frame = SwapHeap.SwapFromHeap(
-				Integer.parseInt(getFromSharedMem("resultframe" + frameNum + Long.toString(sessionID))),
-				Integer.parseInt(getFromSharedMem("resultframelen" + frameNum + Long.toString(sessionID))));
-
-		ByteBuffer buff = ByteBuffer.allocateDirect(frame.length);
-		buff.put(frame);
-
-		int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-		switch ((orientation + 360) % 360)
-		{
-		default:
-		case 0:
-			exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-			break;
-		case 90:
-			exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
-					: ExifInterface.ORIENTATION_ROTATE_90;
-			break;
-		case 180:
-			exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
-			break;
-		case 270:
-			exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
-					: ExifInterface.ORIENTATION_ROTATE_270;
-			break;
-		}
-
-		try
-		{
-			creator.setOrientation(exif_orientation);
-			creator.writeByteBuffer(os, new Size(width, height), buff, 0);
-		} catch (IOException e)
-		{
-			creator.close();
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		creator.close();
-	}
-
-	protected void rotateImage(File file, Matrix matrix)
-	{
-		try
-		{
-			Bitmap sourceBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-			Bitmap rotatedBitmap = Bitmap.createBitmap(sourceBitmap, 0, 0, sourceBitmap.getWidth(),
-					sourceBitmap.getHeight(), matrix, true);
-
-			FileOutputStream outStream;
-			outStream = new FileOutputStream(file);
-			rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, jpegQuality, outStream);
-			outStream.flush();
-			outStream.close();
-		} catch (FileNotFoundException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	protected void drawTextWithBackground(Canvas canvas, Paint paint, String text, int foreground, int background,
-			int imageWidth, int imageHeight)
-	{
-		Rect text_bounds = new Rect();
-		paint.setColor(foreground);
-		String[] resText = text.split("\n");
-		String maxLengthText = "";
-
-		if (resText.length > 1)
-		{
-			maxLengthText = resText[0].length() > resText[1].length() ? resText[0] : resText[1];
-		} else if (resText.length > 0)
-		{
-			maxLengthText = resText[0];
-		}
-
-		final float scale = ApplicationScreen.instance.getResources().getDisplayMetrics().density;
-		paint.setStyle(Paint.Style.FILL);
-		paint.setColor(background);
-		paint.setAlpha(64);
-		paint.getTextBounds(text, 0, maxLengthText.length(), text_bounds);
-		final int padding = (int) (2 * scale + 0.5f); // convert dps to pixels
-
-		int textWidth = 0;
-		int textHeight = text_bounds.bottom - text_bounds.top;
-		if (paint.getTextAlign() == Paint.Align.RIGHT || paint.getTextAlign() == Paint.Align.CENTER)
-		{
-			float width = paint.measureText(maxLengthText); // n.b., need to use
-															// measureText
-															// rather than
-															// getTextBounds
-															// here
-			textWidth = (int) width;
-		}
-
-		text_bounds.left = imageWidth - textWidth - resText.length * padding;
-		text_bounds.right = imageWidth - padding;
-		if (resText.length > 1)
-		{
-			text_bounds.top = imageHeight - resText.length * padding - resText.length * textHeight - textHeight;
-		} else
-		{
-			text_bounds.top = imageHeight - 2 * padding - textHeight;
-			textHeight /= 3;
-		}
-		text_bounds.bottom = imageHeight - padding;
-
-		paint.setColor(foreground);
-		if (resText.length > 0)
-		{
-			canvas.drawText(resText[0], imageWidth - 5 * padding, imageHeight - resText.length * textHeight-textHeight/2, paint);
-		}
-		if (resText.length > 1)
-		{
-			canvas.drawText(resText[1], imageWidth - 5 * padding, imageHeight - (resText.length-1) *textHeight, paint);
-		}
-		if (resText.length > 2)
-		{
-			canvas.drawText(resText[2], imageWidth - 5 * padding, imageHeight - (resText.length-2) *textHeight+textHeight/2, paint);
-		}
-		if (resText.length > 3)
-		{
-			canvas.drawText(resText[3], imageWidth - 5 * padding, imageHeight - textHeight/4, paint);
-		}
-	}
-
-	public String getExportFileName(String modeName)
-	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		saveOption = Integer.parseInt(prefs.getString(ApplicationScreen.sExportNamePref, "2"));
-
-		String prefix = prefs.getString(ApplicationScreen.sExportNamePrefixPref, "");
-		if (!prefix.equals(""))
-			prefix = prefix + "_";
-
-		String postfix = prefs.getString(ApplicationScreen.sExportNamePostfixPref, "");
-		if (!postfix.equals(""))
-			postfix = "_" + postfix;
-
-		Calendar d = Calendar.getInstance();
-		String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d", d.get(Calendar.YEAR), d.get(Calendar.MONTH) + 1,
-				d.get(Calendar.DAY_OF_MONTH), d.get(Calendar.HOUR_OF_DAY), d.get(Calendar.MINUTE),
-				d.get(Calendar.SECOND));
-		switch (saveOption)
-		{
-		case 1:// YEARMMDD_HHMMSS
-			fileFormat = prefix + fileFormat + postfix;
-			break;
-
-		case 2:// YEARMMDD_HHMMSS_MODE
-			fileFormat = prefix + fileFormat + (modeName.equals("") ? "" : ("_" + modeName)) + postfix;
-			break;
-
-		case 3:// IMG_YEARMMDD_HHMMSS
-			fileFormat = prefix + "IMG_" + fileFormat + postfix;
-			break;
-
-		case 4:// IMG_YEARMMDD_HHMMSS_MODE
-			fileFormat = prefix + "IMG_" + fileFormat + (modeName.equals("") ? "" : ("_" + modeName)) + postfix;
-			break;
-		default:
-			break;
-		}
-
-		return fileFormat;
-	}
-
 	public String getFileFormat()
 	{
 		if (CameraController.isUseHALv3())
 		{
-			return getExportFileName(getActiveMode().modeSaveNameHAL);
+			return SavingService.getExportFileName(getActiveMode().modeSaveNameHAL);
 		} else
 		{
-			return getExportFileName(getActiveMode().modeSaveName);
+			return SavingService.getExportFileName(getActiveMode().modeSaveName);
 		}
+	}
+
+	public static File getSaveDir(boolean forceSaveToInternalMemory) {
+		return SavingService.getSaveDir(forceSaveToInternalMemory);
+	}
+	
+	public static DocumentFile getSaveDirNew(boolean forceSaveToInternalMemory) {
+		return SavingService.getSaveDirNew(forceSaveToInternalMemory);
+	}
+	
+	public static String getExportFileName(String modeName) {
+		return SavingService.getExportFileName(modeName);
+	}
+	
+	// Save result pictures method.
+	public void saveResultPicture(long sessionID)
+	{
+		Intent mServiceIntent = new Intent(ApplicationScreen.instance, SavingService.class);
+
+		// Pass to Service sessionID.
+		mServiceIntent.putExtra("sessionID", sessionID);
+
+		// Start processing service with current sessionID.
+		ApplicationScreen.instance.startService(mServiceIntent);
 	}
 
 	public void saveInputFile(boolean isYUV, Long SessionID, int i, byte[] buffer, int yuvBuffer, String fileFormat)
@@ -3119,7 +1465,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		boolean saveGeoInfo = prefs.getBoolean("useGeoTaggingPrefExport", false);
 
-		File saveDir = PluginManager.getSaveDir(false);
+		File saveDir = getSaveDir(false);
 		File file = new File(saveDir, fileFormat + ".jpg");
 		FileOutputStream os = null;
 
@@ -3132,7 +1478,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			{
 				// save always if not working saving to sdcard
 				e.printStackTrace();
-				saveDir = PluginManager.getSaveDir(true);
+				saveDir = getSaveDir(true);
 				file = new File(saveDir, fileFormat + ".jpg");
 
 				os = new FileOutputStream(file);
