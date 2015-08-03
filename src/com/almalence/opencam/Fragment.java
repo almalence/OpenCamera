@@ -24,6 +24,8 @@ package com.almalence.opencam;
 
 //-+- -->
 
+import java.io.File;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,6 +43,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -52,11 +55,11 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.v4.provider.DocumentFile;
 import android.view.Display;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
-
 
 /* <!-- +++
  import com.almalence.opencam_plus.ui.SeekBarPreference;
@@ -64,9 +67,10 @@ import android.widget.Toast;
  import com.almalence.opencam_plus.cameracontroller.CameraController.Size;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.ui.SeekBarPreference;
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.cameracontroller.CameraController.Size;
+import com.almalence.opencam.ui.SeekBarPreference;
+
 //-+- -->
 
 /***
@@ -77,6 +81,7 @@ import com.almalence.opencam.cameracontroller.CameraController.Size;
 public class Fragment extends PreferenceFragment implements OnSharedPreferenceChangeListener
 {
 	public static PreferenceFragment	thiz;
+	public static final int				CHOOSE_FOLDER_CODE	= 15;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -87,7 +92,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 
 		String settings = getArguments().getString("type");
 
-		PluginManager.getInstance().loadHeaderContent(settings, this);
+		ApplicationScreen.getPluginManager().loadHeaderContent(settings, this);
 
 		if (null == getPreferenceScreen())
 			return;
@@ -152,12 +157,12 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 			float mpix = 0.0f;
 			if (size != null)
 			{
-				resMpx = (long) ((long)size.getWidth() * (long)size.getHeight() * 2.25);
+				resMpx = (long) ((long) size.getWidth() * (long) size.getHeight() * 2.25);
 				mpix = (float) resMpx / 1000000.f;
 			}
-			
+
 			String name = String.format("%3.1f Mpix ", mpix);
-			
+
 			upscalePref
 					.setSummary(getActivity().getString(R.string.Pref_Super_SummaryUpscale).replace("$1", "" + name));
 		}
@@ -240,9 +245,50 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 			});
 		}
 
+		Preference sonyPreference = findPreference(MainScreen.sSonyCamerasPref);
+		if (sonyPreference != null)
+		{
+			sonyPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
+			{
+				@Override
+				public boolean onPreferenceChange(Preference preference, Object newValue)
+				{
+					boolean sonyCamerasAvailable = (Boolean) newValue;
+					if (sonyCamerasAvailable)
+					{
+						Toast.makeText(getActivity(),
+								getActivity().getString(R.string.pref_general_more_sonyCamera_available),
+								Toast.LENGTH_SHORT).show();
+					}
+					return true;
+				}
+			});
+		}
+
 		ListPreference saveToPreference = (ListPreference) this.findPreference(getResources().getString(
 				R.string.Preference_SaveToValue));
+
+		// if android 5+, then remove "save to SD card" option. Because it's
+		// equals to "save to custom folder" option.
+		if (saveToPreference != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+		{
+			CharSequence[] entries = saveToPreference.getEntries();
+			CharSequence[] entriyValues = saveToPreference.getEntryValues();
+
+			CharSequence[] newEntries = new String[2];
+			CharSequence[] newEntriyValues = new String[2];
+
+			newEntries[0] = entries[0];
+			newEntries[1] = entries[2];
+			newEntriyValues[0] = entriyValues[0];
+			newEntriyValues[1] = entriyValues[2];
+
+			saveToPreference.setEntries(newEntries);
+			saveToPreference.setEntryValues(newEntriyValues);
+		}
 		if (saveToPreference != null)
+		{
+
 			saveToPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 			{
 				@Override
@@ -264,40 +310,37 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 					if ((v == 2 || v == 1) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
 					{
 						if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+						{
 							Toast.makeText(
 									MainScreen.getInstance(),
 									MainScreen.getAppResources().getString(
 											R.string.pref_advanced_saving_saveToPref_CantSaveToSD), Toast.LENGTH_LONG)
 									.show();
-						else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-						// start new logic to save on sd
-						{
-							Toast.makeText(MainScreen.getInstance(),
-									"Saving to SD card is under development for Android 5", Toast.LENGTH_LONG).show();
 
-							// Intent intent = new Intent(Preferences.thiz,
-							// FolderPickerLollipop.class);
-							// intent.putExtra(MainScreen.sSavePathPref, v_old);
-							// Preferences.thiz.startActivity(intent);
-
-							// show notification, but let select custom folder
-							if (v == 1)
-								return false;
+							return false;
 						}
 					}
 
-					if (v == 2)
+					if (v == 2 || v == 1)
 					{
-						Intent intent = new Intent(Preferences.thiz, FolderPicker.class);
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+						{
+							Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+							startActivityForResult(intent, CHOOSE_FOLDER_CODE);
+						} else if (v != 1)
+						{
+							Intent intent = new Intent(Preferences.thiz, FolderPicker.class);
 
-						intent.putExtra(MainScreen.sSavePathPref, v_old);
+							intent.putExtra(MainScreen.sSavePathPref, v_old);
 
-						Preferences.thiz.startActivity(intent);
+							Preferences.thiz.startActivity(intent);
+						}
 					}
 
 					return true;
 				}
 			});
+		}
 
 		PreferenceCategory cat = (PreferenceCategory) this.findPreference("Pref_VFCommon_Preference_Category");
 		if (cat != null)
@@ -466,6 +509,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		}
 	}
 
+	@TargetApi(13)
 	private void showCameraParameters()
 	{
 		AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
@@ -482,6 +526,8 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		{
 			e.printStackTrace();
 		}
+		about_string.append("\nApplication name: ");
+		about_string.append(MainScreen.getInstance().getResources().getString(R.string.Pref_About));
 		about_string.append("\nAndroid API version: ");
 		about_string.append(Build.VERSION.SDK_INT);
 		about_string.append("\nDevice manufacturer: ");
@@ -643,7 +689,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 			about_string.append("None");
 		}
 
-		String save_location = MainScreen.getSaveToPath();
+		String save_location = SavingService.getSaveToPath();
 		about_string.append("\nSave Location: " + save_location);
 
 		if (MainScreen.getInstance().flattenParamteters != null
@@ -667,5 +713,29 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 					}
 				});
 		alertDialog.show();
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		if (requestCode == CHOOSE_FOLDER_CODE)
+		{
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.instance);
+			if (resultCode == Activity.RESULT_OK)
+			{
+				Uri treeUri = data.getData();
+
+				getActivity().getContentResolver().takePersistableUriPermission(treeUri,
+						Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+				prefs.edit().putString(ApplicationScreen.sSavePathPref, treeUri.toString()).commit();
+			} else
+			{
+				prefs.edit().putString(ApplicationScreen.sSaveToPref, "0").commit();
+			}
+		} else
+		{
+			super.onActivityResult(requestCode, resultCode, data);
+		}
 	}
 }

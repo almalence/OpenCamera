@@ -17,7 +17,9 @@
 package com.almalence.util;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -48,7 +50,9 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.os.StatFs;
+import android.provider.DocumentsContract;
 import android.provider.Settings;
+import android.support.v4.provider.DocumentFile;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.OrientationEventListener;
@@ -60,11 +64,11 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
 /* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
@@ -514,7 +518,7 @@ public final class Util
 
 			if (hasLatLon)
 			{
-				//Log.d(TAG, "Set gps location");
+				// Log.d(TAG, "Set gps location");
 				parameters.setGpsLatitude(lat);
 				parameters.setGpsLongitude(lon);
 				parameters.setGpsProcessingMethod(loc.getProvider().toUpperCase());
@@ -758,8 +762,8 @@ public final class Util
 	public static void initializeMeteringMatrix()
 	{
 		Matrix matrix = new Matrix();
-		Util.prepareMatrix(matrix, CameraController.isFrontCamera(), 0, MainScreen.getPreviewWidth(),
-				MainScreen.getPreviewHeight());
+		Util.prepareMatrix(matrix, CameraController.isFrontCamera(), 0, ApplicationScreen.getPreviewWidth(),
+				ApplicationScreen.getPreviewHeight());
 		matrix.invert(mMeteringMatrix);
 	}
 
@@ -838,5 +842,74 @@ public final class Util
 				|| (orientationProc == Configuration.ORIENTATION_LANDSCAPE && rotation == Surface.ROTATION_180)
 				|| (orientationProc == Configuration.ORIENTATION_PORTRAIT && rotation == Surface.ROTATION_90)
 				|| (orientationProc == Configuration.ORIENTATION_PORTRAIT && rotation == Surface.ROTATION_270);
+	}
+
+	// Get File object from DocumentFile object.
+	// It's possible only if documentFile stored in phone memory, not SD-card.
+	public static File getFileFromDocumentFile(DocumentFile documentFile)
+	{
+		try
+		{
+			File file = new File(URI.create(documentFile.getUri().toString()));
+			return file;
+		} catch (Exception e)
+		{
+			return null;
+		}
+	}
+
+	// Get File absolute path from DocumentFile object.
+	// This method should be used only for files saved to SD-card.
+	public static String getAbsolutePathFromDocumentFile(DocumentFile documentFile)
+	{
+		// We can't get absolute path from DocumentFile or Uri.
+		// It is a hack to build absolute path by DocumentFile.
+		// May not work on some devices.
+		Uri uri = documentFile.getUri();
+		final String docId = DocumentsContract.getDocumentId(uri);
+		final String[] split = docId.split(":");
+		final String id = split[1];
+
+		String sd = null;
+		sd = System.getenv("SECONDARY_STORAGE");
+		if (sd == null)
+		{
+			sd = System.getenv("EXTERNAL_STORAGE");
+		}
+
+		if (sd != null)
+		{
+			// On some devices SECONDARY_STORAGE has several paths
+			// separated with a colon (":"). This is why we split
+			// the String.
+			String[] paths = sd.split(":");
+			for (String p : paths)
+			{
+				File fileSD = new File(p);
+				if (fileSD.isDirectory())
+				{
+					sd = fileSD.getAbsolutePath();
+				}
+			}
+
+			String documentPath = sd + "/" + id;
+			return documentPath;
+		}
+		return null;
+	}
+	
+	public static int getMaxImageSizeIndex(android.util.Size[] ImageSizes) {
+		int maxSizeIndex = 0;
+		long maxSize = ImageSizes[0].getWidth() * ImageSizes[0].getHeight();
+		for (int i = 1; i < ImageSizes.length; i++) {
+			long currentSize = ImageSizes[i].getWidth()
+					* ImageSizes[i].getHeight();
+			if (currentSize > maxSize) {
+				maxSizeIndex = i;
+				maxSize = currentSize;
+			}
+		}
+
+		return maxSizeIndex;
 	}
 }

@@ -20,10 +20,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 /* <!-- +++
-import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.ApplicationScreen;
+import com.almalence.opencam_plus.ui.EglEncoder;
 +++ --> */
 //<!-- -+-
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.ui.EglEncoder;
 //-+- -->
 
 public class DROVideoEngine
@@ -137,7 +139,7 @@ public class DROVideoEngine
 		final Object sync = new Object();
 		synchronized (sync)
 		{
-			MainScreen.getInstance().queueGLEvent(new Runnable()
+			ApplicationScreen.instance.queueGLEvent(new Runnable()
 			{
 				@Override
 				public void run()
@@ -151,15 +153,15 @@ public class DROVideoEngine
 							try
 							{
 								DROVideoEngine.this.encoder = new EglEncoder(path, DROVideoEngine.this.previewWidth,
-									DROVideoEngine.this.previewHeight, 24, 20000000, (MainScreen.getGUIManager()
+									DROVideoEngine.this.previewHeight, 24, 20000000, (ApplicationScreen.getGUIManager()
 											.getDisplayOrientation()) % 360);
 							}
 							catch(RuntimeException e)
 							{
 								e.printStackTrace();
-								MainScreen.getInstance().runOnUiThread(new Runnable() {
+								ApplicationScreen.instance.runOnUiThread(new Runnable() {
 								    public void run() {
-								        Toast.makeText(MainScreen.getInstance(), "Can't record HDR Video. MediaMuxer creation failed.", Toast.LENGTH_LONG).show();
+								        Toast.makeText(ApplicationScreen.instance, "Can't record HDR Video. MediaMuxer creation failed.", Toast.LENGTH_LONG).show();
 								    }
 								});
 								
@@ -189,7 +191,7 @@ public class DROVideoEngine
 		final Object sync = new Object();
 		synchronized (sync)
 		{
-			MainScreen.getInstance().queueGLEvent(new Runnable()
+			ApplicationScreen.instance.queueGLEvent(new Runnable()
 			{
 				@Override
 				public void run()
@@ -217,7 +219,7 @@ public class DROVideoEngine
 							values.put(VideoColumns.BUCKET_DISPLAY_NAME, parentName);
 							values.put(VideoColumns.DATA, fileSaved.getAbsolutePath());
 							
-							MainScreen.getInstance().getContentResolver().insert(Video.Media.EXTERNAL_CONTENT_URI, values);
+							ApplicationScreen.instance.getContentResolver().insert(Video.Media.EXTERNAL_CONTENT_URI, values);
 						}
 					}
 
@@ -247,7 +249,7 @@ public class DROVideoEngine
 		final Object sync = new Object();
 		synchronized (sync)
 		{
-			MainScreen.getInstance().queueGLEvent(new Runnable()
+			ApplicationScreen.instance.queueGLEvent(new Runnable()
 			{
 				@Override
 				public void run()
@@ -288,12 +290,12 @@ public class DROVideoEngine
 	public void onFrameAvailable()
 	{
 		this.filled = true;
-		MainScreen.getInstance().glRequestRender();
+		ApplicationScreen.instance.glRequestRender();
 	}
 
 	public void setPaused(final boolean paused)
 	{
-		MainScreen.getInstance().queueGLEvent(new Runnable()
+		ApplicationScreen.instance.queueGLEvent(new Runnable()
 		{
 			@Override
 			public void run()
@@ -359,7 +361,7 @@ public class DROVideoEngine
 
 			try
 			{
-				final SurfaceTexture surfaceTexture = MainScreen.getInstance().glGetSurfaceTexture();
+				final SurfaceTexture surfaceTexture = ApplicationScreen.instance.glGetSurfaceTexture();
 				surfaceTexture.updateTexImage();
 				surfaceTexture.getTransformMatrix(this.transform);
 			}
@@ -376,16 +378,16 @@ public class DROVideoEngine
 		{
 			if (this.instance != 0)
 			{
-				if (MainScreen.getPreviewWidth() != this.previewWidth
-						|| MainScreen.getPreviewHeight() != this.previewHeight)
+				if (ApplicationScreen.getPreviewWidth() != this.previewWidth
+						|| ApplicationScreen.getPreviewHeight() != this.previewHeight)
 				{
 					RealtimeDRO.release(this.instance);
 					this.instance = 0;
 				}
 			}
 
-			this.previewWidth = MainScreen.getPreviewWidth();
-			this.previewHeight = MainScreen.getPreviewHeight();
+			this.previewWidth = ApplicationScreen.getPreviewWidth();
+			this.previewHeight = ApplicationScreen.getPreviewHeight();
 
 			if (this.instance == 0)
 			{
@@ -400,7 +402,7 @@ public class DROVideoEngine
 
 				t = System.currentTimeMillis();
 
-				RealtimeDRO.render(this.instance, MainScreen.getInstance().glGetPreviewTexture(), this.transform,
+				RealtimeDRO.render(this.instance, ApplicationScreen.instance.glGetPreviewTexture(), this.transform,
 						this.previewWidth, this.previewHeight, true, this.local, this.max_amplify, this.forceUpdate,
 						this.uv_desat, this.dark_uv_desat, this.dark_noise_pass, this.mix_factor, this.gamma, this.max_black_level,
 						this.black_level_atten, this.min_limit, this.max_limit, this.texture_out);

@@ -34,14 +34,16 @@ import android.view.View;
 import android.view.WindowManager;
 
 /* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.PluginViewfinder;
  import com.almalence.opencam_plus.R;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 import com.almalence.util.Util;
@@ -78,7 +80,7 @@ public class HistogramVFPlugin extends PluginViewfinder
 	private int					histoHeight		= 0;
 	private int					histoWidth		= 0;
 
-	private static int			histogramType	= RGB;
+	private static int			histogramType	= NONE;
 
 	public HistogramVFPlugin()
 	{
@@ -94,7 +96,7 @@ public class HistogramVFPlugin extends PluginViewfinder
 		histFacts = new int[256];
 		histPath = new Path();
 		histPath.setFillType(Path.FillType.EVEN_ODD);
-		this.histogram = new HistogramView(MainScreen.getMainContext());
+		this.histogram = new HistogramView(ApplicationScreen.getMainContext());
 
 		histFactsR = new int[256];
 		histPathR = new Path();
@@ -105,7 +107,7 @@ public class HistogramVFPlugin extends PluginViewfinder
 		histFactsB = new int[256];
 		histPathB = new Path();
 		histPathB.setFillType(Path.FillType.EVEN_ODD);
-		this.histogramRGB = new HistogramRGBView(MainScreen.getMainContext());
+		this.histogramRGB = new HistogramRGBView(ApplicationScreen.getMainContext());
 
 		UpdatePreferences();
 
@@ -135,19 +137,19 @@ public class HistogramVFPlugin extends PluginViewfinder
 
 	public void onClickHistogram(boolean isRGB)
 	{
-		if (MainScreen.getGUIManager().lockControls)
+		if (ApplicationScreen.getGUIManager().lockControls)
 		{
 			return;
 		}
 		UpdatePreferences();
 		// save to shared prefs
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		Editor editor = prefs.edit();
 
 		editor.putString("PrefHistogramVF", isRGB ? "1" : "0");
 
-		histoHeight = (int) (MainScreen.getGUIManager().getMaxPluginViewHeight() * 0.6);
-		histoWidth = (int) (MainScreen.getGUIManager().getMaxPluginViewWidth() * 0.6);
+		histoHeight = (int) (ApplicationScreen.getGUIManager().getMaxPluginViewHeight() * 0.6);
+		histoWidth = (int) (ApplicationScreen.getGUIManager().getMaxPluginViewWidth() * 0.6);
 		android.widget.RelativeLayout.LayoutParams histLayoutParams = new android.widget.RelativeLayout.LayoutParams(
 				histoWidth, histoHeight);
 
@@ -164,13 +166,13 @@ public class HistogramVFPlugin extends PluginViewfinder
 
 		if (isRGB)
 		{
-			MainScreen.getGUIManager().removeViewQuick(HistogramVFPlugin.this.histogramRGB);
-			MainScreen.getGUIManager().addViewQuick(HistogramVFPlugin.this.histogram,
+			ApplicationScreen.getGUIManager().removeViewQuick(HistogramVFPlugin.this.histogramRGB);
+			ApplicationScreen.getGUIManager().addViewQuick(HistogramVFPlugin.this.histogram,
 					PluginViewfinder.ViewfinderZone.VIEWFINDER_ZONE_BOTTOM_LEFT);
 		} else
 		{
-			MainScreen.getGUIManager().removeViewQuick(HistogramVFPlugin.this.histogram);
-			MainScreen.getGUIManager().addViewQuick(HistogramVFPlugin.this.histogramRGB,
+			ApplicationScreen.getGUIManager().removeViewQuick(HistogramVFPlugin.this.histogram);
+			ApplicationScreen.getGUIManager().addViewQuick(HistogramVFPlugin.this.histogramRGB,
 					PluginViewfinder.ViewfinderZone.VIEWFINDER_ZONE_BOTTOM_LEFT);
 		}
 		editor.commit();
@@ -180,7 +182,7 @@ public class HistogramVFPlugin extends PluginViewfinder
 	@Override
 	public void onQuickControlClick()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		Editor editor = prefs.edit();
 
 		switch (histogramType)
@@ -219,16 +221,18 @@ public class HistogramVFPlugin extends PluginViewfinder
 
 	void UpdatePreferences()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		histogramType = Integer.parseInt(prefs.getString("PrefHistogramVF", "0"));
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		histogramType = Integer.parseInt(prefs.getString("PrefHistogramVF", "2"));
 
 		switch (histogramType)
 		{
 		case RGB:
 			quickControlIconID = R.drawable.gui_almalence_histogram_rgb;
+			CameraController.setNeedPreviewFrame(true);
 			break;
 		case LUMA:
 			quickControlIconID = R.drawable.gui_almalence_histogram_luma;
+			CameraController.setNeedPreviewFrame(true);
 			break;
 		case NONE:
 			quickControlIconID = R.drawable.gui_almalence_histogram_off;
@@ -244,7 +248,7 @@ public class HistogramVFPlugin extends PluginViewfinder
 	@Override
 	public void onStart()
 	{
-		this.orientListener = new OrientationEventListener(MainScreen.getMainContext())
+		this.orientListener = new OrientationEventListener(ApplicationScreen.getMainContext())
 		{
 			@Override
 			public void onOrientationChanged(int orientation)
@@ -252,7 +256,7 @@ public class HistogramVFPlugin extends PluginViewfinder
 				if (orientation == ORIENTATION_UNKNOWN)
 					return;
 
-				final Display display = ((WindowManager) MainScreen.getInstance().getSystemService(
+				final Display display = ((WindowManager) ApplicationScreen.instance.getSystemService(
 						Context.WINDOW_SERVICE)).getDefaultDisplay();
 				final int orientationProc = (display.getWidth() <= display.getHeight()) ? Configuration.ORIENTATION_PORTRAIT
 						: Configuration.ORIENTATION_LANDSCAPE;
@@ -292,8 +296,8 @@ public class HistogramVFPlugin extends PluginViewfinder
 
 	private void showHisto()
 	{
-		histoHeight = (int) (MainScreen.getGUIManager().getMaxPluginViewHeight() * 0.6);
-		histoWidth = (int) (MainScreen.getGUIManager().getMaxPluginViewWidth() * 0.6);
+		histoHeight = (int) (ApplicationScreen.getGUIManager().getMaxPluginViewHeight() * 0.6);
+		histoWidth = (int) (ApplicationScreen.getGUIManager().getMaxPluginViewWidth() * 0.6);
 		android.widget.RelativeLayout.LayoutParams histLayoutParams = new android.widget.RelativeLayout.LayoutParams(
 				histoWidth, histoHeight);
 		histLayoutParams.setMargins(20, 0, 0, 0);
@@ -310,15 +314,15 @@ public class HistogramVFPlugin extends PluginViewfinder
 
 		if (histogramType == RGB)
 		{
-			MainScreen.getGUIManager().removeViewQuick(HistogramVFPlugin.this.histogram);
-			MainScreen.getGUIManager().removeViewQuick(HistogramVFPlugin.this.histogramRGB);
-			MainScreen.getGUIManager().addViewQuick(HistogramVFPlugin.this.histogramRGB,
+			ApplicationScreen.getGUIManager().removeViewQuick(HistogramVFPlugin.this.histogram);
+			ApplicationScreen.getGUIManager().removeViewQuick(HistogramVFPlugin.this.histogramRGB);
+			ApplicationScreen.getGUIManager().addViewQuick(HistogramVFPlugin.this.histogramRGB,
 					PluginViewfinder.ViewfinderZone.VIEWFINDER_ZONE_BOTTOM_LEFT);
 		} else
 		{
-			MainScreen.getGUIManager().removeViewQuick(HistogramVFPlugin.this.histogramRGB);
-			MainScreen.getGUIManager().removeViewQuick(HistogramVFPlugin.this.histogram);
-			MainScreen.getGUIManager().addViewQuick(HistogramVFPlugin.this.histogram,
+			ApplicationScreen.getGUIManager().removeViewQuick(HistogramVFPlugin.this.histogramRGB);
+			ApplicationScreen.getGUIManager().removeViewQuick(HistogramVFPlugin.this.histogram);
+			ApplicationScreen.getGUIManager().addViewQuick(HistogramVFPlugin.this.histogram,
 					PluginViewfinder.ViewfinderZone.VIEWFINDER_ZONE_BOTTOM_LEFT);
 		}
 	}
@@ -334,8 +338,8 @@ public class HistogramVFPlugin extends PluginViewfinder
 	{
 		if (histogramType == RGB)
 		{
-			histoHeight = (int) (MainScreen.getGUIManager().getMaxPluginViewHeight() * 0.6);
-			histoWidth = (int) (MainScreen.getGUIManager().getMaxPluginViewWidth() * 0.6);
+			histoHeight = (int) (ApplicationScreen.getGUIManager().getMaxPluginViewHeight() * 0.6);
+			histoWidth = (int) (ApplicationScreen.getGUIManager().getMaxPluginViewWidth() * 0.6);
 
 			android.widget.RelativeLayout.LayoutParams histLayoutParams = new android.widget.RelativeLayout.LayoutParams(
 					histoWidth, histoHeight);
@@ -343,8 +347,8 @@ public class HistogramVFPlugin extends PluginViewfinder
 			this.histogram.setLayoutParams(histLayoutParams);
 		} else if (histogramType == LUMA)
 		{
-			histoHeight = (int) (MainScreen.getGUIManager().getMaxPluginViewHeight() * 0.6);
-			histoWidth = (int) (MainScreen.getGUIManager().getMaxPluginViewWidth() * 0.6);
+			histoHeight = (int) (ApplicationScreen.getGUIManager().getMaxPluginViewHeight() * 0.6);
+			histoWidth = (int) (ApplicationScreen.getGUIManager().getMaxPluginViewWidth() * 0.6);
 
 			android.widget.RelativeLayout.LayoutParams histLayoutParams = new android.widget.RelativeLayout.LayoutParams(
 					histoWidth, histoHeight);
@@ -370,8 +374,8 @@ public class HistogramVFPlugin extends PluginViewfinder
 		{
 			return;
 		}
-		int previewWidth = MainScreen.getPreviewWidth();
-		int previewHeight = MainScreen.getPreviewHeight();
+		int previewWidth = ApplicationScreen.getPreviewWidth();
+		int previewHeight = ApplicationScreen.getPreviewHeight();
 
 		if (histogramType == LUMA)
 		{

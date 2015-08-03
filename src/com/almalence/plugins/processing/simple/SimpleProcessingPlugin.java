@@ -19,14 +19,16 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.processing.simple;
 
 /* <!-- +++
-import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.ApplicationScreen;
 import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.PluginProcessing;
 import com.almalence.opencam_plus.R;
 import com.almalence.opencam_plus.cameracontroller.CameraController;
+import com.almalence.opencam_plus.ApplicationInterface;
 +++ --> */
 //<!-- -+-
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationInterface;
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
@@ -69,7 +71,7 @@ public class SimpleProcessingPlugin extends PluginProcessing
 	
 	private void getPrefs()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getInstance()
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.instance
 				.getBaseContext());
 		saveInputPreference = prefs.getBoolean(PREFERENCES_KEY_SAVEINPUT, false);
 	}
@@ -79,7 +81,7 @@ public class SimpleProcessingPlugin extends PluginProcessing
 	{
 		sessionID = SessionID;
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		modePrefDro = Integer.parseInt(prefs.getString("modePrefDro", "1"));
 
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
@@ -121,30 +123,10 @@ public class SimpleProcessingPlugin extends PluginProcessing
 				{
 					try
 					{
-						File saveDir = PluginManager.getSaveDir(false);
-
 						String fileFormat = PluginManager.getInstance().getFileFormat();
 						fileFormat = fileFormat + "_DROSRC";
 
-						File file = new File(saveDir, fileFormat + ".jpg");
-						FileOutputStream os = null;
-						try
-						{
-							os = new FileOutputStream(file);
-						} catch (Exception e)
-						{
-							// save always if not working saving to sdcard
-							e.printStackTrace();
-							saveDir = PluginManager.getSaveDir(true);
-							file = new File(saveDir, fileFormat + ".jpg");
-							os = new FileOutputStream(file);
-						}
-
-						PluginManager.getInstance().writeData(os, true, sessionID, i - 1, null, inputYUV, file);
-					} catch (IOException e)
-					{
-						e.printStackTrace();
-						MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
+						PluginManager.getInstance().saveInputFile(true, sessionID, i, null, inputYUV, fileFormat);
 					} catch (Exception e)
 					{
 						e.printStackTrace();

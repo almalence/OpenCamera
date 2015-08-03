@@ -13,6 +13,12 @@
 	<string name="Pref_Infoset_AvailablePictureCount_Title">Number of images</string>
 	<string name="Pref_Infoset_AvailablePictureCount_Summary">Show number of images that can be shot with current image size setting</string>
 	
+	<string name="Pref_Infoset_useCurrentSensitivityMonitor_Title">ISO value</string>
+	<string name="Pref_Infoset_useCurrentSensitivityMonitor_Summary">Show current camera ISO</string>
+	
+	<string name="Pref_Infoset_useExposureTimeMonitor_Title">Shutter speed</string>
+	<string name="Pref_Infoset_useExposureTimeMonitor_Summary">Show current camera shutter speed</string>
+	
 	<string name="Pref_Infoset_UseEVMonitor_Title">Exposure compensation</string>
 	<string name="Pref_Infoset_UseEVMonitor_Summary">Show current camera exposure compensation</string>
 	

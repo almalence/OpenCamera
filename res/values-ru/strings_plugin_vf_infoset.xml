@@ -13,6 +13,12 @@
 	<string name="Pref_Infoset_AvailablePictureCount_Title">Количество снимков</string>
 	<string name="Pref_Infoset_AvailablePictureCount_Summary">Показывать количество снимков для текущего размера кадра</string>
 	
+	<string name="Pref_Infoset_useCurrentSensitivityMonitor_Title">Значение ISO</string>
+	<string name="Pref_Infoset_useCurrentSensitivityMonitor_Summary">Показывать значение ISO</string>
+	
+	<string name="Pref_Infoset_useExposureTimeMonitor_Title">Выдержка</string>
+	<string name="Pref_Infoset_useExposureTimeMonitor_Summary">Показывать значение выдержки</string>
+	
 	<string name="Pref_Infoset_UseEVMonitor_Title">Экспо-коррекция</string>
 	<string name="Pref_Infoset_UseEVMonitor_Summary">Показывать значение экспокоррекции</string>
 	

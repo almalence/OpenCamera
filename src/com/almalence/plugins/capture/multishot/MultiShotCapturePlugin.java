@@ -21,18 +21,22 @@ package com.almalence.plugins.capture.multishot;
 import android.annotation.TargetApi;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.hardware.camera2.CaptureResult;
 
 /* <!-- +++
 import com.almalence.opencam_plus.cameracontroller.CameraController;
-import com.almalence.opencam_plus.MainScreen;
+import com.almalence.opencam_plus.ApplicationScreen;
 import com.almalence.opencam_plus.PluginCapture;
 import com.almalence.opencam_plus.PluginManager;
+import com.almalence.opencam_plus.ApplicationInterface;
 import com.almalence.opencam_plus.R;
 +++ --> */
 //<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationInterface;
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
@@ -44,26 +48,15 @@ import com.almalence.opencam.R;
 
 public class MultiShotCapturePlugin extends PluginCapture
 {
-
-	private static final String					TAG					= "MultiShotCapturePlugin";
-
-	private static final int					MIN_MPIX_SUPPORTED	= 1280 * 960;
-	private static final int					MIN_MPIX_PREVIEW	= 600 * 400;
-
-	private static int							captureIndex		= -1;
-
-	public static int getCaptureIndex()
-	{
-		return captureIndex;
-	}
-
-	private static int	imgCaptureWidth		= 0;
-	private static int	imgCaptureHeight	= 0;
+	private static final String	TAG						= "MultiShotCapturePlugin";
+	private static int			captureIndex			= -1;
+	private static int			imgCaptureWidth			= 0;
+	private static int			imgCaptureHeight		= 0;
 
 	// defaul val. value should come from config
-	private int		imageAmount			= 8;
-	private int[]	pauseBetweenShots			= { 0, 0, 250, 250, 500, 750, 1000, 1250 };
-	private int[]	pauseBetweenShotsCamera2	= { 100, 200, 250, 250, 500, 750, 1000, 1250 };
+	private int					imageAmount				= 8;
+	private int[]				pauseBetweenShots		= { 0, 0, 250, 250, 500, 750, 1000, 1250 };
+	private int[]				pauseBetweenShotsCamera2= { 100, 200, 250, 250, 500, 750, 1000, 1250 };
 
 	public MultiShotCapturePlugin()
 	{
@@ -77,17 +70,22 @@ public class MultiShotCapturePlugin extends PluginCapture
 		inCapture = false;
 		aboutToTakePicture = false;
 
-		MainScreen.setCaptureFormat(CameraController.YUV);
+		ApplicationScreen.setCaptureFormat(CameraController.YUV);
 	}
 
 	@Override
 	public void onGUICreate()
 	{
-		MainScreen.getGUIManager().showHelp(MainScreen.getInstance().getString(R.string.MultiShot_Help_Header),
-				MainScreen.getAppResources().getString(R.string.MultiShot_Help),
+		ApplicationScreen.getGUIManager().showHelp(ApplicationScreen.instance.getString(R.string.MultiShot_Help_Header),
+				ApplicationScreen.getAppResources().getString(R.string.MultiShot_Help),
 				R.drawable.plugin_help_multishot, "multiShotShowHelp");
 	}
 
+	public static int getCaptureIndex()
+	{
+		return captureIndex;
+	}
+	
 	public boolean delayedCaptureSupported()
 	{
 		return true;
@@ -96,6 +94,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 	public void takePicture()
 	{
 		resultCompleted = 0;
+		createRequestIDList(imageAmount);
 		CameraController.captureImagesWithParams(imageAmount, CameraController.YUV,
 				CameraController.isHALv3Supported()?pauseBetweenShotsCamera2:pauseBetweenShots, null, null, null, true, true);
 	}
@@ -105,15 +104,19 @@ public class MultiShotCapturePlugin extends PluginCapture
 	{
 		imagesTaken++;
 
+		//show indication
+		ApplicationScreen.instance.findViewById(R.id.captureIndicationText).setVisibility(View.VISIBLE);
+		((TextView)ApplicationScreen.instance.findViewById(R.id.captureIndicationText)).setText(imagesTaken+" of " + imageAmount);
+		
 		if (frame == 0)
 		{
 			Log.i(TAG, "Load to heap failed");
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED_NORESULT, String.valueOf(SessionID));
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED_NORESULT, String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			resultCompleted = 0;
-			MainScreen.getInstance().muteShutter(false);
+			ApplicationScreen.instance.muteShutter(false);
 			inCapture = false;
 			return;
 		}
@@ -123,16 +126,19 @@ public class MultiShotCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem(frameName + SessionID, String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem(frameLengthName + SessionID, String.valueOf(frame_len));
 		PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken + SessionID,
-				String.valueOf(MainScreen.getGUIManager().getDisplayOrientation()));
+				String.valueOf(ApplicationScreen.getGUIManager().getDisplayOrientation()));
 		PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
 
 		if (imagesTaken >= imageAmount)
 		{
+			//hide capture indication
+			ApplicationScreen.instance.findViewById(R.id.captureIndicationText).setVisibility(View.GONE);
+			
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
 					String.valueOf(imagesTaken));
 
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			resultCompleted = 0;
@@ -178,19 +184,12 @@ public class MultiShotCapturePlugin extends PluginCapture
 	private void setCameraImageSize()
 	{
 		if (imgCaptureWidth > 0 && imgCaptureHeight > 0)
-		{
 			CameraController.setCameraImageSize(new CameraController.Size(imgCaptureWidth, imgCaptureHeight));
-//			MainScreen.setSaveImageWidth(imgCaptureWidth);
-//			MainScreen.setSaveImageHeight(imgCaptureHeight);
-//
-//			MainScreen.setImageWidth(imgCaptureWidth);
-//			MainScreen.setImageHeight(imgCaptureHeight);
-		}
 	}
 
 	public static void selectImageDimensionMultishot()
 	{
-		captureIndex = MainScreen.selectImageDimensionMultishot();
+		captureIndex = ApplicationScreen.selectImageDimensionMultishot();
 		imgCaptureWidth = CameraController.MultishotResolutionsSizeList.get(captureIndex).getWidth();
 		imgCaptureHeight = CameraController.MultishotResolutionsSizeList.get(captureIndex).getHeight();
 	}

@@ -19,9 +19,6 @@
     plugin id - real unique plugin id which is set in plugin ctor
      -->
 
-	<!--  Default plugin for initial start -->     
-    <defaultmode id="single"/>
-     
 	<mode id="single" name="single_mode_name" savename="">
 		<icon		id="gui_almalence_mode_single"/>
 
@@ -47,31 +44,7 @@
 		<howtotext  id=""/>
 		
 	</mode>
-	<!-- 
-	<mode id="selftimer" name="selftimer_mode_name"  savename="">
 	
-	    <icon		id="gui_almalence_mode_selftimer"/>
-	    
-	    <vf 		id="com.almalence.plugins.gridvf"/>
-	    <vf 		id="com.almalence.plugins.zoomvf"/>
-	    <vf 		id="com.almalence.plugins.focusvf"/>
-	    <vf 		id="com.almalence.plugins.histogramvf"/>
-	    <vf 		id="com.almalence.plugins.barcodescannervf"/>
-	    <vf 		id="com.almalence.plugins.infosetvf"/>
-	    <vf 		id="com.almalence.plugins.aeawlockvf"/>      
-	
-	    <capture 	id="com.almalence.plugins.selftimercapture" />    
-	
-	    <processing	id="com.almalence.plugins.simpleprocessing"/>    
-	
-	    <export 	id="com.almalence.plugins.export"/>
-
-		<sku/>
-		
-		<howtotext  id=""/>
-		
-	</mode> 
-	 -->
 	<mode id="burstmode" name="burst_mode_name"  savename="">
 	    
 	    <icon		id="gui_almalence_mode_burst"/>
@@ -276,29 +249,6 @@
 		<howtotext  id=""/>
 	</mode>
 
-<!-- 
-	<mode id="hires_portrait" name="hiresportrait_mode_name"  savename="PRT">
-	
-	    <icon		id="gui_almalence_mode_hiresportrait"/>
-	    
-	    <vf 		id="com.almalence.plugins.gridvf"/>
-	    <vf 		id="com.almalence.plugins.histogramvf"/>
-	    <vf 		id="com.almalence.plugins.focusvf"/>
-	    <vf 		id="com.almalence.plugins.infosetvf"/>
-	
-	    <capture 	id="com.almalence.plugins.hiresportraitcapture" />
-	
-	    <processing id="com.almalence.plugins.hiresportraitprocessing"/>    
-	
-	    <filter/>    
-	
-	    <export 	id="com.almalence.plugins.export"/>
-
-		<sku		id=""/>
-		
-		<howtotext  id=""/>
-	</mode>
-	-->
 	<mode id="bestshotmode" name="bestshot_mode_name"  savename="BEST">
 	    
 	    <icon		id="gui_almalence_mode_bestshot"/>
@@ -324,5 +274,8 @@
 		<howtotext  id=""/>
 		
 	</mode>
+	
+	<!--  Default plugin for initial start -->     
+    <defaultmode id="single"/>
 
 </config>	

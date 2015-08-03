@@ -23,25 +23,21 @@ import java.util.Locale;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.util.Log;
-
-import com.almalence.SwapHeap;
 import com.almalence.asynctaskmanager.OnTaskCompleteListener;
 
 /* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginProcessing;
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
-
 //-+- -->
 
 /***
@@ -135,12 +131,24 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 				.contains("nexus5");
 		boolean isNexus6 = Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
 				.contains("nexus6");
-		// boolean isNexus9 = Build.MODEL.toLowerCase(Locale.US).replace(" ",
-		// "").contains("nexus9");
+
+		boolean	isG4 = Build.MANUFACTURER.contains("LGE")&&
+				(
+						Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H818")|| 
+						Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H815")|| 
+						Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H812")|| 
+						Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H810")|| 
+						Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H811")|| 
+						Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("LS991")|| 
+						Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("VS986")|| 
+						Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("US991")
+				);
+		
+		cameraIndex = 100;
 		// camera indexes in libalmalib corresponding to models
 		if (isNexus5)   cameraIndex = 100;
 		if (isNexus6)   cameraIndex = 103;
-		if (isLGgflex2) cameraIndex = 507;
+		if (isLGgflex2||isG4) cameraIndex = 507;
 
 		AlmaShotNight.Initialize();
 
@@ -182,9 +190,6 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 
 		AlmaShotNight.NightAddYUVFrames(frames, imagesAmount, mImageWidth, mImageHeight);
 
-		// Log.d("Night",
-		// "PreviewTask.doInBackground AlmaShotNight.Process start");
-
 		float zoom = Float.parseFloat(PluginManager.getInstance().getFromSharedMem("zoom" + sessionID));
 		boolean isSuperMode = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem(
 				"isSuperMode" + sessionID));
@@ -209,7 +214,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 	private void getPrefs()
 	{
 		// Get the xml/preferences.xml preferences
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getInstance()
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.instance
 				.getBaseContext());
 		NoisePreference = prefs.getString("noisePrefNight", "0");
 		GhostPreference = prefs.getString("ghostPrefNight", "1");

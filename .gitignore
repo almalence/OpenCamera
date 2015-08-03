@@ -4,3 +4,5 @@
 /jni/almashot/armeabi-v7a/libalmalib.a
 /jni/almashot/x86/libalmalib.a
 /.settings
+/plus_code.pl
+/plus.sh

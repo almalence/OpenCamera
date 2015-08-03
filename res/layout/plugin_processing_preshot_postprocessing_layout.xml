@@ -25,7 +25,18 @@
 		    android:layout_height="fill_parent"
 		    android:gravity="center_horizontal"
 		    android:id="@+id/view_picture">
-	    
+<!-- 	    
+		    <CheckBox
+	 	 	    android:id="@+id/preshot_image_checkbox"
+	 	 	    android:layout_width="wrap_content"
+	 	 	    android:layout_height="wrap_content"
+	 	 	    android:checked="false"
+	 	 	    android:layout_alignParentTop="true"
+	 	 	    android:layout_centerHorizontal="true"
+	 	 	    android:
+	 	 	    android:layout_marginTop="10dip"
+	 	 	    />
+	 -->	    
 	    	<ImageView
 				android:id="@+id/imageListed"
 				android:layout_width="fill_parent"
@@ -37,7 +48,7 @@
 	 	 	    android:id="@+id/preshot_image_counter"
 	 	 	    android:layout_width="@dimen/postprocessing_imagecounter_size"
 	 	 	    android:layout_height="@dimen/postprocessing_savebutton_size"
-	 	 	    android:layout_alignParentTop="true"
+	 	 	    android:layout_alignParentBottom="true"
 	 	 	    android:layout_centerHorizontal="true"
 	 	 	    android:gravity="center"
 	 	 	    android:layout_marginTop="10dip"

@@ -7,6 +7,7 @@
     <string name="Pref_Common_UseFrontCamera_Title">Front camera</string>
     <string name="Pref_Common_UseFrontCamera_Summary">Use front camera</string>
     <string name="Pref_Common_ImageSize_Title">Image size</string>
+    <string name="Pref_Common_ColorEffect_Title">Color effect</string>
     <string name="Pref_Comon_SmartMultishot_And_Night_ImageSize_Title">Image size (Multishot, Night)</string>
     <string name="Pref_Comon_SmartMultishot_And_Super_ImageSize_Title">Image size Multishot</string>
     <string name="Pref_Common_ImageSize_Summary">\nNote: some modes have individual setting for image size</string>
@@ -48,6 +49,9 @@
     <string name="Pref_Common_HeadsetTap_Title">Headset shutter</string>
     <string name="Pref_Common_HeadsetTap_Summary">Use headset buttons as shutter</string>
     
+    <string name="Pref_Common_ConnectToSonyCameras_Title">Connecnt to Sony cameras</string>
+    <string name="Pref_Common_ConnectToSonyCameras_Summary">Enable interface for Sony cameras connection</string>
+    
     
     <string name="helpTextDontShow">Do not show</string>
     
@@ -74,6 +78,7 @@
     <string name="sceneHDR">HDR</string>
     <string name="sceneAR">AR</string>
     
+    <string name="wbManual">Manual</string>
     <string name="wbAuto">Auto</string>
     <string name="wbIncandescent">Incandescent</string>
     <string name="wbFluorescent">Fluorescent</string>
@@ -82,6 +87,7 @@
     <string name="wbCloudyDaylight">Cloudy daylight</string>
     <string name="wbTwilight">Twilight</string>
     <string name="wbShade">Shade</string>
+    
     
     <string name="focusAuto">Auto</string>
     <string name="focusInfinity">Infinity</string>
@@ -99,17 +105,18 @@
     <string name="flashOff">Off</string>
     <string name="flashRedEye">Red eye</string>
     <string name="flashTorch">Torch</string>
+    <string name="flashCaptureTorch">Torch for capturing</string>
     
-    <string name="isoAuto">Auto</string>
-    <string name="iso50">ISO50</string>
-    <string name="iso100">ISO100</string>
-    <string name="iso200">ISO200</string>
-    <string name="iso400">ISO400</string>
-    <string name="iso800">"ISO800"</string>
-    <string name="iso1600">ISO1600</string>
-    <string name="iso3200">ISO3200</string>
-    <string name="iso6400">ISO6400</string>
-    <string name="iso10000">ISO10000</string>
+    <string name="isoAuto">ISO Auto</string>
+    <string name="iso50">ISO 50</string>
+    <string name="iso100">ISO 100</string>
+    <string name="iso200">ISO 200</string>
+    <string name="iso400">ISO 400</string>
+    <string name="iso800">"ISO 800"</string>
+    <string name="iso1600">ISO 1600</string>
+    <string name="iso3200">ISO 3200</string>
+    <string name="iso6400">ISO 6400</string>
+    <string name="iso10000">ISO 10000</string>
     
     <string name="sceneAutoSystem">auto</string>
     <string name="sceneActionSystem">action</string>
@@ -159,6 +166,13 @@
     <string name="wbTwilightSystem">twilight</string>
     <string name="wbShadeSystem">shade</string>
     
+    <string name="wbAutoSonyRemote">Auto WB</string>
+    <string name="wbIncandescentSonyRemote">Incandescent</string>
+    <string name="wbWarmFluorescentSonyRemote">Fluorescent: Warm White </string>
+    <string name="wbDaylightSonyRemote">Daylight</string>
+    <string name="wbCloudyDaylightSonyRemote">Cloudy</string>
+    <string name="wbShadeSonyRemote">Shade</string>
+    
     <string name="wbAutoKey">00_auto</string>
     <string name="wbCloudyDaylightKey">01_cloudy-daylight</string>
     <string name="wbDaylightKey">02_daylight</string>
@@ -196,6 +210,7 @@
     <string name="flashOffSystem">off</string>
     <string name="flashRedEyeSystem">red-eye</string>
     <string name="flashTorchSystem">torch</string>
+    <string name="flashCaptureTorchSystem">captureTorch</string>
     
     <string name="flashAutoKey">00_auto</string>
     <string name="flashOnKey">01_on</string>
@@ -236,11 +251,35 @@
     <string name="iso6400DefaultSystem">6400</string>
     <string name="iso10000DefaultSystem">10000</string>
     
+    <string name="colorEffectOffSystem">none</string>
+    <string name="colorEffectAquaSystem">aqua</string>
+    <string name="colorEffectBlackboardSystem">blackboard</string>
+    <string name="colorEffectMonoSystem">mono</string>
+    <string name="colorEffectNegativeSystem">negative</string>
+    <string name="colorEffectPosterizeSystem">posterize</string>
+    <string name="colorEffectSepiaSystem">sepia</string>
+    <string name="colorEffectSolarizeSystem">solarize</string>
+    <string name="colorEffectWhiteboardSystem">whiteboard</string>
+    
+    <string name="colorEffectOff">Off</string>
+    <string name="colorEffectAqua">Aqua</string>
+    <string name="colorEffectBlackboard">Blackboard</string>
+    <string name="colorEffectMono">Mono</string>
+    <string name="colorEffectNegative">Negative</string>
+    <string name="colorEffectPosterize">Posterize</string>
+    <string name="colorEffectSepia">Sepia</string>
+    <string name="colorEffectSolarize">Solarize</string>
+    <string name="colorEffectWhiteboard">Whiteboard</string>
+    
     <string name="meteringAutoSystem">Auto</string>
     <string name="meteringMatrixSystem">Matrix</string>
     <string name="meteringCenterSystem">Center-weighted</string>
     <string name="meteringSpotSystem">Spot</string>
-    <string name="meteringManualSystem">Manual exposure</string>
+    <string name="meteringManualSystem">Shutter speed</string>
+    
+    <string name="cameraBack">Back</string>
+    <string name="cameraFront">Front</string>
+    <string name="cameraSony">Sony</string>
     
     <string name="settings_mode_scene">Scene mode</string>
     <string name="settings_mode_wb">White balance</string>
@@ -250,9 +289,11 @@
     <string name="settings_mode_metering">Exposure metering mode</string>
     <string name="settings_mode_rear">Rear camera</string>
     <string name="settings_mode_front">Front camera</string>
-    <string name="settings_mode_exposure">Exposure</string>
+    <string name="settings_mode_exposure">Exposure compensation</string>
     <string name="settings_mode_exposuretime">Exposure time</string>
     <string name="settings_mode_focusdistance">Focus distance</string>
+    <string name="settings_mode_image_size">Image size</string>
+    <string name="settings_mode_color_effect">Color effect</string>
     <string name="settings_mode_moresettings">More settings</string>
     <string name="settings_mode_self_timer">Self-timer</string>
     <string name="settings_mode_aeaflock">AE\\AF Locked</string>
@@ -274,7 +315,9 @@
 	<string name="Pref_Advanced_Preference_Summary">Settings for expert users</string>
 	<string name="Pref_Unlock_Preference_Title">Unlock</string>
 	<string name="Pref_Unlock_Preference_Summary">Unlock premium features</string>
-	
+	<string name="Pref_Help_Preference_Title">Help</string>
+	<string name="Pref_Help_Preference_Summary">Short help and description</string>
+		
 	<string name="layout_hint_bottom">Select camera mode</string>
 	<string name="layout_hint_center">Swipe for more/less info</string>
 	<string name="layout_hint_top_left">Long-press\nto configure</string>

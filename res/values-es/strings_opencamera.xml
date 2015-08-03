@@ -38,4 +38,6 @@
     <string name="raterSendReview">Tu opinión nos importa mucho y queremos mejorar la aplicación. Envía tu reseña directamente al soporte.</string>
     <string name="raterSend">Enviar</string>
     
+    <string name="string_appoftheday">Ahora tienes la versión Pro, gracias a App del Día.</string>
+    
 </resources>

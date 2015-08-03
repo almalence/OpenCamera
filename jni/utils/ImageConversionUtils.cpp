@@ -25,6 +25,8 @@ by Almalence Inc. All Rights Reserved.
 #include "jpeglib.h"
 #include <math.h>
 
+#include <jni.h>
+
 #include "ImageConversionUtils.h"
 
 #define LOG_TAG "ImageConversion"
@@ -895,4 +897,58 @@ void addRoundCornersRGBA8888
 			rgb_bytes[offset+2] = ((int)rgb_bytes[offset+2]*7+sbclr)/8;
 		}
 	}
+}
+
+extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_util_ImageConversion_NV21toARGB
+(
+	JNIEnv* env,
+	jobject thiz,
+	jint inptr,
+	jobject srcSize,
+	jobject rect,
+	jobject dstSize
+)
+{
+	LOGD("NV21toARGB - start");
+
+	Uint32 * pixels;
+	jintArray jpixels = NULL;
+
+	jclass src_size = env->GetObjectClass(srcSize);
+	jfieldID id_srcW = env->GetFieldID(src_size, "width", "I");
+	jint srcW = env->GetIntField(srcSize,id_srcW);
+	jfieldID id_srcH = env->GetFieldID(src_size, "height", "I");
+	jint srcH = env->GetIntField(srcSize,id_srcH);
+
+	jclass class_rect = env->GetObjectClass(rect);
+	jfieldID id_left = env->GetFieldID(class_rect, "left", "I");
+	jint left = env->GetIntField(rect,id_left);
+	jfieldID id_top = env->GetFieldID(class_rect, "top", "I");
+	jint top = env->GetIntField(rect,id_top);
+	jfieldID id_right = env->GetFieldID(class_rect, "right", "I");
+	jint right = env->GetIntField(rect,id_right);
+	jfieldID id_bottom = env->GetFieldID(class_rect, "bottom", "I");
+	jint bottom = env->GetIntField(rect,id_bottom);
+
+	jclass dst_size = env->GetObjectClass(dstSize);
+	jfieldID id_dstW = env->GetFieldID(dst_size, "width", "I");
+	jint dstW = env->GetIntField(dstSize,id_dstW);
+	jfieldID id_dstH = env->GetFieldID(dst_size, "height", "I");
+	jint dstH = env->GetIntField(dstSize,id_dstH);
+
+	LOGD("inptr = %d srcW = %d srcH = %d ", inptr, srcW, srcH);
+	LOGD("left = %d top = %d right = %d bottom = %d ", left, top, right, bottom);
+	LOGD("dstW = %d dstH = %d", dstW, dstH);
+
+	jpixels = env->NewIntArray(dstW*dstH);
+	LOGD("Memory alloc size = %d * %d", dstW, dstH);
+	pixels = (Uint32 *)env->GetIntArrayElements(jpixels, NULL);
+
+	NV21_to_RGB_scaled((Uint8 *)inptr, srcW, srcH, left, top, right - left, bottom - top, dstW, dstH, 4, (Uint8 *)pixels);
+
+	env->ReleaseIntArrayElements(jpixels, (jint*)pixels, 0);
+
+	LOGD("NV21toARGB - end");
+
+	return jpixels;
 }

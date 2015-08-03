@@ -7,6 +7,7 @@
     <string name="Pref_Common_UseFrontCamera_Title">Фронтальная камера</string>
     <string name="Pref_Common_UseFrontCamera_Summary">Использовать фронтальную камеру</string>
     <string name="Pref_Common_ImageSize_Title">Размер снимка</string>
+    <string name="Pref_Common_ColorEffect_Title">Цветовой эффект</string>
     <string name="Pref_Comon_SmartMultishot_And_Night_ImageSize_Title">Размер снимка (Multishot, Ночь)</string>
     <string name="Pref_Comon_SmartMultishot_And_Super_ImageSize_Title">Размер снимка (Multishot)</string>
     <string name="Pref_Common_ImageSize_Summary">\nВнимание: некоторые режимы имеют индивидуальные настройки размера снимка</string>
@@ -32,6 +33,8 @@
 	<string name="helpTextDontShow">Не показывать</string>
 	<string name="Pref_Common_HeadsetTap_Title">Кнопки наушников</string>
     <string name="Pref_Common_HeadsetTap_Summary">Использовать кнопки наушников для съемки</string>
+    <string name="Pref_Common_ConnectToSonyCameras_Title">Позволять выбор Sony камер</string>
+    <string name="Pref_Common_ConnectToSonyCameras_Summary">Включить возможность выбора устройств Sony</string>
     <string name="Pref_SaveConfiguration_Title">Сохранение настроек</string>
     <string name="Pref_SaveConfiguration_Summary">Выбрать настройки, сохраняемые между запусками</string>
     <string name="Pref_SaveConfiguration_ShootingMode_Title">Режимы съемки</string>
@@ -70,6 +73,7 @@
     <string name="sceneHDR">HDR</string>
     <string name="sceneAR">AR</string>
     
+    <string name="wbManual">Ручной</string>
     <string name="wbAuto">Авто</string>
     <string name="wbIncandescent">Накаливания</string>
     <string name="wbFluorescent">Флюоресцентная</string>
@@ -93,8 +97,19 @@
     <string name="flashOff">выкл</string>
     <string name="flashRedEye">red-eye</string>
     <string name="flashTorch">фонарик</string>
+    <string name="flashCaptureTorch">фонарик для съемки</string>
     
     <string name="isoAuto">авто</string> 
+    
+    <string name="colorEffectOff">Нет</string>
+    <string name="colorEffectAqua">Вода</string>
+    <string name="colorEffectBlackboard">Классная доска</string>
+    <string name="colorEffectMono">Моно</string>
+    <string name="colorEffectNegative">Негатив</string>
+    <string name="colorEffectPosterize">Постеризация</string>
+    <string name="colorEffectSepia">Сепия</string>
+    <string name="colorEffectSolarize">Засвет</string>
+    <string name="colorEffectWhiteboard">Доска</string>
     
     <string name="settings_mode_scene">Сцена</string>
     <string name="settings_mode_wb">Баланс белого</string>
@@ -103,8 +118,10 @@
     <string name="settings_mode_iso">ISO</string>
     <string name="settings_mode_rear">Основная</string>
     <string name="settings_mode_front">Фронтальная</string>
-    <string name="settings_mode_exposure">Выдержка</string>
+    <string name="settings_mode_exposure">"Экспокоррекция"</string>
     <string name="settings_mode_self_timer">Таймер</string>
+    <string name="settings_mode_image_size">Размер снимка</string>
+    <string name="settings_mode_color_effect">Цветовой эффект</string>
     <string name="settings_mode_moresettings">Настройки</string>
     
     <string name="settings_not_available">Недоступно в выбранном режиме</string>
@@ -122,6 +139,8 @@
 	<string name="Pref_Advanced_Preference_Summary">Настройки для продвинутых пользователей</string>
 	<string name="Pref_Unlock_Preference_Title">Разблокировка</string>
 	<string name="Pref_Unlock_Preference_Summary">Разблокировать премиальные функции</string>
+	<string name="Pref_Help_Preference_Title">Помощь</string>
+	<string name="Pref_Help_Preference_Summary">Помощь и подсказки</string>
 	
 	<string name="layout_hint_bottom">Выбрать режим камеры</string>
 	<string name="layout_hint_center">Переключение экранов</string>

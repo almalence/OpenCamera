@@ -241,6 +241,19 @@ void AlmaShot_ConvertNV21toUYVY
     int sy
 );
 
+void Raw_DemosaicAndColorCorrect
+(
+	Uint8 *restrict in,
+	Uint8 *restrict out,
+	int sx,
+	int sy,
+	int *kelvin,
+	int blevel,
+	int wlevel,
+	int cameraIndex,
+	int outputRGB
+);
+
 void AlmaShot_PauseProcessing(void);
 void AlmaShot_ResumeProcessing(void);
 
