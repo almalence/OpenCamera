@@ -779,7 +779,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 				&& (fs == CameraController.FOCUS_STATE_IDLE || fs == CameraController.FOCUS_STATE_FOCUSING)
 				&& !(fm == CameraParameters.AF_MODE_INFINITY || fm == CameraParameters.AF_MODE_FIXED
 						|| fm == CameraParameters.AF_MODE_EDOF || fm == CameraParameters.AF_MODE_CONTINUOUS_PICTURE || fm == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
-						|| fm == CameraParameters.MF_MODE)
+						|| fm == CameraParameters.MF_MODE || fm == CameraParameters.AF_MODE_UNSUPPORTED)
 				&& !ApplicationScreen.instance.getAutoFocusLock())
 		{
 			this.focused = false;

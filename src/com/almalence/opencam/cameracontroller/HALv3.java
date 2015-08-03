@@ -271,6 +271,9 @@ public class HALv3
 			
 			originalCaptureFormat = CameraController.JPEG;
 			
+			zoomCropPreview = null;
+			activeRect = null;
+			
 //			inCapture = false; Debug variable. Used in logic to capture RAW in Super mode on Galaxy S6
 		} catch (CameraAccessException e)
 		{
@@ -303,8 +306,10 @@ public class HALv3
 					{
 //						Log.wtf(TAG, "onPauseHALv3. camDevice.close()");
 						HALv3.getInstance().camDevice.close();
-						HALv3.getInstance().camDevice = null;	
+						HALv3.getInstance().camDevice = null;
 					}
+					
+					zoomCropPreview = null;
 					
 //					Log.wtf(TAG, "onPauseHALv3. camDevice.close()");
 //					HALv3.getInstance().camDevice.close();

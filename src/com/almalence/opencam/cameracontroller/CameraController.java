@@ -3815,7 +3815,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		int focusMode = CameraController.getFocusMode();
 		if (CameraController.isFocusModeSupported()
-				&& focusMode != -1
+				&& focusMode != CameraParameters.AF_MODE_UNSUPPORTED
 				&& (CameraController.getFocusState() == CameraController.FOCUS_STATE_IDLE || CameraController
 						.getFocusState() == CameraController.FOCUS_STATE_FOCUSING)
 				&& !(focusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE

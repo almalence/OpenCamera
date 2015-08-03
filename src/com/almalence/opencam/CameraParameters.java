@@ -63,6 +63,7 @@ public final class CameraParameters
 	public static final int		WB_MODE_MANUAL					= 10;
 	
 	// FOCUS
+	public static final int		AF_MODE_UNSUPPORTED				= -1; //Default focus mode value. Often presents on front cameras
 	public static final int		AF_MODE_OFF						= 0;
 	public static final int		AF_MODE_AUTO					= 1;
 	public static final int		AF_MODE_MACRO					= 2;

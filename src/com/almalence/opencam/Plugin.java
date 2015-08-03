@@ -366,7 +366,7 @@ public abstract class Plugin
 		}
 
 		ApplicationScreen.instance.setCameraImageSizeIndex(CaptureIdx, true);
-		CameraController.setCameraImageSize(new CameraController.Size(CaptureWidth, CaptureHeight));		
+		CameraController.setCameraImageSize(new CameraController.Size(CaptureWidth, CaptureHeight));
 	}
 
 	public void setCameraPreviewSize()

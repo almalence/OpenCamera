@@ -541,7 +541,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 		if (useFocusMonitor && focusInfoImage != null)
 		{
 			int focus = CameraController.getFocusMode();
-			if (focus != -1 && focusInfoImage != null && CameraController.isFocusModeSupported())
+			if (focus != CameraParameters.AF_MODE_UNSUPPORTED && focusInfoImage != null && CameraController.isFocusModeSupported())
 			{
 				int focus_id = ApplicationScreen.instance.getFocusIcon(focus);
 				if (focus_id != -1)
@@ -673,7 +673,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 			if (this.useFocusMonitor && focusInfoImage != null)
 			{
 				int focus = CameraController.getFocusMode();
-				if (focus != -1 && focusInfoImage != null)
+				if (focus != CameraParameters.AF_MODE_UNSUPPORTED && focusInfoImage != null)
 				{
 					int focus_id = ApplicationScreen.instance.getFocusIcon(focus);
 					if (focus_id != -1)

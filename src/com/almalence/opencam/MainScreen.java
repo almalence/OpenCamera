@@ -449,7 +449,7 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	public void createImageReaders(ImageReader.OnImageAvailableListener imageAvailableListener)
 	{
-		Log.e("MainScreen", "createImageReaders");
+		Log.d("MainScreen", "createImageReaders");
 		// ImageReader for preview frames in YUV format
 		mImageReaderPreviewYUV = ImageReader.newInstance(thiz.previewWidth, thiz.previewHeight,
 				ImageFormat.YUV_420_888, 2);
