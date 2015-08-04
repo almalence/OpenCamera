@@ -58,6 +58,8 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 	AP4_UI32         width 			  		= 0;
 	AP4_UI32         height 		 		= 0;
 
+	//developer noticed, that sample should be copied only once!!!
+	bool sampleOnce = true;
 
 	int inputFileCount = env->GetArrayLength(inputFiles);
 	jint *fileFds = env->GetIntArrayElements(inputFiles, 0);
@@ -108,6 +110,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 		 * ADD VIDEO SAMPLES
 		 */
 		// add clones of the sample descriptions to the new sample table
+		if (sampleOnce)
 		for (unsigned int j=0; ;j++)
 		{
 			AP4_SampleDescription* sample_descriptionVideo = sample_video->GetSampleDescription(j);
@@ -115,7 +118,6 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 			sample_video_table->AddSampleDescription(sample_descriptionVideo->Clone());
 			break;
 		}
-
 
 		AP4_Sample  sample;
 		AP4_Ordinal index = 0;
@@ -147,6 +149,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 		 * ADD AUDIO SAMPLES
 		 */
 		// add clones of the sample descriptions to the new sample table
+		if (sampleOnce)
 		for (unsigned int k=0; ;k++)
 		{
 			AP4_SampleDescription* sample_descriptionAudio = sample_audio->GetSampleDescription(k);
@@ -154,6 +157,8 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_capture_video_Mp
 			sample_audio_table->AddSampleDescription(sample_descriptionAudio->Clone());
 			break;
 		}
+
+		sampleOnce = false;
 
 		index = 0;
 		while (AP4_SUCCEEDED(sample_audio->GetSample(index, sample)))
