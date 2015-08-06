@@ -72,6 +72,9 @@ public class BestShotCapturePlugin extends PluginCapture
 		imagesTaken = 0;
 		inCapture = false;
 		aboutToTakePicture = false;
+		
+		isAllImagesTaken = false;
+		isAllCaptureResultsCompleted = true;
 
 		if (CameraController.isUseHALv3() && CameraController.isNexus)
 		{
@@ -138,6 +141,8 @@ public class BestShotCapturePlugin extends PluginCapture
 
 	public void takePicture()
 	{
+		imagesTaken = 0;
+		resultCompleted = 0;
 		createRequestIDList(imageAmount);
 		CameraController.captureImagesWithParams(imageAmount, CameraController.YUV, null, null, null, null, true, true);
 	}
@@ -168,13 +173,21 @@ public class BestShotCapturePlugin extends PluginCapture
 
 		if (imagesTaken >= imageAmount)
 		{
-			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
-					String.valueOf(imagesTaken));
-
-			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
-
-			imagesTaken = 0;
-			inCapture = false;
+			if(isAllCaptureResultsCompleted)
+			{
+				PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
+						String.valueOf(imagesTaken));
+	
+				PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+	
+				imagesTaken = 0;
+				resultCompleted = 0;
+				inCapture = false;
+				
+				isAllImagesTaken = false;
+			}
+			else
+				isAllImagesTaken = true;
 		}
 	}
 
@@ -182,8 +195,29 @@ public class BestShotCapturePlugin extends PluginCapture
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{
-		if (imagesTaken == 1)
+		isAllCaptureResultsCompleted = false;
+		
+		resultCompleted++;
+		
+		if (resultCompleted == 1)
 			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, -1);
+		
+		if (resultCompleted == imageAmount)
+		{
+			isAllCaptureResultsCompleted = true;
+			
+			if(isAllImagesTaken)
+			{
+				PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
+						String.valueOf(imagesTaken));
+				PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+				
+				inCapture = false;
+				resultCompleted = 0;
+				imagesTaken = 0;
+				isAllImagesTaken = false;
+			}
+		}
 	}
 
 	@Override

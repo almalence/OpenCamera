@@ -198,6 +198,9 @@ public class NightCapturePlugin extends PluginCapture
 	{
 		inCapture = false;
 		aboutToTakePicture = false;
+		
+		isAllImagesTaken = false;
+		isAllCaptureResultsCompleted = true;
 
 		ApplicationScreen.instance.muteShutter(false);
 
@@ -509,6 +512,7 @@ public class NightCapturePlugin extends PluginCapture
 	{
 		if (!inCapture)
 		{
+			Log.wtf("SUPER", "onShutterClick. inCapture == false. inCapture = true!");
 			inCapture = true;
 			
 			if (!aboutToTakePicture)
@@ -608,6 +612,7 @@ public class NightCapturePlugin extends PluginCapture
 			Arrays.fill(burstGainArray, burstGain);
 			Arrays.fill(burstExposureArray, burstExposure);
 			
+			Log.wtf("SUPER", "AdjustExposureCaptureBurst. create IDList size " + total_frames);
 			resultCompleted = 0; //Reset to get right capture result indexes in burst capturing.
 			createRequestIDList(total_frames);
 			// capture the burst
@@ -616,6 +621,7 @@ public class NightCapturePlugin extends PluginCapture
 		}
 		else
 		{
+			Log.wtf("SUPER", "AdjustExposureCaptureBurst. create IDList size " + total_frames);
 			resultCompleted = 0; //Reset to get right capture result indexes in burst capturing.
 			createRequestIDList(total_frames);
 			// capture the burst
@@ -625,6 +631,7 @@ public class NightCapturePlugin extends PluginCapture
 	}
 	
 	
+	final Object syncObject = new Object();
 	@Override
 	public synchronized void onImageTaken(int frame, byte[] frameData, int frame_len, int format)
 	{
@@ -677,12 +684,17 @@ public class NightCapturePlugin extends PluginCapture
 			
 			if (++imagesTaken == total_frames)
 			{
-				PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
-	
-				inCapture = false;
-				resultCompleted = 0;
-				imagesTaken = 0;
-				Log.e("Super", "onImageTaken. Capture finished. result completed = " + resultCompleted);
+				if(isAllCaptureResultsCompleted)
+				{
+					PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+		
+					inCapture = false;
+					resultCompleted = 0;
+					imagesTaken = 0;
+					isAllImagesTaken = false;
+				}
+				else
+					isAllImagesTaken = true;
 			}
 		}
 	}
@@ -691,10 +703,12 @@ public class NightCapturePlugin extends PluginCapture
 	@Override
 	public synchronized void onCaptureCompleted(CaptureResult result)
 	{
+		 //This is only one place in plugin's code where we can identify that capturing is occurs in camera2 mode
+		isAllCaptureResultsCompleted = false;
+		
 		sensorGain = result.get(CaptureResult.SENSOR_SENSITIVITY);
 		exposureTime = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
 		
-		Log.e("Super", "result completed = " + resultCompleted);
 		int requestID = requestIDArray[resultCompleted];
 		resultCompleted++;
 		
@@ -705,6 +719,22 @@ public class NightCapturePlugin extends PluginCapture
 
 		if (result.getSequenceId() == requestID)
 			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, resultCompleted);
+		
+		if(resultCompleted == total_frames)
+		{
+			isAllCaptureResultsCompleted = true;
+			
+			if(isAllImagesTaken)
+			{
+				PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+				
+				inCapture = false;
+				resultCompleted = 0;
+				imagesTaken = 0;
+				isAllImagesTaken = false;
+			}
+		}
+		
 	}
 	
 	@Override
@@ -731,6 +761,7 @@ public class NightCapturePlugin extends PluginCapture
 			// ToDo: Lock AE, AWB, etc. for the duration of this image capture and the burst
 			
 			// capture single YUV image to figure out correct ISO/exposure for the consequent burst capture
+			Log.wtf("SUPER", "takePicture. First frame. create IDList size 1");
 			createRequestIDList(1);
 			takingImageForExposure = true;
 			CameraController.captureImagesWithParams(1, CameraController.YUV_RAW, null, null, null, null, true, false);

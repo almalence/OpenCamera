@@ -924,8 +924,11 @@ public class HALv3
 		}
 		zoomLevel = newZoom;
 		zoomCropPreview = getZoomRect(zoomLevel, activeRect.width(), activeRect.height());
-		previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
-		setRepeatingRequest();
+		if(previewRequestBuilder != null)
+		{
+			previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
+			setRepeatingRequest();
+		}
 	}
 
 	public static float getZoom()

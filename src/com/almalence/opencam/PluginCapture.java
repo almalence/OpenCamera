@@ -22,6 +22,7 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
+
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
@@ -32,8 +33,12 @@ public abstract class PluginCapture extends Plugin
 	protected boolean	inCapture;
 	protected boolean	aboutToTakePicture	= false;
 	protected int		imagesTaken			= 0;
-	protected int		imagesTakenRAW			= 0;
+	protected int		imagesTakenRAW		= 0;
 	protected int 		resultCompleted 	= 0;
+	
+	protected boolean	isAllImagesTaken	= false;
+	protected boolean	isAllCaptureResultsCompleted	= true; //Used only for camera2 mode when we wait all captureResult before send signal CAPTURE_FINISHED
+																//In camera1 mode always must be true!
 
 	public boolean getInCapture()
 	{
@@ -69,6 +74,9 @@ public abstract class PluginCapture extends Plugin
 	{
 		inCapture = false;
 		aboutToTakePicture = false;
+		
+		isAllImagesTaken = false;
+		isAllCaptureResultsCompleted = true;
 	}
 
 	@Override

@@ -1057,8 +1057,9 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 				Log.e("ApplicationScreen", "Viewfinder preview size: " + sz.width + "x" + sz.height);
 				guiManager.setupViewfinderPreviewSize(new CameraController.Size(sz.width, sz.height));
-				CameraController.allocatePreviewBuffer(sz.width * sz.height
-						* ImageFormat.getBitsPerPixel(CameraController.getCameraParameters().getPreviewFormat()) / 8);
+				double bufferSize = sz.width * sz.height
+						* ImageFormat.getBitsPerPixel(CameraController.getCameraParameters().getPreviewFormat()) / 8.0d;
+				CameraController.allocatePreviewBuffer(bufferSize);
 
 				CameraController.getCamera().setErrorCallback(CameraController.getInstance());
 
@@ -1183,8 +1184,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 							return;
 						}
 
-						CameraController.getCamera().setPreviewCallbackWithBuffer(CameraController.getInstance());
-						CameraController.getCamera().addCallbackBuffer(CameraController.getPreviewBuffer());
+						CameraController.setPreviewCallbackWithBuffer();
 					} else
 					{
 						guiManager.onCameraCreate();

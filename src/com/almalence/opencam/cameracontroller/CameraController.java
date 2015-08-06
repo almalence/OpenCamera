@@ -180,6 +180,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean							isGalaxyS5						= Build.MODEL.contains("SM-G900");
 	
 	public static boolean							isGalaxyNote4					= Build.MODEL.contains("SM-N910");
+	
+	public static boolean							isSony							= Build.BRAND.contains("sony");
 	// Build.MODEL
 	// .toLowerCase(Locale.US)
 	// .replace(" ", "")
@@ -1062,11 +1064,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				if (camera != null)
 				{
 					camera.setPreviewCallback(null);
-					if (Build.BRAND.contains("sony"))
+					if (isSony || isGalaxyS5)
 						camera.stopPreview();
 					if (!isModeSwitching)
 					{
-						if (!Build.BRAND.contains("sony"))
+						if (!isSony || isGalaxyS5)
 							camera.stopPreview();
 						camera.release();
 						camera = null;
@@ -1136,9 +1138,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	}
 
 	/* Preview buffer methods */
-	public static void allocatePreviewBuffer(int size)
+	public static void allocatePreviewBuffer(double size)
 	{
-		pviewBuffer = new byte[size];
+		pviewBuffer = new byte[(int) Math.ceil(size)];
 	}
 
 	public static byte[] getPreviewBuffer()
@@ -4195,8 +4197,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
 	{
 		Log.d(TAG, "onPictureTaken");
-		CameraController.getCamera().setPreviewCallbackWithBuffer(CameraController.getInstance());
-		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
+		CameraController.setPreviewCallbackWithBuffer();
 
 		pluginManager.collectExifData(paramArrayOfByte);
 		if (!CameraController.takeYUVFrame) // if JPEG frame requested
