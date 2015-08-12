@@ -3,7 +3,7 @@
     <CheckBoxPreference
         android:defaultValue="false"
         android:enabled="false"
-        android:key="@string/Preference_UseHALv3Key"
+        android:key="@string/Preference_UseCamera2Key"
         android:summary="@string/Pref_Common_UseHALv3_Summary"
         android:title="@string/Pref_Common_UseHALv3_Title" />
 

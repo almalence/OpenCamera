@@ -1550,8 +1550,7 @@ public class HALv3
 
 		try
 		{
-			CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
-					HALv3.previewRequestBuilder.build(), captureCallback, null);
+			HALv3.getInstance().mCaptureSession.setRepeatingRequest(HALv3.previewRequestBuilder.build(), captureCallback, null);
 		} catch (CameraAccessException e)
 		{
 			e.printStackTrace();
@@ -1564,7 +1563,7 @@ public class HALv3
 	public static int getPreviewFrameRateHALv3()
 	{
 		if (HALv3.getInstance().camCharacter != null
-				&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES) != null)
+			&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES) != null)
 		{
 			Range<Integer>[] range;
 			range = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES);
@@ -2027,8 +2026,7 @@ public class HALv3
 			{
 				try
 				{
-					CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
-							HALv3.previewRequestBuilder.build(), captureCallback, null);
+					HALv3.getInstance().mCaptureSession.capture(HALv3.previewRequestBuilder.build(), captureCallback, null);
 				} catch (CameraAccessException e)
 				{
 					e.printStackTrace();
@@ -2177,8 +2175,7 @@ public class HALv3
 					CameraCharacteristics.CONTROL_AF_TRIGGER_START);
 			try
 			{
-				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
-						HALv3.previewRequestBuilder.build(), captureCallback, null);
+				HALv3.getInstance().mCaptureSession.capture(HALv3.previewRequestBuilder.build(), captureCallback, null);
 			} catch (CameraAccessException e)
 			{
 				e.printStackTrace();
@@ -2199,8 +2196,7 @@ public class HALv3
 			{
 				Log.e(TAG,
 						"autoFocusHALv3. CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_START");
-				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
-						HALv3.previewRequestBuilder.build(), captureCallback, null);
+				HALv3.getInstance().mCaptureSession.capture(HALv3.previewRequestBuilder.build(), captureCallback, null);
 			} catch (CameraAccessException e)
 			{
 				e.printStackTrace();
@@ -2227,8 +2223,7 @@ public class HALv3
 					CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
 			try
 			{
-				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
-						HALv3.previewRequestBuilder.build(), captureCallback, null);
+				HALv3.getInstance().mCaptureSession.capture(HALv3.previewRequestBuilder.build(), captureCallback, null);
 			} catch (CameraAccessException e)
 			{
 				e.printStackTrace();
@@ -2239,8 +2234,7 @@ public class HALv3
 					CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE);
 			try
 			{
-				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
-						HALv3.previewRequestBuilder.build(), captureCallback, null);
+				HALv3.getInstance().mCaptureSession.capture(HALv3.previewRequestBuilder.build(), captureCallback, null);
 			} catch (CameraAccessException e)
 			{
 				e.printStackTrace();
@@ -2589,9 +2583,9 @@ public class HALv3
 				}
 				finally
 				{
-					if (CameraController.isCameraRelaunch())
+					if (CameraController.isCamera2OnRelaunchUsed())
 					{
-						CameraController.needCameraRelaunch(false);
+						CameraController.useCamera2OnRelaunch(false);
 						appInterface.relaunchCamera();
 					} else
 					{
@@ -2706,10 +2700,7 @@ public class HALv3
 						CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
 				try
 				{
-					Log.e(TAG,
-							"resetCaptureCallback. CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL");
-					CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
-							HALv3.previewRequestBuilder.build(), captureCallback, null);
+					HALv3.getInstance().mCaptureSession.capture(HALv3.previewRequestBuilder.build(), captureCallback, null);
 				} catch (CameraAccessException e)
 				{
 					e.printStackTrace();
@@ -2720,11 +2711,7 @@ public class HALv3
 						CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE);
 				try
 				{
-	//				Log.e(TAG,
-	//						"resetCaptureCallback. CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE");
-					resetRequestId = HALv3.getInstance().mCaptureSession.capture(
-							HALv3.previewRequestBuilder.build(), captureCallback, null);
-					CameraController.iCaptureID = resetRequestId;
+					resetRequestId = HALv3.getInstance().mCaptureSession.capture(HALv3.previewRequestBuilder.build(), captureCallback, null);
 				} catch (CameraAccessException e)
 				{
 					e.printStackTrace();
