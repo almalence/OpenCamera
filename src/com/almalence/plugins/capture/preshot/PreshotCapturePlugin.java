@@ -96,11 +96,11 @@ public class PreshotCapturePlugin extends PluginCapture
 		getPrefs();
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		camera2Preference = prefs.getBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), false);
+		camera2Preference = prefs.getBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false);
 		
 		if(Build.MODEL.equals("Nexus 6") && camera2Preference)
 		{
-			prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), false).commit();
+			prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false).commit();
 			CameraController.useHALv3(false);
 			
 			CameraController.isOldCameraOneModeLaunched = true;
@@ -127,7 +127,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		
 		ApplicationScreen.instance.setFocusModePref(preferenceFocusMode);
 		
-		prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), camera2Preference).commit();
+		prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), camera2Preference).commit();
 
 	}
 
@@ -138,7 +138,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		
 		if(Build.MODEL.equals("Nexus 6") && camera2Preference)
 		{
-			CameraController.needCameraRelaunch(true);
+			CameraController.useCamera2OnRelaunch(true);
 			CameraController.useHALv3(camera2Preference);
 		}
 	}

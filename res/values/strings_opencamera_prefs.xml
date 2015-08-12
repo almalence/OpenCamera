@@ -85,7 +85,7 @@
     <string name="Preference_TimestampColorValue">Preference_TimestampColorValue</string>
     <string name="Preference_TimestampFontSizeValue">Preference_TimestampFontSizeValue</string>
     
-    <string name="Preference_UseHALv3Key">useHALv3Pref</string>
+    <string name="Preference_UseCamera2Key">useHALv3Pref</string>
     <string name="Preference_allowExternalGalleries">allowExternalGalleries</string>
     <string name="Preference_ConnectToSonyCameras">Preference_connectToSonyCameras</string>
     

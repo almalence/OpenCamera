@@ -1013,7 +1013,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 		prefs.edit()
 				.putBoolean(
-						ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
+						ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key),
 						camera2Preference).commit();
 
 		if (!CameraController.isRemoteCamera())
@@ -1079,7 +1079,7 @@ public class VideoCapturePlugin extends PluginCapture
 		ApplicationScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
 
 		if (camera2Preference)
-			CameraController.needCameraRelaunch(true);
+			CameraController.useCamera2OnRelaunch(true);
 
 		CameraController.useHALv3(camera2Preference);
 	}
@@ -2339,10 +2339,10 @@ public class VideoCapturePlugin extends PluginCapture
 		ModePreference = prefs.getString("modeVideoDROPref", "1");
 
 		camera2Preference = prefs.getBoolean(
-				ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), false);
+				ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false);
 		prefs.edit()
 				.putBoolean(
-						ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
+						ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key),
 						false).commit();
 		CameraController.useHALv3(false);
 

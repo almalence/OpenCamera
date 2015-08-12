@@ -845,7 +845,7 @@ public class MainScreen extends ApplicationScreen
 	public void onAdvancePreferenceCreate(PreferenceFragment prefActivity)
 	{
 		CheckBoxPreference cp = (CheckBoxPreference) prefActivity.findPreference(getResources().getString(
-				R.string.Preference_UseHALv3Key));
+				R.string.Preference_UseCamera2Key));
 		final CheckBoxPreference fp = (CheckBoxPreference) prefActivity.findPreference(MainScreen.sCaptureRAWPref);
 
 		if (cp != null)
@@ -913,7 +913,7 @@ public class MainScreen extends ApplicationScreen
 		if(realExposurePf != null)
 		{
 			boolean isCamera2 = PreferenceManager.getDefaultSharedPreferences(
-					MainScreen.getMainContext()).getBoolean(getResources().getString(R.string.Preference_UseHALv3Key), false);
+					MainScreen.getMainContext()).getBoolean(getResources().getString(R.string.Preference_UseCamera2Key), false);
 			if (!isCamera2)
 			{
 				realExposurePf.setEnabled(false);
@@ -932,11 +932,11 @@ public class MainScreen extends ApplicationScreen
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 
-		boolean isHALv3 = prefs.getBoolean(getResources().getString(R.string.Preference_UseHALv3Key),
+		boolean isHALv3 = prefs.getBoolean(getResources().getString(R.string.Preference_UseCamera2Key),
 				(CameraController.isNexus || CameraController.isFlex2 || CameraController.isAndroidOne || CameraController.isGalaxyS6 || CameraController.isG4) ? true : false);
 		CameraController.useHALv3(isHALv3);
 		prefs.edit()
-				.putBoolean(getResources().getString(R.string.Preference_UseHALv3Key), CameraController.isUseHALv3())
+				.putBoolean(getResources().getString(R.string.Preference_UseCamera2Key), CameraController.isUseHALv3())
 				.commit();
 		int cameraSelected = prefs.getInt(MainScreen.sCameraModePref, 0);
 		if (cameraSelected == CameraController.getNumberOfCameras() - 1)

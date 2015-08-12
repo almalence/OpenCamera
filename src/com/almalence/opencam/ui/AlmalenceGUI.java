@@ -8097,14 +8097,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 			public void onFinish()
 			{
-				if (!ApplicationScreen.getPluginManager().getActiveModeID().equals("video"))
-				{
-					((RotateImageView) guiView.findViewById(R.id.buttonShutter))
-							.setImageResource(R.drawable.button_shutter);
-
-					shutterSwitch.setThumbResource(R.drawable.button_shutter);
-				}
-
+				((RotateImageView) guiView.findViewById(R.id.buttonShutter))
+						.setImageResource(R.drawable.button_shutter);
+				shutterSwitch.setThumbResource(R.drawable.button_shutter);
 			}
 		}.start();
 	}
