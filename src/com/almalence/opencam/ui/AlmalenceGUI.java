@@ -35,11 +35,9 @@ import java.util.Map;
 import java.util.Set;
 
 import android.annotation.TargetApi;
-import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -90,7 +88,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -7727,29 +7724,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			shutterButtonPressed();
 			return true;
 		}
-
-		// check if back button pressed and processing is in progress
-		if (res == 0)
-			if (keyCode == KeyEvent.KEYCODE_BACK)
-			{
-				if (ApplicationScreen.getPluginManager().getProcessingCounter() != 0)
-				{
-					// splash screen about processing
-					AlertDialog.Builder builder = new AlertDialog.Builder(ApplicationScreen.instance)
-							.setTitle("Processing...")
-							.setMessage(ApplicationScreen.getAppResources().getString(R.string.processing_not_finished))
-							.setPositiveButton("Ok", new DialogInterface.OnClickListener()
-							{
-								public void onClick(DialogInterface dialog, int which)
-								{
-									// continue with delete
-									dialog.cancel();
-								}
-							});
-					AlertDialog alert = builder.create();
-					alert.show();
-				}
-			}
 
 		return res > 0 ? true : false;
 	}

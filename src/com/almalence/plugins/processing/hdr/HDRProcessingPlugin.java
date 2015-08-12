@@ -18,9 +18,6 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.processing.hdr;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import android.app.ProgressDialog;
@@ -71,6 +68,7 @@ import android.widget.TextView;
 import com.almalence.SwapHeap;
 
 /* <!-- +++
+ import com.almalence.opencam_plus.ConfigParser;
  import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.ApplicationInterface;
  import com.almalence.opencam_plus.PluginManager;
@@ -80,6 +78,7 @@ import com.almalence.SwapHeap;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.ConfigParser;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
@@ -123,7 +122,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 
 	public HDRProcessingPlugin()
 	{
-		super("com.almalence.plugins.hdrprocessing", R.xml.preferences_processing_hdr,
+		super("com.almalence.plugins.hdrprocessing", "hdrmode", R.xml.preferences_processing_hdr,
 				R.xml.preferences_processing_hdr, 0, null);
 	}
 
@@ -145,17 +144,18 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		sessionID = SessionID;
 
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
-				PluginManager.getInstance().getActiveMode().modeSaveName);
+				ConfigParser.getInstance().getMode(mode).modeSaveName);
 
 		mDisplayOrientationOnStartProcessing = ApplicationScreen.getGUIManager().getDisplayOrientation();
 		mDisplayOrientationCurrent = ApplicationScreen.getGUIManager().getDisplayOrientation();
 		int orientation = ApplicationScreen.getGUIManager().getLayoutOrientation();
 		mLayoutOrientationCurrent = orientation == 0 || orientation == 180 ? orientation : (orientation + 180) % 360;
-		mCameraMirrored = CameraController.isFrontCamera();
+		
+		mCameraMirrored = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem(
+				"cameraMirrored" + sessionID));
 
-		CameraController.Size imageSize = CameraController.getCameraImageSize();
-		mImageWidth = imageSize.getWidth();
-		mImageHeight = imageSize.getHeight();
+		mImageWidth = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("imageWidth" + sessionID));
+		mImageHeight = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("imageHeight" + sessionID));
 
 		AlmaShotHDR.Initialize();
 
@@ -214,8 +214,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		{
 			try
 			{
-				File saveDir = PluginManager.getSaveDir(false);
-
 				String fileFormat = PluginManager.getInstance().getFileFormat();
 
 				int tmpImagesAmount = imagesAmount;

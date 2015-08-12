@@ -135,8 +135,6 @@ public class CapturePlugin extends PluginCapture
 			}
 		});
 
-		if (PluginManager.getInstance().getProcessingCounter() == 0)
-			modeSwitcher.setEnabled(true);
 	}
 
 	@Override

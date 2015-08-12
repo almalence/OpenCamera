@@ -355,8 +355,6 @@ public class VideoCapturePlugin extends PluginCapture
 			}
 		});
 
-		if (PluginManager.getInstance().getProcessingCounter() == 0)
-			modeSwitcher.setEnabled(true);
 	}
 
 	@Override

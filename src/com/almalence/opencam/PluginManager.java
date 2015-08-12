@@ -851,6 +851,8 @@ public class PluginManager extends PluginManagerBase
 	@Override
 	public boolean handleApplicationMessage(Message msg)
 	{
+		long sessionID = 0;
+		
 		switch (msg.what)
 		{
 		case ApplicationInterface.MSG_NO_CAMERA:
@@ -900,20 +902,22 @@ public class PluginManager extends PluginManagerBase
 			// start async task for further processing
 			cntProcessing++;
 
+			sessionID = Long.valueOf((String) msg.obj);
+			
 			// Map sessionID and processing plugin, because active plugin may be
 			// changed before image processing will start (Mode was switched).
 			// We don't map export plugin, because it's the same for all modes.
-			processingPluginList.put(Long.valueOf((String) msg.obj), pluginList.get(activeProcessing));
+			processingPluginList.put(sessionID, pluginList.get(activeProcessing));
 
 			Intent mServiceIntent = new Intent(ApplicationScreen.instance, ProcessingService.class);
 
 			// Pass to Service sessionID and some other parameters, that may be required.
-			mServiceIntent.putExtra("sessionID", Long.valueOf((String) msg.obj));
+			mServiceIntent.putExtra("sessionID", sessionID);
 			CameraController.Size imageSize = CameraController.getCameraImageSize();
-			mServiceIntent.putExtra("imageWidth", imageSize.getWidth());
-			mServiceIntent.putExtra("imageHeight", imageSize.getHeight());
-			mServiceIntent.putExtra("wantLandscapePhoto", ApplicationScreen.getWantLandscapePhoto());
-			mServiceIntent.putExtra("cameraMirrored", CameraController.isFrontCamera());
+			PluginManager.getInstance().addToSharedMem("imageWidth" + sessionID, String.valueOf(imageSize.getWidth()));
+			PluginManager.getInstance().addToSharedMem("imageHeight" + sessionID, String.valueOf(imageSize.getHeight()));
+			PluginManager.getInstance().addToSharedMem("wantLandscapePhoto" + sessionID, String.valueOf(ApplicationScreen.getWantLandscapePhoto()));
+			PluginManager.getInstance().addToSharedMem("cameraMirrored" + sessionID, String.valueOf(CameraController.isFrontCamera()));
 			
 			// Start processing service with current sessionID.
 			ApplicationScreen.instance.startService(mServiceIntent);
@@ -988,7 +992,7 @@ public class PluginManager extends PluginManagerBase
 			break;
 
 		case ApplicationInterface.MSG_POSTPROCESSING_FINISHED:
-			long sessionID = 0;
+			sessionID = 0;
 			String sSessionID = getFromSharedMem("sessionID");
 			if (sSessionID != null)
 				sessionID = Long.parseLong(getFromSharedMem("sessionID"));

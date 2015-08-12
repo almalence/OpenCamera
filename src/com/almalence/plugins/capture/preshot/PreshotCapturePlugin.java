@@ -175,11 +175,6 @@ public class PreshotCapturePlugin extends PluginCapture
 			}
 		});
 
-		if (PluginManager.getInstance().getProcessingCounter() == 0)
-			modeSwitcher.setEnabled(true);
-		else
-			modeSwitcher.setEnabled(false);
-
 		ApplicationScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
 				LayoutParams.WRAP_CONTENT);

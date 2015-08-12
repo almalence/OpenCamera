@@ -20,6 +20,7 @@ package com.almalence.plugins.processing.simple;
 
 /* <!-- +++
 import com.almalence.opencam_plus.ApplicationScreen;
+import com.almalence.opencam_plus.ConfigParser;
 import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.PluginProcessing;
 import com.almalence.opencam_plus.R;
@@ -29,6 +30,7 @@ import com.almalence.opencam_plus.ApplicationInterface;
 //<!-- -+-
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.ConfigParser;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
@@ -60,7 +62,7 @@ public class SimpleProcessingPlugin extends PluginProcessing
 
 	public SimpleProcessingPlugin()
 	{
-		super("com.almalence.plugins.simpleprocessing", R.xml.preferences_capture_dro, 0, 0, null);
+		super("com.almalence.plugins.simpleprocessing", "single", R.xml.preferences_capture_dro, 0, 0, null);
 	}
 
 	@Override
@@ -85,11 +87,10 @@ public class SimpleProcessingPlugin extends PluginProcessing
 		modePrefDro = Integer.parseInt(prefs.getString("modePrefDro", "1"));
 
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
-				PluginManager.getInstance().getActiveMode().modeSaveName);
+				ConfigParser.getInstance().getMode(mode).modeSaveName);
 
-		CameraController.Size imageSize = CameraController.getCameraImageSize();
-		int mImageWidth = imageSize.getWidth();
-		int mImageHeight = imageSize.getHeight();
+		int mImageWidth = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("imageWidth" + sessionID));
+		int mImageHeight = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("imageHeight" + sessionID));
 
 		String num = PluginManager.getInstance().getFromSharedMem("amountofcapturedframes" + sessionID);
 
