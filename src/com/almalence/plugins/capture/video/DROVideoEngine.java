@@ -13,6 +13,7 @@ import com.almalence.util.FpsMeasurer;
 
 import android.content.ContentValues;
 import android.graphics.SurfaceTexture;
+import android.opengl.EGL14;
 import android.opengl.GLES20;
 import android.provider.MediaStore.Video;
 import android.provider.MediaStore.Video.VideoColumns;
@@ -20,12 +21,13 @@ import android.util.Log;
 import android.widget.Toast;
 
 /* <!-- +++
-import com.almalence.opencam_plus.ApplicationScreen;
-import com.almalence.opencam_plus.ui.EglEncoder;
-+++ --> */
+ import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.opencam_plus.ui.EglEncoder;
+ +++ --> */
 //<!-- -+-
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.ui.EglEncoder;
+
 //-+- -->
 
 public class DROVideoEngine
@@ -34,21 +36,21 @@ public class DROVideoEngine
 
 	private static final int			GL_TEXTURE_EXTERNAL_OES	= 0x00008d65;
 
-	private static final String			SHADER_VERTEX = "attribute vec2 vPosition;\n"
-														+ "attribute vec2 vTexCoord;\n"
-														+ "varying vec2 texCoord;\n"
-														+ "void main() {\n"
-														+ "  texCoord = vTexCoord;\n"
-														+ "  gl_Position = vec4 ( vPosition.x, vPosition.y, 1.0, 1.0 );\n"
-														+ "}";
+	private static final String			SHADER_VERTEX			= "attribute vec2 vPosition;\n"
+																		+ "attribute vec2 vTexCoord;\n"
+																		+ "varying vec2 texCoord;\n"
+																		+ "void main() {\n"
+																		+ "  texCoord = vTexCoord;\n"
+																		+ "  gl_Position = vec4 ( vPosition.x, vPosition.y, 1.0, 1.0 );\n"
+																		+ "}";
 
-	private static final String			SHADER_FRAGMENT	= "#extension GL_OES_EGL_image_external:enable\n"
-														+ "precision mediump float;\n"
-														+ "uniform samplerExternalOES sTexture;\n"
-														+ "varying vec2 texCoord;\n"
-														+ "void main() {\n"
-														+ "  gl_FragColor = texture2D(sTexture, texCoord);\n"
-														+ "}";
+	private static final String			SHADER_FRAGMENT			= "#extension GL_OES_EGL_image_external:enable\n"
+																		+ "precision mediump float;\n"
+																		+ "uniform samplerExternalOES sTexture;\n"
+																		+ "varying vec2 texCoord;\n"
+																		+ "void main() {\n"
+																		+ "  gl_FragColor = texture2D(sTexture, texCoord);\n"
+																		+ "}";
 
 	private static final FloatBuffer	VERTEX_BUFFER;
 	private static final FloatBuffer	UV_BUFFER;
@@ -110,7 +112,7 @@ public class DROVideoEngine
 	private volatile int		dark_uv_desat		= 5;
 	private volatile float		dark_noise_pass		= 0.45f;
 	private volatile float		mix_factor			= 0.1f;
-	private volatile float		gamma				= 0.65f; // 0.5f;
+	private volatile float		gamma				= 0.65f;							// 0.5f;
 	private volatile float		max_black_level		= 64.0f;
 	private volatile float		black_level_atten	= 0.5f;
 	private volatile float		max_amplify			= 2.0f;
@@ -153,18 +155,22 @@ public class DROVideoEngine
 							try
 							{
 								DROVideoEngine.this.encoder = new EglEncoder(path, DROVideoEngine.this.previewWidth,
-									DROVideoEngine.this.previewHeight, 24, 20000000, (ApplicationScreen.getGUIManager()
-											.getDisplayOrientation()) % 360);
-							}
-							catch(RuntimeException e)
+										DROVideoEngine.this.previewHeight, 24, 20000000, (ApplicationScreen
+												.getGUIManager().getDisplayOrientation()) % 360, EGL14
+												.eglGetCurrentContext());
+							} catch (RuntimeException e)
 							{
 								e.printStackTrace();
-								ApplicationScreen.instance.runOnUiThread(new Runnable() {
-								    public void run() {
-								        Toast.makeText(ApplicationScreen.instance, "Can't record HDR Video. MediaMuxer creation failed.", Toast.LENGTH_LONG).show();
-								    }
+								ApplicationScreen.instance.runOnUiThread(new Runnable()
+								{
+									public void run()
+									{
+										Toast.makeText(ApplicationScreen.instance,
+												"Can't record HDR Video. MediaMuxer creation failed.",
+												Toast.LENGTH_LONG).show();
+									}
 								});
-								
+
 							}
 						}
 					}
@@ -202,24 +208,27 @@ public class DROVideoEngine
 						if (DROVideoEngine.this.encoder != null)
 						{
 							final String path = DROVideoEngine.this.encoder.getPath();
-							DROVideoEngine.this.encoder.close();
+							// DROVideoEngine.this.encoder.close();
+							DROVideoEngine.this.encoder.stopRecording();
 							DROVideoEngine.this.encoder = null;
 
 							File fileSaved = new File(path);
 							File parent = fileSaved.getParentFile();
 							String parentPath = parent.toString().toLowerCase(Locale.US);
 							String parentName = parent.getName().toLowerCase(Locale.US);
-							
+
 							ContentValues values = new ContentValues();
-							values.put(VideoColumns.TITLE, fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
+							values.put(VideoColumns.TITLE,
+									fileSaved.getName().substring(0, fileSaved.getName().lastIndexOf(".")));
 							values.put(VideoColumns.DISPLAY_NAME, fileSaved.getName());
 							values.put(VideoColumns.DATE_TAKEN, System.currentTimeMillis());
 							values.put(VideoColumns.MIME_TYPE, "video/mp4");
 							values.put(VideoColumns.BUCKET_ID, parentPath.hashCode());
 							values.put(VideoColumns.BUCKET_DISPLAY_NAME, parentName);
 							values.put(VideoColumns.DATA, fileSaved.getAbsolutePath());
-							
-							ApplicationScreen.instance.getContentResolver().insert(Video.Media.EXTERNAL_CONTENT_URI, values);
+
+							ApplicationScreen.instance.getContentResolver().insert(Video.Media.EXTERNAL_CONTENT_URI,
+									values);
 						}
 					}
 
@@ -324,14 +333,10 @@ public class DROVideoEngine
 		this.texture_out = tex[0];
 
 		GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, this.texture_out);
-		GLES20.glTexParameteri(GL_TEXTURE_EXTERNAL_OES,
-				GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
-		GLES20.glTexParameteri(GL_TEXTURE_EXTERNAL_OES,
-				GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
-		GLES20.glTexParameteri(GL_TEXTURE_EXTERNAL_OES,
-				GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
-		GLES20.glTexParameteri(GL_TEXTURE_EXTERNAL_OES,
-				GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+		GLES20.glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+		GLES20.glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+		GLES20.glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+		GLES20.glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
 
 		this.hProgram = loadShader(SHADER_VERTEX, SHADER_FRAGMENT);
 	}
@@ -364,8 +369,7 @@ public class DROVideoEngine
 				final SurfaceTexture surfaceTexture = ApplicationScreen.instance.glGetSurfaceTexture();
 				surfaceTexture.updateTexImage();
 				surfaceTexture.getTransformMatrix(this.transform);
-			}
-			catch (final Exception e)
+			} catch (final Exception e)
 			{
 				return;
 			}
@@ -404,23 +408,24 @@ public class DROVideoEngine
 
 				RealtimeDRO.render(this.instance, ApplicationScreen.instance.glGetPreviewTexture(), this.transform,
 						this.previewWidth, this.previewHeight, true, this.local, this.max_amplify, this.forceUpdate,
-						this.uv_desat, this.dark_uv_desat, this.dark_noise_pass, this.mix_factor, this.gamma, this.max_black_level,
-						this.black_level_atten, this.min_limit, this.max_limit, this.texture_out);
+						this.uv_desat, this.dark_uv_desat, this.dark_noise_pass, this.mix_factor, this.gamma,
+						this.max_black_level, this.black_level_atten, this.min_limit, this.max_limit, this.texture_out);
 
 				t = System.currentTimeMillis() - t;
-
-				this.forceUpdate = false;
-
-				this.drawOutputTexture();
 
 				DROVideoEngine.this.fps.measure();
 
 				if (this.encoder != null && System.currentTimeMillis() > this.recordingDelayed && !this.paused)
 				{
-					this.encoder.encode(this.texture_out);
+					// this.encoder.encode(this.texture_out);
+					int encodeTexture = this.texture_out;
+					this.encoder.setTextureId(encodeTexture);
+					this.encoder.frameAvailable(ApplicationScreen.instance.glGetSurfaceTexture(), true);
 				}
-			}
-			else
+				
+				this.drawOutputTexture();
+				this.forceUpdate = false;
+			} else
 			{
 				throw new RuntimeException("Unable to create DRO instance.");
 			}
