@@ -21,7 +21,6 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
-
 //-+- -->
 
 import java.io.File;
@@ -56,7 +55,7 @@ public class FolderPickerLollipop extends Activity
 
 //		if (this.currentPath == null)
 //		{
-//			String savedPath = PreferenceManager.getDefaultSharedPreferences(this).getString(MainScreen.sSavePathPref,
+//			String savedPath = PreferenceManager.getDefaultSharedPreferences(this).getString(ApplicationScreen.sSavePathPref,
 //					"/");
 //
 //			if (savedPath.startsWith(this.currentRoot.getAbsolutePath()))
@@ -69,7 +68,7 @@ public class FolderPickerLollipop extends Activity
 //		}
 
 		
-		this.old_value = this.getIntent().getExtras().getInt(MainScreen.sSavePathPref, 0);
+		this.old_value = this.getIntent().getExtras().getInt(ApplicationScreen.sSavePathPref, 0);
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
@@ -80,7 +79,7 @@ public class FolderPickerLollipop extends Activity
 	        
 	        
 	        PreferenceManager.getDefaultSharedPreferences(this).edit()
-			.putString(MainScreen.sSavePathPref, currentPath.getAbsolutePath()).commit();
+			.putString(ApplicationScreen.sSavePathPref, currentPath.getAbsolutePath()).commit();
 	        this.finish();
 //	        DocumentFile pickedDir = DocumentFile.fromTreeUri(this, treeUri);
 //

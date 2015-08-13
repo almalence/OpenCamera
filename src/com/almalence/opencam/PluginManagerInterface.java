@@ -23,22 +23,44 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.opencam;
 //-+- -->
 
+import android.hardware.camera2.CaptureResult;
+
+
+//PluginManagerInterface used by Camera Controller to communicate with appluication's plugins
 public interface PluginManagerInterface
 {
+	//Ask current capture plugin to select desire image size
 	public void selectImageDimension();
 
+	//Call to ask plugins to choose desire default camera parameters values
 	public void selectDefaults();
 
 	public boolean shouldPreviewToGPU();
 
+	//Callback of auto focus
 	public void onAutoFocus(boolean focused);
 	
 	public void onAutoFocusMoving(boolean start);
 
+	//Callback for camera's preview frames
 	public void onPreviewFrame(byte[] data);
 
+	//Callback for captured still images
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, int format);
 	
-	public void addToSharedMemExifTags(byte[] paramArrayOfByte);
+	//Callback for CaptureResult (used in camera2 mode)
+	public void onCaptureCompleted(CaptureResult result);
+	
+	//Pass captured frame data to let plugins extract desired exif data
+	public void collectExifData(byte[] frameData);
+	
+	//In case of multishot capturing pass to plugin id of current capture request
+	public void addRequestID(int nFrame, int requestID);
+	
+	public boolean isPreviewDependentMode();
+	
+	//Check if current device is allowed to use camera2 interface
+	//At that time we limit numbers of devices which may use camera2 interface
+	public boolean isCamera2InterfaceAllowed();
 
 }

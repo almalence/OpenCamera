@@ -21,7 +21,6 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
-
 //-+- -->
 
 import java.util.ArrayList;
@@ -71,20 +70,19 @@ public class Mode
 
 	public Mode()
 	{
-		modeID = "";
-		modeName = "";
-		icon = "";
-		modeNameHAL = "";
-		iconHAL = "";
-		modeSaveName = "";
+		modeID 			= "";
+		modeName		= "";
+		icon 			= "";
+		modeNameHAL		= "";
+		iconHAL 		= "";
+		modeSaveName 	= "";
 		modeSaveNameHAL = "";
-		Capture = "";
-		Processing = "";
-		Export = "";
-		howtoText = "";
-		VF = new ArrayList<String>();
-		Filter = new ArrayList<String>();
-
-		SKU = "";
+		Capture 		= "";
+		Processing 		= "";
+		Export 			= "";
+		howtoText 		= "";
+		SKU 			= "";
+		VF 				= new ArrayList<String>();
+		Filter 			= new ArrayList<String>();
 	}
 }

@@ -22,5 +22,4 @@
     <string name="Preference_ExpoBracketingPref">evPrefExpoBracketing</string>
     <string name="Preference_ExpoBracketingRefocusPref">refocusPrefExpoBracketing</string>
     <string name="Preference_ExpoBracketingUseLumaPref">lumaPrefExpoBracketing</string>
-    <string name="Preference_ExpoBracketingPreviewModePref">expo_previewMode</string>
 </resources>

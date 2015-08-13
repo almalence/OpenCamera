@@ -18,9 +18,6 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.processing.multishot;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import android.content.SharedPreferences;
@@ -37,7 +34,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.almalence.SwapHeap;
 import com.almalence.asynctaskmanager.OnTaskCompleteListener;
 import com.almalence.plugins.processing.groupshot.GroupShotProcessingPlugin;
 import com.almalence.plugins.processing.objectremoval.ObjectRemovalProcessingPlugin;
@@ -45,20 +41,21 @@ import com.almalence.plugins.processing.sequence.SequenceProcessingPlugin;
 import com.almalence.ui.RotateLayout;
 import com.almalence.util.ImageConversion;
 /* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginProcessing;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.R;
+ import com.almalence.opencam_plus.ApplicationInterface;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationInterface;
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.R;
 //-+- -->
-
 
 /***
  * Implements multishot processing
@@ -89,20 +86,20 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 
 	public MultiShotProcessingPlugin()
 	{
-		super("com.almalence.plugins.multishotprocessing", R.xml.preferences_processing_multishot, 0, 0, null);
+		super("com.almalence.plugins.multishotprocessing", "multishot", R.xml.preferences_processing_multishot, 0, 0, null);
 	}
 
 	@Override
 	public void onGUICreate()
 	{
-		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
+		LayoutInflater inflator = ApplicationScreen.instance.getLayoutInflater();
 		mButtonsLayout = inflator.inflate(R.layout.plugin_processing_multishot_options_layout, null, false);
 
 		LinearLayout buttonObjectRemoval = (LinearLayout) mButtonsLayout.findViewById(R.id.buttonObjectRemoval);
 		LinearLayout buttonGroupShot = (LinearLayout) mButtonsLayout.findViewById(R.id.buttonGroupShot);
 		LinearLayout buttonSequence = (LinearLayout) mButtonsLayout.findViewById(R.id.buttonSequence);
 
-		MainScreen.getGUIManager().removeViews(mButtonsLayout, R.id.blockingLayout);
+		ApplicationScreen.getGUIManager().removeViews(mButtonsLayout, R.id.blockingLayout);
 
 		buttonObjectRemoval.setOnClickListener(new OnClickListener()
 		{
@@ -146,8 +143,8 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 				LayoutParams.MATCH_PARENT);
 		params.addRule(RelativeLayout.CENTER_IN_PARENT);
 
-		if (MainScreen.getInstance().findViewById(R.id.blockingLayout) != null)
-			((RelativeLayout) MainScreen.getInstance().findViewById(R.id.blockingLayout)).addView(mButtonsLayout,
+		if (ApplicationScreen.instance.findViewById(R.id.blockingLayout) != null)
+			((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.blockingLayout)).addView(mButtonsLayout,
 					params);
 
 		if (selectedPlugin == WAITING)
@@ -176,7 +173,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 	@Override
 	public void onStart()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getInstance()
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.instance
 				.getBaseContext());
 		mSaveInputPreference = prefs.getBoolean("saveInputPrefMultiShot", false);
 
@@ -192,15 +189,15 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 
 		selectedPlugin = WAITING;
 
-		MainScreen.getInstance().runOnUiThread(new Runnable()
+		ApplicationScreen.instance.runOnUiThread(new Runnable()
 		{
 			public void run()
 			{
 				mButtonsLayout.setVisibility(View.VISIBLE);
-				MainScreen.getInstance().findViewById(R.id.blockingText).setVisibility(View.GONE);
+				ApplicationScreen.instance.findViewById(R.id.blockingText).setVisibility(View.GONE);
 				Message msg = new Message();
-				msg.what = PluginManager.MSG_PROCESSING_BLOCK_UI;
-				MainScreen.getMessageHandler().sendMessage(msg);
+				msg.what = ApplicationInterface.MSG_PROCESSING_BLOCK_UI;
+				ApplicationScreen.getMessageHandler().sendMessage(msg);
 			}
 		});
 
@@ -217,11 +214,11 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 			}
 		}
 
-		MainScreen.getInstance().runOnUiThread(new Runnable()
+		ApplicationScreen.instance.runOnUiThread(new Runnable()
 		{
 			public void run()
 			{
-				MainScreen.getInstance().findViewById(R.id.blockingText).setVisibility(View.VISIBLE);
+				ApplicationScreen.instance.findViewById(R.id.blockingText).setVisibility(View.VISIBLE);
 			}
 		});
 
@@ -272,46 +269,25 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 		{
 			try
 			{
-				File saveDir = PluginManager.getSaveDir(false);
-
 				String fileFormat = PluginManager.getInstance().getFileFormat();
 
 				for (int i = 0; i < imagesAmount; ++i)
 				{
 					if (selectedPlugin != WAITING)
 					{
-						MainScreen.getInstance().runOnUiThread(new Runnable()
+						ApplicationScreen.instance.runOnUiThread(new Runnable()
 						{
 							public void run()
 							{
-								MainScreen.getInstance().findViewById(R.id.blockingText).setVisibility(View.VISIBLE);
+								ApplicationScreen.instance.findViewById(R.id.blockingText).setVisibility(View.VISIBLE);
 							}
 						});
 					}
 
 					String index = String.format("_%02d", i);
-					File file = new File(saveDir, fileFormat + index + ".jpg");
 
-					FileOutputStream os = null;
-					try
-					{
-						os = new FileOutputStream(file);
-					} catch (Exception e)
-					{
-						// save always if not working saving to sdcard
-						e.printStackTrace();
-						saveDir = PluginManager.getSaveDir(true);
-						file = new File(saveDir, fileFormat + index + ".jpg");
-						os = new FileOutputStream(file);
-					}
-
-					PluginManager.getInstance().writeData(os, true, sessionID, i, null, mYUVBufferList.get(i), file);
+					PluginManager.getInstance().saveInputFile(true, sessionID, i, null, mYUVBufferList.get(i), fileFormat + index);
 				}
-			} catch (IOException e)
-			{
-				e.printStackTrace();
-				MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_EXPORT_FINISHED_IOEXCEPTION);
-				return;
 			} catch (Exception e)
 			{
 				e.printStackTrace();
@@ -401,16 +377,16 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 				return false;
 			}
 
-			MainScreen.getInstance().findViewById(R.id.blockingText).setVisibility(View.VISIBLE);
+			ApplicationScreen.instance.findViewById(R.id.blockingText).setVisibility(View.VISIBLE);
 			mButtonsLayout.setVisibility(View.GONE);
 
 			mYUVBufferList.clear();
 			mJpegBufferList.clear();
 
-			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_POSTPROCESSING_FINISHED);
+			ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_POSTPROCESSING_FINISHED);
 			selectedPlugin = CANCELLED;
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_BROADCAST, PluginManager.MSG_CONTROL_UNLOCKED);
-			MainScreen.getGUIManager().lockControls = false;
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_CONTROL_UNLOCKED);
+			ApplicationScreen.getGUIManager().lockControls = false;
 
 			return true;
 		}
@@ -432,14 +408,14 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 	{
 		if (mButtonsLayout != null)
 		{
-			MainScreen.getGUIManager().removeViews(mButtonsLayout, R.id.specialPluginsLayout3);
+			ApplicationScreen.getGUIManager().removeViews(mButtonsLayout, R.id.specialPluginsLayout3);
 		}
 	}
 
 	@Override
 	public void onOrientationChanged(int orientation)
 	{
-		RotateLayout rotateLayout = (RotateLayout) MainScreen.getInstance().findViewById(R.id.rotateLayout);
+		RotateLayout rotateLayout = (RotateLayout) ApplicationScreen.instance.findViewById(R.id.rotateLayout);
 		if (rotateLayout != null)
 		{
 			rotateLayout.setAngle(orientation - 90);

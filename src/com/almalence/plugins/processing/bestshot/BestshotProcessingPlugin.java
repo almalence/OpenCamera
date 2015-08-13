@@ -19,13 +19,13 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.processing.bestshot;
 
 /* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.ConfigParser;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginProcessing;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ConfigParser;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.cameracontroller.CameraController;
@@ -43,7 +43,7 @@ public class BestshotProcessingPlugin extends PluginProcessing
 
 	public BestshotProcessingPlugin()
 	{
-		super("com.almalence.plugins.bestshotprocessing", 0, 0, 0, null);
+		super("com.almalence.plugins.bestshotprocessing", "bestshotmode", 0, 0, 0, null);
 	}
 
 	@Override
@@ -52,15 +52,10 @@ public class BestshotProcessingPlugin extends PluginProcessing
 		sessionID = SessionID;
 
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
-				PluginManager.getInstance().getActiveMode().modeSaveName);
+				ConfigParser.getInstance().getMode(mode).modeSaveName);
 
-		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
-				PluginManager.getInstance().getActiveMode().modeSaveName);
-
-
-		CameraController.Size imageSize = CameraController.getCameraImageSize();
-		int mImageWidth = imageSize.getWidth();
-		int mImageHeight = imageSize.getHeight();
+		int mImageWidth = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("imageWidth" + sessionID));
+		int mImageHeight = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("imageHeight" + sessionID));
 
 		String num = PluginManager.getInstance().getFromSharedMem("amountofcapturedframes" + sessionID);
 		if (num == null)

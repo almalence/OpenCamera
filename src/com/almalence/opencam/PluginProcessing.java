@@ -21,15 +21,17 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
-
 //-+- -->
 
 public abstract class PluginProcessing extends Plugin
 {
-	public PluginProcessing(String ID, int preferenceID, int advancedPreferenceID, int quickControlID,
+	protected String mode = null;
+	
+	public PluginProcessing(String ID, String mode, int preferenceID, int advancedPreferenceID, int quickControlID,
 			String quickControlInitTitle)
 	{
 		super(ID, preferenceID, advancedPreferenceID, quickControlID, quickControlInitTitle);
+		this.mode = mode;
 	}
 
 	@Override

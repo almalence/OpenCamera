@@ -1,3 +1,6 @@
+=\=\=\=\=\=\=
+<<<<<<<=HEAD
+>>>>>>>=refs/heads/master
 eclipse.preferences.version=1
 environment/project/com.android.toolchain.gcc.1245095277/PATH/delimiter=\:
 environment/project/com.android.toolchain.gcc.1245095277/PATH/operation=replace

@@ -21,16 +21,16 @@
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam.cameracontroller;
-
 //-+- -->
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.content.SharedPreferences;
+import android.content.Context;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Rect;
@@ -46,13 +46,17 @@ import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
+import android.hardware.camera2.params.BlackLevelPattern;
+import android.hardware.camera2.params.ColorSpaceTransform;
 import android.hardware.camera2.params.MeteringRectangle;
+import android.hardware.camera2.params.RggbChannelVector;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Range;
@@ -63,19 +67,22 @@ import android.view.SurfaceHolder;
 import android.widget.Toast;
 import com.almalence.SwapHeap;
 import com.almalence.YuvImage;
+import com.almalence.util.ImageConversion;
 import com.almalence.util.Util;
 
 //<!-- -+-
 import com.almalence.opencam.CameraParameters;
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginManager;
+import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.ApplicationInterface;
+import com.almalence.opencam.PluginManagerInterface;
 //-+- -->
-
 /* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
- import com.almalence.opencam_plus.PluginManager;
- import com.almalence.opencam_plus.CameraParameters;
+import com.almalence.opencam_plus.CameraParameters;
+import com.almalence.opencam_plus.ApplicationScreen;
+import com.almalence.opencam_plus.ApplicationInterface;
+import com.almalence.opencam_plus.PluginManagerInterface;
  +++ --> */
+
 
 //HALv3 camera's objects
 @SuppressLint("NewApi")
@@ -99,15 +106,44 @@ public class HALv3
 	private static int[]				evCompensation				= null;
 	private static int[]				sensorGain					= null;
 	private static long[]				exposureTime				= null;
+	private static long 				currentExposure 			= 0;
+	private static int 					currentSensitivity 			= 0;
+	private static int 					blevel			 			= 0;
+	private static int 					wlevel 						= 1024;
+	
+	private static RggbChannelVector 	rggbChannelVector 			= null;
+	
+	private static boolean				isManualExposureTime		= false;
 
 	protected static boolean			resultInHeap				= false;
 
 	private static int					MAX_SUPPORTED_PREVIEW_SIZE	= 1920 * 1088;
 
 	protected static int				captureFormat				= CameraController.JPEG;
+	protected static int				lastCaptureFormat			= CameraController.JPEG;
+	protected static int				originalCaptureFormat		= CameraController.JPEG;
+	
+	protected static Size[] 			allJpegSizes				= null;
+	protected static Size[] 			allYUVSizes					= null;
+	protected static Size				highestAvailableImageSize   = null;
+	protected static Size				highestCurrentImageSize   	= null;
 	
 	protected static boolean			playShutterSound			= false;
+	protected static boolean			captureAllowed 				= false;
+	
+	protected static RggbChannelVector 	rggbVector					= null;
+	protected static int[] 				colorTransformMatrix 		= new int[]{258, 128, -119, 128, -10, 128, -40, 128, 209, 128, -41, 128, -1, 128, -74, 128, 203, 128}; //Nexus 5
+//	protected static int[] 				colorTransformMatrix 		= new int[]{227, 128, -98, 128, -1, 128, -33, 128, 193, 128, -32, 128, 0, 128, -93, 128, 221, 128}; //Nexus 6
+//	protected static float				multiplierR					= 1.81f;
+	protected static float				multiplierR					= 1.6f; //Nexus 5
+	protected static float				multiplierG					= 1.0f;
+//	protected static float				multiplierB					= 1.54f;
+	protected static float				multiplierB					= 2.4f; //Nexus 5
 
+	private static boolean 				needPreviewFrame			= false;
+	
+//	private static boolean 				inCapture					= false; Debug variable. Used in logic to capture RAW in Super mode on Galaxy S6
+	 
 	public static HALv3 getInstance()
 	{
 		if (instance == null)
@@ -130,14 +166,24 @@ public class HALv3
 
 	private static boolean					autoFocusTriggered		= false;
 	
-//	protected static boolean				isManualExposure		= false;
+	protected static Context				mainContext				= null;
+	
+	protected static Handler				messageHandler			= null;
+	
+	private static PluginManagerInterface	pluginManager			= null;
+	private static ApplicationInterface		appInterface			= null;
 
-	public static void onCreateHALv3()
+	public static void onCreateHALv3(Context context, ApplicationInterface app, PluginManagerInterface pluginManagerBase, Handler msgHandler)
 	{
 		Log.e(TAG, "onCreateHALv3");
+		mainContext = context;
+		appInterface = app;
+		pluginManager = pluginManagerBase;
+		messageHandler = msgHandler;
+
 		// HALv3 code ---------------------------------------------------------
 		// get manager for camera devices
-		HALv3.getInstance().manager = (CameraManager) MainScreen.getMainContext().getSystemService("camera");
+		HALv3.getInstance().manager = (CameraManager) mainContext.getSystemService("camera");
 
 		// get list of camera id's (usually it will contain just {"0", "1"}
 		try
@@ -145,7 +191,7 @@ public class HALv3
 			CameraController.cameraIdList = HALv3.getInstance().manager.getCameraIdList();
 		} catch (CameraAccessException e)
 		{
-			Log.d("MainScreen", "getCameraIdList failed");
+			Log.d("HALv3", "getCameraIdList failed");
 			e.printStackTrace();
 		}
 	}
@@ -157,14 +203,50 @@ public class HALv3
 		try
 		{
 			Log.e(TAG, "checkHardwareLevel. CameraIndex = " + CameraController.CameraIndex);
+			int cameraIndex = CameraController.CameraIndex;
+			if (cameraIndex >= CameraController.cameraIdList.length) {
+				cameraIndex = 0;
+			}
 			HALv3.getInstance().camCharacter = HALv3.getInstance().manager
-					.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
-
-			return (HALv3.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED || HALv3
-					.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL);
+					.getCameraCharacteristics(CameraController.cameraIdList[cameraIndex]);
+			int level = HALv3.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL);
+			return (level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED || level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL);
 		} catch (CameraAccessException e)
 		{
-			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public static boolean isLimitedHardwareLevel()
+	{
+		if(CameraController.cameraIdList == null || CameraController.cameraIdList.length == 0)
+			return false;
+		try
+		{
+			HALv3.getInstance().camCharacter = HALv3.getInstance().manager
+					.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
+			
+			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED;
+		} catch (CameraAccessException e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public static boolean isFullHardwareLevel()
+	{
+		if(CameraController.cameraIdList == null || CameraController.cameraIdList.length == 0)
+			return false;
+		try
+		{
+			HALv3.getInstance().camCharacter = HALv3.getInstance().manager
+					.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
+			
+			return HALv3.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL;
+		} catch (CameraAccessException e)
+		{
 			e.printStackTrace();
 			return false;
 		}
@@ -182,45 +264,91 @@ public class HALv3
 			CameraController.isRAWCaptureSupported = false;
 			CameraController.isManualSensorSupported = false;
 			for (int key : keys)
-				if (key == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_RAW)
+				if (key == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_RAW && !CameraController.isGalaxyS6)
 					CameraController.isRAWCaptureSupported = true;
 				else if(key == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_MANUAL_SENSOR)
 					CameraController.isManualSensorSupported = true;
+			
+			originalCaptureFormat = CameraController.JPEG;
+			
+			zoomCropPreview = null;
+			activeRect = null;
+			
+//			inCapture = false; Debug variable. Used in logic to capture RAW in Super mode on Galaxy S6
 		} catch (CameraAccessException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	public static void onPauseHALv3()
 	{
-		// HALv3 code -----------------------------------------
-		// if ((HALv3.getInstance().availCallback != null) &&
-		// (HALv3.getInstance().manager != null))
-		// HALv3.getInstance().manager.removeAvailabilityCallback(HALv3.getInstance().availCallback);
-
-		if (null != HALv3.getInstance().camDevice && null != HALv3.getInstance().mCaptureSession)
-			try
+//		if(ApplicationScreen.getPluginManager().isSwitchToOldCameraInterface())
+			if (null != HALv3.getInstance().camDevice && null != HALv3.getInstance().mCaptureSession)
 			{
-				HALv3.getInstance().mCaptureSession.stopRepeating();
-				HALv3.getInstance().mCaptureSession.close();
-				HALv3.getInstance().mCaptureSession = null;
-			} catch (final CameraAccessException e)
-			{
-				// Doesn't matter, cloising device anyway
-				e.printStackTrace();
-			} catch (final IllegalStateException e2)
-			{
-				// Doesn't matter, cloising device anyway
-				e2.printStackTrace();
-			} finally
-			{
-				HALv3.getInstance().camDevice.close();
-				HALv3.getInstance().camDevice = null;
-				// PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_STOPED,
-				// 0);
+				try
+				{
+//					Log.wtf(TAG, "onPauseHALv3. mCaptureSession.stopRepeating()");
+					HALv3.getInstance().mCaptureSession.stopRepeating();
+//					HALv3.getInstance().mCaptureSession.close();  //According to google docs isn't necessary to close session
+					HALv3.getInstance().mCaptureSession = null;
+				} catch (final CameraAccessException e)
+				{
+					// Doesn't matter, closing device anyway
+					e.printStackTrace();
+				} catch (final IllegalStateException e2)
+				{
+					// Doesn't matter, closing device anyway
+					e2.printStackTrace();
+				} finally
+				{
+					if(ApplicationScreen.getPluginManager().isSwitchToOldCameraInterface())
+					{
+//						Log.wtf(TAG, "onPauseHALv3. camDevice.close()");
+						HALv3.getInstance().camDevice.close();
+						HALv3.getInstance().camDevice = null;
+					}
+					
+					zoomCropPreview = null;
+					
+//					Log.wtf(TAG, "onPauseHALv3. camDevice.close()");
+//					HALv3.getInstance().camDevice.close();
+//					HALv3.getInstance().camDevice = null;
+				}
 			}
+	}
+	
+	public static void onStopHALv3()
+	{
+		if (null != HALv3.getInstance().camDevice)
+		{
+//			Log.wtf(TAG, "onStopHALv3. camDevice.close()");
+			HALv3.getInstance().camDevice.close();
+			HALv3.getInstance().camDevice = null;
+		}
+		
+//		if (null != HALv3.getInstance().camDevice && null != HALv3.getInstance().mCaptureSession)
+//		{
+//			try
+//			{
+//				HALv3.getInstance().mCaptureSession.stopRepeating();
+//				HALv3.getInstance().mCaptureSession.close();  //According to google docs isn't necessary to close session
+//				HALv3.getInstance().mCaptureSession = null;
+//			} catch (final CameraAccessException e)
+//			{
+//				// Doesn't matter, closing device anyway
+//				e.printStackTrace();
+//			} catch (final IllegalStateException e2)
+//			{
+//				// Doesn't matter, closing device anyway
+//				e2.printStackTrace();
+//			} finally
+//			{
+//				Log.wtf(TAG, "onStopHALv3. camDevice.close()");
+//				HALv3.getInstance().camDevice.close();
+//				HALv3.getInstance().camDevice = null;
+//			}
+//		}
 	}
 
 	public static void openCameraHALv3()
@@ -228,11 +356,40 @@ public class HALv3
 		Log.e(TAG, "openCameraHALv3()");
 		// HALv3 open camera
 		// -----------------------------------------------------------------
-		if (HALv3.getCamera2() == null)
+		if (HALv3.getCamera2() != null)
+		{
+//			Log.wtf(TAG, "openCameraHALv3. camDevice.close()");
+			HALv3.getInstance().camDevice.close();
+			HALv3.getInstance().camDevice = null;
+		}
+		
+//		if (HALv3.getCamera2() != null && HALv3.getInstance().mCaptureSession != null)
+//		{
+//			try
+//			{
+//				HALv3.getInstance().mCaptureSession.stopRepeating();
+//				HALv3.getInstance().mCaptureSession.close();
+//				HALv3.getInstance().mCaptureSession = null;
+//			} catch (final CameraAccessException e)
+//			{
+//				// Doesn't matter, closing device anyway
+//				e.printStackTrace();
+//			} catch (final IllegalStateException e2)
+//			{
+//				// Doesn't matter, closing device anyway
+//				e2.printStackTrace();
+//			} finally
+//			{
+//				Log.wtf(TAG, "openCameraHALv3. camDevice.close()");
+//				HALv3.getInstance().camDevice.close();
+//				HALv3.getInstance().camDevice = null;
+//			}
+//		}
+		
+		if(HALv3.getCamera2() == null)
 		{
 			try
 			{
-				// onCreateHALv3();
 				Log.e(TAG, "try to manager.openCamera");
 				String cameraId = CameraController.cameraIdList[CameraController.CameraIndex];
 				HALv3.getInstance().camCharacter = HALv3.getInstance().manager
@@ -242,50 +399,37 @@ public class HALv3
 			{
 				Log.e(TAG, "CameraAccessException manager.openCamera failed: " + e.getMessage());
 				e.printStackTrace();
-				MainScreen.getInstance().finish();
+				appInterface.stopApplication();
 			} catch (IllegalArgumentException e)
 			{
 				Log.e(TAG, "IllegalArgumentException manager.openCamera failed: " + e.getMessage());
 				e.printStackTrace();
-				MainScreen.getInstance().finish();
+				appInterface.stopApplication();
 			} catch (SecurityException e)
 			{
 				Log.e(TAG, "SecurityException manager.openCamera failed: " + e.getMessage());
 				e.printStackTrace();
-				MainScreen.getInstance().finish();
+				appInterface.stopApplication();
 			}
 		}
 
-		// try
-		// {
-		// HALv3.getInstance().camCharacter =
-		// HALv3.getInstance().manager.getCameraCharacteristics(CameraController
-		// .getInstance().cameraIdList[CameraController.CameraIndex]);
-		// } catch (CameraAccessException e)
-		// {
-		// Log.e(TAG, "getCameraCharacteristics failed: " + e.getMessage());
-		// e.printStackTrace();
-		// MainScreen.getInstance().finish();
-		// }
-
 		CameraController.CameraMirrored = (HALv3.getInstance().camCharacter.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT);
-
-		// Add an Availability Callback as Cameras become available or
-		// unavailable
-		// HALv3.getInstance().availCallback = HALv3.getInstance().new
-		// cameraAvailableCallback();
-		// HALv3.getInstance().manager.addAvailabilityCallback(HALv3.getInstance().availCallback,
-		// null);
 
 		CameraController.mVideoStabilizationSupported = HALv3.getInstance().camCharacter
 				.get(CameraCharacteristics.CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES) == null ? false : true;
+		
+		BlackLevelPattern blackPatternLevel = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_BLACK_LEVEL_PATTERN);
+		if (blackPatternLevel != null) {
+			blevel = blackPatternLevel.getOffsetForIndex(0, 0);
+		}
+		wlevel = HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_WHITE_LEVEL);
 
 		Log.d(TAG,
 				"HARWARE_SUPPORT_LEVEL = "
 						+ HALv3.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL));
 		// check that full hw level is supported
 		if (HALv3.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) != CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL)
-			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_NOT_LEVEL_FULL);
+			messageHandler.sendEmptyMessage(ApplicationInterface.MSG_NOT_LEVEL_FULL);
 		else
 			Log.d(TAG, "HARWARE_SUPPORT_LEVEL_FULL");
 
@@ -298,33 +442,31 @@ public class HALv3
 	public static void setupImageReadersHALv3(CameraController.Size sz)
 	{
 		Log.e(TAG, "setupImageReadersHALv3(). Width = " + sz.getWidth() + " Height = " + sz.getHeight());
-
-		MainScreen.setSurfaceHolderSize(sz.getWidth(), sz.getHeight());
-		MainScreen.setPreviewWidth(sz.getWidth());
-		MainScreen.setPreviewHeight(sz.getHeight());
-		// MainScreen.getPreviewSurfaceHolder().setFixedSize(1280, 960);
-		// MainScreen.setPreviewWidth(1280);
-		// MainScreen.setPreviewHeight(960);
-
-		// HALv3 code
-		// -------------------------------------------------------------------
-		MainScreen.createImageReaders();
-
-//		final HandlerThread backgroundThread = new HandlerThread("imageReaders");
-//		backgroundThread.start();
-//		Handler backgroundHandler = new Handler(backgroundThread.getLooper());
-
-		MainScreen.getPreviewYUVImageReader().setOnImageAvailableListener(imageAvailableListener, null);
-
-		MainScreen.getYUVImageReader().setOnImageAvailableListener(imageAvailableListener, null);
-
-		MainScreen.getJPEGImageReader().setOnImageAvailableListener(imageAvailableListener, null);
-
-		MainScreen.getRAWImageReader().setOnImageAvailableListener(imageAvailableListener, null);
+		appInterface.createImageReaders(imageAvailableListener);
+	}
+	
+	public static boolean isCaptureFormatSupported(int captureFormat)
+	{
+		boolean isSupported = false;
+		try
+		{
+			CameraCharacteristics cc = HALv3.getInstance().manager.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
+			StreamConfigurationMap configMap = cc.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+			isSupported = configMap.isOutputSupportedFor(captureFormat);
+			Log.d(TAG, "Capture format " + captureFormat + " is supported? " + isSupported);
+			return isSupported;
+			
+		} catch (CameraAccessException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return isSupported;
+		}
 	}
 
 	public static void setCaptureFormat(int captureFormat)
 	{
+		Log.e(TAG, "set captureFormat.");
 		HALv3.captureFormat = captureFormat;
 	}
 
@@ -350,41 +492,7 @@ public class HALv3
 		return true;
 	}
 
-	// /**
-	// * Configures the necessary {@link android.graphics.Matrix} transformation
-	// to `mTextureView`.
-	// * This method should be called after the camera preview size is
-	// determined in openCamera and
-	// * also the size of `mTextureView` is fixed.
-	// *
-	// * @param viewWidth The width of `mTextureView`
-	// * @param viewHeight The height of `mTextureView`
-	// */
-	// private static void configureTransform(int viewWidth, int viewHeight)
-	// {
-	// Surface surface = MainScreen.thiz.getCameraSurface();
-	// Activity activity = MainScreen.thiz;
-	// if (null == surface || null == activity) {
-	// return;
-	// }
-	// int rotation =
-	// activity.getWindowManager().getDefaultDisplay().getRotation();
-	// Matrix matrix = new Matrix();
-	// RectF viewRect = new RectF(0, 0, viewWidth, viewHeight);
-	// RectF bufferRect = new RectF(0, 0, viewHeight, viewWidth);
-	// float centerX = viewRect.centerX();
-	// float centerY = viewRect.centerY();
-	// if (Surface.ROTATION_90 == rotation || Surface.ROTATION_270 == rotation)
-	// {
-	// bufferRect.offset(centerX - bufferRect.centerX(), centerY -
-	// bufferRect.centerY());
-	// matrix.setRectToRect(viewRect, bufferRect, Matrix.ScaleToFit.FILL);
-	// float scale = 1.0f;
-	// matrix.postScale(scale, scale, centerX, centerY);
-	// matrix.postRotate(90 * (rotation - 2), centerX, centerY);
-	// }
-	// surface.setTransform(matrix);
-	// }
+	
 	public static void dumpCameraCharacteristics()
 	{
 		Log.i(TAG, "Total cameras found: " + CameraController.cameraIdList.length);
@@ -440,7 +548,9 @@ public class HALv3
 		StreamConfigurationMap configMap = params.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 		final Size[] cs = configMap.getOutputSizes(captureFormat);
 
-		return new CameraController.Size(cs[0].getWidth(), cs[0].getHeight());
+		int maxSizeIndex = Util.getMaxImageSizeIndex(cs);
+		
+		return new CameraController.Size(cs[maxSizeIndex].getWidth(), cs[maxSizeIndex].getHeight());
 	}
 
 	public static void populateCameraDimensionsHALv3()
@@ -454,7 +564,20 @@ public class HALv3
 		int minMPIX = CameraController.MIN_MPIX_SUPPORTED;
 		CameraCharacteristics params = getCameraParameters2();
 		StreamConfigurationMap configMap = params.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-		final Size[] cs = configMap.getOutputSizes(MainScreen.getCaptureFormat());
+		Size[] cs = configMap.getOutputSizes(captureFormat);
+		Size highestSize = findMaximumSize(cs);
+		/*
+		 * In case when device supports capturing YUV less maximum size than JPEG
+		 * give users available JPEG sizes instead
+		 */
+		if(captureFormat == CameraController.YUV)
+		{
+			Size[] jpegSize = configMap.getOutputSizes(CameraController.JPEG);
+			Size highestJPEGSize = findMaximumSize(jpegSize);
+			if(highestJPEGSize.getWidth() > highestSize.getWidth())
+				cs = jpegSize;
+		}
+		
 
 		int iHighestIndex = 0;
 		Size sHighest = cs[iHighestIndex];
@@ -462,8 +585,6 @@ public class HALv3
 		int ii = 0;
 		for (Size s : cs)
 		{
-			// if(s.getWidth()*s.getHeight() == FULL_HD_SIZE)
-			// s = new Size(1920, 1088);
 			int currSizeWidth = s.getWidth();
 			int currSizeHeight = s.getHeight();
 			int highestSizeWidth = sHighest.getWidth();
@@ -486,8 +607,6 @@ public class HALv3
 		if (CameraController.ResolutionsNamesList.isEmpty())
 		{
 			Size s = cs[iHighestIndex];
-			// if(s.getWidth()*s.getHeight() == FULL_HD_SIZE)
-			// s = new Size(1920, 1088);
 
 			int currSizeWidth = s.getWidth();
 			int currSizeHeight = s.getHeight();
@@ -519,8 +638,7 @@ public class HALv3
 					.getWidth(), previewSizes.get(1).getHeight());
 		}
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		String prefIdx = prefs.getString(MainScreen.sImageSizeMultishotBackPref, "-1");
+		String prefIdx = appInterface.getSpecialImageSizeIndexPref();
 
 		if (prefIdx.equals("-1"))
 		{
@@ -541,9 +659,7 @@ public class HALv3
 			}
 			if (previewSizes != null && previewSizes.size() > 0 && maxMpx >= CameraController.MPIX_1080)
 			{
-				SharedPreferences.Editor prefEditor = prefs.edit();
-				prefEditor.putString(MainScreen.sImageSizeMultishotBackPref, String.valueOf(maxFastIdx));
-				prefEditor.commit();
+				appInterface.setSpecialImageSizeIndexPref(maxFastIdx);
 			}
 		}
 
@@ -554,9 +670,6 @@ public class HALv3
 	{
 		boolean needAdd = true;
 		boolean isFast = true;
-
-		// if(currSizeWidth*currSizeHeight == FULL_HD_SIZE)
-		// currSizeHeight = 1088;
 
 		Long lmpix = (long) currSizeWidth * currSizeHeight;
 		float mpix = (float) lmpix / 1000000.f;
@@ -620,14 +733,14 @@ public class HALv3
 		List<CameraController.Size> previewSizes = new ArrayList<CameraController.Size>();
 		StreamConfigurationMap configMap = HALv3.getInstance().camCharacter
 				.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-		// Size[] cs = configMap.getOutputSizes(ImageFormat.YUV_420_888);
 		Size[] cs = configMap.getOutputSizes(SurfaceHolder.class);
+		//Only with such preview size Galaxy S6 isn't crashed in camera2 mode
+		if(CameraController.isGalaxyS6)
+			cs = new Size[]{new Size(1920, 1080)};
 		if (cs != null) {
 			for (Size sz : cs)
 				if (sz.getWidth() * sz.getHeight() <= MAX_SUPPORTED_PREVIEW_SIZE)
 				{
-					// if(sz.getWidth()*sz.getHeight() == FULL_HD_SIZE)
-					// sz = new Size(1920, 1088);
 					previewSizes.add(new CameraController.Size(sz.getWidth(), sz.getHeight()));
 				}
 		}
@@ -637,15 +750,52 @@ public class HALv3
 
 	public static void fillPictureSizeList(List<CameraController.Size> pictureSizes)
 	{
+		Log.e(TAG, "fillPictureSizeList. USE captureFormat.");
 		CameraCharacteristics camCharacter = HALv3.getInstance().camCharacter;
 		StreamConfigurationMap configMap = camCharacter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-		Size[] cs = configMap.getOutputSizes(MainScreen.getCaptureFormat());
+		Size[] cs = configMap.getOutputSizes(captureFormat);
+		
+		/*
+		 * In case when device supports capturing YUV less maximum size than JPEG
+		 * give users available JPEG sizes instead
+		 */
+		if(captureFormat == CameraController.YUV)
+		{
+			allYUVSizes = cs;
+			allJpegSizes = configMap.getOutputSizes(CameraController.JPEG);
+			
+			HALv3.highestCurrentImageSize = findMaximumSize(cs);			
+			HALv3.highestAvailableImageSize = findMaximumSize(allJpegSizes);
+			if(HALv3.highestAvailableImageSize.getWidth() > HALv3.highestCurrentImageSize.getWidth())
+				cs = allJpegSizes;
+		}
+		
 		for (Size sz : cs)
 		{
-			// if(sz.getWidth()*sz.getHeight() == FULL_HD_SIZE)
-			// sz = new Size(1920, 1088);
 			pictureSizes.add(new CameraController.Size(sz.getWidth(), sz.getHeight()));
 		}
+	}
+	
+	//Search maximum size in array by comparing width and size in megapixels
+	protected static Size findMaximumSize(Size[] sizes)
+	{
+		if(sizes.length > 0)
+		{
+			Size maxSize = sizes[0];
+			int maxMPix = maxSize.getWidth() * maxSize.getHeight();
+			for(Size sz : sizes)
+			{
+				int currentMPix = sz.getWidth() * sz.getHeight();
+				if(currentMPix > maxMPix)
+				{
+					maxSize = sz;
+					maxMPix = currentMPix;
+				}
+			}
+			return maxSize;
+		}
+		else
+			return new Size(0, 0);
 	}
 
 	public static void fillVideoSizeList(List<CameraController.Size> videoSizes)
@@ -658,6 +808,52 @@ public class HALv3
 			videoSizes.add(new CameraController.Size(sz.getWidth(), sz.getHeight()));
 		}
 	}
+	
+	
+	//Check size chosen by application. Related to case when plugin wants to capture YUV but chosen size available only for JPEG capturing
+	public static void checkImageSize(CameraController.Size imageSize)
+	{
+		if(captureFormat == CameraController.YUV)
+		{
+			if(!isSizeAvailable(imageSize, captureFormat) && isSizeAvailable(imageSize, CameraController.JPEG))
+			{
+				originalCaptureFormat = captureFormat;
+				ApplicationScreen.setCaptureFormat(CameraController.JPEG);
+			}
+		}
+	}
+	
+	
+	//Utility method to determine whether size is available for capture format
+	//Used only for JPEG and YUV formats. Don't use that method for RAW format!
+	public static boolean isSizeAvailable(CameraController.Size sz, int format)
+	{
+		boolean isSizeSupported = false;
+		
+		int width = sz.getWidth();
+		int MPix  = sz.getWidth() * sz.getHeight();
+		
+		Size[] allSizes = null;
+		if(format == CameraController.YUV)
+			allSizes = allYUVSizes;
+		else if(format == CameraController.JPEG)
+			allSizes = allJpegSizes;
+		else
+			isSizeSupported = true;
+		
+		for(Size systemSize : allSizes)
+		{
+			int systemMPix = systemSize.getWidth() * systemSize.getHeight();
+			int systemWidth = systemSize.getWidth();
+			
+			if(systemMPix == MPix && systemWidth == width)
+				isSizeSupported = true;
+		}
+		
+		return isSizeSupported;
+	}
+	
+	
 	
 	public static CameraDevice getCamera2()
 	{
@@ -680,8 +876,8 @@ public class HALv3
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AE_LOCK, lock);
 			setRepeatingRequest();
 			
-			PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
-			.putBoolean(MainScreen.sAELockPref, lock).commit();
+			PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).edit()
+			.putBoolean(ApplicationScreen.sAELockPref, lock).commit();
 		}
 	}
 	
@@ -692,8 +888,8 @@ public class HALv3
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_LOCK, lock);
 			setRepeatingRequest();
 			
-			PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
-			.putBoolean(MainScreen.sAWBLockPref, lock).commit();
+			PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).edit()
+			.putBoolean(ApplicationScreen.sAWBLockPref, lock).commit();
 		}
 	}
 	
@@ -728,8 +924,11 @@ public class HALv3
 		}
 		zoomLevel = newZoom;
 		zoomCropPreview = getZoomRect(zoomLevel, activeRect.width(), activeRect.height());
-		previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
-		setRepeatingRequest();
+		if(previewRequestBuilder != null)
+		{
+			previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
+			setRepeatingRequest();
+		}
 	}
 
 	public static float getZoom()
@@ -802,7 +1001,6 @@ public class HALv3
 
 	public static void resetExposureCompensationHALv3()
 	{
-//		Log.e(TAG, "RESET EXPOSURE COMPENSATION");
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 		{
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, 0);
@@ -835,6 +1033,28 @@ public class HALv3
 
 		return new int[0];
 	}
+	
+	public static boolean isManualWhiteBalanceSupportedHALv3()
+	{
+		if (HALv3.getInstance().camCharacter != null
+				&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES) != null
+				&& !Build.MODEL.contains("Nexus 6")) //Disable manual WB for Nexus 6 - it manages WB wrong
+		{
+			int[] wb = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES);
+			
+			boolean wbOFF = false;
+			for(int i = 0; i < wb.length; i++)
+				if(wb[i] == CaptureRequest.CONTROL_AWB_MODE_OFF)
+				{
+					wbOFF = true;
+					break;
+				}
+			
+			return wbOFF;
+		}
+		
+		return false;
+	}
 
 	public static int[] getSupportedFocusModesHALv3()
 	{
@@ -860,62 +1080,79 @@ public class HALv3
 		return false;
 	}
 
+	public static int[] getSupportedCollorEffectsHALv3()
+	{
+		if (HALv3.getInstance().camCharacter != null
+				&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AVAILABLE_EFFECTS) != null)
+		{
+			int[] collorEffect = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AVAILABLE_EFFECTS);
+			if (collorEffect.length > 0)
+				return collorEffect;
+		}
+
+		return new int[]{0};
+	}
+	
 	public static int[] getSupportedISOModesHALv3()
 	{
 		//Temprorary disable ISO in camera2 mode, because SENSOR_SENSITIVITY parameter is ignored by the camera.
-//		if (HALv3.getInstance().camCharacter != null
-//				&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE) != null)
-//		{
-//			Range<Integer> iso = HALv3.getInstance().camCharacter
-//					.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
-//			int max_iso = iso.getUpper();
-//			int min_iso = iso.getLower();
-//
-//			int iso_count = 0;
-//			int index = 0;
-//			for (index = 0; index < CameraController.getIsoModeHALv3().size(); index++)
-//			{
-//				int iso_value = CameraController.getIsoModeHALv3().get(index);
-//				if (max_iso >= iso_value && min_iso <= iso_value)
-//					++iso_count;
-//			}
-//			int[] iso_values = new int[iso_count + 1];
-//			// for (int i = 0; i < index; i++)
-//			// iso_values[i] =
-//			// CameraController.getIsoValuesList().get(i).byteValue();
-//
-//			iso_values[0] = CameraController.getIsoValuesList().get(0).byteValue();
-//			int iso_index = 1;
-//			for (index = 0; index < CameraController.getIsoModeHALv3().size(); index++)
-//			{
-//				int iso_value = CameraController.getIsoModeHALv3().get(index);
-//				if (max_iso >= iso_value && min_iso <= iso_value)
-//					iso_values[iso_index++] = CameraController.getIsoValuesList().get(index).byteValue();
-//			}
-//
-//			if (iso_values.length > 0)
-//				return iso_values;
-//		}
+		if (HALv3.getInstance().camCharacter != null
+				&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE) != null)
+		{
+			Range<Integer> iso = HALv3.getInstance().camCharacter
+					.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
+			int max_iso = iso.getUpper();
+			int min_iso = iso.getLower();
 
+			int iso_count = 0;
+			int index = 0;
+			for (index = 0; index < CameraController.getIsoModeHALv3().size(); index++)
+			{
+				int iso_value = CameraController.getIsoModeHALv3().get(index);
+				if (max_iso >= iso_value && min_iso <= iso_value)
+					++iso_count;
+			}
+			int[] iso_values = new int[iso_count];
+
+			int iso_index = 0;
+			for (index = 0; index < CameraController.getIsoModeHALv3().size(); index++)
+			{
+				int iso_value = CameraController.getIsoModeHALv3().get(index);
+				if (max_iso >= iso_value && min_iso <= iso_value)
+					iso_values[iso_index++] = CameraController.getIsoValuesList().get(index).byteValue();
+			}
+
+			if (iso_values.length > 0)
+				return iso_values;
+		}
 		return new int[0];
 	}
 
+	public static long getCameraCurrentExposureHALv3() {
+		return currentExposure;
+	}
+	
+	public static int getCameraCurrentSensitivityHALv3() {
+		return currentSensitivity;
+	}
+	
 	public static boolean isISOModeSupportedHALv3()
 	{
 		// CLOSED until manual exposure metering will be researched
-		// if (HALv3.getInstance().camCharacter != null &&
-		// HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE)
-		// != null)
-		// {
-		// Range<Integer> iso =
-		// HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
-		// if (iso.getLower() == iso.getUpper())
-		// return false;
-		// return true;
-		// }
+		 if (HALv3.getInstance().camCharacter != null &&
+		 HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE)
+		 != null)
+		 {
+			 Range<Integer> iso =
+			 HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
+			 if (iso.getLower() == iso.getUpper())
+				 return false;
+			 return true;
+		 }
 
 		return false;
 	}
+	
 	
 	public static boolean isManualFocusDistanceSupportedHALv3()
 	{
@@ -998,26 +1235,13 @@ public class HALv3
 			} else
 			{
 				HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
-				// HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
-				// CaptureRequest.CONTROL_AE_MODE_OFF);
-				//
-				// Range<Long> expRange =
-				// HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE);
-				// HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME,
-				// (expRange.getUpper()+expRange.getLower())/2);
-				//
-				// Long frameDuration =
-				// HALv3.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_MAX_FRAME_DURATION);
-				// HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_FRAME_DURATION,
-				// frameDuration);
 			}
 
 			HALv3.setRepeatingRequest();
 
 		}
 
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
-				.putInt(MainScreen.sSceneModePref, mode).commit();
+		appInterface.setSceneModePref(mode);
 	}
 
 	public static void setCameraWhiteBalanceHALv3(int mode)
@@ -1031,11 +1255,35 @@ public class HALv3
 						.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_USE_SCENE_MODE);
 
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, mode);
-			HALv3.setRepeatingRequest();
+			
+			try
+			{
+				HALv3.getInstance().configurePreviewRequest(true);
+			} catch (CameraAccessException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
-				.putInt(MainScreen.sWBModePref, mode).commit();
+		appInterface.setWBModePref(mode);
+	}
+	
+	public static void setCameraColorTemperatureHALv3(int iTemp)
+	{
+		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
+		{
+			appInterface.setColorTemperature(iTemp);
+			try
+			{
+				HALv3.setCameraWhiteBalanceHALv3(CameraParameters.WB_MODE_OFF);
+				HALv3.getInstance().configurePreviewRequest(true);
+			} catch (CameraAccessException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public static void setCameraFocusModeHALv3(int mode)
@@ -1046,19 +1294,14 @@ public class HALv3
 			HALv3.setRepeatingRequest();
 		}
 
-		PreferenceManager
-				.getDefaultSharedPreferences(MainScreen.getMainContext())
-				.edit()
-				.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-						: MainScreen.sFrontFocusModePref, mode).commit();
+		appInterface.setFocusModePref(mode);
 	}
 
 	public static void setCameraFlashModeHALv3(int mode)
 	{
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 		{
-			int currentFlash = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
-					MainScreen.sFlashModePref, CameraParameters.FLASH_MODE_AUTO);
+			int currentFlash = appInterface.getFlashModePref(ApplicationScreen.sDefaultFlashValue);
 
 			int previewFlash = mode;
 			if (mode != CameraParameters.FLASH_MODE_TORCH && currentFlash == CameraParameters.FLASH_MODE_TORCH)
@@ -1090,16 +1333,13 @@ public class HALv3
 				HALv3.setRepeatingRequest();
 			}
 		}
-
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
-				.putInt(MainScreen.sFlashModePref, mode).commit();
 	}
 
 	public static void setCameraISOModeHALv3(int mode)
 	{
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 		{
-			if (mode != 1)
+			if (mode > 0)
 			{
 				int iso = CameraController.getIsoModeHALv3().get(mode);
 				HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
@@ -1108,8 +1348,7 @@ public class HALv3
 			HALv3.setRepeatingRequest();
 		}
 
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
-				.putInt(MainScreen.sISOPref, mode).commit();
+		appInterface.setISOModePref(mode);
 	}
 
 	public static void setCameraExposureCompensationHALv3(int iEV)
@@ -1121,10 +1360,8 @@ public class HALv3
 			HALv3.setRepeatingRequest();
 		}
 
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
-				.putInt(MainScreen.sEvPref, iEV).commit();
+		appInterface.setEVPref(iEV);
 	}
-	
 	
 	/*
 	 * Manual sensor parameters: focus distance and exposure time.
@@ -1135,17 +1372,59 @@ public class HALv3
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null
 				&& HALv3.getInstance().mCaptureSession != null)
 		{
-//			isManualExposure = true;
-//			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_OFF);
-//			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE);
+			boolean isRealExposureTimeOnPreview = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getBoolean(ApplicationScreen.sRealExposureTimeOnPreviewPref, false);
+			long exposureTime = iTime;
+			long frameDuration = 0;
+			int  sensorSensitivity = CameraController.getIsoModeHALv3().get(appInterface.getISOModePref(1));
+
+			//Exposure time longer than 1/15 gets preview very slow
+			//Set custom exposure time/frame duration/ISO allows preview looks like real but on high fps.
+			if(!isRealExposureTimeOnPreview)
+			{
+				if(iTime == 100000000L)
+				{
+					exposureTime = 70000000L;
+					frameDuration = 70000000L;
+					sensorSensitivity = 500;
+				}
+				else if(iTime == 142857142L)
+				{
+					exposureTime = 35000000L;
+					frameDuration = 39000000L;
+					sensorSensitivity = 1100;
+				}
+				else if(iTime >= 200000000L)
+				{
+					exposureTime = 40000000L;
+					frameDuration = 40000000L;
+					sensorSensitivity = 1300;
+				}
+			}
 			previewRequestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF);
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
-			HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, iTime);
+			HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, exposureTime);
+			
+			if(frameDuration > 0)
+				HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_FRAME_DURATION, frameDuration);
+			
+			if(sensorSensitivity > 0)
+				HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, sensorSensitivity);
+			
 			HALv3.setRepeatingRequest();
+			isManualExposureTime = true;
 		}
 
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
-				.putLong(MainScreen.sExposureTimePref, iTime).commit();
+		PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).edit()
+				.putLong(ApplicationScreen.sExposureTimePref, iTime).commit();
+	}
+	
+	public static void setCameraCollorEffectHALv3(int mode)
+	{
+		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
+		{
+			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, mode);
+			HALv3.setRepeatingRequest();
+		}
 	}
 	
 	public static void resetCameraAEModeHALv3()
@@ -1153,13 +1432,11 @@ public class HALv3
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null
 				&& HALv3.getInstance().mCaptureSession != null)
 		{
-//			isManualExposure = false;
 			try
 			{
 				HALv3.getInstance().configurePreviewRequest(true);
 			} catch (CameraAccessException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -1176,12 +1453,12 @@ public class HALv3
 			HALv3.setRepeatingRequest();
 		}
 
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
-				.putFloat(MainScreen.sFocusDistancePref, fDistance).commit();
+		PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).edit()
+				.putFloat(ApplicationScreen.sFocusDistancePref, fDistance).commit();
 		
-		PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
-				.putInt(CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-				: MainScreen.sFrontFocusModePref, CameraParameters.MF_MODE).commit();
+		PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).edit()
+				.putInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
+				: ApplicationScreen.sFrontFocusModePref, CameraParameters.MF_MODE).commit();
 	}
 	//////////////////////////////////////////////////////////////////////////////////////
 
@@ -1197,7 +1474,7 @@ public class HALv3
 			for (int i = 0; i < focusAreas.size(); i++)
 			{
 				Rect r = focusAreas.get(i).rect;
-//				Log.e(TAG, "focusArea: " + r.left + " " + r.top + " " + r.right + " " + r.bottom);
+				Log.e(TAG, "focusArea: " + r.left + " " + r.top + " " + r.right + " " + r.bottom);
 
 				Matrix matrix = new Matrix();
 				matrix.setScale(1, 1);
@@ -1207,30 +1484,16 @@ public class HALv3
 				RectF rectF = new RectF(r.left, r.top, r.right, r.bottom);
 				matrix.mapRect(rectF);
 				Util.rectFToRect(rectF, r);
-//				Log.e(TAG, "focusArea after matrix: " + r.left + " " + r.top + " " + r.right + " " + r.bottom);
+				Log.e(TAG, "focusArea after matrix: " + r.left + " " + r.top + " " + r.right + " " + r.bottom);
 
 				int currRegion = i;
 				af_regions[currRegion] = new MeteringRectangle(r.left, r.top, r.right, r.bottom, 1000);
-				// af_regions[currRegion] = r.left;
-				// af_regions[currRegion + 1] = r.top;
-				// af_regions[currRegion + 2] = r.right;
-				// af_regions[currRegion + 3] = r.bottom;
-				// af_regions[currRegion + 4] = 10;
 			}
 		} else
 		{
 			af_regions = new MeteringRectangle[1];
 			af_regions[0] = new MeteringRectangle(0, 0, activeRect.width() - 1, activeRect.height() - 1, 1000);
-			// af_regions = new int[5];
-			// af_regions[0] = 0;
-			// af_regions[1] = 0;
-			// af_regions[2] = activeRect.width() - 1;
-			// af_regions[3] = activeRect.height() - 1;
-			// af_regions[4] = 0;
 		}
-//		Log.e(TAG, "activeRect: " + activeRect.left + " " + activeRect.top + " " + activeRect.right + " "
-//				+ activeRect.bottom);
-//		Log.e(TAG, "zoomRect: " + zoomRect.left + " " + zoomRect.top + " " + zoomRect.right + " " + zoomRect.bottom);
 
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 		{
@@ -1264,40 +1527,30 @@ public class HALv3
 
 				int currRegion = i;
 				ae_regions[currRegion] = new MeteringRectangle(r.left, r.top, r.right, r.bottom, 10);
-				// ae_regions[currRegion] = r.left;
-				// ae_regions[currRegion + 1] = r.top;
-				// ae_regions[currRegion + 2] = r.right;
-				// ae_regions[currRegion + 3] = r.bottom;
-				// ae_regions[currRegion + 4] = 10;
 			}
 		} else
 		{
 			ae_regions = new MeteringRectangle[1];
 			ae_regions[0] = new MeteringRectangle(0, 0, activeRect.width() - 1, activeRect.height() - 1, 10);
-			// ae_regions = new int[5];
-			// ae_regions[0] = 0;
-			// ae_regions[1] = 0;
-			// ae_regions[2] = activeRect.width() - 1;
-			// ae_regions[3] = activeRect.height() - 1;
-			// ae_regions[4] = 0;
 		}
 
 		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
 		{
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, ae_regions);
 			HALv3.setRepeatingRequest();
+			isManualExposureTime = false;
 		}
 	}
 	
 	public static void setRepeatingRequest()
 	{
-		if(HALv3.getInstance().mCaptureSession == null)
+		//Second part of operator if is experimental. Used only for RAW capturing in Super mode on Galaxy S6
+		if(HALv3.getInstance().mCaptureSession == null/* || (inCapture == true && lastCaptureFormat == CameraController.YUV_RAW && CameraController.isGalaxyS6)*/)
 			return;
 
 		try
 		{
-			CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.setRepeatingRequest(
-					HALv3.previewRequestBuilder.build(), captureCallback, null);
+			HALv3.getInstance().mCaptureSession.setRepeatingRequest(HALv3.previewRequestBuilder.build(), captureCallback, null);
 		} catch (CameraAccessException e)
 		{
 			e.printStackTrace();
@@ -1310,7 +1563,7 @@ public class HALv3
 	public static int getPreviewFrameRateHALv3()
 	{
 		if (HALv3.getInstance().camCharacter != null
-				&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES) != null)
+			&& HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES) != null)
 		{
 			Range<Integer>[] range;
 			range = HALv3.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES);
@@ -1437,11 +1690,8 @@ public class HALv3
 				rawRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropCapture);
 		}
 
-		
 		//Focus mode. Event in case of manual exposure switch off auto focusing.
-		int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
-				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
-//		if(focusMode != CameraParameters.MF_MODE && !isManualExposure)
+		int focusMode = appInterface.getFocusModePref(-1);
 		if(focusMode != CameraParameters.MF_MODE)
 		{
 			stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
@@ -1449,26 +1699,58 @@ public class HALv3
 			if (isRAWCapture)
 				rawRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
 		}
-
-		if (format == CameraController.JPEG)
+		
+		int wbMode = appInterface.getWBModePref();
+		stillRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, wbMode);
+		precaptureRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, wbMode);
+		if(wbMode == CaptureRequest.CONTROL_AWB_MODE_OFF)
 		{
-			stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
-		} else if (format == CameraController.YUV || format == CameraController.YUV_RAW)
-		{
-			stillRequestBuilder.addTarget(MainScreen.getYUVImageReader().getSurface());
-		} else if (format == CameraController.RAW)
-		{
-			rawRequestBuilder.addTarget(MainScreen.getRAWImageReader().getSurface());
-			stillRequestBuilder.addTarget(MainScreen.getJPEGImageReader().getSurface());
+			stillRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_MODE, CaptureRequest.COLOR_CORRECTION_MODE_TRANSFORM_MATRIX);
+			precaptureRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_MODE, CaptureRequest.COLOR_CORRECTION_MODE_TRANSFORM_MATRIX);
+			
+			stillRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_GAINS, rggbVector);
+			stillRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_TRANSFORM, new ColorSpaceTransform(colorTransformMatrix));
+			
+			precaptureRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_GAINS, rggbVector);
+			precaptureRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_TRANSFORM, new ColorSpaceTransform(colorTransformMatrix));
 		}
-		precaptureRequestBuilder.addTarget(MainScreen.getPreviewYUVImageReader().getSurface());
+
+		//Color effect (filters)
+		int colorEffect = appInterface.getColorEffectPref();
+		if(colorEffect != CameraParameters.COLOR_EFFECT_MODE_OFF)
+		{
+			stillRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, colorEffect);
+			precaptureRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, colorEffect);
+			if (isRAWCapture)
+				rawRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, colorEffect);
+		}
 		
 		
-		boolean isAutoExTime = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getBoolean(MainScreen.sExposureTimeModePref, true);
-		long exTime = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getLong(MainScreen.sExposureTimePref, 0);
+		if (format == CameraController.JPEG || captureFormat == CameraController.JPEG)
+		{
+			stillRequestBuilder.addTarget(appInterface.getJPEGImageSurface());
+		}
+		else if (format == CameraController.YUV || format == CameraController.YUV_RAW)
+		{
+			//Temporary disable super mode for Galaxy S6
+//			if (CameraController.isGalaxyS6 && format == CameraController.YUV_RAW)
+//				stillRequestBuilder.addTarget(appInterface.getRAWImageSurface()); //Used only for Super mode
+//			else
+				stillRequestBuilder.addTarget(appInterface.getYUVImageSurface());
+		}
+		else if (format == CameraController.RAW)
+		{
+			rawRequestBuilder.addTarget(appInterface.getRAWImageSurface());
+			stillRequestBuilder.addTarget(appInterface.getJPEGImageSurface());
+		}
+		precaptureRequestBuilder.addTarget(appInterface.getPreviewYUVImageSurface());
 		
-		boolean isAutoFDist = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getBoolean(MainScreen.sFocusDistanceModePref, true);
-		float fDist = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getFloat(MainScreen.sFocusDistancePref, 0);
+		
+		boolean isAutoExTime = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getBoolean(ApplicationScreen.sExposureTimeModePref, true);
+		long exTime = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getLong(ApplicationScreen.sExposureTimePref, 0);
+		
+		boolean isAutoFDist = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getBoolean(ApplicationScreen.sFocusDistanceModePref, true);
+		float fDist = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getFloat(ApplicationScreen.sFocusDistancePref, 0);
 		
 		if(!isAutoFDist)
 		{
@@ -1483,8 +1765,11 @@ public class HALv3
 			}
 		}
 		
-		int flashMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
-				MainScreen.sFlashModePref, -1);
+		int flashMode = appInterface.getFlashModePref(ApplicationScreen.sDefaultFlashValue);
+		if (flashMode == CameraParameters.FLASH_MODE_CAPTURE_TORCH) {
+			// If flashMode == FLASH_MODE_CAPTURE_TORCH, then turn on torch for captureRequests.
+			flashMode = CameraParameters.FLASH_MODE_TORCH;
+		}
 		
 		if(isAutoExTime)
 		{
@@ -1528,45 +1813,25 @@ public class HALv3
 		// explicitly disable AWB for the duration of still/burst capture to get
 		// full burst with the same WB
 		// WB does not apply to RAW, so no need for this in rawRequestBuilder
-		stillRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_OFF);
-		precaptureRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_OFF);
+		if (!Build.MODEL.contains("G925") && !Build.MODEL.contains("G920"))
+		{
+			stillRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_OFF);
+			precaptureRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_OFF);
+			if(appInterface.getWBModePref() == CaptureRequest.CONTROL_AWB_MODE_OFF)
+			{
+				stillRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_GAINS, rggbVector);
+				stillRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_TRANSFORM, new ColorSpaceTransform(colorTransformMatrix));
+				
+				precaptureRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_GAINS, rggbVector);
+				precaptureRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_TRANSFORM, new ColorSpaceTransform(colorTransformMatrix));
+			}
+		}
 
 		stillRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ev);
 		precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ev);
 		if (isRAWCapture)
 			rawRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, ev);
 		
-//		int sceneMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
-//				MainScreen.sSceneModePref, -1);
-//		int flashMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
-//				MainScreen.sFlashModePref, -1);
-//		
-//		if(sceneMode == CameraParameters.SCENE_MODE_AUTO)
-//		{
-//			if(flashMode == CameraParameters.FLASH_MODE_SINGLE)
-//			{
-////				stillRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
-//				stillRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER, CameraMetadata.CONTROL_AE_PRECAPTURE_TRIGGER_START);
-//				if (isRAWCapture)
-//				{
-////					rawRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
-//					rawRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER, CameraMetadata.CONTROL_AE_PRECAPTURE_TRIGGER_START);
-//				}
-//			}
-////			if(flashMode != CameraParameters.FLASH_MODE_AUTO && flashMode != CameraParameters.FLASH_MODE_REDEYE)
-////			{
-////	//			stillRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
-////				stillRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
-////				if (isRAWCapture)
-////					rawRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
-////			}
-////			else
-////			{
-////				stillRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
-////				stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
-////			}
-//		}
-
 		if (gain > 0)
 		{
 			stillRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, gain);
@@ -1575,6 +1840,11 @@ public class HALv3
 				rawRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, gain);
 		}
 
+		if(isManualExposureTime)
+		{
+			expo = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getLong(ApplicationScreen.sExposureTimePref, 0);
+		}
+		
 		if (expo > 0)
 		{
 			stillRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, expo);
@@ -1597,7 +1867,6 @@ public class HALv3
 
 		final boolean isRAWCapture = (format == CameraController.RAW);
 
-		PluginManager.getInstance().createRequestIDList(isRAWCapture? nFrames*2 : nFrames);
 		// ToDo: burst capture is implemented now in Camera2 API
 		/*
 		 * List<CaptureRequest> requests = new ArrayList<CaptureRequest>();
@@ -1614,14 +1883,12 @@ public class HALv3
 					break;
 				}
 			
-		// HALv3.getInstance().mCaptureSession.stopRepeating();
 		// requests for SZ input frames
 		resultInHeap = resInHeap;
 		playShutterSound = playShutter;
-		//if (pause != null && Array.getLength(pause) > 0)
 		
 		int selectedEvCompensation = 0;
-		selectedEvCompensation = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(MainScreen.sEvPref, 0);
+		selectedEvCompensation = appInterface.getEVPref();
 		
 		if(hasPause)
 		{
@@ -1633,37 +1900,56 @@ public class HALv3
 			exposureTime = exposure;
 			captureNextImageWithParams(format, 0,
 					pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
-					evCompensation == null ? selectedEvCompensation : evCompensation[currentFrameIndex], sensorGain == null ? 0
+					evCompensation == null ? selectedEvCompensation : evCompensation[currentFrameIndex], sensorGain == null ? currentSensitivity
 							: sensorGain[currentFrameIndex], exposureTime == null ? 0
 							: exposureTime[currentFrameIndex]);
 		} else
 		{
 			pauseBetweenShots = new int[totalFrames];
-			MainScreen.getGUIManager().showCaptureIndication();
-			if(playShutterSound)
-				MainScreen.getInstance().playShutter();
+			appInterface.showCaptureIndication(playShutterSound);
+			
+			/*
+			 * Debug code for Galaxy S6. Trying to capture RAW with stopped preview (coz it hangs while capturing RAW)
+			 */
+//			if(HALv3.getInstance().mCaptureSession != null)
+//			{
+//				if(CameraController.isGalaxyS6/* && nFrames > 1*/)
+//					try 
+//					{
+//						HALv3.getInstance().mCaptureSession.stopRepeating();
+//						Log.wtf(TAG, "Capture SUPER. stop preview!");
+//					}
+//					catch (CameraAccessException e1)
+//					{
+//						Log.e(TAG, "Can't stop preview");
+//						e1.printStackTrace();
+//					}
+//			}
 
 			for (int n = 0; n < nFrames; ++n)
 			{
-				SetupPerFrameParameters(evRequested == null ? selectedEvCompensation : evRequested[n], gain == null ? 0 : gain[n],
+				SetupPerFrameParameters(evRequested == null ? selectedEvCompensation : evRequested[n], gain == null ? currentSensitivity : gain[n],
 						exposure == null ? 0 : exposure[n], isRAWCapture);
 
-				try
+				if(HALv3.getInstance().mCaptureSession != null)
 				{
-					requestID = HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
-							stillCaptureCallback, null);
-
-					PluginManager.getInstance().addRequestID(n, requestID);
-					Log.e("HALv3", "mCaptureSession.capture. REQUEST ID = " + requestID);
-					// FixMe: Why aren't requestID assigned if there is request with ev's being adjusted??
-//						if (evRequested == null) requestID = tmp;
-					
-					if(isRAWCapture)
-						HALv3.getInstance().mCaptureSession.capture(rawRequestBuilder.build(),
+					try
+					{
+						requestID = HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
 								stillCaptureCallback, null);
-				} catch (CameraAccessException e)
-				{
-					e.printStackTrace();
+	
+						pluginManager.addRequestID(n, requestID);
+						Log.e("HALv3", "mCaptureSession.capture. REQUEST ID = " + requestID);
+						// FixMe: Why aren't requestID assigned if there is request with ev's being adjusted??
+	//						if (evRequested == null) requestID = tmp;
+						
+						if(isRAWCapture)
+							HALv3.getInstance().mCaptureSession.capture(rawRequestBuilder.build(),
+									stillCaptureCallback, null);
+					} catch (CameraAccessException e)
+					{
+						e.printStackTrace();
+					}
 				}
 			}
 		}
@@ -1672,18 +1958,17 @@ public class HALv3
 
 	}
 	
-	public static int captureImageWithParamsHALv3(final int nFrames, final int format, final int[] pause,
-			final int[] evRequested, final int[] gain, final long[] exposure, final boolean resInHeap, final boolean playShutter)
-	{
-		int requestID = -1;
-
+	public static void captureImageWithParamsHALv3Allowed (final int nFrames, final int format, final int[] pause,
+			final int[] evRequested, final int[] gain, final long[] exposure, final boolean resInHeap, final boolean playShutter) {
 		try
 		{
+			lastCaptureFormat = format;
+			int requestID = -1;
 			CreateRequests(format);
 			
 			// Nexus 5 fix flash in dark conditions and exposure set to 0.
 			int selectedEvCompensation = 0;
-			selectedEvCompensation = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(MainScreen.sEvPref, 0);
+			selectedEvCompensation = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getInt(ApplicationScreen.sEvPref, 0);
 			if ((stillRequestBuilder.get(CaptureRequest.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH
 					|| stillRequestBuilder.get(CaptureRequest.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH
 					|| stillRequestBuilder.get(CaptureRequest.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH_REDEYE)
@@ -1693,22 +1978,25 @@ public class HALv3
 
 			if (checkHardwareLevel())
 			{
-				precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
-						CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
-				requestID = HALv3.getInstance().mCaptureSession.capture(precaptureRequestBuilder.build(),
-						new CameraCaptureSession.CaptureCallback()
-						{
-							@Override
-							public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request,
-									TotalCaptureResult result)
+				if(HALv3.getInstance().mCaptureSession != null)
+				{
+					precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+							CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
+					requestID = HALv3.getInstance().mCaptureSession.capture(precaptureRequestBuilder.build(),
+							new CameraCaptureSession.CaptureCallback()
 							{
-								precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
-										CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
-								
-								captureImageWithParamsHALv3Simple(nFrames, format, pause,
-										evRequested, gain, exposure, resInHeap, playShutter);
-							}
-						}, null);
+								@Override
+								public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request,
+										TotalCaptureResult result)
+								{
+									precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+											CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
+									
+									captureImageWithParamsHALv3Simple(nFrames, format, pause,
+											evRequested, gain, exposure, resInHeap, playShutter);
+								}
+							}, null);
+				}
 			} else
 			{
 				captureImageWithParamsHALv3Simple(nFrames, format, pause,
@@ -1721,6 +2009,50 @@ public class HALv3
 			throw new RuntimeException();
 		}
 
+	}
+	
+	public static int captureImageWithParamsHALv3(final int nFrames, final int format, final int[] pause,
+			final int[] evRequested, final int[] gain, final long[] exposure, final boolean resInHeap, final boolean playShutter)
+	{
+//		inCapture = true; Debug variable. Used in logic to capture RAW in Super mode on Galaxy S6
+		int requestID = -1;
+
+		if (CameraController.getFocusMode() == CameraParameters.AF_MODE_CONTINUOUS_PICTURE) {
+			captureAllowed = false;
+			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
+					CameraCharacteristics.CONTROL_AF_TRIGGER_START);
+			
+			if(HALv3.getInstance().mCaptureSession != null)
+			{
+				try
+				{
+					HALv3.getInstance().mCaptureSession.capture(HALv3.previewRequestBuilder.build(), captureCallback, null);
+				} catch (CameraAccessException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		} else {
+			captureAllowed = true;
+		}
+		
+		if (!captureAllowed) {
+			new CountDownTimer(2000, 10) {
+				public void onTick(long millisUntilFinished) {
+					if (captureAllowed) {
+						this.cancel();
+						captureImageWithParamsHALv3Allowed(nFrames, format, pause, evRequested, gain, exposure, resInHeap, playShutter);
+					}
+				}
+
+				public void onFinish() {
+					captureImageWithParamsHALv3Allowed(nFrames, format, pause, evRequested, gain, exposure, resInHeap, playShutter);
+				}
+			}.start();
+		} else
+			captureImageWithParamsHALv3Allowed(nFrames, format, pause, evRequested, gain, exposure, resInHeap, playShutter);
+		
+		
 		return requestID;
 	}
 
@@ -1742,34 +2074,34 @@ public class HALv3
 
 				public void onFinish()
 				{
-					// play tick sound
-					MainScreen.getGUIManager().showCaptureIndication();
-					if(playShutterSound)
-						MainScreen.getInstance().playShutter();
-					try
+					if(HALv3.getInstance().mCaptureSession != null)
 					{
-						// FixMe: Why aren't requestID assigned if there is
-						// request with ev's being adjusted??
-						int requestID = HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
-								captureCallback, null);
-
-						PluginManager.getInstance().addRequestID(frameIndex, requestID);
-						Log.e("HALv3", "NEXT mCaptureSession.capture. REQUEST ID = " + requestID);
-						if (isRAWCapture)
-							HALv3.getInstance().mCaptureSession.capture(rawRequestBuilder.build(), captureCallback,
-									null);
-					} catch (CameraAccessException e)
-					{
-						e.printStackTrace();
+						// play tick sound
+						appInterface.showCaptureIndication(playShutterSound);
+						try
+						{
+							// FixMe: Why aren't requestID assigned if there is
+							// request with ev's being adjusted??
+							int requestID = HALv3.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
+									captureCallback, null);
+	
+							pluginManager.addRequestID(frameIndex, requestID);
+							Log.e("HALv3", "NEXT mCaptureSession.capture. REQUEST ID = " + requestID);
+							if (isRAWCapture)
+								HALv3.getInstance().mCaptureSession.capture(rawRequestBuilder.build(), captureCallback,
+										null);
+						} catch (CameraAccessException e)
+						{
+							e.printStackTrace();
+						}
 					}
 				}
 			}.start();
 
-		} else
+		} else if(HALv3.getInstance().mCaptureSession != null)
 		{
 			// play tick sound
-			MainScreen.getGUIManager().showCaptureIndication();
-			MainScreen.getInstance().playShutter();
+			appInterface.showCaptureIndication(true);
 
 			try
 			{
@@ -1801,23 +2133,26 @@ public class HALv3
 			
 			if (checkHardwareLevel())
 			{
-				precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
-						CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
-				requestID = HALv3.getInstance().mCaptureSession.capture(precaptureRequestBuilder.build(),
-						new CameraCaptureSession.CaptureCallback()
-						{
-							@Override
-							public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request,
-									TotalCaptureResult result)
+				if(HALv3.getInstance().mCaptureSession != null)
+				{
+					precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+							CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
+					requestID = HALv3.getInstance().mCaptureSession.capture(precaptureRequestBuilder.build(),
+							new CameraCaptureSession.CaptureCallback()
 							{
-								Log.e(TAG, "TRIGER CAPTURE COMPLETED");
-								
-								precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
-										CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
-								
-								captureNextImageWithParamsSimple(format, frameIndex, pause, evRequested, gain, exposure);
-							}
-						}, null);
+								@Override
+								public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request,
+										TotalCaptureResult result)
+								{
+									Log.e(TAG, "TRIGER CAPTURE COMPLETED");
+									
+									precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+											CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
+									
+									captureNextImageWithParamsSimple(format, frameIndex, pause, evRequested, gain, exposure);
+								}
+							}, null);
+				}
 			} else
 			{
 				captureNextImageWithParamsSimple(format, frameIndex, pause, evRequested, gain, exposure);
@@ -1832,30 +2167,28 @@ public class HALv3
 		return requestID;
 	}
 	
+	public static void forceFocusHALv3()
+	{
+		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null && HALv3.getInstance().mCaptureSession != null)
+		{
+			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
+					CameraCharacteristics.CONTROL_AF_TRIGGER_START);
+			try
+			{
+				HALv3.getInstance().mCaptureSession.capture(HALv3.previewRequestBuilder.build(), captureCallback, null);
+			} catch (CameraAccessException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public static boolean autoFocusHALv3()
 	{
 		Log.e(TAG, "HALv3.autoFocusHALv3");
-		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null)
+		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null && HALv3.getInstance().mCaptureSession != null)
 		{
-			// if(af_regions != null)
-			// HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_REGIONS,
-			// af_regions);
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, af_regions);
-			
-//			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
-//					CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
-//			try
-//			{
-//				Log.e(TAG,
-//						"autoFocusHALv3. CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL");
-//				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
-//						HALv3.previewRequestBuilder.build(), captureCallback, null);
-//			} catch (CameraAccessException e)
-//			{
-//				e.printStackTrace();
-//				return false;
-//			}
-			
 			
 			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
 					CameraCharacteristics.CONTROL_AF_TRIGGER_START);
@@ -1863,29 +2196,25 @@ public class HALv3
 			{
 				Log.e(TAG,
 						"autoFocusHALv3. CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_START");
-				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
-						HALv3.previewRequestBuilder.build(), captureCallback, null);
+				HALv3.getInstance().mCaptureSession.capture(HALv3.previewRequestBuilder.build(), captureCallback, null);
 			} catch (CameraAccessException e)
 			{
 				e.printStackTrace();
 				return false;
 			}
 			
-			
 			HALv3.autoFocusTriggered = true;
-			
 			return true;
 		}
-
 		return false;
 	}
 
 	public static void cancelAutoFocusHALv3()
 	{
 		Log.e(TAG, "HALv3.cancelAutoFocusHALv3");
-		int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
-				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
-		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null && focusMode != CameraParameters.MF_MODE)
+		int focusMode = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getInt(
+				CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref : ApplicationScreen.sFrontFocusModePref, -1);
+		if (HALv3.previewRequestBuilder != null && HALv3.getInstance().camDevice != null && focusMode != CameraParameters.MF_MODE && HALv3.getInstance().mCaptureSession != null)
 		{
 			if(HALv3.getInstance().mCaptureSession == null)
 				return;
@@ -1894,8 +2223,18 @@ public class HALv3
 					CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
 			try
 			{
-				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
-						HALv3.previewRequestBuilder.build(), captureCallback, null);
+				HALv3.getInstance().mCaptureSession.capture(HALv3.previewRequestBuilder.build(), captureCallback, null);
+			} catch (CameraAccessException e)
+			{
+				e.printStackTrace();
+			}
+			
+			// Force set IDLE to prevent canceling all the time.
+			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
+					CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE);
+			try
+			{
+				HALv3.getInstance().mCaptureSession.capture(HALv3.previewRequestBuilder.build(), captureCallback, null);
 			} catch (CameraAccessException e)
 			{
 				e.printStackTrace();
@@ -1906,15 +2245,12 @@ public class HALv3
 				HALv3.getInstance().configurePreviewRequest(true);
 			} catch (CameraAccessException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
 			HALv3.autoFocusTriggered = false;
 		}
-
 		HALv3.autoFocusTriggered = false;
-
 	}
 
 	public void configurePreviewRequest(boolean needZoom) throws CameraAccessException
@@ -1922,36 +2258,35 @@ public class HALv3
 		if (camDevice == null)
 			return;
 
-		int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
-				CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
-		int flashMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(MainScreen.sFlashModePref, -1);
-		int wbMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(MainScreen.sWBModePref, -1);
-		int sceneMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(MainScreen.sSceneModePref, -1);
-		int ev = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(MainScreen.sEvPref, 0);
+		long exTime = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getLong(ApplicationScreen.sExposureTimePref, 0);
+		boolean isAutoExpTime = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getBoolean(ApplicationScreen.sExposureTimeModePref, true);
+		boolean isRealExposureTimeOnPreview = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getBoolean(ApplicationScreen.sRealExposureTimeOnPreviewPref, false);
 		
-		long exTime = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getLong(MainScreen.sExposureTimePref, 0);
-		boolean isAutoExpTime = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getBoolean(MainScreen.sExposureTimeModePref, true);
+		float fDist = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getFloat(ApplicationScreen.sFocusDistancePref, 0);
+		boolean isAutoFDist = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getBoolean(ApplicationScreen.sFocusDistanceModePref, true);
 		
-		float fDist = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getFloat(MainScreen.sFocusDistancePref, 0);
-		boolean isAutoFDist = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getBoolean(MainScreen.sFocusDistanceModePref, true);
+		int focusMode = appInterface.getFocusModePref(-1);
+		int flashMode = appInterface.getFlashModePref(-1);
+		int wbMode	  = appInterface.getWBModePref();
+		int sceneMode = appInterface.getSceneModePref();
+		int ev 		  = appInterface.getEVPref();
+		int iso 	  = CameraController.getIsoModeHALv3().get(appInterface.getISOModePref(1));
 		
-		int antibanding = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getString(MainScreen.sAntibandingPref,
-				"3"));
+		int antibanding = appInterface.getAntibandingModePref();
 		
-		boolean aeLock = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getBoolean(MainScreen.sAELockPref, false);
-		boolean awbLock = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getBoolean(MainScreen.sAWBLockPref, false);
+		boolean aeLock = appInterface.getAELockPref();
+		boolean awbLock = appInterface.getAWBLockPref();
+		
+		int colorEffect = appInterface.getColorEffectPref();
 
 		Log.e(TAG, "configurePreviewRequest()");
 		previewRequestBuilder = camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
 		
+		previewRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, colorEffect);
+		
 		if(focusMode != CameraParameters.MF_MODE)
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
 
-//		if(focusMode != CameraParameters.MF_MODE && !isManualExposure)
-//			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
-//		else if(isManualExposure)
-//			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
-		
 		previewRequestBuilder.set(CaptureRequest.CONTROL_AE_ANTIBANDING_MODE, antibanding);
 		
 		if(isAutoExpTime)
@@ -1961,7 +2296,6 @@ public class HALv3
 		}
 		else
 		{
-//			previewRequestBuilder.set(CaptureRequest.CONTROL_AE_LOCK, true);
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_LOCK, true);			
 		}
 		
@@ -1993,6 +2327,115 @@ public class HALv3
 		}
 		
 		previewRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, wbMode);
+		if(wbMode == CaptureRequest.CONTROL_AWB_MODE_OFF)
+		{
+			previewRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_MODE, CaptureRequest.COLOR_CORRECTION_MODE_TRANSFORM_MATRIX);
+			
+			float R = 0;
+			float G_even = 0;
+			float G_odd  = 0;
+			float B      = 0;
+			float tmpKelvin = appInterface.getColorTemperature()/100;
+			
+			/*RED*/
+			if(tmpKelvin <= 66)
+				R = 255;
+			else
+			{
+				double tmpCalc = tmpKelvin - 60;
+		        tmpCalc = 329.698727446 * Math.pow(tmpCalc, -0.1332047592);
+//				tmpCalc = 300 * Math.pow(tmpCalc, -0.1332047592);
+		        R = (float)tmpCalc;
+		        if(R < 0) R = 0.0f;
+		        if(R > 255) R = 255;
+			}		
+//			double tmpCalcR = tmpKelvin;// - 60;
+//			if (tmpKelvin > 66)
+//				tmpCalcR = tmpKelvin - 60;
+//	        tmpCalcR = 329.698727446 * Math.pow(tmpCalcR, -0.1332047592);
+//	        R = (float)tmpCalcR;
+//	        if(R < 0) R = 0;
+	        
+			/*GREENs*/
+			if(tmpKelvin <= 66)
+			{
+				double tmpCalc = tmpKelvin;
+		        tmpCalc = 99.4708025861 * Math.log(tmpCalc) - 161.1195681661;
+		        G_even = (float)tmpCalc;
+		        if(G_even < 0)
+		        	G_even = 0.0f;
+		        if(G_even > 255)
+		        	G_even = 255;
+		        G_odd = G_even;
+			}
+			else
+			{
+				double tmpCalc = tmpKelvin - 60;
+		        tmpCalc = 288.1221695283 * Math.pow(tmpCalc, -0.0755148492);
+		        G_even = (float)tmpCalc;
+		        if(G_even < 0)
+		        	G_even = 0.0f;
+		        if(G_even > 255)
+		        	G_even = 255;
+		        G_odd = G_even;
+			}
+			
+			/*BLUE*/
+//			if(tmpKelvin >= 66)
+//				B = 255.0f;
+//			else if(tmpKelvin <= 19)
+//			{
+//		        B = 0.0f;
+//			}
+//			else
+//			{
+//				double tmpCalc = tmpKelvin - 10;
+//		        tmpCalc = 138.5177312231 * Math.log(tmpCalc) - 305.0447927307;
+////				tmpCalc = 300 * Math.log(tmpCalc) - 305.0447927307;
+//		        B = (float)tmpCalc;
+//		        if(B < 0) B = 0.0f;
+//		        if(B > 255) B = 255;
+//			}
+			
+			if(tmpKelvin <= 19)
+			{
+		        B = 0.0f;
+			}
+			else
+			{
+				double tmpCalc = tmpKelvin - 10;
+		        tmpCalc = 138.5177312231 * Math.log(tmpCalc) - 305.0447927307;
+		        B = (float)tmpCalc;
+		        if(B < 0) B = 0;
+			}
+//			float X = 255;
+//			if(G_even > 0 && R > 0 && B > 0)
+//				X = Math.min(G_even, Math.min(R, B));
+//			else if(R > 0 && G_even > 0)
+//				X = Math.min(R, G_even);
+			
+//			if(R > 0)
+//				R = (float) (Math.pow(X/R, 2.2f) * multiplierR);
+//				R = (X/R) * multiplierR;
+				R = (R/255) * multiplierR;
+//			if(G_even > 0)
+//				G_even = (float) (Math.pow(X/G_even, 2.2f) * multiplierG);
+//				G_even = (X/G_even) * multiplierG;
+				G_even = (G_even/255) * multiplierG;
+			G_odd = G_even;
+//			if(B > 0)
+//				B = (float) (Math.pow(X/B, 2.2f) * multiplierB);
+//				B = (X/B) * multiplierB;
+				B = (B/255) * multiplierB;
+			
+			rggbVector = new RggbChannelVector(R, G_even, G_odd, B);
+//			RggbChannelVector rggb = new RggbChannelVector(R, 1.0f, 1.0f, B);
+			
+//			Log.e(TAG, "RGGB: R:" + R + " G:" + G_even + " B:" + B);
+			Log.e(TAG, "RGGB vector: " + rggbVector.toString());
+			previewRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_GAINS, rggbVector);
+			previewRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_TRANSFORM, new ColorSpaceTransform(colorTransformMatrix));
+		}
 		
 		if (sceneMode != CameraParameters.SCENE_MODE_AUTO)
 		{
@@ -2012,21 +2455,53 @@ public class HALv3
 		
 		if(!isAutoExpTime)
 		{
-//			previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_OFF);
-//			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE);
+			long exposureTime = exTime;
+			long frameDuration = 0;
+			int  sensorSensitivity = iso;
+
+			//Exposure time longer than 1/15 gets preview very slow
+			//Set custom exposure time/frame duration/ISO allows preview looks like real but on high fps.
+			if(!isRealExposureTimeOnPreview)
+			{
+				if(exTime == 100000000L)
+				{
+					exposureTime = 70000000L;
+					frameDuration = 70000000L;
+					sensorSensitivity = 500;
+				}
+				else if(exTime == 142857142L)
+				{
+					exposureTime = 35000000L;
+					frameDuration = 39000000L;
+					sensorSensitivity = 1100;
+				}
+				else if(exTime >= 200000000L)
+				{
+					exposureTime = 40000000L;
+					frameDuration = 40000000L;
+					sensorSensitivity = 1300;
+				}
+			}
+			
 			previewRequestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF);
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
-			previewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, exTime);
+			HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, exposureTime);
+			
+			if(frameDuration > 0)
+				HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_FRAME_DURATION, frameDuration);
+			
+			if(sensorSensitivity > 0)
+				HALv3.previewRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, sensorSensitivity);
 		}
-		
-		previewRequestBuilder.addTarget(MainScreen.getInstance().getCameraSurface());
+
+		previewRequestBuilder.addTarget(appInterface.getCameraSurface());
 		
 		
 		//Disable Image Reader for Nexus 6 according to slow focusing issue
-		if (!Build.MODEL.equals("Nexus 6") && captureFormat != CameraController.RAW)
-			previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
+		if (!CameraController.isNexus6  && captureFormat != CameraController.RAW)
+			previewRequestBuilder.addTarget(appInterface.getPreviewYUVImageSurface());
 		
-		if(needZoom)
+		if(needZoom && zoomCropPreview != null)
 			previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
 
 		setRepeatingRequest();
@@ -2070,16 +2545,14 @@ public class HALv3
 
 			HALv3.getInstance().camDevice = arg0;
 
-			MainScreen.getMessageHandler().sendEmptyMessage(PluginManager.MSG_CAMERA_OPENED);
-
-			// dumpCameraCharacteristics();
+			messageHandler.sendEmptyMessage(ApplicationInterface.MSG_CAMERA_OPENED);
 		}
 
 		@Override
 		public void onClosed(CameraDevice arg0)
 		{
 			Log.d(TAG,"CameraDevice.StateCallback.onClosed");
-			PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_STOPED, 0);
+			CameraController.sendMessage(ApplicationInterface.MSG_CAMERA_STOPED, 0);
 		}
 	};
 
@@ -2090,7 +2563,7 @@ public class HALv3
 		{
 			Log.e(TAG, "CaptureSessionConfigure failed");
 			onPauseHALv3();
-			MainScreen.getInstance().finish();
+			appInterface.stopApplication();
 		}
 
 		@Override
@@ -2100,16 +2573,6 @@ public class HALv3
 
 			try
 			{
-//				int focusMode = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
-//						CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref : MainScreen.sFrontFocusModePref, -1);
-//
-//				Log.e(TAG, "configurePreviewRequest()");
-//				HALv3.previewRequestBuilder = HALv3.getInstance().camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-//				HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);
-//				HALv3.previewRequestBuilder.addTarget(MainScreen.getInstance().getCameraSurface());
-//				if (HALv3.captureFormat != CameraController.RAW)
-//					HALv3.previewRequestBuilder.addTarget(MainScreen.getInstance().getPreviewYUVSurface());
-//				CameraController.iCaptureID = session.setRepeatingRequest(HALv3.previewRequestBuilder.build(), captureCallback, null);
 				try
 				{
 					HALv3.getInstance().configurePreviewRequest(false);
@@ -2118,151 +2581,48 @@ public class HALv3
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
-//				PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
-				// if(!CameraController.appStarted)
-				// {
-				// CameraController.appStarted
-				// =
-				// true;
-				// MainScreen.getInstance().relaunchCamera();
-				// }
-				if (CameraController.isCameraRelaunch())
+				finally
 				{
-					CameraController.needCameraRelaunch(false);
-					MainScreen.getInstance().relaunchCamera();
-				} else
-				{
-					Log.e(TAG, "session.setRepeatingRequest success. Session configured");
-					PluginManager.getInstance().sendMessage(PluginManager.MSG_CAMERA_CONFIGURED, 0);
+					if (CameraController.isCamera2OnRelaunchUsed())
+					{
+						CameraController.useCamera2OnRelaunch(false);
+						appInterface.relaunchCamera();
+					} else
+					{
+						Log.e(TAG, "Session.onConfigured");
+						CameraController.sendMessage(ApplicationInterface.MSG_CAMERA_CONFIGURED, 0);
+					}
 				}
 			} catch (final Exception e)
 			{
 				e.printStackTrace();
-				Toast.makeText(MainScreen.getInstance(), "Unable to start preview: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-				MainScreen.getInstance().finish();
+				Toast.makeText(mainContext, "Unable to start preview: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+				appInterface.stopApplication();
 			}
 		}
-
 	};
 
-	// Note: there other onCaptureXxxx methods in this Callback which we do not
-	// implement
-	// public final static CameraCaptureSession.CaptureCallback focusCallback =
-	// new CameraCaptureSession.CaptureCallback()
-	// {
-	// @Override
-	// public void onCaptureCompleted(CameraCaptureSession session,
-	// CaptureRequest request, TotalCaptureResult result)
-	// {
-	// PluginManager.getInstance().onCaptureCompleted(result);
-	// try
-	// {
-	// // HALv3.exposureTime =
-	// // result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
-	// // Log.e(TAG, "EXPOSURE TIME = " + HALv3.exposureTime);
-	// Log.e(TAG, "onFocusCompleted. AF State = " +
-	// result.get(CaptureResult.CONTROL_AF_STATE));
-	// if (result.get(CaptureResult.CONTROL_AF_STATE) ==
-	// CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED
-	// )
-	// {
-	// Log.e(TAG,
-	// "onFocusCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED");
-	// resetCaptureCallback();
-	// CameraController.onAutoFocus(true);
-	// HALv3.autoFocusTriggered = false;
-	//
-	// } else if (result.get(CaptureResult.CONTROL_AF_STATE) ==
-	// CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED
-	// )
-	// {
-	// Log.e(TAG,
-	// "onFocusCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED");
-	// resetCaptureCallback();
-	// CameraController.onAutoFocus(false);
-	// HALv3.autoFocusTriggered = false;
-	// } else if (result.get(CaptureResult.CONTROL_AF_STATE) ==
-	// CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN
-	// )
-	// {
-	// Log.e(TAG,
-	// "onFocusCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN");
-	// // resetCaptureCallback();
-	// // CameraController.onAutoFocus(false);
-	// // HALv3.autoFocusTriggered = false;
-	// }
-	// } catch (Exception e)
-	// {
-	// Log.e(TAG, "Exception: " + e.getMessage());
-	// }
-	//
-	// // if(result.getSequenceId() == iCaptureID)
-	// // {
-	// // //Log.e(TAG, "Image metadata received. Capture timestamp = " +
-	// // result.get(CaptureResult.SENSOR_TIMESTAMP));
-	// // iPreviewFrameID = result.get(CaptureResult.SENSOR_TIMESTAMP);
-	// // }
-	//
-	// // Note: result arriving here is just image metadata, not the image
-	// // itself
-	// // good place to extract sensor gain and other parameters
-	//
-	// // Note: not sure which units are used for exposure time (ms?)
-	// // currentExposure = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
-	// // currentSensitivity =
-	// // result.get(CaptureResult.SENSOR_SENSITIVITY);
-	//
-	// // dumpCaptureResult(result);
-	// }
-	//
-	// private void resetCaptureCallback()
-	// {
-	// if (HALv3.getInstance().previewRequestBuilder != null &&
-	// HALv3.getInstance().camDevice != null)
-	// {
-	// int focusMode =
-	// PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
-	// CameraController.isFrontCamera() ? MainScreen.sRearFocusModePref
-	// : MainScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
-	// HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
-	// focusMode);
-	// HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
-	// CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
-	// try
-	// {
-	// Log.e(TAG, "resetCaptureCallback. CONTROL_AF_TRIGGER_CANCEL");
-	// // HALv3.getInstance().camDevice.stopRepeating();
-	// CameraController.iCaptureID =
-	// HALv3.getInstance().mCaptureSession.capture(
-	// HALv3.getInstance().previewRequestBuilder.build(), null, null);
-	// } catch (CameraAccessException e)
-	// {
-	// e.printStackTrace();
-	// }
-	// }
-	// }
-	// };
-
+	
 	public final static CameraCaptureSession.CaptureCallback captureCallback	= new CameraCaptureSession.CaptureCallback()
 	{
+		boolean resetInProgress = false;
+		int resetRequestId = 0;
+		
+		
 		@Override
 		public void onCaptureCompleted(
 				CameraCaptureSession session,
 				CaptureRequest request,
 				TotalCaptureResult result)
 		{
-			// PluginManager.getInstance().onCaptureCompleted(result);
 			try
 			{
 //				if(HALv3.autoFocusTriggered)
 //					Log.e(TAG, "CAPTURE_AF_STATE = " + result.get(CaptureResult.CONTROL_AF_STATE));
-				// HALv3.exposureTime = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
-				// Log.e(TAG, "EXPOSURE TIME = " + HALv3.exposureTime);
 				if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED
 						&& HALv3.autoFocusTriggered)
 				{
-					 Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED");
+//					 Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED");
 					resetCaptureCallback();
 					CameraController.onAutoFocus(true);
 					HALv3.autoFocusTriggered = false;
@@ -2271,7 +2631,7 @@ public class HALv3
 				else if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED
 						&& HALv3.autoFocusTriggered)
 				{
-					Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED");
+//					Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED");
 					resetCaptureCallback();
 					CameraController.onAutoFocus(false);
 					HALv3.autoFocusTriggered = false;
@@ -2284,110 +2644,79 @@ public class HALv3
 						CameraController.onAutoFocusMoving(true);
 					}
 				} 
-//				else if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN
-//						&& HALv3.autoFocusTriggered)
-//				{
-//					// Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_ACTIVE_SCAN");
-//					// resetCaptureCallback();
-//					// CameraController.onAutoFocus(false);
-//					// HALv3.autoFocusTriggered = false;
-//				}
-//				else if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_INACTIVE
-//						&& HALv3.autoFocusTriggered)
-//				{
-//					// Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_INACTIVE");
-//					// resetCaptureCallback();
-//					// CameraController.onAutoFocus(false);
-//					// HALv3.autoFocusTriggered = false;
-//				}
-	
 			} catch (Exception e)
 			{
 				Log.e(TAG, "Exception: " + e.getMessage());
 			}
 	
-			// if(result.getSequenceId()
-			// ==
-			// iCaptureID)
-			// {
-			// //Log.e(TAG,
-			// "Image metadata received. Capture timestamp = "
-			// +
-			// result.get(CaptureResult.SENSOR_TIMESTAMP));
-			// iPreviewFrameID
-			// =
-			// result.get(CaptureResult.SENSOR_TIMESTAMP);
-			// }
-	
 			// Note: result arriving here is just image metadata, not the image itself
 			// good place to extract sensor gain and other parameters
 	
 			// Note: not sure which units are used for exposure time (ms?)
-			// currentExposure
-			// =
-			// result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
-			// currentSensitivity
-			// =
-			// result.get(CaptureResult.SENSOR_SENSITIVITY);
-	
-			// dumpCaptureResult(result);
-		}
-	
-		private void resetCaptureCallback()
-		{
-			HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
-					CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
-			try
-			{
-				Log.e(TAG,
-						"resetCaptureCallback. CaptureRequest.CONTROL_AF_TRIGGER, CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL");
-				CameraController.iCaptureID = HALv3.getInstance().mCaptureSession.capture(
-						HALv3.previewRequestBuilder.build(), captureCallback, null);
-			} catch (CameraAccessException e)
-			{
+			 currentExposure = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
+			 currentSensitivity = result.get(CaptureResult.SENSOR_SENSITIVITY);
+			 
+			 ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_EV_CHANGED);
+			 ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_ISO_CHANGED);
+			
+			 if (request.get(CaptureRequest.SENSOR_SENSITIVITY) >= 50 && currentSensitivity != request.get(CaptureRequest.SENSOR_SENSITIVITY) && request.get(CaptureRequest.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_OFF && !resetInProgress) 
+			 {
+				try {
+					resetCaptureCallback();
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			 }
+			 
+			rggbChannelVector = result
+						.get(CaptureResult.COLOR_CORRECTION_GAINS); 
+			 
+			try {
+				int focusState = result.get(CaptureResult.CONTROL_AF_STATE);
+				if (focusState == CaptureResult.CONTROL_AF_STATE_PASSIVE_SCAN
+						|| focusState == CaptureResult.CONTROL_AF_STATE_PASSIVE_UNFOCUSED)
+					captureAllowed = false;
+				else
+					captureAllowed = true;
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			// if
-			// (HALv3.getInstance().previewRequestBuilder
-			// !=
-			// null
-			// &&
-			// HALv3.getInstance().camDevice
-			// !=
-			// null)
-			// {
-			// int
-			// focusMode
-			// =
-			// PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).getInt(
-			// CameraController.isFrontCamera()
-			// ?
-			// MainScreen.sRearFocusModePref
-			// :
-			// MainScreen.sFrontFocusModePref,
-			// CameraParameters.AF_MODE_AUTO);
-			// HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
-			// focusMode);
-			// HALv3.getInstance().previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
-			// CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
-			// try
-			// {
-			// //
-			// HALv3.getInstance().camDevice.stopRepeating();
-			// CameraController.iCaptureID
-			// =
-			// HALv3.getInstance().mCaptureSession.capture(
-			// HALv3.getInstance().previewRequestBuilder.build(),
-			// null,
-			// null);
-			// }
-			// catch
-			// (CameraAccessException
-			// e)
-			// {
-			// e.printStackTrace();
-			// }
-			// }
+		}
+	
+		public void onCaptureSequenceCompleted(CameraCaptureSession session, int sequenceId, long frameNumber) {
+			if (sequenceId == resetRequestId) {
+				resetInProgress = false;
+			}
+		};
+		
+		private void resetCaptureCallback()
+		{
+			if(HALv3.getInstance().mCaptureSession != null)
+			{
+				resetInProgress = true;
+				
+				HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
+						CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
+				try
+				{
+					HALv3.getInstance().mCaptureSession.capture(HALv3.previewRequestBuilder.build(), captureCallback, null);
+				} catch (CameraAccessException e)
+				{
+					e.printStackTrace();
+				}
+				
+				// Force set IDLE to prevent canceling all the time.
+				HALv3.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
+						CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE);
+				try
+				{
+					resetRequestId = HALv3.getInstance().mCaptureSession.capture(HALv3.previewRequestBuilder.build(), captureCallback, null);
+				} catch (CameraAccessException e)
+				{
+					e.printStackTrace();
+				}
+			}
 		}
 	};
 
@@ -2400,10 +2729,27 @@ public class HALv3
 				TotalCaptureResult result)
 		{
 			Log.e(TAG, "CAPTURE COMPLETED");
-			PluginManager.getInstance().onCaptureCompleted(	result);
+			RggbChannelVector rggb = result.get(CaptureResult.COLOR_CORRECTION_GAINS);
+			ColorSpaceTransform transformMatrix = result.get(CaptureResult.COLOR_CORRECTION_TRANSFORM);
+			Log.e(TAG, "RGGB = R: " + rggb.getRed() + " G_even: " + rggb.getGreenEven()+ " G_odd: " + rggb.getGreenOdd() + " B: " + rggb.getBlue());
+			Log.e(TAG, "Transform Matrix: " + transformMatrix.toString());
+			Log.e(TAG, "Exposure time = " + result.get(CaptureResult.SENSOR_EXPOSURE_TIME));
+			Log.e(TAG, "Frame duration = " + result.get(CaptureResult.SENSOR_FRAME_DURATION));
+			Log.e(TAG, "Sensor sensitivity = " + result.get(CaptureResult.SENSOR_SENSITIVITY));
+			pluginManager.onCaptureCompleted(result);
 		}
 	};
 
+	public static void setNeedPreviewFrame(boolean needPreviewFrames)
+	{
+		needPreviewFrame |= needPreviewFrames;
+	}
+	
+	public static void resetNeedPreviewFrame()
+	{
+		needPreviewFrame = false;
+	}
+	
 	public final static ImageReader.OnImageAvailableListener imageAvailableListener = new ImageReader.OnImageAvailableListener()
 	{
 		@Override
@@ -2415,9 +2761,13 @@ public class HALv3
 			// Image im = ir.acquireLatestImage();
 
 			Image im = ir.acquireNextImage();
-			// if(iPreviewFrameID == im.getTimestamp())
 			if (ir.getSurface() == CameraController.mPreviewSurface)
 			{
+				if (!needPreviewFrame)
+				{
+					im.close();
+					return;
+				}
 				ByteBuffer Y = im.getPlanes()[0].getBuffer();
 				ByteBuffer U = im.getPlanes()[1].getBuffer();
 				ByteBuffer V = im.getPlanes()[2].getBuffer();
@@ -2427,6 +2777,7 @@ public class HALv3
 					|| (!V.isDirect()))
 				{
 					Log.e(TAG,"Oops, YUV ByteBuffers isDirect failed");
+					im.close();
 					return;
 				}
 
@@ -2451,7 +2802,7 @@ public class HALv3
 								imageWidth,
 								imageHeight);
 
-				PluginManager.getInstance().onPreviewFrame(data);
+				pluginManager.onPreviewFrame(data);
 			} else
 			{
 				Log.e("HALv3", "onImageAvailable");
@@ -2472,6 +2823,7 @@ public class HALv3
 						|| (!V.isDirect()))
 					{
 						Log.e(TAG,"Oops, YUV ByteBuffers isDirect failed");
+						im.close();
 						return;
 					}
 
@@ -2498,7 +2850,7 @@ public class HALv3
 					if (status != 0)
 						Log.e(TAG, "Error while cropping: "	+ status);
 
-					PluginManager.getInstance().addToSharedMemExifTags(null);
+					pluginManager.collectExifData(null);
 					if (!resultInHeap)
 						frameData = YuvImage.GetByteFrame();
 					else
@@ -2516,36 +2868,104 @@ public class HALv3
 					frame_len = jpeg.limit();
 					frameData = new byte[frame_len];
 					jpeg.get(frameData,	0, frame_len);
-
-					PluginManager.getInstance().addToSharedMemExifTags(frameData);
-					if (resultInHeap)
+					
+					if(HALv3.originalCaptureFormat == ImageFormat.YUV_420_888)
 					{
-						frame = SwapHeap.SwapToHeap(frameData);
-						frameData = null;
+						isYUV = true;
+						CameraController.Size imageSize = CameraController.getCameraImageSize();
+						
+						frame = ImageConversion.JpegConvert(frameData, imageSize.getWidth(),
+								imageSize.getHeight(), false, false, 0);
+						frame_len = imageSize.getWidth() * imageSize.getHeight() + 2 * ((imageSize.getWidth() + 1) / 2)
+								* ((imageSize.getHeight() + 1) / 2);
+
+						pluginManager.collectExifData(null);
+						if (!resultInHeap)
+						{
+							frameData = SwapHeap.SwapFromHeap(frame, frame_len);
+							frame = 0;
+						}
+					}
+					else
+					{
+						pluginManager.collectExifData(frameData);
+						if (resultInHeap)
+						{
+							frame = SwapHeap.SwapToHeap(frameData);
+							frameData = null;
+						}
 					}
 				} else if (im.getFormat() == ImageFormat.RAW_SENSOR)
 				{
-					Log.e(TAG, "captured RAW");
-					ByteBuffer raw = im.getPlanes()[0].getBuffer();
+					if (lastCaptureFormat == CameraController.YUV_RAW && CameraController.isGalaxyS6) {
+						// This case is for SUPER mode on galaxy s6. And nothing more.
+						// It means we have RAW image and need to crop and convert it to YUV.
+						
+						ByteBuffer raw = im.getPlanes()[0].getBuffer();
 
-					frame_len = raw.limit();
-					frameData = new byte[frame_len];
-					raw.get(frameData, 0, frame_len);
+						if (!raw.isDirect())
+						{
+							Log.e(TAG,"Oops, YUV ByteBuffers isDirect failed");
+							im.close();
+							return;
+						}
+						
+						CameraController.Size imageSize = CameraController.getCameraImageSize();
+						CameraController.Size rawImageSize = CameraController.getMaxCameraImageSize(CameraController.RAW);
+						int status = YuvImage.CreateYUVImageFromRAW(
+								raw, 
+								im.getPlanes()[0].getPixelStride(), 
+								im.getPlanes()[0].getRowStride(), 
+								rawImageSize.getWidth(), 
+								rawImageSize.getHeight(), 
+								imageSize.getWidth(), 
+								imageSize.getHeight(), 
+								(int) (rggbChannelVector.getRed() * 256), 
+								(int) (rggbChannelVector.getBlue() * 256), 
+								blevel, 
+								wlevel, 
+								4, 
+								0);
 
-					// PluginManager.getInstance().addToSharedMemExifTags(frameData);
-					if (resultInHeap)
-					{
-						frame = SwapHeap.SwapToHeap(frameData);
-						frameData = null;
+						if (status != 0)
+							Log.e(TAG, "Error while cropping: "	+ status);
+
+						pluginManager.collectExifData(null);
+						if (!resultInHeap)
+							frameData = YuvImage.GetByteFrame();
+						else
+							frame = YuvImage.GetFrame();
+
+						frame_len = imageSize.getWidth() * imageSize.getHeight() + imageSize.getWidth()	* ((imageSize.getHeight() + 1) / 2);
+
+						isYUV = true;
+						
+					} else {
+						Log.e(TAG, "captured RAW");
+						ByteBuffer raw = im.getPlanes()[0].getBuffer();
+						
+						frame_len = raw.limit();
+						frameData = new byte[frame_len];
+						raw.get(frameData, 0, frame_len);
+						
+						if (resultInHeap)
+						{
+							frame = SwapHeap.SwapToHeap(frameData);
+							frameData = null;
+						}
 					}
+					
 				}
 
-				if (im.getFormat() == ImageFormat.RAW_SENSOR)
-					PluginManager.getInstance().onImageTaken(frame,	frameData, frame_len, CameraController.RAW);
+				if (im.getFormat() == ImageFormat.RAW_SENSOR && !(lastCaptureFormat == CameraController.YUV_RAW && CameraController.isGalaxyS6)) {
+					pluginManager.onImageTaken(frame, frameData, frame_len, CameraController.RAW);
+				}
 				else
 				{
-					PluginManager.getInstance().onImageTaken(frame,	frameData, frame_len, isYUV ? CameraController.YUV : CameraController.JPEG);
-					HALv3.cancelAutoFocusHALv3();
+					ApplicationScreen.getPluginManager().onImageTaken(frame, frameData, frame_len, isYUV ? CameraController.YUV : CameraController.JPEG);
+					if (CameraController.getFocusMode() != CameraParameters.AF_MODE_CONTINUOUS_PICTURE) {
+						HALv3.cancelAutoFocusHALv3();
+					}
 				}
 
 				currentFrameIndex++;
@@ -2554,7 +2974,7 @@ public class HALv3
 							CameraController.frameFormat, currentFrameIndex,
 							pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
 							evCompensation == null ? 0 : evCompensation[currentFrameIndex],
-							sensorGain == null ? 0 : sensorGain[currentFrameIndex],
+							sensorGain == null ? currentSensitivity : sensorGain[currentFrameIndex],
 							exposureTime == null ? 0 : exposureTime[currentFrameIndex]);
 			}
 
@@ -2562,6 +2982,32 @@ public class HALv3
 			im.close();
 		}
 	};
+	
+	
+	/*
+	 * Debug code for Galaxy S6. Trying to capture RAW with stopped preview (coz it hangs while capturing RAW)
+	 * At this point we try to resume preview. But now works only full camera re-launch
+	 */
+//	public static void onCaptureFinished()
+//	{
+//		inCapture = false;
+//		if(lastCaptureFormat == CameraController.YUV_RAW && CameraController.isGalaxyS6)
+////		{
+////			ApplicationScreen.getGUIManager().setCameraModeGUI(0);
+////			ApplicationScreen.instance.pauseMain();
+////			ApplicationScreen.instance.switchingMode(false);
+////			ApplicationScreen.instance.resumeMain();
+////		}
+//			try
+//			{
+//				HALv3.getInstance().configurePreviewRequest(false);
+//			} catch (CameraAccessException e)
+//			{
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+////			appInterface.relaunchCamera();
+//	}
 	// ^^ HALv3 code
 	// --------------------------------------------------------------
 	// camera-related Callbacks

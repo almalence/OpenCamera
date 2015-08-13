@@ -2,9 +2,11 @@
 <resources>
     <string name="Preference_ImageSizeFrontValue">imageSizePrefCommonFront</string>
     <string name="Preference_ImageSizeRearValue">imageSizePrefCommonBack</string>
+    <string name="Preference_ImageSizeSonyRemoteValue">Preference_ImageSizeSonyRemoteValue</string>
     
     <string name="Preference_ImageSizePrefSmartMultishotBackValue">imageSizePrefSmartMultishotBack</string>
     <string name="Preference_ImageSizePrefSmartMultishotFrontValue">imageSizePrefSmartMultishotFront</string>
+    <string name="Preference_ImageSizePrefSmartMultishotSonyRemoteValue">Preference_ImageSizePrefSmartMultishotSonyRemoteValue</string>
     
     <string name="Preference_ImageSizePrefPanoramaBackValue">imageSizePrefPanoramaBack</string>
     <string name="Preference_ImageSizePrefPanoramaFrontValue">imageSizePrefPanoramaFront</string>
@@ -19,17 +21,22 @@
     <string name="Preference_EvCompensationValue">Preference_EvCompensationValue</string>
     <string name="Preference_SceneModeValue">Preference_SceneModeValue</string>
     <string name="Preference_WBModeValue">Preference_WBModeValue</string>
+    <string name="Preference_ColorTemperatureValue">Preference_ColorTemperatureValue</string>
     <string name="Preference_FrontFocusModeValue">Preference_FrontFocusModeValue</string>
     <string name="Preference_FrontFocusModeVideoValue">Preference_FrontFocusModeVideoValue</string>
     <string name="Preference_RearFocusModeValue">Preference_RearFocusModeValue</string>
     <string name="Preference_RearFocusModeVideoValue">Preference_RearFocusModeVideoValue</string>
+    <string name="Preference_FrontColorEffectValue">Preference_FrontColorEffectValue</string>
+    <string name="Preference_RearColorEffectValue">Preference_RearColorEffectValue</string>
     <string name="Preference_FlashModeValue">Preference_FlashModeValue</string>
     <string name="Preference_ISOValue">Preference_ISOValue</string>
     <string name="Preference_MeteringModeValue">Preference_MeteringModeValue</string>
     <string name="Preference_ExposureTimeValue">Preference_ExposureTimeValue</string>
     <string name="Preference_ExposureTimeModeValue">Preference_ExposureTimeModeValue</string>
+    <string name="Preference_RealExposureTimeOnPreviewValue">Preference_RealExposureTimeOnPreviewValue</string>
     <string name="Preference_FocusDistanceValue">Preference_FocusDistanceValue</string>
     <string name="Preference_FocusDistanceModeValue">Preference_FocusDistanceModeValue</string>
+    <string name="Preference_CameraModeValue">Preference_CameraModeValue</string>
     
     <string name="Preference_DelayedCaptureValue">Preference_DelayedCaptureValue</string>
     <string name="Preference_ShowDelayedCaptureValue">Preference_ShowDelayedCaptureValue</string>
@@ -58,23 +65,30 @@
     <string name="Preference_SavePathLollipopValue">Preference_SavePathLollipopValue</string>
     <string name="Preference_ExportNameValue">Preference_ExportName</string>
     <string name="Preference_SaveToValue">Preference_SaveToValue</string>
+    <string name="Preference_LastPhotoModeValue">Preference_LastPhotoModeValue</string>
     <string name="Preference_SortByDataValue">Preference_SortByDataValue</string>
     <string name="Preference_SavePathPrefixValue">Preference_SavePathPrefixValue</string>
     <string name="Preference_SavePathPostfixValue">Preference_SavePathPostfixValue</string>
     <string name="Preference_EnableExifTagOrientationValue">Preference_EnableExifTagOrientationValue</string>
     <string name="Preference_AdditionalRotationValue">Preference_AdditionalRotationValue</string>
+    <string name="Preference_UseGeotaggingValue">useGeoTaggingPrefExport</string>
     
     <string name="Preference_KeepScreenOnValue">Preference_KeepScreenOnValue</string>
+    <string name="Preference_ShowFastSwitchShutterValue">Preference_ShowFastSwitchShutterValue</string>
     
     <string name="Preference_TimestampDateValue">Preference_TimestampDateValue</string>
     <string name="Preference_TimestampAbbreviationValue">Preference_TimestampAbbreviationValue</string>
     <string name="Preference_TimestampTimeValue">Preference_TimestampTimeValue</string>
+    <string name="Preference_TimestampGeoValue">Preference_TimestampGeoValue</string>
     <string name="Preference_TimestampSeparatorValue">Preference_TimestampSeparatorValue</string>
     <string name="Preference_TimestampCustomTextValue">Preference_TimestampCustomTextValue</string>
     <string name="Preference_TimestampColorValue">Preference_TimestampColorValue</string>
     <string name="Preference_TimestampFontSizeValue">Preference_TimestampFontSizeValue</string>
     
-    <string name="Preference_UseHALv3Key">useHALv3Pref</string>
+    <string name="Preference_UseCamera2Key">useHALv3Pref</string>
     <string name="Preference_allowExternalGalleries">allowExternalGalleries</string>
+    <string name="Preference_ConnectToSonyCameras">Preference_connectToSonyCameras</string>
+    
+    <string name="Preference_ExpoBracketingPreviewModePref">expo_previewMode</string>
     
 </resources>

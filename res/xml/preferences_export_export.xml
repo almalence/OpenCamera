@@ -11,7 +11,7 @@
             android:title="@string/Pref_Export_UseGeoTagging_Title"
             android:defaultValue="false"
             android:summary="@string/Pref_Export_UseGeoTagging_Summary"
-            android:key="useGeoTaggingPrefExport" />
+            android:key="@string/Preference_UseGeotaggingValue" />
 
     	<!-- -+-  -->
     	<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 

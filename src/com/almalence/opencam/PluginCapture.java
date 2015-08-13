@@ -33,8 +33,12 @@ public abstract class PluginCapture extends Plugin
 	protected boolean	inCapture;
 	protected boolean	aboutToTakePicture	= false;
 	protected int		imagesTaken			= 0;
-	protected int		imagesTakenRAW			= 0;
+	protected int		imagesTakenRAW		= 0;
 	protected int 		resultCompleted 	= 0;
+	
+	protected boolean	isAllImagesTaken	= false;
+	protected boolean	isAllCaptureResultsCompleted	= true; //Used only for camera2 mode when we wait all captureResult before send signal CAPTURE_FINISHED
+																//In camera1 mode always must be true!
 
 	public boolean getInCapture()
 	{
@@ -59,9 +63,9 @@ public abstract class PluginCapture extends Plugin
 		if (imagesTaken == 0)
 		{
 			if (frameData != null)
-				PluginManager.getInstance().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
+				ApplicationScreen.getPluginManager().addToSharedMemExifTagsFromJPEG(frameData, SessionID, -1);
 			else
-				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
+				ApplicationScreen.getPluginManager().addToSharedMemExifTagsFromCamera(SessionID);
 		}
 	}
 
@@ -70,6 +74,9 @@ public abstract class PluginCapture extends Plugin
 	{
 		inCapture = false;
 		aboutToTakePicture = false;
+		
+		isAllImagesTaken = false;
+		isAllCaptureResultsCompleted = true;
 	}
 
 	@Override
@@ -79,11 +86,11 @@ public abstract class PluginCapture extends Plugin
 		{
 			inCapture = true;
 
-			MainScreen.getGUIManager().lockControls = true;
+			ApplicationScreen.getGUIManager().lockControls = true;
 			Date curDate = new Date();
 			SessionID = curDate.getTime();
 
-			MainScreen.getInstance().muteShutter(true);
+			ApplicationScreen.instance.muteShutter(true);
 
 			if (CameraController.isAutoFocusPerform())
 				aboutToTakePicture = true;
