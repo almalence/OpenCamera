@@ -1981,9 +1981,6 @@ public class VideoCapturePlugin extends PluginCapture
 
 		lastCamera = camera;
 
-		Date curDate = new Date();
-		SessionID = curDate.getTime();
-
 		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH && videoStabilization)
 			CameraController.setVideoStabilization(true);
 
@@ -2883,6 +2880,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 	public void takePicture()
 	{
+		SessionID = System.currentTimeMillis();
 		createRequestIDList(1);
 		CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, true, true);
 	}
