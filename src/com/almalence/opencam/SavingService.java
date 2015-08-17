@@ -67,6 +67,7 @@ import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.support.v4.provider.DocumentFile;
 import android.util.Size;
+import android.widget.Toast;
 
 import com.almalence.SwapHeap;
 import com.almalence.plugins.export.ExifDriver.ExifDriver;
@@ -885,7 +886,21 @@ public class SavingService extends NotificationService
 							}
 							is.close();
 							os.close();
-						} catch (Exception e)
+						}
+						catch (IOException eIO)
+						{
+							eIO.printStackTrace();
+							final IOException eIOFinal = eIO;
+							ApplicationScreen.instance.runOnUiThread(new Runnable()
+							{
+								public void run()
+								{
+									Toast.makeText(MainScreen.getMainContext(), "Error ocurred:" + eIOFinal.getLocalizedMessage(),
+											Toast.LENGTH_LONG).show();
+								}
+							});
+						}
+						catch (Exception e)
 						{
 							e.printStackTrace();
 						}

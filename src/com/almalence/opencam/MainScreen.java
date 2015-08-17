@@ -1164,6 +1164,7 @@ public class MainScreen extends ApplicationScreen
 			isScreenTimerRunning = true;
 		}
 
+		//checking for available memory
 		long memoryFree = getAvailableInternalMemory();
 		if (memoryFree < 30)
 			Toast.makeText(MainScreen.getMainContext(), "Almost no free space left on internal storage.",
