@@ -519,7 +519,7 @@ public class PluginManager extends PluginManagerBase
 		} else if ("general_image_size".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_general_image_size);
-			if (CameraController.isUseHALv3())
+			if (CameraController.isUseCamera2())
 			{
 				Preference pref;
 				if (null != (pref = pf.findPreference(ApplicationScreen.sImageSizeMultishotBackPref))
@@ -584,7 +584,7 @@ public class PluginManager extends PluginManagerBase
 		} else if ("processing_night_more".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_processing_night_more);
-			if (CameraController.isUseHALv3())
+			if (CameraController.isUseCamera2())
 			{
 				PreferenceScreen prefScr;
 				if (null != (prefScr = (PreferenceScreen) pf.findPreference("nightProcessingMoreScreen")))
@@ -860,7 +860,7 @@ public class PluginManager extends PluginManagerBase
 			shutterRelease = true;
 
 			/*
-			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more
+			 * Debug code for Galaxy S6 in Super mode. Look at Camera2 for more
 			 * details
 			 */
 			// CameraController.onCaptureFinished();
@@ -884,7 +884,7 @@ public class PluginManager extends PluginManagerBase
 			ApplicationScreen.getGUIManager().startProcessingAnimation();
 
 			// Returns actual flash mode if it was changed during capturing.
-			if (!CameraController.isUseHALv3())
+			if (!CameraController.isUseCamera2())
 			{
 				int flashMode = ApplicationScreen.instance.getFlashModePref(ApplicationScreen.sDefaultFlashValue);
 				if (flashMode != CameraParameters.FLASH_MODE_CAPTURE_TORCH)
@@ -938,7 +938,7 @@ public class PluginManager extends PluginManagerBase
 			shutterRelease = true;
 
 			/*
-			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more
+			 * Debug code for Galaxy S6 in Super mode. Look at Camera2 for more
 			 * details
 			 */
 			// CameraController.onCaptureFinished();

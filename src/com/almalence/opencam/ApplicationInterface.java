@@ -31,7 +31,7 @@ import android.media.ImageReader;
 import android.view.Surface;
 
 /*
- * Application interface used by CameraController and secondary classes as HALv3
+ * Application interface used by CameraController and secondary classes as Camera2
  * to communicate with implementation of OpenCameraApplication class.
  * Commonly provides methods related to camera functionality
  */
@@ -59,7 +59,7 @@ public interface ApplicationInterface
 	
 	public static final int				MSG_APPLICATION_STOP					= 163;
 
-	// For HALv3 code version
+	// For Camera2 code version
 	public static final int				MSG_CAMERA_OPENED						= 16;
 	public static final int				MSG_SURFACE_READY						= 17;
 	public static final int				MSG_SURFACE_CONFIGURED					= 170;
@@ -67,7 +67,7 @@ public interface ApplicationInterface
 	public static final int				MSG_PROCESS								= 19;
 	public static final int				MSG_PROCESS_FINISHED					= 20;
 	public static final int				MSG_VOLUME_ZOOM							= 21;
-	// ^^ For HALv3 code version
+	// ^^ For Camera2 code version
 
 	public static final int				MSG_BAD_FRAME							= 24;
 	public static final int				MSG_OUT_OF_MEMORY						= 25;

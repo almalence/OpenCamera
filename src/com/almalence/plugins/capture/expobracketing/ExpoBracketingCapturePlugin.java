@@ -123,7 +123,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		preferenceSceneMode = ApplicationScreen.instance.getSceneModePref();
 		preferenceFlashMode = ApplicationScreen.instance.getFlashModePref(ApplicationScreen.sDefaultFlashValue);
 		
-		if (CameraController.isUseHALv3() && CameraController.isNexus)
+		if (CameraController.isUseCamera2() && CameraController.isNexus)
 			ApplicationScreen.instance.setFlashModePref(CameraParameters.FLASH_MODE_OFF);
 
 		cdt = null;
@@ -146,7 +146,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		ApplicationScreen.instance.setEVPref(preferenceEVCompensationValue);
 		ApplicationScreen.instance.setSceneModePref(preferenceSceneMode);
 
-		if (CameraController.isUseHALv3() && CameraController.isNexus)
+		if (CameraController.isUseCamera2() && CameraController.isNexus)
 		{
 			prefs.edit().putInt(ApplicationScreen.sFlashModePref, preferenceFlashMode).commit();
 			CameraController.setCameraFlashMode(preferenceFlashMode);
@@ -159,7 +159,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		ApplicationScreen.instance.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, true, false, true);
 		ApplicationScreen.instance.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, true, true);
 
-		if (CameraController.isUseHALv3() && CameraController.isNexus)
+		if (CameraController.isUseCamera2() && CameraController.isNexus)
 			ApplicationScreen.instance.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false, true);
 	}
 
@@ -183,7 +183,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		try
 		{
 			int[] flashModes = CameraController.getSupportedFlashModes();
-			if (flashModes != null && flashModes.length > 0 && CameraController.isUseHALv3() && CameraController.isNexus)
+			if (flashModes != null && flashModes.length > 0 && CameraController.isUseCamera2() && CameraController.isNexus)
 			{
 				SharedPreferences.Editor editor = prefs.edit();
 				editor.putInt(ApplicationScreen.sFlashModePref, CameraParameters.FLASH_MODE_OFF);

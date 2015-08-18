@@ -142,9 +142,9 @@ public class MainScreen extends ApplicationScreen
 
 	public static MainScreen	thiz;
 
-	// Interface to HALv3 camera and Old style camera
+	// Interface to Camera2 camera and Old style camera
 
-	// HALv3 camera's objects
+	// Camera2 camera's objects
 	private ImageReader			mImageReaderPreviewYUV;
 	private ImageReader			mImageReaderYUV;
 	private ImageReader			mImageReaderJPEG;
@@ -850,7 +850,7 @@ public class MainScreen extends ApplicationScreen
 
 		if (cp != null)
 		{
-			if (!CameraController.isHALv3Supported())
+			if (!CameraController.isCamera2Supported())
 				cp.setEnabled(false);
 			else
 				cp.setEnabled(true);
@@ -902,7 +902,7 @@ public class MainScreen extends ApplicationScreen
 				}
 			});
 
-			if (CameraController.isRAWCaptureSupported() && CameraController.isUseHALv3())
+			if (CameraController.isRAWCaptureSupported() && CameraController.isUseCamera2())
 				fp.setEnabled(true);
 			else
 				fp.setEnabled(false);
@@ -932,11 +932,11 @@ public class MainScreen extends ApplicationScreen
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 
-		boolean isHALv3 = prefs.getBoolean(getResources().getString(R.string.Preference_UseCamera2Key),
+		boolean isCamera2 = prefs.getBoolean(getResources().getString(R.string.Preference_UseCamera2Key),
 				(CameraController.isNexus || CameraController.isFlex2 || CameraController.isAndroidOne || CameraController.isGalaxyS6 || CameraController.isG4) ? true : false);
-		CameraController.useHALv3(isHALv3);
+		CameraController.useCamera2(isCamera2);
 		prefs.edit()
-				.putBoolean(getResources().getString(R.string.Preference_UseCamera2Key), CameraController.isUseHALv3())
+				.putBoolean(getResources().getString(R.string.Preference_UseCamera2Key), CameraController.isUseCamera2())
 				.commit();
 		int cameraSelected = prefs.getInt(MainScreen.sCameraModePref, 0);
 		if (cameraSelected == CameraController.getNumberOfCameras() - 1)
@@ -963,7 +963,7 @@ public class MainScreen extends ApplicationScreen
 
 		if (!CameraController.isRemoteCamera())
 		{
-			if (CameraController.isUseHALv3())
+			if (CameraController.isUseCamera2())
 				stopImageReaders();
 		}
 
@@ -1113,12 +1113,12 @@ public class MainScreen extends ApplicationScreen
 						preview.setOnTouchListener(MainScreen.this);
 						preview.setKeepScreenOn(true);
 
-						if (CameraController.isUseHALv3())
+						if (CameraController.isUseCamera2())
 						{
 							MainScreen.setSurfaceHolderSize(1, 1);
 						}
 
-						if (CameraController.isUseHALv3())
+						if (CameraController.isUseCamera2())
 						{
 							Log.d("MainScreen", "onResume: CameraController.setupCamera(null)");
 							CameraController.setupCamera(null, !switchingMode || openCamera);
@@ -1263,7 +1263,7 @@ public class MainScreen extends ApplicationScreen
 
 		if (!CameraController.isRemoteCamera())
 		{
-			if (CameraController.isUseHALv3())
+			if (CameraController.isUseCamera2())
 				stopImageReaders();
 		} else
 		{
@@ -1329,7 +1329,7 @@ public class MainScreen extends ApplicationScreen
 								+ width + "x" + height);
 						if (!CameraController.isRemoteCamera())
 						{
-							if (!CameraController.isUseHALv3())
+							if (!CameraController.isUseCamera2())
 							{
 								CameraController.setupCamera(holder, !switchingMode);
 							} else
@@ -1372,7 +1372,8 @@ public class MainScreen extends ApplicationScreen
 	public void setSpecialImageSizeIndexPref(int iIndex)
 	{
 		SharedPreferences.Editor prefEditor = PreferenceManager.getDefaultSharedPreferences(mainContext).edit();
-		prefEditor.putString(MainScreen.sImageSizeMultishotBackPref, String.valueOf(iIndex));
+		prefEditor.putString(CameraController.getCameraIndex() == 0 ? MainScreen.sImageSizeMultishotBackPref
+																	: MainScreen.sImageSizeMultishotFrontPref, String.valueOf(iIndex));
 		prefEditor.commit();
 	}
 
@@ -1380,13 +1381,14 @@ public class MainScreen extends ApplicationScreen
 	public String getSpecialImageSizeIndexPref()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
-		return prefs.getString(MainScreen.sImageSizeMultishotBackPref, "-1");
+		return prefs.getString(CameraController.getCameraIndex() == 0 ? MainScreen.sImageSizeMultishotBackPref
+																	  : MainScreen.sImageSizeMultishotFrontPref, "-1");
 	}
 
 	public static int selectImageDimensionMultishot()
 	{
 		String modeName = PluginManager.getInstance().getActiveModeID();
-		if (CameraController.isUseHALv3() && modeName.contains("night"))
+		if (CameraController.isUseCamera2() && modeName.contains("night"))
 		{
 			return 0;
 		}
@@ -1474,8 +1476,8 @@ public class MainScreen extends ApplicationScreen
 		// prepare list of surfaces to be used in capture requests
 		if (!CameraController.isRemoteCamera())
 		{
-			if (CameraController.isUseHALv3())
-				configureHALv3Camera(captureFormat);
+			if (CameraController.isUseCamera2())
+				configureCamera2Camera(captureFormat);
 			else
 			{
 				Camera.Size sz = CameraController.getCameraParameters().getPreviewSize();
@@ -2910,7 +2912,7 @@ public class MainScreen extends ApplicationScreen
 
 		int launchesLeft = MainScreen.getLeftLaunches(mode.modeID);
 		int id = MainScreen.getAppResources().getIdentifier(
-				(CameraController.isUseHALv3() ? mode.modeNameHAL : mode.modeName), "string",
+				(CameraController.isUseCamera2() ? mode.modeNameHAL : mode.modeName), "string",
 				MainScreen.thiz.getPackageName());
 		String modename = MainScreen.getAppResources().getString(id);
 

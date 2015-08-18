@@ -189,7 +189,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 		else
 			evPref.setEnabled(false);
 
-		if (CameraController.isUseHALv3())
+		if (CameraController.isUseCamera2())
 		{
 			useCurrentSensitivityPref.setEnabled(true);
 			useCurrentExposureTimePref.setEnabled(true);
@@ -219,7 +219,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 		else
 			flashPref.setEnabled(false);
 
-		if (CameraController.isUseHALv3())
+		if (CameraController.isUseCamera2())
 			isoPref.setEnabled(false);
 		else
 		{

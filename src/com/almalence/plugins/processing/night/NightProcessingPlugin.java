@@ -88,7 +88,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 	{
 		sessionID = SessionID;
 
-		if (CameraController.isUseHALv3())
+		if (CameraController.isUseCamera2())
 		{
 			PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
 					PluginManager.getInstance().getActiveMode().modeSaveNameHAL);
@@ -109,7 +109,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 		mOutImageWidth = mImageWidth;
 		mOutImageHeight = mImageHeight;
 
-		if (CameraController.isUseHALv3())
+		if (CameraController.isUseCamera2())
 		{
 			if (upscaleResult)
 			{

@@ -2675,7 +2675,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				int initValue = preferences.getInt(ApplicationScreen.sISOPref, ApplicationScreen.sDefaultISOValue);
 				int meteringMode = preferences.getInt(ApplicationScreen.sMeteringModePref,
 						ApplicationScreen.sDefaultMeteringValue);
-				if (CameraController.isUseHALv3() && meteringMode == CameraParameters.meteringModeManual)
+				if (CameraController.isUseCamera2() && meteringMode == CameraParameters.meteringModeManual)
 				{
 					// The default (AUTO) value of ISO and manual metering mode
 					// produce too dark image.
@@ -2912,7 +2912,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					if (mWB != CameraParameters.WB_MODE_OFF)
 						guiView.findViewById(R.id.manualWBLayout).setVisibility(View.GONE);
 
-					if (CameraController.isUseHALv3())
+					if (CameraController.isUseCamera2())
 					{
 						mISO = CameraParameters.ISO_AUTO;
 						setISO(mISO);
@@ -2936,7 +2936,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		}
 
 		if (!PluginManager.getInstance().getActiveModeID().equals("video")
-				&& !(PluginManager.getInstance().getActiveModeID().equals("nightmode") && CameraController.isUseHALv3()))
+				&& !(PluginManager.getInstance().getActiveModeID().equals("nightmode") && CameraController.isUseCamera2()))
 		{
 			RotateImageView buttonImageSize = (RotateImageView) topMenuButtons.get(MODE_IMAGE_SIZE);
 			buttonImageSize.setImageResource(ICON_IMAGE_SIZE);
@@ -3261,7 +3261,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			case MODE_IMAGE_SIZE:
 				if (PluginManager.getInstance().getActiveModeID().equals("video")
 						|| (PluginManager.getInstance().getActiveModeID().equals("nightmode") && CameraController
-								.isUseHALv3()))
+								.isUseCamera2()))
 				{
 					return false;
 				}
@@ -3622,7 +3622,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		case IMAGE_SIZE:
 			if (!PluginManager.getInstance().getActiveModeID().equals("video")
 					&& !(PluginManager.getInstance().getActiveModeID().equals("nightmode") && CameraController
-							.isUseHALv3()))
+							.isUseCamera2()))
 			{
 				String selectedSize = "";
 				final String modeId = PluginManager.getInstance().getActiveModeID();
@@ -3886,7 +3886,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			case R.id.imageSizeButton:
 				if (!PluginManager.getInstance().getActiveModeID().equals("video")
 						&& !(PluginManager.getInstance().getActiveModeID().equals("nightmode") && CameraController
-								.isUseHALv3()))
+								.isUseCamera2()))
 				{
 					addQuickSetting(SettingsType.IMAGE_SIZE, true);
 				}
@@ -4312,7 +4312,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			case R.id.imageSizeButton:
 				if (!PluginManager.getInstance().getActiveModeID().equals("video")
 						&& !(PluginManager.getInstance().getActiveModeID().equals("nightmode") && CameraController
-								.isUseHALv3()))
+								.isUseCamera2()))
 				{
 					addQuickSetting(SettingsType.IMAGE_SIZE, false);
 				}
@@ -5946,7 +5946,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		if (isEVInitEnabled)
 			disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, false, true, false);
 
-		if (isIsoInitEnabled && !CameraController.isUseHALv3())
+		if (isIsoInitEnabled && !CameraController.isUseCamera2())
 			disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, false, true, false);
 		else
 		{

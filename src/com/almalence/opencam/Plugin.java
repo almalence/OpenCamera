@@ -380,7 +380,7 @@ public abstract class Plugin
 //		ApplicationScreen.setPreviewHeight(os.getHeight());
 	}
 
-	// Used only in old camera interface (HALv3 don't use it)
+	// Used only in old camera interface (Camera2 don't use it)
 	// called to set specific plugin's camera parameters
 	public void setupCameraParameters()
 	{

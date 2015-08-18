@@ -155,7 +155,7 @@ public class NightCapturePlugin extends PluginCapture
 	{
 		//Between switches from camera1 to camera2 APIs via preference screen application doesn't calls onCreate
 		//Re-initialize camera2 detection variables again.
-		usingCamera2API = CameraController.isUseHALv3(); 
+		usingCamera2API = CameraController.isUseCamera2(); 
 		usingSuperMode = CameraController.isUseSuperMode();
 		
 		if (usingSuperMode)
@@ -672,7 +672,7 @@ public class NightCapturePlugin extends PluginCapture
 						String.valueOf(usingSuperMode));
 		
 				// Note: a more memory-effective way would be to crop zoomed images right here
-				// (only possible with HALv3)
+				// (only possible with Camera2)
 				float zoom = CameraController.getZoom();
 				PluginManager.getInstance().addToSharedMem("zoom" + SessionID,
 						String.valueOf(zoom));

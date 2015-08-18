@@ -585,7 +585,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 
 	protected void AddModeSettings(String modeName, PreferenceFragment pf)
 	{
-		if (modeName.equals("super") && CameraController.isUseHALv3())
+		if (modeName.equals("super") && CameraController.isUseCamera2())
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_processing_super);
 			return;
@@ -908,7 +908,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		case ApplicationInterface.MSG_CAPTURE_FINISHED:
 
 			/*
-			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more
+			 * Debug code for Galaxy S6 in Super mode. Look at Camera2 for more
 			 * details
 			 */
 			// CameraController.onCaptureFinished();
@@ -959,7 +959,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		case ApplicationInterface.MSG_CAPTURE_FINISHED_NORESULT:
 
 			/*
-			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more
+			 * Debug code for Galaxy S6 in Super mode. Look at Camera2 for more
 			 * details
 			 */
 			// CameraController.onCaptureFinished();
@@ -1397,7 +1397,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 
 	public String getFileFormat()
 	{
-		if (CameraController.isUseHALv3())
+		if (CameraController.isUseCamera2())
 		{
 			return SavingService.getExportFileName(getActiveMode().modeSaveNameHAL);
 		} else

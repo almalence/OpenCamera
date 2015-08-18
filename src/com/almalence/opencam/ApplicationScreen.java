@@ -108,7 +108,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public Context						mainContext;
 	protected Handler					messageHandler;
 
-	// Interface to HALv3 camera and Old style camera
+	// Interface to Camera2 camera and Old style camera
 	protected CameraController			cameraController			= null;
 
 	protected int						captureFormat				= CameraController.JPEG;
@@ -706,7 +706,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 		if (!CameraController.isRemoteCamera())
 		{
-			if (CameraController.isUseHALv3())
+			if (CameraController.isUseCamera2())
 				stopImageReaders();
 		}
 	}
@@ -791,7 +791,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 						surfaceHolder.addCallback(ApplicationScreen.this);
 
 						// One of device camera is selected.
-						if (CameraController.isUseHALv3())
+						if (CameraController.isUseCamera2())
 						{
 							ApplicationScreen.instance.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
 							CameraController.setupCamera(null, true);
@@ -853,7 +853,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	{
 		if (!CameraController.isRemoteCamera())
 		{
-			if (CameraController.isUseHALv3() || ApplicationScreen.getPluginManager().isRestart())
+			if (CameraController.isUseCamera2() || ApplicationScreen.getPluginManager().isRestart())
 			{
 				new CountDownTimer(100, 100)
 				{
@@ -930,7 +930,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 		if (!CameraController.isRemoteCamera())
 		{
-			if (CameraController.isUseHALv3())
+			if (CameraController.isUseCamera2())
 				stopImageReaders();
 		} else
 		{
@@ -992,7 +992,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 						ApplicationScreen.instance.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
 						if (!CameraController.isRemoteCamera())
 						{
-							if (!CameraController.isUseHALv3())
+							if (!CameraController.isUseCamera2())
 							{
 								CameraController.setupCamera(holder, true);
 							} else
@@ -1049,8 +1049,8 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		// prepare list of surfaces to be used in capture requests
 		if (!CameraController.isRemoteCamera())
 		{
-			if (CameraController.isUseHALv3())
-				configureHALv3Camera(captureFormat);
+			if (CameraController.isUseCamera2())
+				configureCamera2Camera(captureFormat);
 			else
 			{
 				Camera.Size sz = CameraController.getCameraParameters().getPreviewSize();
@@ -1086,7 +1086,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 		if (!CameraController.isRemoteCamera())
 		{
-			if (!CameraController.isUseHALv3())
+			if (!CameraController.isUseCamera2())
 			{
 				try
 				{
@@ -1144,7 +1144,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 			prepareMeteringAreas();
 
-			if (!CameraController.isUseHALv3())
+			if (!CameraController.isUseCamera2())
 			{
 				guiManager.onCameraCreate();
 				ApplicationScreen.getPluginManager().onCameraParametersSetup();
@@ -1167,7 +1167,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 			{
 				if (!CameraController.isRemoteCamera())
 				{
-					if (!CameraController.isUseHALv3())
+					if (!CameraController.isUseCamera2())
 					{
 						if (!CameraController.isCameraCreated())
 							return;
@@ -1215,7 +1215,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	}
 
 	@TargetApi(21)
-	protected void configureHALv3Camera(int captureFormat)
+	protected void configureCamera2Camera(int captureFormat)
 	{
 		isCameraConfiguring = true;
 
@@ -1500,10 +1500,10 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 				{
 					// if both surface is created and camera device is opened
 					// - ready to set up preview and other things
-					// if (surfaceCreated && (HALv3.getCamera2() != null))
+					// if (surfaceCreated && (Camera2.getCamera2() != null))
 					if (surfaceCreated)
 					{
-						configureCamera(!CameraController.isUseHALv3() || modeName.contains("video"));
+						configureCamera(!CameraController.isUseCamera2() || modeName.contains("video"));
 						mCameraStarted = true;
 					}
 				} else
@@ -1608,7 +1608,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	{
 		if (!CameraController.isRemoteCamera())
 		{
-			if (CameraController.isUseHALv3())
+			if (CameraController.isUseCamera2())
 			{
 				setSurfaceHolderSize(iWidth, iHeight);
 				setPreviewWidth(iWidth);

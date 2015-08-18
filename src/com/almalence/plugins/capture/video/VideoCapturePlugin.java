@@ -1083,7 +1083,7 @@ public class VideoCapturePlugin extends PluginCapture
 		if (camera2Preference)
 			CameraController.useCamera2OnRelaunch(true);
 
-		CameraController.useHALv3(camera2Preference);
+		CameraController.useCamera2(camera2Preference);
 	}
 
 	@Override
@@ -2346,7 +2346,7 @@ public class VideoCapturePlugin extends PluginCapture
 				.putBoolean(
 						ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key),
 						false).commit();
-		CameraController.useHALv3(false);
+		CameraController.useCamera2(false);
 
 		if (camera2Preference)
 		{

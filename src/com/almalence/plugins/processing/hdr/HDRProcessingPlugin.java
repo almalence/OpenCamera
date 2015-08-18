@@ -256,7 +256,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 
 		int nf = HDRProcessingPlugin.getNoise();
 		
-		if(Build.MODEL.contains("Nexus 6") && CameraController.isUseHALv3())
+		if(Build.MODEL.contains("Nexus 6") && CameraController.isUseCamera2())
 			nf = -1;
 
 		AlmaShotHDR.HDRPreview(imagesAmount, mImageWidth, mImageHeight, pview, HDRProcessingPlugin.getExposure(true),
