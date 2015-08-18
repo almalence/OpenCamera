@@ -382,7 +382,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 				}.start();
 			}
 		});
-		this.modeSwitcher.setEnabled(PluginManager.getInstance().getProcessingCounter() == 0);
 
 		this.engine = new AugmentedPanoramaEngine();
 	}
@@ -508,10 +507,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 							PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED_NORESULT,
 									String.valueOf(SessionID));
 
-							if (PluginManager.getInstance().getProcessingCounter() == 0)
-							{
-								modeSwitcher.setEnabled(true);
-							}
 						}
 
 						return true;
@@ -537,7 +532,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 	@Override
 	public void onExportFinished()
 	{
-		if (modeSwitcher != null && PluginManager.getInstance().getProcessingCounter() == 0 && !inCapture)
+		if (modeSwitcher != null && !inCapture)
 			modeSwitcher.setEnabled(true);
 	}
 

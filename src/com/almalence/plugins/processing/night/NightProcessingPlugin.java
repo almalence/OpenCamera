@@ -27,6 +27,7 @@ import com.almalence.asynctaskmanager.OnTaskCompleteListener;
 
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.opencam_plus.ConfigParser;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginProcessing;
  import com.almalence.opencam_plus.R;
@@ -34,10 +35,12 @@ import com.almalence.asynctaskmanager.OnTaskCompleteListener;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.ConfigParser;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
+
 //-+- -->
 
 /***
@@ -73,7 +76,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 
 	public NightProcessingPlugin()
 	{
-		super("com.almalence.plugins.nightprocessing", R.xml.preferences_processing_night,
+		super("com.almalence.plugins.nightprocessing", "nightmode", R.xml.preferences_processing_night,
 				R.xml.preferences_processing_night, 0, null);
 	}
 
@@ -91,20 +94,20 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 		if (CameraController.isUseCamera2())
 		{
 			PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
-					PluginManager.getInstance().getActiveMode().modeSaveNameHAL);
+					ConfigParser.getInstance().getMode(mode).modeSaveNameHAL);
 		} else
 		{
 			PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
-					PluginManager.getInstance().getActiveMode().modeSaveName);
+					ConfigParser.getInstance().getMode(mode).modeSaveName);
 		}
 
 		mDisplayOrientation = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
 				"frameorientation1" + sessionID));
-		mCameraMirrored = CameraController.isFrontCamera();
+		mCameraMirrored = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem(
+				"cameraMirrored" + sessionID));
 
-		CameraController.Size imageSize = CameraController.getCameraImageSize();
-		mImageWidth = imageSize.getWidth();
-		mImageHeight = imageSize.getHeight();
+		mImageWidth = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("imageWidth" + sessionID));
+		mImageHeight = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("imageHeight" + sessionID));
 
 		mOutImageWidth = mImageWidth;
 		mOutImageHeight = mImageHeight;
@@ -121,34 +124,30 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 			}
 		}
 
-		boolean isLGgflex2 = Build.MODEL.toLowerCase(Locale.US)
-				.replace(" ", "").contains("lg-h959")
-				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
-						.contains("lg-h510")
-				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
-						.contains("lg-f510k");
-		boolean isNexus5 = Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
-				.contains("nexus5");
-		boolean isNexus6 = Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
-				.contains("nexus6");
+		boolean isLGgflex2 = Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h959")
+				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h510")
+				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-f510k");
+		boolean isNexus5 = Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus5");
+		boolean isNexus6 = Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus6");
 
-		boolean	isG4 = Build.MANUFACTURER.contains("LGE")&&
-				(
-						Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H818")|| 
-						Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H815")|| 
-						Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H812")|| 
-						Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H810")|| 
-						Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H811")|| 
-						Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("LS991")|| 
-						Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("VS986")|| 
-						Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("US991")
-				);
-		
+		boolean isG4 = Build.MANUFACTURER.contains("LGE")
+				&& (Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H818")
+						|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H815")
+						|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H812")
+						|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H810")
+						|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H811")
+						|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("LS991")
+						|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("VS986") || Build.MODEL
+						.toLowerCase(Locale.US).replace(" ", "").contains("US991"));
+
 		cameraIndex = 100;
 		// camera indexes in libalmalib corresponding to models
-		if (isNexus5)   cameraIndex = 100;
-		if (isNexus6)   cameraIndex = 103;
-		if (isLGgflex2||isG4) cameraIndex = 507;
+		if (isNexus5)
+			cameraIndex = 100;
+		if (isNexus6)
+			cameraIndex = 103;
+		if (isLGgflex2 || isG4)
+			cameraIndex = 507;
 
 		AlmaShotNight.Initialize();
 

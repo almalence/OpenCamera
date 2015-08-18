@@ -355,8 +355,6 @@ public class VideoCapturePlugin extends PluginCapture
 			}
 		});
 
-		if (PluginManager.getInstance().getProcessingCounter() == 0)
-			modeSwitcher.setEnabled(true);
 	}
 
 	@Override
@@ -1983,9 +1981,6 @@ public class VideoCapturePlugin extends PluginCapture
 
 		lastCamera = camera;
 
-		Date curDate = new Date();
-		SessionID = curDate.getTime();
-
 		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH && videoStabilization)
 			CameraController.setVideoStabilization(true);
 
@@ -2885,6 +2880,13 @@ public class VideoCapturePlugin extends PluginCapture
 
 	public void takePicture()
 	{
+		// Do nothing if capture was started and not stopped yet.
+		if (inCapture) {
+			return;
+		}
+		
+		inCapture = true;
+		SessionID = System.currentTimeMillis();
 		createRequestIDList(1);
 		CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, true, true);
 	}
@@ -3025,6 +3027,8 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 
 		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+		
+		inCapture = false;
 	}
 
 	private int			frameCnt	= 0;
