@@ -49,7 +49,7 @@
     <string name="Pref_Common_HeadsetTap_Title">Headset shutter</string>
     <string name="Pref_Common_HeadsetTap_Summary">Use headset buttons as shutter</string>
     
-    <string name="Pref_Common_ConnectToSonyCameras_Title">Connecnt to Sony cameras</string>
+    <string name="Pref_Common_ConnectToSonyCameras_Title">Connect to Sony cameras</string>
     <string name="Pref_Common_ConnectToSonyCameras_Summary">Enable interface for Sony cameras connection</string>
     
     
