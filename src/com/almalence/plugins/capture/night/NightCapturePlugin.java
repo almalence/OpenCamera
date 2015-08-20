@@ -354,7 +354,7 @@ public class NightCapturePlugin extends PluginCapture
 		//max size will be used in supermode
 		int captureIndex = 0;
 		if (!usingSuperMode)
-			captureIndex = ApplicationScreen.selectImageDimensionMultishot();
+			captureIndex = ApplicationScreen.instance.selectImageDimensionMultishot();
 		
 		int imgCaptureWidth = CameraController.MultishotResolutionsSizeList.get(captureIndex).getWidth();
 		int imgCaptureHeight = CameraController.MultishotResolutionsSizeList.get(captureIndex).getHeight();

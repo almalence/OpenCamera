@@ -3644,8 +3644,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 				} else if (modeId.equals("nightmode") || modeId.equals("multishot"))
 				{
-					int currentIdx = Integer.parseInt(CameraController.MultishotResolutionsIdxesList.get(MainScreen
-							.selectImageDimensionMultishot()));
+					int currentIdx = Integer.parseInt(CameraController.MultishotResolutionsIdxesList.get(MainScreen.thiz.selectImageDimensionMultishot()));
 
 					selectedSize = getSizeName(CameraController.getMultishotResolutionsNamesList(),
 							CameraController.getMultishotResolutionsSizeList(),

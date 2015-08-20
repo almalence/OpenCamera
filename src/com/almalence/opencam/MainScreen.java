@@ -649,8 +649,7 @@ public class MainScreen extends ApplicationScreen
 			opt2 = sImageSizeMultishotFrontPref;
 			if (!CameraController.isRemoteCamera())
 			{
-				currentIdx = Integer.parseInt(CameraController.MultishotResolutionsIdxesList.get(MainScreen
-						.selectImageDimensionMultishot()));
+				currentIdx = Integer.parseInt(CameraController.MultishotResolutionsIdxesList.get(selectImageDimensionMultishot()));
 				entries = CameraController.MultishotResolutionsNamesList
 						.toArray(new CharSequence[CameraController.MultishotResolutionsNamesList.size()]);
 				entryValues = CameraController.MultishotResolutionsIdxesList
@@ -1386,7 +1385,8 @@ public class MainScreen extends ApplicationScreen
 																	  : MainScreen.sImageSizeMultishotFrontPref, "-1");
 	}
 
-	public static int selectImageDimensionMultishot()
+	@Override
+	public int selectImageDimensionMultishot()
 	{
 		String modeName = PluginManager.getInstance().getActiveModeID();
 		if (CameraController.isUseCamera2() && modeName.contains("night"))

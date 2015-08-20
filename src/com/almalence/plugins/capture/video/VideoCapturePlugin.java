@@ -1386,8 +1386,7 @@ public class VideoCapturePlugin extends PluginCapture
 		int jpegQuality = Integer.parseInt(prefs.getString(ApplicationScreen.sJPEGQualityPref, "95"));
 		CameraController.setJpegQuality(jpegQuality);
 
-		preferenceVideoFocusMode = ApplicationScreen.instance
-				.getFocusModePref(CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
+		preferenceVideoFocusMode = ApplicationScreen.instance.getFocusModePref(CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
 
 		if (CameraController.isModeAvailable(CameraController.getSupportedFocusModes(), preferenceVideoFocusMode))
 		{

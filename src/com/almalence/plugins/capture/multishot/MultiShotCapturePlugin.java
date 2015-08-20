@@ -234,7 +234,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 
 	public static void selectImageDimensionMultishot()
 	{
-		captureIndex = ApplicationScreen.selectImageDimensionMultishot();
+		captureIndex = ApplicationScreen.instance.selectImageDimensionMultishot();
 		imgCaptureWidth = CameraController.MultishotResolutionsSizeList.get(captureIndex).getWidth();
 		imgCaptureHeight = CameraController.MultishotResolutionsSizeList.get(captureIndex).getHeight();
 	}

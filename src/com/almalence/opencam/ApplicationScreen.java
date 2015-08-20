@@ -1025,10 +1025,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	}
 
 	// Method used only in Almalence's multishot modes
-	public static int selectImageDimensionMultishot()
-	{
-		return 0;
-	}
+	abstract public int selectImageDimensionMultishot();
 
 	@Override
 	public void addSurfaceCallback()

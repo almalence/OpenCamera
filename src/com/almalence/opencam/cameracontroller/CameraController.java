@@ -98,6 +98,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean							isNexus			= Build.MODEL.contains("Nexus 5") ||
 																	  Build.MODEL.contains("Nexus 6");
 
+	public static boolean							isNexus5		= Build.MODEL.contains("Nexus 5");
 	public static boolean							isNexus6		= Build.MODEL.contains("Nexus 6");
 
 	public static boolean							isFlex2			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h959") ||
