@@ -228,6 +228,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public static String				sAWBLockPref;
 	public static String				sSavePathPref;
 	public static String				sExportNamePref;
+	public static String				sExportNameSeparatorPref;
 	public static String				sExportNamePrefixPref;
 	public static String				sExportNamePostfixPref;
 	public static String				sSaveToPref;
@@ -311,6 +312,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		sAntibandingPref = getResources().getString(R.string.Preference_AntibandingValue);
 
 		sExportNamePref = getResources().getString(R.string.Preference_ExportNameValue);
+		sExportNameSeparatorPref = getResources().getString(R.string.Preference_ExportNameSeparatorValue);
 		sExportNamePrefixPref = getResources().getString(R.string.Preference_SavePathPrefixValue);
 		sExportNamePostfixPref = getResources().getString(R.string.Preference_SavePathPostfixValue);
 		sSavePathPref = getResources().getString(R.string.Preference_SavePathValue);
