@@ -1207,11 +1207,16 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	@Override
 	public void onStart()
 	{
-
+		this.createInitialGUI();
+		this.onCreateGUI();
+		ApplicationScreen.instance.findViewById(R.id.mainLayout1).invalidate();
+		ApplicationScreen.instance.findViewById(R.id.mainLayout1).requestLayout();
+		
 		// Calculate right sizes for plugin's controls
 		DisplayMetrics metrics = new DisplayMetrics();
 		ApplicationScreen.instance.getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		fScreenDensity = metrics.density;
+		int dpi = metrics.densityDpi;
 
 		iInfoViewMaxHeight = (int) (ApplicationScreen.getMainContext().getResources()
 				.getInteger(R.integer.infoControlHeight) * fScreenDensity);
@@ -1537,6 +1542,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	// Create standard OpenCamera's buttons and theirs OnClickListener
 	@Override
 	public void onCreate()
+	{
+		
+	}
+//	@Override
+	public void onCreateGUI()
 	{
 		// Get application preferences object
 		preferences = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());

@@ -384,10 +384,10 @@ public class MainScreen extends ApplicationScreen
 		PluginManager.getInstance().setupDefaultMode();
 		// init gui manager
 		guiManager = new AlmalenceGUI();
-		guiManager.createInitialGUI();
-		this.findViewById(R.id.mainLayout1).invalidate();
-		this.findViewById(R.id.mainLayout1).requestLayout();
-		guiManager.onCreate();
+//		guiManager.createInitialGUI();
+//		this.findViewById(R.id.mainLayout1).invalidate();
+//		this.findViewById(R.id.mainLayout1).requestLayout();
+//		guiManager.onCreate();
 
 		// init plugin manager
 		PluginManager.getInstance().onCreate();
@@ -1512,6 +1512,7 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	public void createCaptureSession()
 	{
+		CameraController.setupImageReadersCamera2();
 		mCameraSurface = surfaceHolder.getSurface();
 		surfaceList.add(mCameraSurface); // surface for viewfinder preview
 

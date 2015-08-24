@@ -327,29 +327,32 @@ public class Thumbnail
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
 		{
 			DocumentFile saveDir = PluginManagerBase.getSaveDirNew(false);
-			if (!saveDir.canWrite())
+			if(saveDir != null)
 			{
-				saveDir = PluginManagerBase.getSaveDirNew(true);
-			}
-
-			// Try to build max deep file path
-			DocumentFile parentFile = saveDir.getParentFile();
-			name = saveDir.getName();
-			while (parentFile != null)
-			{
-				name = parentFile.getName() + "/" + name;
-				parentFile = parentFile.getParentFile(); 
-			}
-			
-			// If we able to get File object, than get path from it
-			try
-			{
-				File file = new File(URI.create(saveDir.getUri().toString()));
-				name = file.getAbsolutePath();
-			} catch (Exception e)
-			{
-			} finally
-			{
+				if (!saveDir.canWrite())
+				{
+					saveDir = PluginManagerBase.getSaveDirNew(true);
+				}
+	
+				// Try to build max deep file path
+				DocumentFile parentFile = saveDir.getParentFile();
+				name = saveDir.getName();
+				while (parentFile != null)
+				{
+					name = parentFile.getName() + "/" + name;
+					parentFile = parentFile.getParentFile(); 
+				}
+				
+				// If we able to get File object, than get path from it
+				try
+				{
+					File file = new File(URI.create(saveDir.getUri().toString()));
+					name = file.getAbsolutePath();
+				} catch (Exception e)
+				{
+				} finally
+				{
+				}
 			}
 		} else
 		{

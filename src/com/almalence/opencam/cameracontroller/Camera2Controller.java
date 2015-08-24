@@ -396,9 +396,8 @@ public class Camera2Controller
 	}
 
 	
-	public static void setupImageReadersCamera2(CameraController.Size sz)
+	public static void setupImageReadersCamera2()
 	{
-		Log.e(TAG, "setupImageReadersCamera2(). Width = " + sz.getWidth() + " Height = " + sz.getHeight());
 		appInterface.createImageReaders(imageAvailableListener);
 	}
 	
