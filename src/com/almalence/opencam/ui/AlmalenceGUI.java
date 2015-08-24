@@ -4784,9 +4784,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	@Override
 	public void onHardwareShutterButtonPressed()
 	{
-		hideSecondaryMenus();
-		unselectPrimaryTopMenuButtons(-1);
-		ApplicationScreen.getPluginManager().onShutterClick();
+		shutterButtonPressed();
 	}
 
 	@Override

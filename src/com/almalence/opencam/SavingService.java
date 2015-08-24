@@ -138,6 +138,7 @@ public class SavingService extends NotificationService
 
 	private static int		jpegQuality				= 95;
 	protected static int	saveOption;
+	protected static boolean saveOptionSeparator	= false;
 	private static boolean	useGeoTaggingPrefExport;
 	private static boolean	enableExifTagOrientation;
 	private static int		additionalRotation;
@@ -1763,6 +1764,7 @@ public class SavingService extends NotificationService
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		saveOption = Integer.parseInt(prefs.getString(ApplicationScreen.sExportNamePref, "2"));
+		saveOptionSeparator = prefs.getBoolean(ApplicationScreen.sExportNameSeparatorPref, false);
 
 		String prefix = prefs.getString(ApplicationScreen.sExportNamePrefixPref, "");
 		if (!prefix.equals(""))
@@ -1773,9 +1775,18 @@ public class SavingService extends NotificationService
 			postfix = "_" + postfix;
 
 		Calendar d = Calendar.getInstance();
-		String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d", d.get(Calendar.YEAR), d.get(Calendar.MONTH) + 1,
-				d.get(Calendar.DAY_OF_MONTH), d.get(Calendar.HOUR_OF_DAY), d.get(Calendar.MINUTE),
-				d.get(Calendar.SECOND));
+		String fileFormat = "";
+		
+		//if using separator in file name
+		if (!saveOptionSeparator)
+			fileFormat = String.format("%04d%02d%02d_%02d%02d%02d", d.get(Calendar.YEAR), d.get(Calendar.MONTH) + 1,
+					d.get(Calendar.DAY_OF_MONTH), d.get(Calendar.HOUR_OF_DAY), d.get(Calendar.MINUTE),
+					d.get(Calendar.SECOND));
+		else
+			fileFormat = String.format("%04d-%02d-%02d_%02d:%02d:%02d", d.get(Calendar.YEAR), d.get(Calendar.MONTH) + 1,
+					d.get(Calendar.DAY_OF_MONTH), d.get(Calendar.HOUR_OF_DAY), d.get(Calendar.MINUTE),
+					d.get(Calendar.SECOND));
+		
 		switch (saveOption)
 		{
 		case 1:// YEARMMDD_HHMMSS

@@ -449,8 +449,7 @@ public class PluginManager extends PluginManagerBase
 			}
 		} else
 		{
-			if (!showDelayedCapturePrefCommon || delayInterval == 0
-					|| !pluginList.get(activeCapture).delayedCaptureSupported())
+			if (!showDelayedCapturePrefCommon || delayInterval == 0 || !pluginList.get(activeCapture).delayedCaptureSupported())
 			{
 				for (int i = 0; i < activeVF.size(); i++)
 					pluginList.get(activeVF.get(i)).onShutterClick();

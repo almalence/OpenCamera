@@ -1750,7 +1750,8 @@ public class MainScreen extends ApplicationScreen
 			boolean headsetFunc = prefs.getBoolean("headsetPrefCommon", false);
 			if (headsetFunc)
 			{
-				MainScreen.getGUIManager().onHardwareFocusButtonPressed();
+				//removed as not needed??? SM 21.08.15 was focusing on HW button pressed when AFL was enabled
+				//MainScreen.getGUIManager().onHardwareFocusButtonPressed();
 				MainScreen.getGUIManager().onHardwareShutterButtonPressed();
 				return true;
 			}
@@ -1763,7 +1764,8 @@ public class MainScreen extends ApplicationScreen
 			int buttonFunc = Integer.parseInt(prefs.getString(MainScreen.sVolumeButtonPref, "0"));
 			if (buttonFunc == VOLUME_FUNC_SHUTTER)
 			{
-				MainScreen.getGUIManager().onHardwareFocusButtonPressed();
+				//removed as not needed??? SM 21.08.15 was focusing on HW button pressed when AFL was enabled
+				//MainScreen.getGUIManager().onHardwareFocusButtonPressed();
 				MainScreen.getGUIManager().onHardwareShutterButtonPressed();
 				return true;
 			} else if (buttonFunc == VOLUME_FUNC_EXPO)
