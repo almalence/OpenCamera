@@ -358,7 +358,11 @@ public class PluginManager extends PluginManagerBase
 
 		isRestarting = true;
 
-		ApplicationScreen.getGUIManager().removeViews(countdownLayout, R.id.specialPluginsLayout);
+//		if(countdownLayout.getParent() != null)
+//			((ViewGroup) countdownLayout.getParent()).removeView(countdownLayout);
+//		ApplicationScreen.getGUIManager().removeViews(countdownLayout, R.id.specialPluginsLayout);
+//		ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout).invalidate();
+//		ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout).requestLayout();
 
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT,
 				LayoutParams.FILL_PARENT);
@@ -372,7 +376,9 @@ public class PluginManager extends PluginManagerBase
 		this.countdownLayout.requestLayout();
 		this.countdownLayout.setVisibility(View.INVISIBLE);
 
-		ApplicationScreen.getGUIManager().removeViews(photoTimeLapseLayout, R.id.specialPluginsLayout);
+//		if(photoTimeLapseLayout.getParent() != null)
+//			((ViewGroup) photoTimeLapseLayout.getParent()).removeView(photoTimeLapseLayout);
+//		ApplicationScreen.getGUIManager().removeViews(photoTimeLapseLayout, R.id.specialPluginsLayout);
 
 		params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 

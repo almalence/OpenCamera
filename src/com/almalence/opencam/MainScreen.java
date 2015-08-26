@@ -449,11 +449,10 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	public void createImageReaders(ImageReader.OnImageAvailableListener imageAvailableListener)
 	{
-		Log.d("MainScreen", "createImageReaders");
 		// ImageReader for preview frames in YUV format
 		mImageReaderPreviewYUV = ImageReader.newInstance(thiz.previewWidth, thiz.previewHeight,
 				ImageFormat.YUV_420_888, 2);
-
+		
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		// ImageReader for YUV still images
 		mImageReaderYUV = ImageReader.newInstance(imageSize.getWidth(), imageSize.getHeight(), ImageFormat.YUV_420_888,
@@ -927,6 +926,17 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	protected void onApplicationStart()
 	{
+		setContentView(R.layout.opencamera_main_layout);
+		
+		findViewById(R.id.SurfaceView02).setVisibility(View.GONE);
+		preview = (SurfaceView) this.findViewById(R.id.SurfaceView01);
+		preview.setOnClickListener(this);
+		preview.setOnTouchListener(this);
+		preview.setKeepScreenOn(true);
+
+		surfaceHolder = preview.getHolder();
+		surfaceHolder.addCallback(this);
+		
 		mWifiHandler.register();
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
@@ -1302,7 +1312,6 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	public void surfaceChanged(final SurfaceHolder holder, final int format, final int width, final int height)
 	{
-		Log.e("MainScreen", "SURFACE CHANGED");
 		mCameraSurface = holder.getSurface();
 
 		if (isCameraConfiguring)
@@ -1503,8 +1512,9 @@ public class MainScreen extends ApplicationScreen
 		Log.e("MainScreen", "createGUI is " + createGUI);
 		if (createGUI)
 		{
-			PluginManager.getInstance().onGUICreate();
 			MainScreen.getGUIManager().onGUICreate();
+			PluginManager.getInstance().onGUICreate();
+//			MainScreen.getGUIManager().onGUICreate();
 		}
 	}
 

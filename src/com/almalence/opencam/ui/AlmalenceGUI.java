@@ -1209,8 +1209,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	{
 		this.createInitialGUI();
 		this.onCreateGUI();
-		ApplicationScreen.instance.findViewById(R.id.mainLayout1).invalidate();
-		ApplicationScreen.instance.findViewById(R.id.mainLayout1).requestLayout();
+//		ApplicationScreen.instance.findViewById(R.id.mainLayout1).invalidate();
+//		ApplicationScreen.instance.findViewById(R.id.mainLayout1).requestLayout();
 		
 		// Calculate right sizes for plugin's controls
 		DisplayMetrics metrics = new DisplayMetrics();
@@ -1534,9 +1534,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	@Override
 	public void createInitialGUI()
 	{
-		guiView = LayoutInflater.from(ApplicationScreen.getMainContext()).inflate(R.layout.gui_almalence_layout, null);
+		guiView = ApplicationScreen.instance.findViewById(R.id.almalence_gui);
+		//guiView = LayoutInflater.from(ApplicationScreen.getMainContext()).inflate(R.layout.gui_almalence_layout, null);
 		// Add GUI Layout to main layout of OpenCamera
-		((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.mainLayout1)).addView(guiView);
+		//((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.mainLayout1)).addView(guiView);
 	}
 
 	// Create standard OpenCamera's buttons and theirs OnClickListener
@@ -5175,6 +5176,36 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				((ViewGroup) view.getParent()).removeView(view);
 
 			infoLayout.removeView(view);
+		}
+		
+		
+		List<View> specialpluginsView = new ArrayList<View>();
+		RelativeLayout specialpluginsLayout = (RelativeLayout) ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout);
+		for (int i = 0; i < specialpluginsLayout.getChildCount(); i++)
+			specialpluginsView.add(specialpluginsLayout.getChildAt(i));
+
+		for (int j = 0; j < specialpluginsView.size(); j++)
+		{
+			View view = specialpluginsView.get(j);
+			if (view.getParent() != null)
+				((ViewGroup) view.getParent()).removeView(view);
+
+			specialpluginsLayout.removeView(view);
+		}
+		
+		
+		List<View> specialplugins2View = new ArrayList<View>();
+		RelativeLayout specialplugins2Layout = (RelativeLayout) ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout2);
+		for (int i = 0; i < specialplugins2Layout.getChildCount(); i++)
+			specialplugins2View.add(specialplugins2Layout.getChildAt(i));
+
+		for (int j = 0; j < specialplugins2View.size(); j++)
+		{
+			View view = specialplugins2View.get(j);
+			if (view.getParent() != null)
+				((ViewGroup) view.getParent()).removeView(view);
+
+			specialplugins2Layout.removeView(view);
 		}
 	}
 

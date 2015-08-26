@@ -296,7 +296,7 @@ public class Camera2Controller
 				try
 				{
 					Camera2Controller.getInstance().mCaptureSession.stopRepeating();
-//					Camera2.getInstance().mCaptureSession.close();  //According to google docs isn't necessary to close session
+					Camera2Controller.getInstance().mCaptureSession.close();  //According to google docs isn't necessary to close session
 					Camera2Controller.getInstance().mCaptureSession = null;
 				} catch (final CameraAccessException e)
 				{

@@ -351,7 +351,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 						| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 
 		// set some common view here
-		setContentView(R.layout.opencamera_main_layout);
+//		setContentView(R.layout.opencamera_main_layout);
 
 		createPluginManager();
 		duringOnCreate();
@@ -370,14 +370,14 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
 
 		// set preview, on click listener and surface buffers
-		findViewById(R.id.SurfaceView02).setVisibility(View.GONE);
-		preview = (SurfaceView) this.findViewById(R.id.SurfaceView01);
-		preview.setOnClickListener(this);
-		preview.setOnTouchListener(this);
-		preview.setKeepScreenOn(true);
-
-		surfaceHolder = preview.getHolder();
-		surfaceHolder.addCallback(this);
+//		findViewById(R.id.SurfaceView02).setVisibility(View.GONE);
+//		preview = (SurfaceView) this.findViewById(R.id.SurfaceView01);
+//		preview.setOnClickListener(this);
+//		preview.setOnTouchListener(this);
+//		preview.setKeepScreenOn(true);
+//
+//		surfaceHolder = preview.getHolder();
+//		surfaceHolder.addCallback(this);
 
 		orientListener = new OrientationEventListener(this)
 		{
@@ -1519,8 +1519,9 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		case ApplicationInterface.MSG_SURFACE_CONFIGURED:
 			{
 				createCaptureSession();
-				ApplicationScreen.getPluginManager().onGUICreate();
 				ApplicationScreen.getGUIManager().onGUICreate();
+				ApplicationScreen.getPluginManager().onGUICreate();
+//				ApplicationScreen.getGUIManager().onGUICreate();
 				mCameraStarted = true;
 			}
 			break;
