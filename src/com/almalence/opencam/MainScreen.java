@@ -362,7 +362,8 @@ public class MainScreen extends ApplicationScreen
 			unlockAllSubscriptionYear = prefs.getBoolean("subscription_unlock_all_year", false);
 		}
 
-		createBillingHandler();
+		if (!unlockAllPurchased)
+			createBillingHandler();
 
 		/**** Billing *****/
 
