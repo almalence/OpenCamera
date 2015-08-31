@@ -323,6 +323,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	
 				imagesTakenRAW = 0;
 				frame_num = 0;
+				resultCompleted = 0;
 				inCapture = false;
 				
 				isAllImagesTaken = false;
@@ -359,6 +360,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 				|| (!captureRAW && resultCompleted >= total_frames))
 		{
 			isAllCaptureResultsCompleted = true;
+			resultCompleted = 0;
 			
 			if(isAllImagesTaken)
 			{
@@ -377,6 +379,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 				
 				imagesTakenRAW = 0;
 				frame_num = 0;
+				resultCompleted = 0;
 				inCapture = false;
 				
 				isAllImagesTaken = false;
