@@ -259,6 +259,23 @@ public class Camera2Controller
 		}
 	}
 
+	public static int getHardwareLevel()
+	{
+		if(CameraController.cameraIdList == null || CameraController.cameraIdList.length == 0)
+			return -1;
+		try
+		{
+			Camera2Controller.getInstance().camCharacter = Camera2Controller.getInstance().manager
+					.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
+			
+			return Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL);
+		} catch (CameraAccessException e)
+		{
+			e.printStackTrace();
+			return -1;
+		}
+	}
+	
 	//At this point camera2controller collect camera capabilities such as support of RAW capture, manual sensor management (white balance and exposure time)
 	public static void onResumeCamera2()
 	{
