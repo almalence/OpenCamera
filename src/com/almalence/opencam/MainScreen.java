@@ -944,7 +944,7 @@ public class MainScreen extends ApplicationScreen
 
 		boolean isCamera2 = prefs.getBoolean(getResources().getString(R.string.Preference_UseCamera2Key),
 				(CameraController.isNexus || CameraController.isFlex2 || CameraController.isAndroidOne || CameraController.isGalaxyS6 || CameraController.isG4) ? true : false);
-		CameraController.useCamera2(isCamera2);
+		CameraController.setUseCamera2(isCamera2);
 		prefs.edit()
 				.putBoolean(getResources().getString(R.string.Preference_UseCamera2Key), CameraController.isUseCamera2())
 				.commit();

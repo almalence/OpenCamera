@@ -943,7 +943,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return (CameraIndex == getNumberOfCameras() - 1);
 	}
 
-	public static void useCamera2(boolean useCamera2)
+	public static void setUseCamera2(boolean useCamera2)
 	{
 		isCamera2 = useCamera2;
 	}
@@ -956,6 +956,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean isCamera2Supported()
 	{
 		return isCamera2Supported;
+	}
+	
+	//returns camera2 supported level. -1 if not suppoerted.
+	public static int getCamera2Level()
+	{
+		if (isCamera2Supported)
+			return Camera2Controller.getHardwareLevel();
+		return -1;
 	}
 
 	public static boolean isRAWCaptureSupported()

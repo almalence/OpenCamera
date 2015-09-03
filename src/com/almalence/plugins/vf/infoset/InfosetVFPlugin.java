@@ -41,6 +41,7 @@ import android.widget.TextView;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
  import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginViewfinder;
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.ApplicationInterface;
@@ -366,9 +367,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 
 		if (usePictureCount)
 		{
-			if (PluginManager.getInstance().getActiveMode().modeID.equalsIgnoreCase("panorama_augmented"))
-			{}
-			else
+			if (!PluginManager.getInstance().getActiveMode().modeID.equalsIgnoreCase("panorama_augmented"))
 			{
 				String memoryString = String.valueOf(Util.AvailablePictureCount());
 				View v = LayoutInflater.from(ApplicationScreen.getMainContext()).inflate(R.layout.plugin_vf_infoset_text, null);

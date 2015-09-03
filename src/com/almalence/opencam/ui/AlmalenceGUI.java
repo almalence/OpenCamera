@@ -1353,23 +1353,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		Mode mode = ConfigParser.getInstance().getMode(defaultModeName);
 		try
 		{
-			Bitmap bm = null;
-			Bitmap iconBase = BitmapFactory.decodeResource(ApplicationScreen.getMainContext().getResources(),
-					R.drawable.gui_almalence_select_mode);
-			Bitmap iconOverlay = BitmapFactory.decodeResource(
-					ApplicationScreen.getMainContext().getResources(),
-					ApplicationScreen.instance.getResources().getIdentifier(
-							CameraController.isUseSuperMode() ? mode.iconHAL : mode.icon, "drawable",
-							ApplicationScreen.instance.getPackageName()));
-			iconOverlay = Bitmap.createScaledBitmap(iconOverlay, (int) (iconBase.getWidth() / 1.8),
-					(int) (iconBase.getWidth() / 1.8), false);
-
-			bm = mergeImage(iconBase, iconOverlay);
-			bm = Bitmap.createScaledBitmap(bm,
-					(int) (ApplicationScreen.getMainContext().getResources().getDimension(R.dimen.paramsLayoutHeight)),
-					(int) (ApplicationScreen.getMainContext().getResources().getDimension(R.dimen.paramsLayoutHeight)),
-					false);
-			((RotateImageView) guiView.findViewById(R.id.buttonSelectMode)).setImageBitmap(bm);
+			((RotateImageView) guiView.findViewById(R.id.buttonSelectMode)).setImageResource(ApplicationScreen.instance.getResources().getIdentifier
+					(CameraController.isUseSuperMode() ? mode.iconHAL : mode.icon, "drawable",ApplicationScreen.instance.getPackageName()));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -6621,24 +6606,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			}
 		}.start();
 
-		// set modes icon inside mode selection icon
-		Bitmap bm = null;
-		Bitmap iconBase = BitmapFactory.decodeResource(ApplicationScreen.getMainContext().getResources(),
-				R.drawable.gui_almalence_select_mode);
-		Bitmap iconOverlay = BitmapFactory.decodeResource(
-				ApplicationScreen.getMainContext().getResources(),
-				ApplicationScreen.instance.getResources().getIdentifier(
-						CameraController.isUseSuperMode() ? mode.iconHAL : mode.icon, "drawable",
-						ApplicationScreen.instance.getPackageName()));
-		iconOverlay = Bitmap.createScaledBitmap(iconOverlay, (int) (iconBase.getWidth() / 1.8),
-				(int) (iconBase.getWidth() / 1.8), false);
-
-		bm = mergeImage(iconBase, iconOverlay);
-		bm = Bitmap.createScaledBitmap(bm,
-				(int) (ApplicationScreen.getMainContext().getResources().getDimension(R.dimen.mainButtonHeightSelect)),
-				(int) (ApplicationScreen.getMainContext().getResources().getDimension(R.dimen.mainButtonHeightSelect)),
-				false);
-		((RotateImageView) guiView.findViewById(R.id.buttonSelectMode)).setImageBitmap(bm);
+		// set modes icon
+		((RotateImageView) guiView.findViewById(R.id.buttonSelectMode)).setImageResource(ApplicationScreen.instance.getResources().getIdentifier
+				(CameraController.isUseSuperMode() ? mode.iconHAL : mode.icon, "drawable",ApplicationScreen.instance.getPackageName()));
 
 		int rid = ApplicationScreen.getAppResources().getIdentifier(tmpActiveMode.howtoText, "string",
 				ApplicationScreen.instance.getPackageName());
@@ -7670,8 +7640,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	public void setShutterIcon(ShutterButton id)
 	{
 		RotateImageView mainButton = (RotateImageView) guiView.findViewById(R.id.buttonShutter);
-		RotateImageView buttonSelectMode = (RotateImageView) guiView.findViewById(R.id.buttonSelectMode);
-		LinearLayout buttonShutterContainer = (LinearLayout) guiView.findViewById(R.id.buttonShutterContainer);
 
 		if (id == ShutterButton.TIMELAPSE_ACTIVE)
 		{

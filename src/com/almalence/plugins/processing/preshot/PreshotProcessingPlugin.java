@@ -54,6 +54,7 @@ import com.almalence.SwapHeap;
  import com.almalence.opencam_plus.ApplicationInterface;
  import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.ConfigParser;
+ import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginProcessing;
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
