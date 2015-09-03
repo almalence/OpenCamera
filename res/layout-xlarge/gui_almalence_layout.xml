@@ -196,9 +196,9 @@
         </LinearLayout>
 
         <FrameLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/paramsLayoutHeight"
-            android:layout_weight="2"
+            android:layout_weight="1"
             android:gravity="center"
             >
 
