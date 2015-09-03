@@ -3064,14 +3064,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean isModeAvailable(int[] modeList, int mode)
 	{
 		boolean isAvailable = false;
-		for (int currMode : modeList)
-		{
-			if (currMode == mode)
+		if(modeList != null && modeList.length > 0)
+			for (int currMode : modeList)
 			{
-				isAvailable = true;
-				break;
+				if (currMode == mode)
+				{
+					isAvailable = true;
+					break;
+				}
 			}
-		}
+
 		return isAvailable;
 	}
 
