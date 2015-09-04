@@ -103,7 +103,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static boolean							isFlex2			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h959") ||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-f510") ||
-																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-f510k");
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h955") ||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-as995")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h950") ||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-us995")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-ls996");
 
 	public static boolean							isG4			= Build.MANUFACTURER.contains("LGE") &&
 																	 (Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H818")  ||
