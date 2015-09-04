@@ -2642,7 +2642,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					flashModes = camera.getParameters().getSupportedFlashModes();
 				}
 
-				if (flashModes.contains(CameraController.mode_flash.get(CameraParameters.FLASH_MODE_TORCH)))
+				if (flashModes != null && flashModes.contains(CameraController.mode_flash.get(CameraParameters.FLASH_MODE_TORCH)))
 				{
 					// If TORCH mode is available, then also enable CAPTURE_TORCH.
 					flashModes.add(CameraController.mode_flash.get(CameraParameters.FLASH_MODE_CAPTURE_TORCH));
