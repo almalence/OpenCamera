@@ -173,7 +173,11 @@ public class ConfigParser
 		    Build.MODEL.contains("Nexus 6") ||
 		    Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h959") ||
 		    Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h510") ||
-		    Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-f510k")
+		    Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h955") ||
+  		    Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-as995")||
+		    Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h950") ||
+		    Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-us995")||
+		    Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-ls996")
 		    )
 		{
 			Iterator<Mode> it = modes.iterator();

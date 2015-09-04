@@ -1324,9 +1324,14 @@ public class PluginManager extends PluginManagerBase
 	{
 		String modeID = getActiveModeID();
 		// Temp fix HDR modes for LG G Flex 2.
-		boolean isLgGFlex2 = Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h959")
-				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h510")
-				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-f510k");
+		boolean isLgGFlex2 = 
+				  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h959")  || 
+				  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h510")  || 
+				  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h955")  ||
+				  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-as995") ||
+				  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h950")  ||
+				  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-us995") ||
+				  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-ls996");
 
 		if (modeID.equals("video")
 				|| (Build.MODEL.contains("Nexus 6") && (modeID.equals("pixfix") || modeID.equals("panorama_augmented")))
