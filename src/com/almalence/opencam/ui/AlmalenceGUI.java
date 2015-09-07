@@ -999,6 +999,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private int												iInfoViewMaxHeight;
 	private int												iInfoViewMaxWidth;
 	private int												iInfoViewHeight;
+	private int 											iInfoControlsRemainingHeight;
+	
 
 	private int												iCenterViewMaxHeight;
 	private int												iCenterViewMaxWidth;
@@ -1718,10 +1720,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	public void onGUICreate()
 	{
 		if (ApplicationScreen.instance.findViewById(R.id.infoLayout).getVisibility() == View.VISIBLE)
-			iInfoViewHeight = ApplicationScreen.instance.findViewById(R.id.infoLayout).getHeight();
+		{
+			this.iInfoViewHeight = ApplicationScreen.instance.findViewById(R.id.infoLayout).getHeight();
+			this.iInfoControlsRemainingHeight = this.iInfoViewHeight;
+		}
 		// Recreate plugin views
 		removePluginViews();
-		createPluginViews();
+//		createPluginViews();
 
 		// add self-timer control
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
@@ -6327,17 +6332,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	 * controls from other plugins
 	 * 
 	 ***********************************************************************************/
-	private void addInfoControl(View info_control)
-	{
-		// Calculate appropriate size of added plugin's view
-		android.widget.LinearLayout.LayoutParams viewLayoutParams = (android.widget.LinearLayout.LayoutParams) info_control
-				.getLayoutParams();
-		viewLayoutParams = this.getTunedLinearLayoutParams(info_control, viewLayoutParams, iInfoViewMaxWidth,
-				iInfoViewMaxHeight);
-
-		((LinearLayout) guiView.findViewById(R.id.infoLayout)).addView(info_control, viewLayoutParams);
-	}
-
 	// Public interface for all plugins
 	// Automatically decide where to put view and correct view's size if
 	// necessary
@@ -6429,10 +6423,39 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	// INFO VIEW SECTION
 	@Override
+	public void addInfoView(View infoView)
+	{
+		// Calculate appropriate size of added plugin's view
+		android.widget.LinearLayout.LayoutParams viewLayoutParams = (android.widget.LinearLayout.LayoutParams) infoView
+				.getLayoutParams();
+		viewLayoutParams = this.getTunedLinearLayoutParams(infoView, viewLayoutParams,
+				iInfoViewMaxWidth, iInfoViewMaxHeight);
+
+		if (iInfoControlsRemainingHeight >= viewLayoutParams.height)
+		{
+			iInfoControlsRemainingHeight -= viewLayoutParams.height;
+			this.addInfoView(infoView, viewLayoutParams);
+		}
+	}
+	
+	
+	@Override
 	protected void addInfoView(View view, android.widget.LinearLayout.LayoutParams viewLayoutParams)
 	{
+		
+		
 		if (((LinearLayout) guiView.findViewById(R.id.infoLayout)).getChildCount() != 0)
 			viewLayoutParams.topMargin = 4;
+		else
+		{
+			LinearLayout infoLayout = (LinearLayout) guiView.findViewById(R.id.infoLayout);
+			RelativeLayout.LayoutParams infoParams = (RelativeLayout.LayoutParams) infoLayout.getLayoutParams();
+			if (infoParams != null)
+			{
+				infoParams.rightMargin = 0;
+				infoLayout.setLayoutParams(infoParams);
+			}	
+		}
 
 		((LinearLayout) guiView.findViewById(R.id.infoLayout)).addView(view, viewLayoutParams);
 	}

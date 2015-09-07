@@ -669,6 +669,7 @@ public abstract class Plugin
 	protected void addView(View view, ViewfinderZone position)
 	{
 		pluginViews.put(view, position);
+		ApplicationScreen.getGUIManager().addViewQuick(view, position);
 	}
 
 	protected void addView(View view)
@@ -696,6 +697,7 @@ public abstract class Plugin
 	protected void addInfoView(View view)
 	{
 		infoViews.add(view);
+		ApplicationScreen.getGUIManager().addInfoView(view);
 	}
 
 	protected void removeInfoView(View view)
