@@ -109,15 +109,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-us995")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-ls996");
 
-	public static boolean							isG4			= Build.MANUFACTURER.contains("LGE") &&
-																	 (Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H818")  ||
-																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H815")  ||
-																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H812")  ||
-																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H810")  ||
-																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("H811")  ||
-																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("LS991") ||
-																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("VS986") ||
-																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("US991"));
+	public static boolean							isG4			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h818")  ||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h815")  ||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h812")  ||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h810")  ||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h811")  ||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-ls991") ||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-vs986") ||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-us991");
 
 	public static boolean							isAndroidOne	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("Micromax AQ4501");
 
@@ -3733,7 +3732,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		if (!CameraController.isCamera2)
 		{
 			// LG G Flex 2.
-			if (CameraController.isFlex2)
+			if (CameraController.isFlex2 || CameraController.isG4)
 			{
 				return 60.808907f;
 			}
@@ -3758,7 +3757,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		if (!CameraController.isCamera2)
 		{
 			// LG G Flex 2.
-			if (CameraController.isFlex2)
+			if (CameraController.isFlex2 || CameraController.isG4)
 			{
 				return 47.50866f;
 			}
