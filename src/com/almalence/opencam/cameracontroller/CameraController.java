@@ -118,7 +118,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-vs986") ||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-us991");
 
-	public static boolean							isAndroidOne	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("Micromax AQ4501");
+	public static boolean							isAndroidOne	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("micromax aq4501");
 
 	public static boolean							isGalaxyS6		= Build.MODEL.contains("SM-G920") ||
 														  			  Build.MODEL.contains("SM-G925");
