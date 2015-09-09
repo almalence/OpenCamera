@@ -128,8 +128,10 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 			cameraIndex = 100;
 		if (CameraController.isNexus6)
 			cameraIndex = 103;
-		if (CameraController.isFlex2 || CameraController.isG4)
+		if (CameraController.isFlex2)
 			cameraIndex = 507;
+		if (CameraController.isG4)
+			cameraIndex = 506;
 
 		AlmaShotNight.Initialize();
 
