@@ -752,7 +752,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			//Now only LG Flex2, G4, Nexus 5\6 and Andoid One devices support camera2 without critical problems
 			//We have to test Samsung Galaxy S6 to include in this list of allowed devices
 			if (!(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService("camera") != null)
-					|| (!isFlex2 && !isNexus && !isAndroidOne  && /*!isGalaxyS6 &&*/ !isG4))
+					|| (!isFlex2 && !isNexus && !isAndroidOne  /*&& !isGalaxyS6 &&*/ /* && !isG4*/))
 			{
 				isCamera2 = false;
 				isCamera2Supported = false;
@@ -1023,7 +1023,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																	 * CameraController
 																	 * .
 																	 * isGalaxyS6
-																	 */|| CameraController.isG4)
+																	 */
+										 /*|| CameraController.isG4*/)
 				SuperModeOk = true;
 		}
 
@@ -3732,7 +3733,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		if (!CameraController.isCamera2)
 		{
 			// LG G Flex 2.
-			if (CameraController.isFlex2 || CameraController.isG4)
+			if (CameraController.isFlex2 /*|| CameraController.isG4*/)
 			{
 				return 60.808907f;
 			}
@@ -3757,7 +3758,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		if (!CameraController.isCamera2)
 		{
 			// LG G Flex 2.
-			if (CameraController.isFlex2 || CameraController.isG4)
+			if (CameraController.isFlex2 /*|| CameraController.isG4*/)
 			{
 				return 47.50866f;
 			}

@@ -1326,7 +1326,7 @@ public class PluginManager extends PluginManagerBase
 
 		if (modeID.equals("video")
 				|| (Build.MODEL.contains("Nexus 6") && (modeID.equals("pixfix") || modeID.equals("panorama_augmented")))
-				|| ((CameraController.isFlex2 || CameraController.isG4) && (modeID.equals("hdrmode") || modeID.equals("expobracketing"))))
+				|| ((CameraController.isFlex2 /*|| CameraController.isG4*/) && (modeID.equals("hdrmode") || modeID.equals("expobracketing"))))
 			return false;
 		else
 			return true;
