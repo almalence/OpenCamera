@@ -358,7 +358,11 @@ public class PluginManager extends PluginManagerBase
 
 		isRestarting = true;
 
-		ApplicationScreen.getGUIManager().removeViews(countdownLayout, R.id.specialPluginsLayout);
+//		if(countdownLayout.getParent() != null)
+//			((ViewGroup) countdownLayout.getParent()).removeView(countdownLayout);
+//		ApplicationScreen.getGUIManager().removeViews(countdownLayout, R.id.specialPluginsLayout);
+//		ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout).invalidate();
+//		ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout).requestLayout();
 
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT,
 				LayoutParams.FILL_PARENT);
@@ -372,7 +376,9 @@ public class PluginManager extends PluginManagerBase
 		this.countdownLayout.requestLayout();
 		this.countdownLayout.setVisibility(View.INVISIBLE);
 
-		ApplicationScreen.getGUIManager().removeViews(photoTimeLapseLayout, R.id.specialPluginsLayout);
+//		if(photoTimeLapseLayout.getParent() != null)
+//			((ViewGroup) photoTimeLapseLayout.getParent()).removeView(photoTimeLapseLayout);
+//		ApplicationScreen.getGUIManager().removeViews(photoTimeLapseLayout, R.id.specialPluginsLayout);
 
 		params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
@@ -449,8 +455,7 @@ public class PluginManager extends PluginManagerBase
 			}
 		} else
 		{
-			if (!showDelayedCapturePrefCommon || delayInterval == 0
-					|| !pluginList.get(activeCapture).delayedCaptureSupported())
+			if (!showDelayedCapturePrefCommon || delayInterval == 0 || !pluginList.get(activeCapture).delayedCaptureSupported())
 			{
 				for (int i = 0; i < activeVF.size(); i++)
 					pluginList.get(activeVF.get(i)).onShutterClick();
@@ -519,7 +524,7 @@ public class PluginManager extends PluginManagerBase
 		} else if ("general_image_size".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_general_image_size);
-			if (CameraController.isUseHALv3())
+			if (CameraController.isUseCamera2())
 			{
 				Preference pref;
 				if (null != (pref = pf.findPreference(ApplicationScreen.sImageSizeMultishotBackPref))
@@ -584,7 +589,7 @@ public class PluginManager extends PluginManagerBase
 		} else if ("processing_night_more".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_processing_night_more);
-			if (CameraController.isUseHALv3())
+			if (CameraController.isUseCamera2())
 			{
 				PreferenceScreen prefScr;
 				if (null != (prefScr = (PreferenceScreen) pf.findPreference("nightProcessingMoreScreen")))
@@ -851,6 +856,8 @@ public class PluginManager extends PluginManagerBase
 	@Override
 	public boolean handleApplicationMessage(Message msg)
 	{
+		long sessionID = 0;
+		
 		switch (msg.what)
 		{
 		case ApplicationInterface.MSG_NO_CAMERA:
@@ -860,7 +867,7 @@ public class PluginManager extends PluginManagerBase
 			shutterRelease = true;
 
 			/*
-			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more
+			 * Debug code for Galaxy S6 in Super mode. Look at Camera2 for more
 			 * details
 			 */
 			// CameraController.onCaptureFinished();
@@ -884,7 +891,7 @@ public class PluginManager extends PluginManagerBase
 			ApplicationScreen.getGUIManager().startProcessingAnimation();
 
 			// Returns actual flash mode if it was changed during capturing.
-			if (!CameraController.isUseHALv3())
+			if (!CameraController.isUseCamera2())
 			{
 				int flashMode = ApplicationScreen.instance.getFlashModePref(ApplicationScreen.sDefaultFlashValue);
 				if (flashMode != CameraParameters.FLASH_MODE_CAPTURE_TORCH)
@@ -900,20 +907,22 @@ public class PluginManager extends PluginManagerBase
 			// start async task for further processing
 			cntProcessing++;
 
+			sessionID = Long.valueOf((String) msg.obj);
+			
 			// Map sessionID and processing plugin, because active plugin may be
 			// changed before image processing will start (Mode was switched).
 			// We don't map export plugin, because it's the same for all modes.
-			processingPluginList.put(Long.valueOf((String) msg.obj), pluginList.get(activeProcessing));
+			processingPluginList.put(sessionID, pluginList.get(activeProcessing));
 
 			Intent mServiceIntent = new Intent(ApplicationScreen.instance, ProcessingService.class);
 
 			// Pass to Service sessionID and some other parameters, that may be required.
-			mServiceIntent.putExtra("sessionID", Long.valueOf((String) msg.obj));
+			mServiceIntent.putExtra("sessionID", sessionID);
 			CameraController.Size imageSize = CameraController.getCameraImageSize();
-			mServiceIntent.putExtra("imageWidth", imageSize.getWidth());
-			mServiceIntent.putExtra("imageHeight", imageSize.getHeight());
-			mServiceIntent.putExtra("wantLandscapePhoto", ApplicationScreen.getWantLandscapePhoto());
-			mServiceIntent.putExtra("cameraMirrored", CameraController.isFrontCamera());
+			PluginManager.getInstance().addToSharedMem("imageWidth" + sessionID, String.valueOf(imageSize.getWidth()));
+			PluginManager.getInstance().addToSharedMem("imageHeight" + sessionID, String.valueOf(imageSize.getHeight()));
+			PluginManager.getInstance().addToSharedMem("wantLandscapePhoto" + sessionID, String.valueOf(ApplicationScreen.getWantLandscapePhoto()));
+			PluginManager.getInstance().addToSharedMem("cameraMirrored" + sessionID, String.valueOf(CameraController.isFrontCamera()));
 			
 			// Start processing service with current sessionID.
 			ApplicationScreen.instance.startService(mServiceIntent);
@@ -938,7 +947,7 @@ public class PluginManager extends PluginManagerBase
 			shutterRelease = true;
 
 			/*
-			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more
+			 * Debug code for Galaxy S6 in Super mode. Look at Camera2 for more
 			 * details
 			 */
 			// CameraController.onCaptureFinished();
@@ -988,7 +997,7 @@ public class PluginManager extends PluginManagerBase
 			break;
 
 		case ApplicationInterface.MSG_POSTPROCESSING_FINISHED:
-			long sessionID = 0;
+			sessionID = 0;
 			String sSessionID = getFromSharedMem("sessionID");
 			if (sSessionID != null)
 				sessionID = Long.parseLong(getFromSharedMem("sessionID"));
@@ -1314,14 +1323,10 @@ public class PluginManager extends PluginManagerBase
 	public boolean isCamera2InterfaceAllowed()
 	{
 		String modeID = getActiveModeID();
-		// Temp fix HDR modes for LG G Flex 2.
-		boolean isLgGFlex2 = Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h959")
-				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h510")
-				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-f510k");
 
 		if (modeID.equals("video")
 				|| (Build.MODEL.contains("Nexus 6") && (modeID.equals("pixfix") || modeID.equals("panorama_augmented")))
-				|| (isLgGFlex2 && (modeID.equals("hdrmode") || modeID.equals("expobracketing"))))
+				|| ((CameraController.isFlex2 /*|| CameraController.isG4*/) && (modeID.equals("hdrmode") || modeID.equals("expobracketing"))))
 			return false;
 		else
 			return true;

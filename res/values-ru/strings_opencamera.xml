@@ -67,6 +67,5 @@
     <string name="raterSend">Отправить</string>
     <string name="string_appoftheday">Благодаря Приложению дня теперь у вас есть полная версия</string>
     
-    <string name="string_processing_image">Обработка изображения...</string>
-    <string name="string_saving_image">Сохранение изображения...</string>
+    <string name="string_processing_and_saving_image">Обработка и сохранение изображения...</string>
 </resources>

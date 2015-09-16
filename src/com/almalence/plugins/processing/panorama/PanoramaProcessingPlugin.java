@@ -39,12 +39,14 @@ import com.almalence.util.ImageConversion;
 
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.opencam_plus.ConfigParser;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginProcessing;
  import com.almalence.opencam_plus.R;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.ConfigParser;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
@@ -65,7 +67,7 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 	
 	public PanoramaProcessingPlugin()
 	{
-		super("com.almalence.plugins.panoramaprocessing", R.xml.preferences_processing_panorama, 0, 0, null);
+		super("com.almalence.plugins.panoramaprocessing", "panorama_augmented", R.xml.preferences_processing_panorama, 0, 0, null);
 	}
 
 	@SuppressLint("DefaultLocale")
@@ -97,7 +99,7 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 				PREFERENCES_KEY_SAVEINPUT, false);
 
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
-				PluginManager.getInstance().getActiveMode().modeSaveName);
+				ConfigParser.getInstance().getMode(mode).modeSaveName);
 
 		int orient = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("frameorientation" + sessionID));
 		this.prefLandscape = orient == 0 || orient == 180 ? true : false;
@@ -199,7 +201,7 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 		File saveDir = PluginManager.getSaveDir(false);
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 
-		final String modeName = PluginManager.getInstance().getActiveMode().modeSaveName;
+		final String modeName = ConfigParser.getInstance().getMode(mode).modeSaveName;
 		String fileFormat = PluginManager.getInstance().getExportFileName(modeName);
 
 		final Rect crop = new Rect(0, 0, input_width, input_height);

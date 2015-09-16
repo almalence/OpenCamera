@@ -29,4 +29,7 @@
             android:visibility="gone" />
     </RelativeLayout>
 
+    <include android:id="@+id/almalence_gui"
+        	 layout="@layout/gui_almalence_layout"/>
+    
 </RelativeLayout>

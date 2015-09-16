@@ -24,31 +24,11 @@ package com.almalence.opencam;
 
 //-+- -->
 
-import java.util.LinkedList;
-import java.util.Queue;
-
-import android.app.Notification;
-import android.app.Service;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
 
-public class ProcessingService extends Service
+public class ProcessingService extends NotificationService
 {
-
-	private static final int	NOTIFICATION_ID		= 10;
-	private Notification		notification;
-	private boolean				notificationShown	= false;
-	private int					processingCount		= 0;
-
-	// We need this queue to save images in right order (as they were captured).
-	private static Queue<Long>	processingQueue		= new LinkedList<Long>();
-
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startid)
 	{
@@ -58,73 +38,21 @@ public class ProcessingService extends Service
 			return START_NOT_STICKY;
 		}
 
-		processingQueue.add(sessionID);
 		ProcessingTask task = new ProcessingTask();
 		task.sessionID = sessionID;
-		task.bundle = intent.getExtras();
-		task.execute();
+		task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
 
 		return START_NOT_STICKY;
-	}
-
-	@Override
-	public IBinder onBind(Intent intent)
-	{
-		return null;
-	}
-
-	private synchronized void showNotification()
-	{
-		processingCount++;
-
-		// Notification already shown.
-		if (notificationShown)
-			return;
-
-		if (notification == null)
-		{
-			Bitmap bigIcon = BitmapFactory.decodeResource(getResources(), R.drawable.icon);
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-			{
-				notification = new Notification.Builder(this).setContentTitle(getString(R.string.app_name))
-						.setContentText(getString(R.string.string_processing_image))
-						.setSmallIcon(R.drawable.icon).setLargeIcon(bigIcon).build();
-			} else
-			{
-				notification = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.icon).setLargeIcon(bigIcon)
-						.setContentTitle(getString(R.string.app_name))
-						.setContentText(getString(R.string.string_processing_image)).build();
-			}
-		}
-
-		startForeground(NOTIFICATION_ID, notification);
-		notificationShown = true;
-	}
-
-	private synchronized void hideNotification()
-	{
-		processingCount--;
-
-		// Notification already hidden.
-		if (!notificationShown)
-			return;
-
-		if (processingCount == 0)
-		{
-			stopForeground(true);
-			notificationShown = false;
-		}
 	}
 
 	private class ProcessingTask extends AsyncTask<Void, Void, Void>
 	{
 		public long	sessionID	= 0;	// id to identify data flow
-		Bundle		bundle;
 
 		@Override
 		protected void onPreExecute()
 		{
-			showNotification();			
+			showNotification();	
 		}
 		
 		@Override
@@ -140,24 +68,10 @@ public class ProcessingService extends Service
 
 			export = PluginManager.getInstance().pluginList.get(PluginManager.getInstance().activeExport);
 
-			// if post processing not needed - save few values
-			// from intent to shared memory for current session
-			if (null != processing)
-				if (!processing.isPostProcessingNeeded())
-				{
-					PluginManager.getInstance().addToSharedMem("imageHeight" + sessionID,
-							String.valueOf(bundle.getInt("imageHeight", 0)));
-					PluginManager.getInstance().addToSharedMem("imageWidth" + sessionID,
-							String.valueOf(bundle.getInt("imageWidth", 0)));
-					PluginManager.getInstance().addToSharedMem("wantLandscapePhoto" + sessionID,
-							String.valueOf(bundle.getBoolean("wantLandscapePhoto", false)));
-					PluginManager.getInstance().addToSharedMem("CameraMirrored" + sessionID,
-							String.valueOf(bundle.getBoolean("cameraMirrored", false)));
-				}
-
 			if (null != processing)
 			{
 				processing.onStartProcessing(sessionID);
+				
 				if (processing.isPostProcessingNeeded())
 				{
 					ApplicationScreen.getMessageHandler().sendEmptyMessage(
@@ -168,22 +82,7 @@ public class ProcessingService extends Service
 
 			if (null != export)
 			{
-				// Sleep until current session become the head of queue.
-				while(processingQueue.element() != sessionID) {
-					try
-					{
-						Thread.sleep(10);
-					} catch (InterruptedException e)
-					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				
 				export.onExportActive(sessionID);
-				
-				// Remove current session from queue. 
-				processingQueue.remove();
 			} else
 			{
 				if (ApplicationScreen.instance != null && ApplicationScreen.getMessageHandler() != null)

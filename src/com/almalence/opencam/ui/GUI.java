@@ -204,6 +204,7 @@ public abstract class GUI
 
 	// INFO view
 	abstract protected void addInfoView(View view, android.widget.LinearLayout.LayoutParams viewLayoutParams);
+	abstract public void addInfoView(View info_control);
 
 	abstract protected void removeInfoView(View view);
 

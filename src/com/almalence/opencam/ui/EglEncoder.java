@@ -3,9 +3,17 @@ package com.almalence.opencam_plus.ui;
 +++ --> */
 //<!-- -+-
 package com.almalence.opencam.ui;
+
 //-+- -->
 
+import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+
 import android.annotation.SuppressLint;
+import android.graphics.SurfaceTexture;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaCodecList;
@@ -19,37 +27,61 @@ import android.opengl.EGLExt;
 import android.opengl.EGLSurface;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.Surface;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-
-
 @SuppressLint("NewApi")
-public class EglEncoder
+public class EglEncoder implements Runnable
 {
-	private static final String			TAG				= "EglEncoder";
-	private static final boolean		VERBOSE			= false;		// lots
-																		// of
-																		// logging
+	private static final String			TAG							= "EglEncoder";
+	private static final boolean		VERBOSE						= false;		// lots
+																					// of
+																					// logging
 
-	private static final String			SHADER_VERTEX	= "attribute vec2 vPosition;\n"
-																+ "attribute vec2 vTexCoord;\n"
-																+ "varying vec2 texCoord;\n"
-																+ "void main() {\n"
-																+ "  texCoord = vTexCoord;\n"
-																+ "  gl_Position = vec4 ( vPosition.x, vPosition.y, 1.0, 1.0 );\n"
-																+ "}";
+	private static final int			MSG_START_RECORDING			= 0;
+	private static final int			MSG_STOP_RECORDING			= 1;
+	private static final int			MSG_FRAME_AVAILABLE			= 2;
+	private static final int			MSG_SET_TEXTURE_ID			= 3;
+	private static final int			MSG_QUIT					= 5;
 
-	private static final String			SHADER_FRAGMENT	= "#extension GL_OES_EGL_image_external:enable\n"
-																+ "precision mediump float;\n"
-																+ "uniform samplerExternalOES sTexture;\n"
-																+ "varying vec2 texCoord;\n" + "void main() {\n"
-																+ "  gl_FragColor = texture2D(sTexture, texCoord);\n"
-																+ "}";
+	private Object						mReadyFence					= new Object(); // guards
+																					// ready/running
+	private boolean						mReady;
+	private boolean						mRunning;
+
+	static EGLContext					mEglContext					= null;
+
+	private int							mTextureId;
+
+	private volatile EncoderHandler		mHandler;
+
+	private static final String			SHADER_VERTEX_WITH_ROTATION	= "attribute vec2 vPosition;\n"
+																			+ "attribute vec4 vTexCoordinate;\n"
+																			+ "uniform mat4 textureTransform;\n"
+																			+ "varying vec2 v_TexCoordinate;\n"
+																			+ "void main() {\n"
+																			+ "   v_TexCoordinate = (textureTransform * vTexCoordinate).xy;\n"
+																			+ "  gl_Position = vec4 ( vPosition.x, vPosition.y, 1.0, 1.0 );\n"
+																			+ "}";
+
+	private static final String			SHADER_VERTEX				= "attribute vec2 vPosition;\n"
+																			+ "attribute vec2 vTexCoordinate;\n"
+																			+ "varying vec2 v_TexCoordinate;\n"
+																			+ "void main() {\n"
+																			+ "  v_TexCoordinate = vTexCoordinate;\n"
+																			+ "  gl_Position = vec4 ( vPosition.x, vPosition.y, 1.0, 1.0 );\n"
+																			+ "}";
+
+	private static final String			SHADER_FRAGMENT				= "#extension GL_OES_EGL_image_external:enable\n"
+																			+ "precision mediump float;\n"
+																			+ "uniform samplerExternalOES sTexture;\n"
+																			+ "varying vec2 v_TexCoordinate;\n"
+																			+ "void main() {\n"
+																			+ "  gl_FragColor = texture2D(sTexture, v_TexCoordinate);\n"
+																			+ "}";
 
 	private static final FloatBuffer	VERTEX_BUFFER;
 
@@ -131,6 +163,7 @@ public class EglEncoder
 	private boolean					open					= true;
 
 	private int						hProgram;
+	private int						hProgramWithRotation;
 
 	private final FloatBuffer		UV_BUFFER;
 
@@ -139,7 +172,7 @@ public class EglEncoder
 	private volatile boolean		paused					= true;
 
 	public EglEncoder(final String outputPath, final int width, final int height, final int fps, final int bitrate,
-			int orientation)
+			int orientation, EGLContext sharedContext)
 	{
 		this.outputPath = outputPath;
 		this.mBitRate = bitrate;
@@ -175,9 +208,34 @@ public class EglEncoder
 		this.UV_BUFFER.put(ttmp);
 		this.UV_BUFFER.position(0);
 
-		this.prepareEncoder();
+		mEglContext = sharedContext;
+
+		// Start encoder in it's own thread.
+		synchronized (mReadyFence)
+		{
+			if (mRunning)
+			{
+				Log.w(TAG, "Encoder thread already running");
+				return;
+			}
+			mRunning = true;
+			new Thread(this, "EglEncoder").start();
+			while (!mReady)
+			{
+				try
+				{
+					mReadyFence.wait();
+				} catch (InterruptedException ie)
+				{
+					// ignore
+				}
+			}
+		}
+
+		mHandler.sendMessage(mHandler.obtainMessage(MSG_START_RECORDING, null));
 
 		this.hProgram = loadShader(SHADER_VERTEX, SHADER_FRAGMENT);
+		this.hProgramWithRotation = loadShader(SHADER_VERTEX_WITH_ROTATION, SHADER_FRAGMENT);
 	}
 
 	public String getPath()
@@ -244,7 +302,7 @@ public class EglEncoder
 
 		this.audioRecorder.updateTime(this.timeTotal);
 
-		this.drawEncode(texture);
+		this.drawEncode(texture, null);
 	}
 
 	public void encode(final int texture, final long nanoSec)
@@ -260,15 +318,40 @@ public class EglEncoder
 		this.timeTotal += nanoSec;
 		this.audioRecorder.updateTime(this.timeTotal);
 
-		this.drawEncode(texture);
+		this.drawEncode(texture, null);
+	}
+	
+	public void encode(float[] transform, long timestamp)
+	{
+		final long time = System.nanoTime();
+		final long timeDiff;
+
+		if (this.checkPaused())
+		{
+			timeDiff = 0;
+		} else
+		{
+			timeDiff = time - this.timeLast;
+		}
+
+		if (this.timeLast >= 0)
+		{
+			this.timeTotal += timeDiff;
+		}
+
+		this.timeLast = time;
+
+		this.audioRecorder.updateTime(this.timeTotal);
+
+		this.drawEncode(mTextureId, transform);
 	}
 
-	private void drawEncode(final int texture)
+	private void drawEncode(final int texture, float[] transform)
 	{
 		this.mInputSurface.makeCurrent();
 
 		this.drainEncoder(false);
-		this.drawTexture(texture);
+		this.drawTexture(texture, transform);
 		this.mInputSurface.setPresentationTime(this.timeTotal);
 
 		this.mInputSurface.swapBuffers();
@@ -276,8 +359,7 @@ public class EglEncoder
 		this.mInputSurface.unmakeCurrent();
 	}
 
-	private void drawTexture(final int texture)
-	{
+	private void drawTexture(final int texture, float[] transform) {
 		GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
 
 		GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -285,22 +367,46 @@ public class EglEncoder
 
 		GLES20.glViewport(0, 0, this.mWidth, this.mHeight);
 
-		GLES20.glUseProgram(this.hProgram);
+		if (transform == null) {
+			GLES20.glUseProgram(this.hProgram);
+		} else{
+			GLES20.glUseProgram(this.hProgramWithRotation);
+		} 
 
-		final int ph = GLES20.glGetAttribLocation(this.hProgram, "vPosition");
-		final int tch = GLES20.glGetAttribLocation(this.hProgram, "vTexCoord");
-		final int th = GLES20.glGetUniformLocation(this.hProgram, "sTexture");
-
+		final int ph;
+		final int th;
+		final int tch;
+		if (transform == null) {
+			GLES20.glUseProgram(this.hProgram);
+			ph = GLES20.glGetAttribLocation(this.hProgram, "vPosition");
+			th = GLES20.glGetUniformLocation(this.hProgram, "sTexture");
+	        tch = GLES20.glGetAttribLocation(this.hProgram, "vTexCoordinate");
+		} else {
+			GLES20.glUseProgram(this.hProgramWithRotation);
+			ph = GLES20.glGetAttribLocation(this.hProgramWithRotation, "vPosition");
+			th = GLES20.glGetUniformLocation(this.hProgramWithRotation, "sTexture");
+	        tch = GLES20.glGetAttribLocation(this.hProgramWithRotation, "vTexCoordinate");
+		}
+		
 		GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
 		GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, texture);
 		GLES20.glUniform1i(th, 0);
 
-		GLES20.glVertexAttribPointer(ph, 2, GLES20.GL_FLOAT, false, 4 * 2, VERTEX_BUFFER);
-		GLES20.glVertexAttribPointer(tch, 2, GLES20.GL_FLOAT, false, 4 * 2, this.UV_BUFFER);
+		if (transform != null) {
+        	int tth = GLES20.glGetUniformLocation(this.hProgramWithRotation, "textureTransform");
+        	GLES20.glUniformMatrix4fv(tth, 1, false, transform, 0);
+        }
+		
+		GLES20.glVertexAttribPointer(ph, 2, GLES20.GL_FLOAT, false, 4 * 2,
+				VERTEX_BUFFER);
+		GLES20.glVertexAttribPointer(tch, 2, GLES20.GL_FLOAT, false, 4 * 2,
+				this.UV_BUFFER);
 		GLES20.glEnableVertexAttribArray(ph);
 		GLES20.glEnableVertexAttribArray(tch);
 
 		GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+		// GLES20.glFlush();
+		// GLES20.glFinish();
 
 		GLES20.glDisableVertexAttribArray(ph);
 		GLES20.glDisableVertexAttribArray(tch);
@@ -439,8 +545,7 @@ public class EglEncoder
 		try
 		{
 			this.mEncoder = MediaCodec.createEncoderByType(MIME_TYPE);
-		}
-		catch (IOException e1)
+		} catch (IOException e1)
 		{
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -528,7 +633,7 @@ public class EglEncoder
 			this.mEncoder.signalEndOfInputStream();
 		}
 
-		ByteBuffer[] encoderOutputBuffers = this.mEncoder.getOutputBuffers();
+		ByteBuffer[] encoderOutputBuffers = mEncoder.getOutputBuffers();
 		while (true)
 		{
 			final int encoderStatus = this.mEncoder.dequeueOutputBuffer(this.mBufferInfo, TIMEOUT_USEC);
@@ -596,10 +701,7 @@ public class EglEncoder
 					encodedData.position(this.mBufferInfo.offset);
 					encodedData.limit(this.mBufferInfo.offset + this.mBufferInfo.size);
 
-					synchronized (this.mMuxer)
-					{
-						this.mMuxer.writeSampleData(this.mTrackIndex, encodedData, this.mBufferInfo);
-					}
+					this.mMuxer.writeSampleData(this.mTrackIndex, encodedData, this.mBufferInfo);
 					if (VERBOSE)
 						Log.d(TAG, "sent " + this.mBufferInfo.size + " bytes to muxer");
 				}
@@ -657,6 +759,20 @@ public class EglEncoder
 			this.eglSetup();
 		}
 
+		public static final int	FLAG_RECORDABLE	= 0x01;
+
+		private EGLConfig getConfig(int flags, int version, EGLDisplay mEGLDisplay)
+		{
+			EGLConfig[] configs = new EGLConfig[1];
+			int[] numConfigs = new int[1];
+			if (!EGL14.eglChooseConfig(mEGLDisplay, EGL_ATTRIB_LIST, 0, configs, 0, configs.length, numConfigs, 0))
+			{
+				Log.w(TAG, "unable to find RGB8888 / " + version + " EGLConfig");
+				return null;
+			}
+			return configs[0];
+		}
+
 		/**
 		 * Prepares EGL. We want a GLES 2.0 context and a surface that supports
 		 * recording.
@@ -669,7 +785,11 @@ public class EglEncoder
 				throw new RuntimeException("unable to get EGL14 display");
 			}
 
-			this.eglContext = EGL14.eglGetCurrentContext();
+			// this.eglContext = EGL14.eglGetCurrentContext();
+			int[] attrib2_list = { EGL14.EGL_CONTEXT_CLIENT_VERSION, 2, EGL14.EGL_NONE };
+			EGLConfig config = getConfig(FLAG_RECORDABLE, 2, eglDisplay);
+			this.eglContext = EGL14.eglCreateContext(eglDisplay, config, mEglContext, attrib2_list, 0);
+
 			if (this.eglContext == EGL14.EGL_NO_CONTEXT)
 			{
 				throw new RuntimeException("unable to get EGL14 context");
@@ -755,6 +875,147 @@ public class EglEncoder
 			if ((error = EGL14.eglGetError()) != EGL14.EGL_SUCCESS)
 			{
 				throw new RuntimeException(msg + ": EGL error: 0x" + Integer.toHexString(error));
+			}
+		}
+	}
+
+	// EglEncoder working in it's own thread.
+	@Override
+	public void run()
+	{
+		Looper.prepare();
+		synchronized (mReadyFence)
+		{
+			mHandler = new EncoderHandler(this);
+			mReady = true;
+			mReadyFence.notify();
+		}
+		Looper.loop();
+
+		Log.d(TAG, "Encoder thread exiting");
+		synchronized (mReadyFence)
+		{
+			mReady = mRunning = false;
+			mHandler = null;
+		}
+
+	}
+
+	float[]	transform	= new float[16];
+
+	/**
+	 * Tells the video recorder new frame is available. (Call from non-encoder
+	 * thread)
+	 */
+	public void frameAvailable(SurfaceTexture st, boolean filtering)
+	{
+		synchronized (mReadyFence)
+		{
+			if (!mReady)
+			{
+				return;
+			}
+		}
+
+		st.getTransformMatrix(transform);
+		long timestamp = st.getTimestamp();
+		if (timestamp == 0)
+		{
+			Log.w(TAG, "HEY: got SurfaceTexture with timestamp of zero");
+			return;
+		}
+
+		mHandler.sendMessage(mHandler.obtainMessage(MSG_FRAME_AVAILABLE, (int) (timestamp >> 32), (int) timestamp,
+				filtering ? null : transform.clone()));
+	}
+
+	/**
+	 * Sets the texture name that SurfaceTexture will use when frames are
+	 * received.
+	 */
+	private void handleSetTexture(int id)
+	{
+		// Log.d(TAG, "handleSetTexture " + id);
+		mTextureId = id;
+	}
+
+	/**
+	 * Tells the video recorder what texture name to use. This is the external
+	 * texture that we're receiving camera previews in. (Call from non-encoder
+	 * thread.)
+	 */
+	public void setTextureId(int id)
+	{
+		synchronized (mReadyFence)
+		{
+			if (!mReady)
+			{
+				return;
+			}
+		}
+		mHandler.sendMessage(mHandler.obtainMessage(MSG_SET_TEXTURE_ID, id, 0, null));
+	}
+
+	/**
+	 * Tells the video recorder to stop recording. (Call from non-encoder
+	 * thread)
+	 */
+	public void stopRecording()
+	{
+		mHandler.sendMessage(mHandler.obtainMessage(MSG_STOP_RECORDING));
+		mHandler.sendMessage(mHandler.obtainMessage(MSG_QUIT));
+		// We don't know when these will actually finish (or even start). We
+		// don't want to
+		// delay the UI thread though, so we return immediately.
+	}
+
+	/**
+	 * Handles encoder state change requests. The handler is created on the
+	 * encoder thread.
+	 */
+	private static class EncoderHandler extends Handler
+	{
+		private WeakReference<EglEncoder>	mWeakEncoder;
+
+		public EncoderHandler(EglEncoder encoder)
+		{
+			mWeakEncoder = new WeakReference<EglEncoder>(encoder);
+		}
+
+		@Override
+		// runs on encoder thread
+		public void handleMessage(Message inputMessage)
+		{
+			int what = inputMessage.what;
+			Object obj = inputMessage.obj;
+
+			EglEncoder encoder = mWeakEncoder.get();
+			if (encoder == null)
+			{
+				Log.w(TAG, "EncoderHandler.handleMessage: encoder is null");
+				return;
+			}
+
+			switch (what)
+			{
+			case MSG_START_RECORDING:
+				encoder.prepareEncoder();
+				break;
+			case MSG_STOP_RECORDING:
+				encoder.close();
+				break;
+			case MSG_FRAME_AVAILABLE:
+				long timestamp = (((long) inputMessage.arg1) << 32) | (((long) inputMessage.arg2) & 0xffffffffL);
+				encoder.encode((float[]) obj, timestamp);
+				break;
+			case MSG_SET_TEXTURE_ID:
+				encoder.handleSetTexture(inputMessage.arg1);
+				break;
+			case MSG_QUIT:
+				Looper.myLooper().quit();
+				break;
+			default:
+				throw new RuntimeException("Unhandled msg what=" + what);
 			}
 		}
 	}

@@ -585,7 +585,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 
 	protected void AddModeSettings(String modeName, PreferenceFragment pf)
 	{
-		if (modeName.equals("super") && CameraController.isUseHALv3())
+		if (modeName.equals("super") && CameraController.isUseCamera2())
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_processing_super);
 			return;
@@ -900,6 +900,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 
 	public boolean handleApplicationMessage(Message msg)
 	{
+		long sessionID = 0;
+		
 		switch (msg.what)
 		{
 		case ApplicationInterface.MSG_NO_CAMERA:
@@ -908,7 +910,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		case ApplicationInterface.MSG_CAPTURE_FINISHED:
 
 			/*
-			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more
+			 * Debug code for Galaxy S6 in Super mode. Look at Camera2 for more
 			 * details
 			 */
 			// CameraController.onCaptureFinished();
@@ -933,21 +935,23 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			// start async task for further processing
 			cntProcessing++;
 
+			sessionID = Long.valueOf((String) msg.obj);
+			
 			// Map sessionID and processing plugin, because active plugin may be
 			// changed before image processing will start.
 			// We don't map export plugin, because it's the same for all modes.
-			processingPluginList.put(Long.valueOf((String) msg.obj), pluginList.get(activeProcessing));
+			processingPluginList.put(sessionID, pluginList.get(activeProcessing));
 
 			Intent mServiceIntent = new Intent(ApplicationScreen.instance, ProcessingService.class);
 
 			// Pass to Service sessionID and some other parameters, that may be
 			// required.
-			mServiceIntent.putExtra("sessionID", Long.valueOf((String) msg.obj));
+			mServiceIntent.putExtra("sessionID", sessionID);
 			CameraController.Size imageSize = CameraController.getCameraImageSize();
-			mServiceIntent.putExtra("imageWidth", imageSize.getWidth());
-			mServiceIntent.putExtra("imageHeight", imageSize.getHeight());
-			mServiceIntent.putExtra("wantLandscapePhoto", ApplicationScreen.getWantLandscapePhoto());
-			mServiceIntent.putExtra("cameraMirrored", CameraController.isFrontCamera());
+			PluginManager.getInstance().addToSharedMem("imageWidth" + sessionID, String.valueOf(imageSize.getWidth()));
+			PluginManager.getInstance().addToSharedMem("imageHeight" + sessionID, String.valueOf(imageSize.getHeight()));
+			PluginManager.getInstance().addToSharedMem("wantLandscapePhoto" + sessionID, String.valueOf(ApplicationScreen.getWantLandscapePhoto()));
+			PluginManager.getInstance().addToSharedMem("cameraMirrored" + sessionID, String.valueOf(CameraController.isFrontCamera()));
 
 			// Start processing service with current sessionID.
 			ApplicationScreen.instance.startService(mServiceIntent);
@@ -959,7 +963,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		case ApplicationInterface.MSG_CAPTURE_FINISHED_NORESULT:
 
 			/*
-			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more
+			 * Debug code for Galaxy S6 in Super mode. Look at Camera2 for more
 			 * details
 			 */
 			// CameraController.onCaptureFinished();
@@ -1002,7 +1006,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			break;
 
 		case ApplicationInterface.MSG_POSTPROCESSING_FINISHED:
-			long sessionID = 0;
+			sessionID = 0;
 			String sSessionID = getFromSharedMem("sessionID");
 			if (sSessionID != null)
 				sessionID = Long.parseLong(getFromSharedMem("sessionID"));
@@ -1397,7 +1401,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 
 	public String getFileFormat()
 	{
-		if (CameraController.isUseHALv3())
+		if (CameraController.isUseCamera2())
 		{
 			return SavingService.getExportFileName(getActiveMode().modeSaveNameHAL);
 		} else
@@ -1539,7 +1543,9 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 
 	private void saveInputFileNew(boolean isYUV, Long SessionID, int i, byte[] buffer, int yuvBuffer, String fileFormat)
 	{
-		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		
+		int mImageWidth = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("imageWidth" + SessionID));
+		int mImageHeight = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("imageHeight" + SessionID));
 		ContentValues values = null;
 		String resultOrientation = getFromSharedMem("frameorientation" + (i + 1) + Long.toString(SessionID));
 		if (resultOrientation == null)
@@ -1601,7 +1607,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 					jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
 
 					com.almalence.YuvImage image = new com.almalence.YuvImage(yuvBuffer, ImageFormat.NV21,
-							imageSize.getWidth(), imageSize.getHeight(), null);
+							mImageWidth, mImageHeight, null);
 					// to avoid problems with SKIA
 					int cropHeight = image.getHeight() - image.getHeight() % 16;
 					image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), jpegQuality, os);
@@ -1643,7 +1649,22 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
 		values.put(ImageColumns.MIME_TYPE, "image/jpeg");
 		values.put(ImageColumns.ORIENTATION, mDisplayOrientation);
-		values.put(ImageColumns.DATA, file.getName());
+		
+		String filePath = file.getName();
+		// If we able to get File object, than get path from it.
+		// fileObject should not be null for files on phone memory.
+		File fileObject = Util.getFileFromDocumentFile(file);
+		if (fileObject != null)
+		{
+			filePath = fileObject.getAbsolutePath();
+			values.put(ImageColumns.DATA, filePath);
+		} else
+		{
+			// This case should typically happen for files saved to SD
+			// card.
+			String documentPath = Util.getAbsolutePathFromDocumentFile(file);
+			values.put(ImageColumns.DATA, documentPath);
+		}
 
 		if (saveGeoInfo)
 		{

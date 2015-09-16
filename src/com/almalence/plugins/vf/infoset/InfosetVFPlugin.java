@@ -41,6 +41,7 @@ import android.widget.TextView;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
  import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginViewfinder;
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.ApplicationInterface;
@@ -49,6 +50,7 @@ import android.widget.TextView;
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
@@ -189,7 +191,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 		else
 			evPref.setEnabled(false);
 
-		if (CameraController.isUseHALv3())
+		if (CameraController.isUseCamera2())
 		{
 			useCurrentSensitivityPref.setEnabled(true);
 			useCurrentExposureTimePref.setEnabled(true);
@@ -219,7 +221,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 		else
 			flashPref.setEnabled(false);
 
-		if (CameraController.isUseHALv3())
+		if (CameraController.isUseCamera2())
 			isoPref.setEnabled(false);
 		else
 		{
@@ -365,13 +367,16 @@ public class InfosetVFPlugin extends PluginViewfinder
 
 		if (usePictureCount)
 		{
-			String memoryString = String.valueOf(Util.AvailablePictureCount());
-			View v = LayoutInflater.from(ApplicationScreen.getMainContext()).inflate(R.layout.plugin_vf_infoset_text, null);
-			memoryInfoText = (TextView) v.findViewById(R.id.infoText);
-			memoryInfoText.setText(memoryString);
-			memoryInfoText.setRotation(-mDeviceOrientation);
-
-			addInfoView(memoryInfoText);
+			if (!PluginManager.getInstance().getActiveMode().modeID.equalsIgnoreCase("panorama_augmented"))
+			{
+				String memoryString = String.valueOf(Util.AvailablePictureCount());
+				View v = LayoutInflater.from(ApplicationScreen.getMainContext()).inflate(R.layout.plugin_vf_infoset_text, null);
+				memoryInfoText = (TextView) v.findViewById(R.id.infoText);
+				memoryInfoText.setText(memoryString);
+				memoryInfoText.setRotation(-mDeviceOrientation);
+	
+				addInfoView(memoryInfoText);
+			}
 		}
 
 		if (useEVMonitor)
@@ -541,7 +546,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 		if (useFocusMonitor && focusInfoImage != null)
 		{
 			int focus = CameraController.getFocusMode();
-			if (focus != -1 && focusInfoImage != null && CameraController.isFocusModeSupported())
+			if (focus != CameraParameters.AF_MODE_UNSUPPORTED && focusInfoImage != null && CameraController.isFocusModeSupported())
 			{
 				int focus_id = ApplicationScreen.instance.getFocusIcon(focus);
 				if (focus_id != -1)
@@ -673,7 +678,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 			if (this.useFocusMonitor && focusInfoImage != null)
 			{
 				int focus = CameraController.getFocusMode();
-				if (focus != -1 && focusInfoImage != null)
+				if (focus != CameraParameters.AF_MODE_UNSUPPORTED && focusInfoImage != null)
 				{
 					int focus_id = ApplicationScreen.instance.getFocusIcon(focus);
 					if (focus_id != -1)

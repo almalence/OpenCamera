@@ -14,8 +14,8 @@
     <string name="Pref_Common_HWShutter_Summary">使用硬件快门可开启应用</string>
     <string name="Pref_Common_ShotOnTap_Title">触按可拍摄</string>
     <string name="Pref_Common_ShotOnTap_Summary">聚焦后触按拍摄</string>
-    <string name="Pref_Common_UseHALv3_Title">使用相机2界面</string>
-    <string name="Pref_Common_UseHALv3_Summary">实验模式。可运行在有限数目的设备上(Google Nexus 5、 7 和Android L)</string>    
+    <string name="Pref_Common_UseCamera2_Title">使用相机2界面</string>
+    <string name="Pref_Common_UseCamera2_Summary">实验模式。可运行在有限数目的设备上(Google Nexus 5、 7 和Android L)</string>    
     <string name="Pref_Common_MediaRescan_Title">注销时媒体重新扫描</string>
     <string name="Pref_Common_MediaRescan_Summary">图像未出现在库中时帮助。</string>
     <string name="Pref_Common_Gallery_Title">可选择外部图库</string>

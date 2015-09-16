@@ -63,7 +63,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	// almashot - related
 	public static int[]			evValues				= new int[MAX_HDR_FRAMES];
 	public static int[]			evIdx					= new int[MAX_HDR_FRAMES];
-	private int					frame_num, captureResult_num;
+	private int					frame_num;
 	public static float			ev_step;
 	private boolean				cm7_crap;
 
@@ -112,6 +112,9 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	{
 		inCapture = false;
 		aboutToTakePicture = false;
+		
+		isAllImagesTaken = false;
+		isAllCaptureResultsCompleted = true;
 
 		ApplicationScreen.instance.muteShutter(false);
 
@@ -120,7 +123,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		preferenceSceneMode = ApplicationScreen.instance.getSceneModePref();
 		preferenceFlashMode = ApplicationScreen.instance.getFlashModePref(ApplicationScreen.sDefaultFlashValue);
 		
-		if (CameraController.isUseHALv3() && CameraController.isNexus)
+		if (CameraController.isUseCamera2() && CameraController.isNexus)
 			ApplicationScreen.instance.setFlashModePref(CameraParameters.FLASH_MODE_OFF);
 
 		cdt = null;
@@ -143,7 +146,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		ApplicationScreen.instance.setEVPref(preferenceEVCompensationValue);
 		ApplicationScreen.instance.setSceneModePref(preferenceSceneMode);
 
-		if (CameraController.isUseHALv3() && CameraController.isNexus)
+		if (CameraController.isUseCamera2() && CameraController.isNexus)
 		{
 			prefs.edit().putInt(ApplicationScreen.sFlashModePref, preferenceFlashMode).commit();
 			CameraController.setCameraFlashMode(preferenceFlashMode);
@@ -156,7 +159,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		ApplicationScreen.instance.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, true, false, true);
 		ApplicationScreen.instance.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, true, true);
 
-		if (CameraController.isUseHALv3() && CameraController.isNexus)
+		if (CameraController.isUseCamera2() && CameraController.isNexus)
 			ApplicationScreen.instance.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false, true);
 	}
 
@@ -180,7 +183,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		try
 		{
 			int[] flashModes = CameraController.getSupportedFlashModes();
-			if (flashModes != null && flashModes.length > 0 && CameraController.isUseHALv3() && CameraController.isNexus)
+			if (flashModes != null && flashModes.length > 0 && CameraController.isUseCamera2() && CameraController.isNexus)
 			{
 				SharedPreferences.Editor editor = prefs.edit();
 				editor.putInt(ApplicationScreen.sFlashModePref, CameraParameters.FLASH_MODE_OFF);
@@ -225,7 +228,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 			// reiniting for every shutter press
 			frame_num = 0;
-			captureResult_num = 0;
+			resultCompleted = 0;
 
 			if (CameraController.isAutoFocusPerform())
 				aboutToTakePicture = true;
@@ -303,21 +306,30 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		if ((captureRAW && (frame_num + imagesTakenRAW) >= (total_frames * 2))
 				|| (!captureRAW && frame_num >= total_frames))
 		{
-			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
-					String.valueOf(frame_num + imagesTakenRAW));
-			if (cdt != null)
+			Log.wtf("EXPO", "frame_num = " + frame_num);
+			if(isAllCaptureResultsCompleted)
 			{
-				cdt.cancel();
-				cdt = null;
+				PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
+						String.valueOf(frame_num + imagesTakenRAW));
+				if (cdt != null)
+				{
+					cdt.cancel();
+					cdt = null;
+				}
+	
+				PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+	
+				CameraController.resetExposureCompensation();
+	
+				imagesTakenRAW = 0;
+				frame_num = 0;
+				resultCompleted = 0;
+				inCapture = false;
+				
+				isAllImagesTaken = false;
 			}
-
-			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
-
-			CameraController.resetExposureCompensation();
-
-			imagesTakenRAW = 0;
-			frame_num = 0;
-			inCapture = false;
+			else
+				isAllImagesTaken = true;
 		}
 	}
 
@@ -325,22 +337,53 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{
-		Log.e("EXPO", "onCaptureCompleted. REQUEST ID = " + result.getSequenceId());
-		int requestID = requestIDArray[captureResult_num];
-		captureResult_num++;
+		isAllCaptureResultsCompleted = false;
+
+		int requestID = requestIDArray[resultCompleted];
+		resultCompleted++;
 		if (result.getSequenceId() == requestID)
 		{
 			// Log.e("ExpoBkt", "frame_num = " + frame_num);
 			// if (evIdx[frame_num] == 0)
 			Log.e("EXPO", "addToSharedMemExifTagsFromCaptureResult REQUEST ID = " + requestID);
-			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, captureResult_num);
+			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, resultCompleted);
 		}
 
 		if (captureRAW)
 		{
-			Log.e("ExpoBkt", "captureResult_num = " + captureResult_num);
-			PluginManager.getInstance().addRAWCaptureResultToSharedMem("captureResult" + captureResult_num + SessionID,
+			Log.e("ExpoBkt", "resultCompleted = " + resultCompleted);
+			PluginManager.getInstance().addRAWCaptureResultToSharedMem("captureResult" + resultCompleted + SessionID,
 					result);
+		}
+		
+		if ((captureRAW && resultCompleted >= (total_frames * 2))
+				|| (!captureRAW && resultCompleted >= total_frames))
+		{
+			isAllCaptureResultsCompleted = true;
+			resultCompleted = 0;
+			
+			if(isAllImagesTaken)
+			{
+				PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
+						String.valueOf(frame_num + imagesTakenRAW));
+				
+				if (cdt != null)
+				{
+					cdt.cancel();
+					cdt = null;
+				}
+	
+				PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+	
+				CameraController.resetExposureCompensation();
+				
+				imagesTakenRAW = 0;
+				frame_num = 0;
+				resultCompleted = 0;
+				inCapture = false;
+				
+				isAllImagesTaken = false;
+			}
 		}
 	}
 

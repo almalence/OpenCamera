@@ -355,8 +355,6 @@ public class VideoCapturePlugin extends PluginCapture
 			}
 		});
 
-		if (PluginManager.getInstance().getProcessingCounter() == 0)
-			modeSwitcher.setEnabled(true);
 	}
 
 	@Override
@@ -1015,7 +1013,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 		prefs.edit()
 				.putBoolean(
-						ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
+						ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key),
 						camera2Preference).commit();
 
 		if (!CameraController.isRemoteCamera())
@@ -1081,9 +1079,9 @@ public class VideoCapturePlugin extends PluginCapture
 		ApplicationScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
 
 		if (camera2Preference)
-			CameraController.needCameraRelaunch(true);
+			CameraController.useCamera2OnRelaunch(true);
 
-		CameraController.useHALv3(camera2Preference);
+		CameraController.setUseCamera2(camera2Preference);
 	}
 
 	@Override
@@ -1388,8 +1386,7 @@ public class VideoCapturePlugin extends PluginCapture
 		int jpegQuality = Integer.parseInt(prefs.getString(ApplicationScreen.sJPEGQualityPref, "95"));
 		CameraController.setJpegQuality(jpegQuality);
 
-		preferenceVideoFocusMode = ApplicationScreen.instance
-				.getFocusModePref(CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
+		preferenceVideoFocusMode = ApplicationScreen.instance.getFocusModePref(CameraParameters.AF_MODE_CONTINUOUS_VIDEO);
 
 		if (CameraController.isModeAvailable(CameraController.getSupportedFocusModes(), preferenceVideoFocusMode))
 		{
@@ -1983,9 +1980,6 @@ public class VideoCapturePlugin extends PluginCapture
 
 		lastCamera = camera;
 
-		Date curDate = new Date();
-		SessionID = curDate.getTime();
-
 		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH && videoStabilization)
 			CameraController.setVideoStabilization(true);
 
@@ -2341,12 +2335,12 @@ public class VideoCapturePlugin extends PluginCapture
 		ModePreference = prefs.getString("modeVideoDROPref", "1");
 
 		camera2Preference = prefs.getBoolean(
-				ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), false);
+				ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false);
 		prefs.edit()
 				.putBoolean(
-						ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key),
+						ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key),
 						false).commit();
-		CameraController.useHALv3(false);
+		CameraController.setUseCamera2(false);
 
 		if (camera2Preference)
 		{
@@ -2885,6 +2879,13 @@ public class VideoCapturePlugin extends PluginCapture
 
 	public void takePicture()
 	{
+		// Do nothing if capture was started and not stopped yet.
+		if (inCapture) {
+			return;
+		}
+		
+		inCapture = true;
+		SessionID = System.currentTimeMillis();
 		createRequestIDList(1);
 		CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, true, true);
 	}
@@ -3025,6 +3026,8 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 
 		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+		
+		inCapture = false;
 	}
 
 	private int			frameCnt	= 0;

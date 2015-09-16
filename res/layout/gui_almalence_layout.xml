@@ -196,24 +196,32 @@
             </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="0dp"
             android:layout_height="@dimen/paramsLayoutHeight"
             android:layout_weight="2"
             android:gravity="center"
-            android:orientation="vertical" >
+            >
 
             <com.almalence.ui.RotateImageView
-                android:id="@+id/buttonSelectMode"
+                android:id="@+id/buttonSelectModeBackground"
                 android:layout_width="@dimen/paramsLayoutHeight"
                 android:layout_height="@dimen/paramsLayoutHeight"
                 android:layout_gravity="center_horizontal"
-                android:background="@android:color/transparent"
+                android:background="@drawable/gui_almalence_select_mode"
+                android:scaleType="fitXY">
+            </com.almalence.ui.RotateImageView>
+            
+            <com.almalence.ui.RotateImageView
+                android:id="@+id/buttonSelectMode"
+                android:layout_width="@dimen/paramsLayoutHeightInnerMode"
+                android:layout_height="@dimen/paramsLayoutHeightInnerMode"
+                android:layout_gravity="center_horizontal|center_vertical"
                 android:onClick="onButtonClick"
                 android:scaleType="fitXY"
-                android:src="@drawable/button_selectmode" >
+                >
             </com.almalence.ui.RotateImageView>
-        </LinearLayout>
+        </FrameLayout>
     </LinearLayout>
 
     <RelativeLayout

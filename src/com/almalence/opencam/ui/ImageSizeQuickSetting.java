@@ -89,8 +89,7 @@ public class ImageSizeQuickSetting
 		{
 			opt1 = ApplicationScreen.sImageSizeMultishotBackPref;
 			opt2 = ApplicationScreen.sImageSizeMultishotFrontPref;
-			currentIdx = Integer.parseInt(CameraController.MultishotResolutionsIdxesList.get(MainScreen
-					.selectImageDimensionMultishot()));
+			currentIdx = Integer.parseInt(CameraController.MultishotResolutionsIdxesList.get(MainScreen.thiz.selectImageDimensionMultishot()));
 			mEntries = CameraController.MultishotResolutionsNamesList
 					.toArray(new String[CameraController.MultishotResolutionsNamesList.size()]);
 			mEntryValues = CameraController.MultishotResolutionsIdxesList

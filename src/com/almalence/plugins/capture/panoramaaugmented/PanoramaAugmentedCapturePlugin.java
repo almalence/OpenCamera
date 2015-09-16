@@ -382,7 +382,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 				}.start();
 			}
 		});
-		this.modeSwitcher.setEnabled(PluginManager.getInstance().getProcessingCounter() == 0);
 
 		this.engine = new AugmentedPanoramaEngine();
 	}
@@ -447,12 +446,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 	public void onStart()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		camera2Preference = prefs.getBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), false);
+		camera2Preference = prefs.getBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false);
 		
 		if(Build.MODEL.equals("Nexus 6") && camera2Preference)
 		{
-			prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), false).commit();
-			CameraController.useHALv3(false);
+			prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false).commit();
+			CameraController.setUseCamera2(false);
 			
 			CameraController.isOldCameraOneModeLaunched = true;
 			PluginManager.getInstance().setSwitchModeType(true);
@@ -486,7 +485,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 
-		prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseHALv3Key), camera2Preference).commit();
+		prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), camera2Preference).commit();
 	}
 
 	@Override
@@ -508,10 +507,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 							PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED_NORESULT,
 									String.valueOf(SessionID));
 
-							if (PluginManager.getInstance().getProcessingCounter() == 0)
-							{
-								modeSwitcher.setEnabled(true);
-							}
 						}
 
 						return true;
@@ -529,15 +524,15 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 		
 		if(Build.MODEL.equals("Nexus 6") && camera2Preference)
 		{
-			CameraController.needCameraRelaunch(true);
-			CameraController.useHALv3(camera2Preference);
+			CameraController.useCamera2OnRelaunch(true);
+			CameraController.setUseCamera2(camera2Preference);
 		}
 	}
 
 	@Override
 	public void onExportFinished()
 	{
-		if (modeSwitcher != null && PluginManager.getInstance().getProcessingCounter() == 0 && !inCapture)
+		if (modeSwitcher != null && !inCapture)
 			modeSwitcher.setEnabled(true);
 	}
 
@@ -779,7 +774,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 				&& (fs == CameraController.FOCUS_STATE_IDLE || fs == CameraController.FOCUS_STATE_FOCUSING)
 				&& !(fm == CameraParameters.AF_MODE_INFINITY || fm == CameraParameters.AF_MODE_FIXED
 						|| fm == CameraParameters.AF_MODE_EDOF || fm == CameraParameters.AF_MODE_CONTINUOUS_PICTURE || fm == CameraParameters.AF_MODE_CONTINUOUS_VIDEO
-						|| fm == CameraParameters.MF_MODE)
+						|| fm == CameraParameters.MF_MODE || fm == CameraParameters.AF_MODE_UNSUPPORTED)
 				&& !ApplicationScreen.instance.getAutoFocusLock())
 		{
 			this.focused = false;

@@ -636,7 +636,7 @@ public class FocusVFPlugin extends PluginViewfinder
 			cancelAutoFocus();
 			int fm = CameraController.getFocusMode();
 			if ((preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE || preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
-					&& fm != -1
+					&& fm != CameraParameters.AF_MODE_UNSUPPORTED
 					&& preferenceFocusMode != CameraController.getFocusMode()
 					&& preferenceFocusMode != CameraParameters.MF_MODE)
 			{
@@ -1080,7 +1080,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		// mode is in fact FOCUS_MODE_CONTINUOUS_PICTURE or
 		// FOCUS_MODE_CONTINUOUS_VIDEO
 		int fm = CameraController.getFocusMode();
-		if (fm != -1)
+		if (fm != CameraParameters.AF_MODE_UNSUPPORTED)
 		{
 			if (fm != preferenceFocusMode && preferenceFocusMode != CameraParameters.MF_MODE)
 			{
@@ -1127,7 +1127,7 @@ public class FocusVFPlugin extends PluginViewfinder
 	// This can only be called after mParameters is initialized.
 	public int getFocusMode()
 	{
-		if (mOverrideFocusMode != -1)
+		if (mOverrideFocusMode != CameraParameters.AF_MODE_UNSUPPORTED)
 			return mOverrideFocusMode;
 
 		if (mFocusAreaSupported && mFocusArea != null)

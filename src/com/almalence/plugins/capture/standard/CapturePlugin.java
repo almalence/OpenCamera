@@ -135,8 +135,6 @@ public class CapturePlugin extends PluginCapture
 			}
 		});
 
-		if (PluginManager.getInstance().getProcessingCounter() == 0)
-			modeSwitcher.setEnabled(true);
 	}
 
 	@Override
@@ -170,6 +168,9 @@ public class CapturePlugin extends PluginCapture
 	{
 		inCapture = false;
 		aboutToTakePicture = false;
+		
+		isAllImagesTaken = false;
+		isAllCaptureResultsCompleted = true;
 		
 		if (ModePreference.compareTo("0") == 0)
 			ApplicationScreen.setCaptureFormat(CameraController.YUV);

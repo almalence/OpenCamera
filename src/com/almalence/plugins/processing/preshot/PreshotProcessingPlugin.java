@@ -53,6 +53,8 @@ import com.almalence.SwapHeap;
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationInterface;
  import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.opencam_plus.ConfigParser;
+ import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginProcessing;
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
@@ -60,6 +62,8 @@ import com.almalence.SwapHeap;
 // <!-- -+-
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.ConfigParser;
+import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
@@ -75,7 +79,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 {
 	public PreshotProcessingPlugin()
 	{
-		super("com.almalence.plugins.preshotprocessing", R.xml.preferences_processing_preshot, 0, 0, null);
+		super("com.almalence.plugins.preshotprocessing", "pixfix", R.xml.preferences_processing_preshot, 0, 0, null);
 
 		this.mSavingDialog = new ProgressDialog(ApplicationScreen.instance);
 		this.mSavingDialog.setIndeterminate(true);
@@ -133,15 +137,14 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		mDisplayOrientationCurrent = ApplicationScreen.getGUIManager().getDisplayOrientation();
 		int orientation = ApplicationScreen.getGUIManager().getLayoutOrientation();
 		mLayoutOrientationCurrent = orientation == 0 || orientation == 180 ? orientation : (orientation + 180) % 360;
-		mCameraMirrored = CameraController.isFrontCamera();
+		
+		mCameraMirrored = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem(
+				"cameraMirrored" + sessionID));
 
 		sessionID = SessionID;
 
 		ApplicationScreen.getPluginManager().addToSharedMem("modeSaveName" + sessionID,
-				ApplicationScreen.getPluginManager().getActiveMode().modeSaveName);
-
-		ApplicationScreen.getPluginManager().addToSharedMem("modeSaveName" + sessionID,
-				ApplicationScreen.getPluginManager().getActiveMode().modeSaveName);
+				ConfigParser.getInstance().getMode(mode).modeSaveName);
 
 		ProcessingImages();
 

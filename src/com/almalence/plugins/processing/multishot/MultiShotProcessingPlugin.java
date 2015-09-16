@@ -18,9 +18,6 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.processing.multishot;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import android.content.SharedPreferences;
@@ -89,7 +86,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 
 	public MultiShotProcessingPlugin()
 	{
-		super("com.almalence.plugins.multishotprocessing", R.xml.preferences_processing_multishot, 0, 0, null);
+		super("com.almalence.plugins.multishotprocessing", "multishot", R.xml.preferences_processing_multishot, 0, 0, null);
 	}
 
 	@Override

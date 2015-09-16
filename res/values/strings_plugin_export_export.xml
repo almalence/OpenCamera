@@ -6,6 +6,9 @@
 	
 	<string name="Pref_Export_ExportName_Title">Photo name pattern</string>
 	
+	<string name="Pref_Export_ExportNameSeparator_Title">Photo name pattern separator</string>
+	<string name="Pref_Export_ExportNameSeparator_Summary">Separator for data and time, exmpl: 2015-10-30_22:15:45</string>
+	
 	<string name="Pref_Export_ExportFormat_Title">Export name format</string>
 	
 	<string name="Res_Export_SaveJPEG_Text">Save format JPEG</string>

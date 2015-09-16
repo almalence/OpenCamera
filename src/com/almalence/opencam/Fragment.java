@@ -24,7 +24,9 @@ package com.almalence.opencam;
 
 //-+- -->
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -105,7 +107,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		if (nightPreference != null)
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-			if (prefs.getBoolean("useHALv3Pref", false))
+			if (prefs.getBoolean("useCamera2Pref", false))
 			{
 				getPreferenceScreen().removePreference(nightPreference);
 			} else
@@ -317,7 +319,18 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 											R.string.pref_advanced_saving_saveToPref_CantSaveToSD), Toast.LENGTH_LONG)
 									.show();
 
-							return false;
+							if (isDeviceRooted())
+							{
+								Intent intent = new Intent(Preferences.thiz, FolderPicker.class);
+	
+								intent.putExtra(MainScreen.sSavePathPref, v_old);
+	
+								Preferences.thiz.startActivity(intent);
+								
+								return true;
+							}
+							else
+								return false;
 						}
 					}
 
@@ -364,6 +377,41 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		boolean MaxScreenBrightnessPreference = prefs.getBoolean("maxScreenBrightnessPref", false);
 		setScreenBrightness(MaxScreenBrightnessPreference);
 	}
+	
+	//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	//Detects if device is rooted or not
+	public static boolean isDeviceRooted() {
+        return checkRootMethod1() || checkRootMethod2() || checkRootMethod3();
+    }
+
+    private static boolean checkRootMethod1() {
+        String buildTags = android.os.Build.TAGS;
+        return buildTags != null && buildTags.contains("test-keys");
+    }
+
+    private static boolean checkRootMethod2() {
+        String[] paths = { "/system/app/Superuser.apk", "/sbin/su", "/system/bin/su", "/system/xbin/su", "/data/local/xbin/su", "/data/local/bin/su", "/system/sd/xbin/su",
+                "/system/bin/failsafe/su", "/data/local/su" };
+        for (String path : paths) {
+            if (new File(path).exists()) return true;
+        }
+        return false;
+    }
+
+    private static boolean checkRootMethod3() {
+        Process process = null;
+        try {
+            process = Runtime.getRuntime().exec(new String[] { "/system/xbin/which", "su" });
+            BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            if (in.readLine() != null) return true;
+            return false;
+        } catch (Throwable t) {
+            return false;
+        } finally {
+            if (process != null) process.destroy();
+        }
+    }
+    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 	public static void setScreenBrightness(boolean setMax)
 	{
@@ -556,6 +604,24 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 			about_string.append(display_size.y);
 		}
 
+		//show camera 2 support level
+		int level = CameraController.getCamera2Level();
+		about_string.append("\nCamera2 API: ");
+		switch (level)
+		{
+		case 0://limited
+			about_string.append("limited");
+			break;
+		case 1://full
+			about_string.append("full");
+			break;
+		case 2://legacy
+			about_string.append("legacy");
+			break;
+		default:
+			about_string.append("not supported");
+		}		
+		
 		if (MainScreen.getInstance().preview_sizes != null)
 		{
 			about_string.append("\nPreview resolutions: ");

@@ -39,8 +39,6 @@ import java.util.List;
 import java.util.Locale;
 
 import android.annotation.TargetApi;
-import android.app.Notification;
-import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -64,13 +62,12 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
-import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.provider.DocumentFile;
 import android.util.Size;
+import android.widget.Toast;
 
 import com.almalence.SwapHeap;
 import com.almalence.plugins.export.ExifDriver.ExifDriver;
@@ -82,19 +79,14 @@ import com.almalence.util.MLocation;
 import com.almalence.util.Util;
 
 /* <!-- +++
-import com.almalence.opencam_plus.cameracontroller.CameraController;
-+++ --> */
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
+ +++ --> */
 //<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
-public class SavingService extends Service
+public class SavingService extends NotificationService
 {
-
-	private static final int	NOTIFICATION_ID		= 11;
-	private Notification		notification;
-	private boolean				notificationShown	= false;
-	private int					savingCount			= 0;
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startid)
@@ -107,58 +99,9 @@ public class SavingService extends Service
 
 		SavingTask task = new SavingTask();
 		task.sessionID = sessionID;
-		task.execute();
+		task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
 
 		return START_NOT_STICKY;
-	}
-
-	@Override
-	public IBinder onBind(Intent intent)
-	{
-		return null;
-	}
-
-	private synchronized void showNotification()
-	{
-		savingCount++;
-
-		// Notification already shown.
-		if (notificationShown)
-			return;
-
-		if (notification == null)
-		{
-			Bitmap bigIcon = BitmapFactory.decodeResource(getResources(), R.drawable.icon);
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-			{
-				notification = new Notification.Builder(this).setContentTitle(getString(R.string.app_name))
-						.setContentText(getString(R.string.string_saving_image))
-						.setSmallIcon(R.drawable.icon).setLargeIcon(bigIcon).build();
-			} else
-			{
-				notification = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.icon).setLargeIcon(bigIcon)
-						.setContentTitle(getString(R.string.app_name))
-						.setContentText(getString(R.string.string_saving_image)).build();
-			}
-		}
-
-		startForeground(NOTIFICATION_ID, notification);
-		notificationShown = true;
-	}
-
-	private synchronized void hideNotification()
-	{
-		savingCount--;
-
-		// Notification already hidden.
-		if (!notificationShown)
-			return;
-
-		if (savingCount == 0)
-		{
-			stopForeground(true);
-			notificationShown = false;
-		}
 	}
 
 	private class SavingTask extends AsyncTask<Void, Void, Void>
@@ -181,7 +124,7 @@ public class SavingService extends Service
 			{
 				saveResultPicture(sessionID);
 			}
-			
+
 			PluginManager.getInstance().clearSharedMemory(sessionID);
 			return null;
 		}
@@ -195,6 +138,7 @@ public class SavingService extends Service
 
 	private static int		jpegQuality				= 95;
 	protected static int	saveOption;
+	protected static boolean saveOptionSeparator	= false;
 	private static boolean	useGeoTaggingPrefExport;
 	private static boolean	enableExifTagOrientation;
 	private static int		additionalRotation;
@@ -208,10 +152,11 @@ public class SavingService extends Service
 		return saveToPath;
 	}
 
-	public void initSavingPrefs() {
+	public void initSavingPrefs()
+	{
 		initSavingPrefs(getApplicationContext());
 	}
-	
+
 	public static void initSavingPrefs(Context context)
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -577,8 +522,8 @@ public class SavingService extends Service
 					modifiedFile.delete();
 				}
 
-				Uri uri = getApplicationContext().getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI,
-						values);
+				Uri uri = getApplicationContext().getContentResolver()
+						.insert(Images.Media.EXTERNAL_CONTENT_URI, values);
 				broadcastNewPicture(uri);
 			}
 
@@ -647,6 +592,7 @@ public class SavingService extends Service
 									/ 2 : i);
 
 				String modeName = getFromSharedMem("modeSaveName" + Long.toString(sessionID));
+
 				// define file name format. from settings!
 				String fileFormat = getExportFileName(modeName);
 				fileFormat += idx;
@@ -869,7 +815,6 @@ public class SavingService extends Service
 				}
 
 				String filePath = file.getName();
-				boolean isDATAFieldInited = false;
 
 				// If we able to get File object, than get path from it.
 				// fileObject should not be null for files on phone memory.
@@ -877,7 +822,6 @@ public class SavingService extends Service
 				if (fileObject != null)
 				{
 					filePath = fileObject.getAbsolutePath();
-					isDATAFieldInited = true;
 					values.put(ImageColumns.DATA, filePath);
 				} else
 				{
@@ -885,7 +829,6 @@ public class SavingService extends Service
 					// card.
 					String documentPath = Util.getAbsolutePathFromDocumentFile(file);
 					values.put(ImageColumns.DATA, documentPath);
-					isDATAFieldInited = true;
 				}
 
 				if (!enableExifTagOrientation && !hasDNGResult)
@@ -944,7 +887,21 @@ public class SavingService extends Service
 							}
 							is.close();
 							os.close();
-						} catch (Exception e)
+						}
+						catch (IOException eIO)
+						{
+							eIO.printStackTrace();
+							final IOException eIOFinal = eIO;
+							ApplicationScreen.instance.runOnUiThread(new Runnable()
+							{
+								public void run()
+								{
+									Toast.makeText(MainScreen.getMainContext(), "Error ocurred:" + eIOFinal.getLocalizedMessage(),
+											Toast.LENGTH_LONG).show();
+								}
+							});
+						}
+						catch (Exception e)
 						{
 							e.printStackTrace();
 						}
@@ -977,12 +934,9 @@ public class SavingService extends Service
 					bufFile.delete();
 				}
 
-				if (isDATAFieldInited)
-				{
-					Uri uri = getApplicationContext().getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI,
-							values);
-					broadcastNewPicture(uri);
-				}
+				Uri uri = getApplicationContext().getContentResolver()
+						.insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+				broadcastNewPicture(uri);
 			}
 
 			ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED);
@@ -1001,7 +955,7 @@ public class SavingService extends Service
 
 	public static void broadcastNewPicture(Uri uri)
 	{
-		if (ApplicationScreen.instance != null) 
+		if (ApplicationScreen.instance != null)
 		{
 			ApplicationScreen.instance.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
 			ApplicationScreen.getMainContext().sendBroadcast(new Intent("android.hardware.action.NEW_PICTURE", uri));
@@ -1285,8 +1239,7 @@ public class SavingService extends Service
 			String tag_modename = getFromSharedMem("mode_name" + Long.toString(sessionID));
 			if (tag_modename == null)
 				tag_modename = "";
-			String softwareString = getResources().getString(R.string.app_name) + ", "
-					+ tag_modename;
+			String softwareString = getResources().getString(R.string.app_name) + ", " + tag_modename;
 			ValueByteArray softwareValue = new ValueByteArray(ExifDriver.FORMAT_ASCII_STRINGS);
 			softwareValue.setBytes(softwareString.getBytes());
 			exifDriver.getIfd0().put(ExifDriver.TAG_SOFTWARE, softwareValue);
@@ -1811,6 +1764,7 @@ public class SavingService extends Service
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		saveOption = Integer.parseInt(prefs.getString(ApplicationScreen.sExportNamePref, "2"));
+		saveOptionSeparator = prefs.getBoolean(ApplicationScreen.sExportNameSeparatorPref, false);
 
 		String prefix = prefs.getString(ApplicationScreen.sExportNamePrefixPref, "");
 		if (!prefix.equals(""))
@@ -1821,9 +1775,18 @@ public class SavingService extends Service
 			postfix = "_" + postfix;
 
 		Calendar d = Calendar.getInstance();
-		String fileFormat = String.format("%04d%02d%02d_%02d%02d%02d", d.get(Calendar.YEAR), d.get(Calendar.MONTH) + 1,
-				d.get(Calendar.DAY_OF_MONTH), d.get(Calendar.HOUR_OF_DAY), d.get(Calendar.MINUTE),
-				d.get(Calendar.SECOND));
+		String fileFormat = "";
+		
+		//if using separator in file name
+		if (!saveOptionSeparator)
+			fileFormat = String.format("%04d%02d%02d_%02d%02d%02d", d.get(Calendar.YEAR), d.get(Calendar.MONTH) + 1,
+					d.get(Calendar.DAY_OF_MONTH), d.get(Calendar.HOUR_OF_DAY), d.get(Calendar.MINUTE),
+					d.get(Calendar.SECOND));
+		else
+			fileFormat = String.format("%04d-%02d-%02d_%02d:%02d:%02d", d.get(Calendar.YEAR), d.get(Calendar.MONTH) + 1,
+					d.get(Calendar.DAY_OF_MONTH), d.get(Calendar.HOUR_OF_DAY), d.get(Calendar.MINUTE),
+					d.get(Calendar.SECOND));
+		
 		switch (saveOption)
 		{
 		case 1:// YEARMMDD_HHMMSS
@@ -1850,8 +1813,7 @@ public class SavingService extends Service
 
 	public void copyFromForceFileName(File dst) throws IOException
 	{
-		InputStream in = getContentResolver().openInputStream(
-				ApplicationScreen.getForceFilenameURI());
+		InputStream in = getContentResolver().openInputStream(ApplicationScreen.getForceFilenameURI());
 		OutputStream out = new FileOutputStream(dst);
 
 		// Transfer bytes from in to out
@@ -1868,8 +1830,7 @@ public class SavingService extends Service
 	public void copyToForceFileName(File src) throws IOException
 	{
 		InputStream in = new FileInputStream(src);
-		OutputStream out = getContentResolver().openOutputStream(
-				ApplicationScreen.getForceFilenameURI());
+		OutputStream out = getContentResolver().openOutputStream(ApplicationScreen.getForceFilenameURI());
 
 		// Transfer bytes from in to out
 		byte[] buf = new byte[1024];

@@ -17,8 +17,8 @@
     <string name="Pref_Common_ShotOnTap_Title">Çəkiliş üçün toxunun</string>
     <string name="Pref_Common_Antibanding_Title">Antibanding</string>
     <string name="Pref_Common_ShotOnTap_Summary">Toxunmaqla Fokus və çəkiliş</string>
-    <string name="Pref_Common_UseHALv3_Title">Kamera2 interfeysindən istifadə</string>
-    <string name="Pref_Common_UseHALv3_Summary">Eksperimental rejim. Android 5 cihazlarında məhdud sayda işləyəcək</string>    
+    <string name="Pref_Common_UseCamera2_Title">Kamera2 interfeysindən istifadə</string>
+    <string name="Pref_Common_UseCamera2_Summary">Eksperimental rejim. Android 5 cihazlarında məhdud sayda işləyəcək</string>    
     <string name="Pref_Common_MediaRescan_Title">Çıxışda medianı təkrar skanlaşdır</string>
     <string name="Pref_Common_MediaRescan_Summary">Təsvirlər qalereyada görünmədikdə köməklik edir.</string>
     <string name="Pref_Common_Gallery_Title">Xarici qalereya seçiminə imkan verir</string>

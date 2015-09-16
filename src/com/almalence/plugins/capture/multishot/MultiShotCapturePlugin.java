@@ -69,6 +69,9 @@ public class MultiShotCapturePlugin extends PluginCapture
 		imagesTaken = 0;
 		inCapture = false;
 		aboutToTakePicture = false;
+		
+		isAllImagesTaken = false;
+		isAllCaptureResultsCompleted = true;
 
 		ApplicationScreen.setCaptureFormat(CameraController.YUV);
 	}
@@ -96,7 +99,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 		resultCompleted = 0;
 		createRequestIDList(imageAmount);
 		CameraController.captureImagesWithParams(imageAmount, CameraController.YUV,
-				CameraController.isHALv3Supported()?pauseBetweenShotsCamera2:pauseBetweenShots, null, null, null, true, true);
+				CameraController.isCamera2Supported()?pauseBetweenShotsCamera2:pauseBetweenShots, null, null, null, true, true);
 	}
 
 	@Override
@@ -132,27 +135,35 @@ public class MultiShotCapturePlugin extends PluginCapture
 
 		if (imagesTaken >= imageAmount)
 		{
-			//hide capture indication
-			ApplicationScreen.instance.findViewById(R.id.captureIndicationText).setVisibility(View.GONE);
-			
-			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
-					String.valueOf(imagesTaken));
-
-			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
-
-			imagesTaken = 0;
-			resultCompleted = 0;
-			new CountDownTimer(5000, 5000)
+			if(isAllCaptureResultsCompleted)
 			{
-				public void onTick(long millisUntilFinished)
+				//hide capture indication
+				ApplicationScreen.instance.findViewById(R.id.captureIndicationText).setVisibility(View.GONE);
+				
+				PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
+						String.valueOf(imagesTaken));
+	
+				PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+	
+				imagesTaken = 0;
+				resultCompleted = 0;
+				
+				isAllImagesTaken = false;
+				
+				new CountDownTimer(5000, 5000)
 				{
-				}
-
-				public void onFinish()
-				{
-					inCapture = false;
-				}
-			}.start();
+					public void onTick(long millisUntilFinished)
+					{
+					}
+	
+					public void onFinish()
+					{
+						inCapture = false;
+					}
+				}.start();
+			}
+			else
+				isAllImagesTaken = true;
 		}
 	}
 
@@ -160,12 +171,46 @@ public class MultiShotCapturePlugin extends PluginCapture
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{
+		isAllCaptureResultsCompleted = false;
+		
 		int requestID = requestIDArray[resultCompleted];
 		resultCompleted++;
 		if (result.getSequenceId() == requestID)
 		{
 			if (imagesTaken == 1)
 				PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, resultCompleted);
+		}
+		
+		if (resultCompleted == imageAmount)
+		{
+			isAllCaptureResultsCompleted = true;
+			
+			if(isAllImagesTaken)
+			{
+				//hide capture indication
+				ApplicationScreen.instance.findViewById(R.id.captureIndicationText).setVisibility(View.GONE);
+				
+				PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
+						String.valueOf(imagesTaken));
+
+				PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+
+				imagesTaken = 0;
+				resultCompleted = 0;
+				isAllImagesTaken = false;
+				
+				new CountDownTimer(5000, 5000)
+				{
+					public void onTick(long millisUntilFinished)
+					{
+					}
+
+					public void onFinish()
+					{
+						inCapture = false;
+					}
+				}.start();
+			}
 		}
 	}
 
@@ -189,7 +234,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 
 	public static void selectImageDimensionMultishot()
 	{
-		captureIndex = ApplicationScreen.selectImageDimensionMultishot();
+		captureIndex = ApplicationScreen.instance.selectImageDimensionMultishot();
 		imgCaptureWidth = CameraController.MultishotResolutionsSizeList.get(captureIndex).getWidth();
 		imgCaptureHeight = CameraController.MultishotResolutionsSizeList.get(captureIndex).getHeight();
 	}

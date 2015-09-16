@@ -150,7 +150,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 	jboolean mirror,
 	jfloat zoom,
 	jint cameraIndex,
-	jboolean isHALv3
+	jboolean isCamera2
 )
 {
 	Uint8 *OutPic, *OutNV21;
@@ -160,7 +160,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 
 	crop = (int*)env->GetIntArrayElements(jcrop, NULL);
 
-	if (isHALv3)
+	if (isCamera2)
 	{
 		//__android_log_print(ANDROID_LOG_ERROR, "Almalence", "sx:%d sy:%d sxo:%d syo:%d", sx, sy, sxo, syo);
 

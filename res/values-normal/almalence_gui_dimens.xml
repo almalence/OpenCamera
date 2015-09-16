@@ -41,14 +41,15 @@
    <dimen name="viewfinderViewsMarginTop">20dp</dimen>
    
    <dimen name="paramsLayoutHeight">60dp</dimen>
+   <dimen name="paramsLayoutHeightInnerMode">33dp</dimen>
    <dimen name="paramsLayoutHeightScanner">62dp</dimen>
    
    <dimen name="buttonsLayoutMarginTop">70dp</dimen>   
    
    <dimen name="exposureButtonSize">30dp</dimen>
-   <dimen name="exposureSeekBarWidth">265dp</dimen>
-   <dimen name="exposureTitleWidth">70dp</dimen>
-   <dimen name="exposureCenterTitleWidth">70dp</dimen>
+   <dimen name="exposureSeekBarWidth">160dp</dimen>
+   <dimen name="exposureTitleWidth">50dp</dimen>
+   <dimen name="exposureCenterTitleWidth">60dp</dimen>
    <dimen name="exposureTitleSize">16sp</dimen>
    <dimen name="exposureTimeTitleSize">14sp</dimen>
    

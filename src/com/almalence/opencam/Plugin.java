@@ -366,7 +366,7 @@ public abstract class Plugin
 		}
 
 		ApplicationScreen.instance.setCameraImageSizeIndex(CaptureIdx, true);
-		CameraController.setCameraImageSize(new CameraController.Size(CaptureWidth, CaptureHeight));		
+		CameraController.setCameraImageSize(new CameraController.Size(CaptureWidth, CaptureHeight));
 	}
 
 	public void setCameraPreviewSize()
@@ -380,7 +380,7 @@ public abstract class Plugin
 //		ApplicationScreen.setPreviewHeight(os.getHeight());
 	}
 
-	// Used only in old camera interface (HALv3 don't use it)
+	// Used only in old camera interface (Camera2 don't use it)
 	// called to set specific plugin's camera parameters
 	public void setupCameraParameters()
 	{
@@ -669,6 +669,7 @@ public abstract class Plugin
 	protected void addView(View view, ViewfinderZone position)
 	{
 		pluginViews.put(view, position);
+		ApplicationScreen.getGUIManager().addViewQuick(view, position);
 	}
 
 	protected void addView(View view)
@@ -696,6 +697,7 @@ public abstract class Plugin
 	protected void addInfoView(View view)
 	{
 		infoViews.add(view);
+		ApplicationScreen.getGUIManager().addInfoView(view);
 	}
 
 	protected void removeInfoView(View view)

@@ -72,8 +72,11 @@ public class BestShotCapturePlugin extends PluginCapture
 		imagesTaken = 0;
 		inCapture = false;
 		aboutToTakePicture = false;
+		
+		isAllImagesTaken = false;
+		isAllCaptureResultsCompleted = true;
 
-		if (CameraController.isUseHALv3() && CameraController.isNexus)
+		if (CameraController.isUseCamera2() && CameraController.isNexus)
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 			preferenceFlashMode = prefs.getInt(ApplicationScreen.sFlashModePref, ApplicationScreen.sDefaultFlashValue);
@@ -92,7 +95,7 @@ public class BestShotCapturePlugin extends PluginCapture
 		try
 		{
 			int[] flashModes = CameraController.getSupportedFlashModes();
-			if (flashModes != null && flashModes.length > 0 && CameraController.isUseHALv3()
+			if (flashModes != null && flashModes.length > 0 && CameraController.isUseCamera2()
 					&& CameraController.isNexus)
 			{
 				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
@@ -115,7 +118,7 @@ public class BestShotCapturePlugin extends PluginCapture
 				ApplicationScreen.getAppResources().getString(R.string.Bestshot_Help), R.drawable.plugin_help_bestshot,
 				"bestShotShowHelp");
 
-		if (CameraController.isUseHALv3() && CameraController.isNexus)
+		if (CameraController.isUseCamera2() && CameraController.isNexus)
 		{
 			ApplicationScreen.instance.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false, true);
 		}
@@ -129,7 +132,7 @@ public class BestShotCapturePlugin extends PluginCapture
 	@Override
 	public void onPause()
 	{
-		if (CameraController.isUseHALv3() && CameraController.isNexus) {
+		if (CameraController.isUseCamera2() && CameraController.isNexus) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 			prefs.edit().putInt(ApplicationScreen.sFlashModePref, preferenceFlashMode).commit();
 			CameraController.setCameraFlashMode(preferenceFlashMode);
@@ -138,6 +141,8 @@ public class BestShotCapturePlugin extends PluginCapture
 
 	public void takePicture()
 	{
+		imagesTaken = 0;
+		resultCompleted = 0;
 		createRequestIDList(imageAmount);
 		CameraController.captureImagesWithParams(imageAmount, CameraController.YUV, null, null, null, null, true, true);
 	}
@@ -168,13 +173,21 @@ public class BestShotCapturePlugin extends PluginCapture
 
 		if (imagesTaken >= imageAmount)
 		{
-			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
-					String.valueOf(imagesTaken));
-
-			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
-
-			imagesTaken = 0;
-			inCapture = false;
+			if(isAllCaptureResultsCompleted)
+			{
+				PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
+						String.valueOf(imagesTaken));
+	
+				PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+	
+				imagesTaken = 0;
+				resultCompleted = 0;
+				inCapture = false;
+				
+				isAllImagesTaken = false;
+			}
+			else
+				isAllImagesTaken = true;
 		}
 	}
 
@@ -182,8 +195,29 @@ public class BestShotCapturePlugin extends PluginCapture
 	@Override
 	public void onCaptureCompleted(CaptureResult result)
 	{
-		if (imagesTaken == 1)
+		isAllCaptureResultsCompleted = false;
+		
+		resultCompleted++;
+		
+		if (resultCompleted == 1)
 			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, -1);
+		
+		if (resultCompleted == imageAmount)
+		{
+			isAllCaptureResultsCompleted = true;
+			
+			if(isAllImagesTaken)
+			{
+				PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
+						String.valueOf(imagesTaken));
+				PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
+				
+				inCapture = false;
+				resultCompleted = 0;
+				imagesTaken = 0;
+				isAllImagesTaken = false;
+			}
+		}
 	}
 
 	@Override
