@@ -1312,6 +1312,9 @@ public class SavingService extends NotificationService
 
 							geoText = (country != null ? country : "") + (locality != null ? (", " + locality) : "")
 									+ (address != null ? (", \n" + address) : "");
+							
+							if (geoText.equals(""))
+								geoText = "lat:" + l.getLatitude() + "\nlng:" + l.getLongitude();
 						}
 					} else
 						geoText = "lat:" + l.getLatitude() + "\nlng:" + l.getLongitude();
