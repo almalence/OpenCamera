@@ -250,8 +250,8 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 		//		sensorGain, deGhostGain, filter, sharpen, nImages, cameraIndex);
 
 		Super_Process(
-				yuv, &OutPic,
-				sx_zoom, sy_zoom, sxo, syo, nImages,
+				yuv, NULL, &OutPic,
+				sx_zoom, sy_zoom, sx_zoom, sxo, syo, nImages,
 				sensorGain,
 				deGhostGain*deghostTable[DeGhostPref]/256,
 				1,							// deghostFrames
