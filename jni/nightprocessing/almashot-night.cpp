@@ -214,7 +214,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 		switch (cameraIndex)
 		{
 		case 100:		// Nexus 5
-			deGhostGain = 256;
+			deGhostGain = 256*80/100;
 			sensorGain = (int)( 256*powf((float)iso/100, 0.5f) );
 
 			// slightly more sharpening and less filtering at low zooms
@@ -225,20 +225,21 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 			else filter = 192;
 			break;
 		case 103:		// Nexus 6
-			deGhostGain = 256;
-			sensorGain = (int)( 170*256/100*powf((float)iso/100, 0.5f) );
+			deGhostGain = 256*50/100;
+			sensorGain = (int)( 107*256/100*powf((float)iso/100, 0.7f) );
 
 			sharpen = 1;
+			if (!zoomAbove15x) sharpen = 0x80;	// slightly more filtering at low zooms (noise interpolation artefacts are evident otherwise)
 			filter = 256;
-			if (!zoomAbove15x) filter = 320;	// slightly more filtering at low zooms (noise interpolation artefacts are evident otherwise)
 			break;
 		case 507:		// LG G Flex2
 			deGhostGain = 256*60/100;
 			sensorGain = (int)( 2*256*powf((float)iso/100, 0.45f) );
 
 			sharpen = 1;
-			filter = 300;
-			if (!zoomAbove15x) filter = 192;	// slightly less filtering at low zooms (somehow sr processing is creating less sharp images here)
+			if (zoomAbove30x) sharpen = 0x80;// fine edge enhancement instead of primitive sharpen at high zoom levels
+				filter = 300;
+			if (!zoomAbove15x) filter = 192;// slightly less filtering at low zooms (somehow sr processing is creating less sharp images here)
 			break;
 		default:
 			__android_log_print(ANDROID_LOG_INFO, "CameraTest", "Error: Unknown camera");
