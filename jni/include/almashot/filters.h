@@ -81,6 +81,7 @@ void Filters_FindNoiseLevel
 	Uint8 * reserved,
 	int sx,
 	int sy,
+	int stride,
 	int nl[3]
 );
 
@@ -348,9 +349,10 @@ void Filters_ResidualQuarterComputeUV
 	Uint8 *quarterOut,
 	int sx,
 	int sy,
+	int pstride,
+	int stride,
 	int sxs,
-	int sys,
-	int stride
+	int sys
 );
 
 void Filters_ResidualQuarterComputeUV16bit
@@ -383,8 +385,9 @@ void Filters_FilterLowSpatialUV
 	Uint8 *inUV,
 	int sx,
 	int sy,
-	int Filter,
-	int stride
+	int pstride,
+	int stride,
+	int Filter
 );
 
 void Filters_FilterMoving

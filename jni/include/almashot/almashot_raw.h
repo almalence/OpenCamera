@@ -35,53 +35,52 @@
 
  ---------------------------------------------------------------------------
 
-  Super Sensor public header
+  Raw sensor functions
 
 \* ------------------------------------------------------------------------- */
 
-#ifndef __SUPERSENSOR_H__
-#define __SUPERSENSOR_H__
+
+#ifndef __ALMASHOT_RAW_H__
+#define __ALMASHOT_RAW_H__
 
 #if defined __cplusplus
 extern "C"
 {
 #endif
 
-
 #include "almashot.h"
 
+// ----------------------------------------------------------------
+// Functions
+// ----------------------------------------------------------------
 
-int Super_Process
+int Raw_AutoWB
 (
-	Uint8 ** inY,
-	Uint8 ** inUV,
-	Uint8 ** pout,
-	int		sx,
-	int		sy,
-	int		stride,
-	int		sxo,
-	int		syo,
-	int		nFrames,
-	int     SensorGain,
-	int     DeGhostGain,
-	int     DeGhostFrames,
-	int		postFilter,
-	int		postSharpen,
-	int		gamma,
-	int     cameraIndex,
-	int     externalBuffers
+		Int16 *raw,
+		int sx,
+		int sy
 );
 
-
-int Super_ExposureVerification
+void Raw_AutoWB_nonTemp
 (
-	Uint8 *yuv,
+		Int16 *raw,
+		int sx,
+		int sy,
+		int *kelvin
+);
+
+void Raw_DemosaicAndColorCorrect
+(
+	Uint8 *restrict in,
+	Uint8 *restrict out,
 	int sx,
 	int sy,
-	int x0,
-	int y0,
-	int w,
-	int h
+	int *kelvin,
+	Int16 *inColorMatrix,
+	int blevel,
+	int wlevel,
+	int cameraIndex,
+	int outputRGB
 );
 
 
@@ -89,4 +88,4 @@ int Super_ExposureVerification
 }
 #endif
 
-#endif // __SUPERSENSOR_H__
+#endif // __ALMASHOT_RAW_H__
