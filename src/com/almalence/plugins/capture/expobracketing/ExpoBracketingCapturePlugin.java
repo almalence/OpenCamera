@@ -306,7 +306,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		if ((captureRAW && (frame_num + imagesTakenRAW) >= (total_frames * 2))
 				|| (!captureRAW && frame_num >= total_frames))
 		{
-			Log.wtf("EXPO", "frame_num = " + frame_num);
 			if(isAllCaptureResultsCompleted)
 			{
 				PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
@@ -345,7 +344,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		{
 			// Log.e("ExpoBkt", "frame_num = " + frame_num);
 			// if (evIdx[frame_num] == 0)
-			Log.e("EXPO", "addToSharedMemExifTagsFromCaptureResult REQUEST ID = " + requestID);
 			PluginManager.getInstance().addToSharedMemExifTagsFromCaptureResult(result, SessionID, resultCompleted);
 		}
 

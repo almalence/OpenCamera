@@ -681,6 +681,11 @@ public abstract class Plugin
 	{
 		pluginViews.remove(view);
 	}
+	
+	protected void removeViewQuick(View view)
+	{
+		ApplicationScreen.getGUIManager().removeViewQuick(view);
+	}
 
 	// used by GUIManager to obtain list of view for current plugin
 	public Map<View, ViewfinderZone> getPluginViews()

@@ -8115,7 +8115,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			return;
 		}
 
-		new CountDownTimer(400, 200)
+		new CountDownTimer(200, 100)
 		{
 			public void onTick(long millisUntilFinished)
 			{

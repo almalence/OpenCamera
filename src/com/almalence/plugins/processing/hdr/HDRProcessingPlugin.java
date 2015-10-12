@@ -157,6 +157,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		mImageWidth = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("imageWidth" + sessionID));
 		mImageHeight = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("imageHeight" + sessionID));
 
+//		AlmaShotHDR.getAffinity();
 		AlmaShotHDR.Initialize();
 
 		// hdr processing

@@ -85,8 +85,8 @@ import com.almalence.plugins.capture.preshot.PreshotCapturePlugin;
 import com.almalence.plugins.capture.standard.CapturePlugin;
 import com.almalence.plugins.capture.video.VideoCapturePlugin;
 import com.almalence.plugins.export.standard.ExportPlugin;
-import com.almalence.plugins.export.standard.GPSTagsConverter;
 import com.almalence.plugins.processing.bestshot.BestshotProcessingPlugin;
+import com.almalence.plugins.processing.hdr.AlmaShotHDR;
 import com.almalence.plugins.processing.hdr.HDRProcessingPlugin;
 import com.almalence.plugins.processing.multishot.MultiShotProcessingPlugin;
 import com.almalence.plugins.processing.night.NightProcessingPlugin;
@@ -101,7 +101,6 @@ import com.almalence.plugins.vf.gyro.GyroVFPlugin;
 import com.almalence.plugins.vf.histogram.HistogramVFPlugin;
 import com.almalence.plugins.vf.infoset.InfosetVFPlugin;
 import com.almalence.plugins.vf.zoom.ZoomVFPlugin;
-import com.almalence.util.MLocation;
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.ui.GUI.ShutterButton;
@@ -916,7 +915,7 @@ public class PluginManager extends PluginManagerBase
 
 			Intent mServiceIntent = new Intent(ApplicationScreen.instance, ProcessingService.class);
 
-			// Pass to Service sessionID and some other parameters, that may be required.
+//			// Pass to Service sessionID and some other parameters, that may be required.
 			mServiceIntent.putExtra("sessionID", sessionID);
 			CameraController.Size imageSize = CameraController.getCameraImageSize();
 			PluginManager.getInstance().addToSharedMem("imageWidth" + sessionID, String.valueOf(imageSize.getWidth()));
@@ -926,6 +925,19 @@ public class PluginManager extends PluginManagerBase
 			
 			// Start processing service with current sessionID.
 			ApplicationScreen.instance.startService(mServiceIntent);
+//			new Thread() {
+//				@Override
+//				public void run()
+//				{
+//					android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_DEFAULT);
+//					AlmaShotHDR.getAffinity();
+//				}
+//			}.start();
+//			
+////			android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+//			ProcessingTask task = new ProcessingTask();
+//			task.sessionID = sessionID;
+//			task.start();
 
 			ApplicationScreen.instance.muteShutter(false);
 

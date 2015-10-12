@@ -1279,11 +1279,25 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		CameraController.SupportedPictureSizesList = new ArrayList<CameraController.Size>();
 		if (!isCamera2)
 		{
-			if (camera != null && camera.getParameters() != null)
+			if (camera != null)
 			{
-				List<Camera.Size> list = camera.getParameters().getSupportedPictureSizes();
-				for (Camera.Size sz : list)
-					CameraController.SupportedPictureSizesList.add(new CameraController.Size(sz.width, sz.height));
+				try
+				{
+					Camera.Parameters params = camera.getParameters();
+					if(params != null)
+					{
+						List<Camera.Size> list = camera.getParameters().getSupportedPictureSizes();
+						for (Camera.Size sz : list)
+							CameraController.SupportedPictureSizesList.add(new CameraController.Size(sz.width, sz.height));
+					}
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+					camera.release();
+					camera = null;
+					ApplicationScreen.instance.finish();
+				}
 			}
 		} else
 			Camera2Controller.fillPictureSizeList(CameraController.SupportedPictureSizesList);

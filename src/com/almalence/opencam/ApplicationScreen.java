@@ -741,7 +741,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	protected void onResume()
 	{
 		super.onResume();
-
 		onApplicationResume();
 	}
 
@@ -1479,7 +1478,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	@Override
 	public boolean handleMessage(Message msg)
 	{
-
 		switch (msg.what)
 		{
 		case ApplicationInterface.MSG_APPLICATION_STOP:
