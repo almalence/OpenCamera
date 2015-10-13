@@ -978,12 +978,13 @@ public class SavingService extends NotificationService
 			ExifInterface ei = new ExifInterface(file.getAbsolutePath());
 			String tag_model = getFromSharedMem("exiftag_model" + Long.toString(sessionID));
 			String tag_make = getFromSharedMem("exiftag_make" + Long.toString(sessionID));
-			if (tag_model != null)
-			{
-				ei.setAttribute(ExifInterface.TAG_MODEL, tag_model);
-				ei.setAttribute(ExifInterface.TAG_MAKE, tag_make);
-				ei.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(exif_orientation));
-			}
+			if (tag_model == null)
+				tag_model = Build.MODEL; 
+			ei.setAttribute(ExifInterface.TAG_MODEL, tag_model);
+			if (tag_make != null)
+				tag_make = Build.MANUFACTURER;	
+			ei.setAttribute(ExifInterface.TAG_MAKE, tag_make);
+			ei.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(exif_orientation));
 			ei.saveAttributes();
 		} catch (IOException e1)
 		{
