@@ -26,7 +26,6 @@ package com.almalence.opencam;
 
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.util.Log;
 
 public class ProcessingService extends NotificationService
 {
