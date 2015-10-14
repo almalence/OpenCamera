@@ -3862,14 +3862,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		if (!isRemoteCamera())
 		{
-			if (appInterface.getFlashModePref(ApplicationScreen.sDefaultFlashValue) == CameraParameters.FLASH_MODE_CAPTURE_TORCH)
-			{
-				// If current flash mode is FLASH_MODE_CAPTURE_TORCH, then turn on torch before capturing.
-				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_TORCH);
-			}
-
 			if (!CameraController.isCamera2)
 			{
+				if (appInterface.getFlashModePref(ApplicationScreen.sDefaultFlashValue) == CameraParameters.FLASH_MODE_CAPTURE_TORCH)
+				{
+					// If current flash mode is FLASH_MODE_CAPTURE_TORCH, then turn on torch before capturing.
+					CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_TORCH);
+				}
+				
 				takeYUVFrame = (format == CameraController.YUV) || (format == CameraController.YUV_RAW);
 				if (evRequested != null && evRequested.length >= total_frames)
 					CameraController.setExposure();

@@ -491,7 +491,12 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	public Surface getPreviewYUVImageSurface()
 	{
-		return mImageReaderPreviewYUV.getSurface();
+		if(mImageReaderPreviewYUV != null)
+			return mImageReaderPreviewYUV.getSurface();
+		else
+		{
+			return null;
+		}
 	}
 
 	@TargetApi(19)

@@ -1766,12 +1766,16 @@ public class Camera2Controller
 		if (flashMode == CameraParameters.FLASH_MODE_CAPTURE_TORCH)
 		{
 			// If flashMode == FLASH_MODE_CAPTURE_TORCH, then turn on torch for captureRequests.
+			Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
+			Camera2Controller.previewRequestBuilder.set(CaptureRequest.FLASH_MODE, CameraParameters.FLASH_MODE_TORCH);
+			Camera2Controller.setRepeatingRequest();
+
 			flashMode = CameraParameters.FLASH_MODE_TORCH;
 		}
 		
 		if(isAutoExTime)
 		{
-			if(flashMode == CameraParameters.FLASH_MODE_SINGLE || flashMode == CameraParameters.FLASH_MODE_AUTO || flashMode == CameraParameters.FLASH_MODE_REDEYE || flashMode == CameraParameters.FLASH_MODE_TORCH)
+			if(flashMode == CameraParameters.FLASH_MODE_SINGLE || flashMode == CameraParameters.FLASH_MODE_AUTO || flashMode == CameraParameters.FLASH_MODE_REDEYE)
 			{
 				if(flashMode == CameraParameters.FLASH_MODE_SINGLE)
 					flashMode = CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH;
@@ -1779,9 +1783,7 @@ public class Camera2Controller
 					flashMode = CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH;
 				else if(flashMode == CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH_REDEYE )
 					flashMode = CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH_REDEYE;
-				else if(flashMode == CameraParameters.FLASH_MODE_TORCH )
-					flashMode = CaptureRequest.FLASH_MODE_TORCH;
-				
+								
 				Camera2Controller.stillRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
 				Camera2Controller.stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, flashMode);
 				
@@ -1790,6 +1792,17 @@ public class Camera2Controller
 				
 				Camera2Controller.rawRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
 				Camera2Controller.rawRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, flashMode);
+			}
+			else if(flashMode == CameraParameters.FLASH_MODE_TORCH || flashMode == CameraParameters.FLASH_MODE_OFF)
+			{
+				Camera2Controller.stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
+				Camera2Controller.stillRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
+				
+				Camera2Controller.precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
+				Camera2Controller.precaptureRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
+				
+				Camera2Controller.rawRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
+				Camera2Controller.rawRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
 			}
 		}
 		else //Manual exposure time
@@ -1891,9 +1904,9 @@ public class Camera2Controller
 //		inCapture = true; Debug variable. Used in logic to capture RAW in Super mode on Galaxy S6
 		int requestID = -1;
 
-		if (CameraController.getFocusMode() == CameraParameters.AF_MODE_CONTINUOUS_PICTURE)
+		if (CameraController.getFocusMode() == CameraParameters.AF_MODE_CONTINUOUS_PICTURE && captureAllowed == false)
 		{
-			captureAllowed = false;
+			Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, af_regions);
 			Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
 					CameraCharacteristics.CONTROL_AF_TRIGGER_START);
 			
@@ -1909,9 +1922,6 @@ public class Camera2Controller
 				}
 			}
 		}
-		else
-			captureAllowed = true;
-		
 
 		if (!captureAllowed)
 		{
@@ -2351,12 +2361,7 @@ public class Camera2Controller
 		
 		if(isAutoExpTime)
 		{
-			if (flashMode == CameraParameters.FLASH_MODE_TORCH)
-			{
-				previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
-				previewRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
-			}
-			else if(flashMode == CameraParameters.FLASH_MODE_SINGLE || flashMode == CameraParameters.FLASH_MODE_AUTO || flashMode == CameraParameters.FLASH_MODE_REDEYE)
+			if(flashMode == CameraParameters.FLASH_MODE_SINGLE || flashMode == CameraParameters.FLASH_MODE_AUTO || flashMode == CameraParameters.FLASH_MODE_REDEYE)
 			{
 				if(flashMode == CameraParameters.FLASH_MODE_SINGLE)
 					flashMode = CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH;
@@ -2368,8 +2373,9 @@ public class Camera2Controller
 				previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
 				previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, flashMode);
 			}
-			else if(flashMode == CameraParameters.FLASH_MODE_OFF)
+			else if(flashMode == CameraParameters.FLASH_MODE_TORCH || flashMode == CameraParameters.FLASH_MODE_OFF)
 			{
+				previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
 				previewRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
 			}
 			
@@ -2544,12 +2550,18 @@ public class Camera2Controller
 				Camera2Controller.previewRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, sensorSensitivity);
 		}
 
-		previewRequestBuilder.addTarget(appInterface.getCameraSurface());
+		Surface cameraSurface = appInterface.getCameraSurface();
+		if(cameraSurface != null)
+			previewRequestBuilder.addTarget(appInterface.getCameraSurface());
 		
 		
 		//Disable Image Reader for Nexus 6 according to slow focusing issue
 		if (!CameraController.isNexus6  && captureFormat != CameraController.RAW)
-			previewRequestBuilder.addTarget(appInterface.getPreviewYUVImageSurface());
+		{
+			Surface previewSurface = appInterface.getPreviewYUVImageSurface();
+			if(previewSurface != null)
+				previewRequestBuilder.addTarget(previewSurface);
+		}
 		
 		if(needZoom && zoomCropPreview != null)
 			previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
@@ -2727,8 +2739,11 @@ public class Camera2Controller
 				if (focusState == CaptureResult.CONTROL_AF_STATE_PASSIVE_SCAN
 						|| focusState == CaptureResult.CONTROL_AF_STATE_PASSIVE_UNFOCUSED)
 					captureAllowed = false;
-				else
+				else if(!captureAllowed)
+				{
+					resetCaptureCallback();
 					captureAllowed = true;
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
