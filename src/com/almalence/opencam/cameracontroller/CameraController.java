@@ -1651,16 +1651,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				//Camera2 interface doesn't have direct settings of camera preview size
 				//Instead of this in camera2 interface we have to create ImageReaders of desired sizes
-//				Camera2Controller.setupImageReadersCamera2();
+				Camera2Controller.setupImageReadersCamera2();
 			}
 		}
 	}
 	
-	public static void setupImageReadersCamera2()
-	{
-		if (!CameraController.isRemoteCamera() && CameraController.isCamera2)
-				Camera2Controller.setupImageReadersCamera2();
-	}
+//	public static void setupImageReadersCamera2()
+//	{
+//		if (!CameraController.isRemoteCamera() && CameraController.isCamera2)
+//				Camera2Controller.setupImageReadersCamera2();
+//	}
 
 	//Setup camera logic in camera2 interface
 	public static void setSurfaceHolderFixedSize(int width, int height)
