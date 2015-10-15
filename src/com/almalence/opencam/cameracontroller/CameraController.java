@@ -127,7 +127,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public static boolean							isGalaxyNote4	= Build.MODEL.contains("SM-N910");
 	
-	public static boolean							isSony			= Build.BRAND.contains("sony");
+	public static boolean							isSony			= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("sony");
+	
+	public static boolean							isHuawei		= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("huawei");
 	
 
 	// Android camera parameters constants
@@ -859,12 +861,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				if (camera != null)
 				{
 					camera.setPreviewCallback(null);
-					//Sony devices and Samsung Galaxy S5 has unexpected behavior if preview isn't stopped until mode changes
-					if (isSony || isGalaxyS5)
+					//Sony devices, some Huawei devices and Samsung Galaxy S5 has unexpected behavior if preview isn't stopped until mode changes
+					if (isSony || isGalaxyS5 || isHuawei)
 						camera.stopPreview();
 					if (!isModeSwitching)
 					{
-						if (!isSony || isGalaxyS5)
+						if (!isSony && !isGalaxyS5 && !isHuawei)
 							camera.stopPreview();
 						camera.release();
 						camera = null;
