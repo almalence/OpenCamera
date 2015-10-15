@@ -491,7 +491,12 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	public Surface getPreviewYUVImageSurface()
 	{
-		return mImageReaderPreviewYUV.getSurface();
+		if(mImageReaderPreviewYUV != null)
+			return mImageReaderPreviewYUV.getSurface();
+		else
+		{
+			return null;
+		}
 	}
 
 	@TargetApi(19)
@@ -1523,7 +1528,7 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	public void createCaptureSession()
 	{
-		CameraController.setupImageReadersCamera2();
+//		CameraController.setupImageReadersCamera2();
 		mCameraSurface = surfaceHolder.getSurface();
 		surfaceList.add(mCameraSurface); // surface for viewfinder preview
 

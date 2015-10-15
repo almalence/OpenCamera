@@ -860,6 +860,7 @@ public class PluginManager extends PluginManagerBase
 				// If flashMode == FLASH_MODE_CAPTURE_TORCH, then turn off torch
 				// after capturing completed.
 				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
+				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_CAPTURE_TORCH);
 			}
 
 			for (int i = 0; i < activeVF.size(); i++)

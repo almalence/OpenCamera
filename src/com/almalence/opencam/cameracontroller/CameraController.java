@@ -127,7 +127,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public static boolean							isGalaxyNote4	= Build.MODEL.contains("SM-N910");
 	
-	public static boolean							isSony			= Build.BRAND.contains("sony");
+	public static boolean							isSony			= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("sony");
+	
+	public static boolean							isHuawei		= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("huawei");
 	
 
 	// Android camera parameters constants
@@ -859,12 +861,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				if (camera != null)
 				{
 					camera.setPreviewCallback(null);
-					//Sony devices and Samsung Galaxy S5 has unexpected behavior if preview isn't stopped until mode changes
-					if (isSony || isGalaxyS5)
+					//Sony devices, some Huawei devices and Samsung Galaxy S5 has unexpected behavior if preview isn't stopped until mode changes
+					if (isSony || isGalaxyS5 || isHuawei)
 						camera.stopPreview();
 					if (!isModeSwitching)
 					{
-						if (!isSony || isGalaxyS5)
+						if (!isSony && !isGalaxyS5 && !isHuawei)
 							camera.stopPreview();
 						camera.release();
 						camera = null;
@@ -1651,16 +1653,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				//Camera2 interface doesn't have direct settings of camera preview size
 				//Instead of this in camera2 interface we have to create ImageReaders of desired sizes
-//				Camera2Controller.setupImageReadersCamera2();
+				Camera2Controller.setupImageReadersCamera2();
 			}
 		}
 	}
 	
-	public static void setupImageReadersCamera2()
-	{
-		if (!CameraController.isRemoteCamera() && CameraController.isCamera2)
-				Camera2Controller.setupImageReadersCamera2();
-	}
+//	public static void setupImageReadersCamera2()
+//	{
+//		if (!CameraController.isRemoteCamera() && CameraController.isCamera2)
+//				Camera2Controller.setupImageReadersCamera2();
+//	}
 
 	//Setup camera logic in camera2 interface
 	public static void setSurfaceHolderFixedSize(int width, int height)
@@ -3862,14 +3864,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		if (!isRemoteCamera())
 		{
-			if (appInterface.getFlashModePref(ApplicationScreen.sDefaultFlashValue) == CameraParameters.FLASH_MODE_CAPTURE_TORCH)
-			{
-				// If current flash mode is FLASH_MODE_CAPTURE_TORCH, then turn on torch before capturing.
-				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_TORCH);
-			}
-
 			if (!CameraController.isCamera2)
 			{
+				if (appInterface.getFlashModePref(ApplicationScreen.sDefaultFlashValue) == CameraParameters.FLASH_MODE_CAPTURE_TORCH)
+				{
+					// If current flash mode is FLASH_MODE_CAPTURE_TORCH, then turn on torch before capturing.
+					CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_TORCH);
+				}
+				
 				takeYUVFrame = (format == CameraController.YUV) || (format == CameraController.YUV_RAW);
 				if (evRequested != null && evRequested.length >= total_frames)
 					CameraController.setExposure();
