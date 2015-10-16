@@ -66,6 +66,7 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.support.v4.provider.DocumentFile;
+import android.util.Log;
 import android.util.Size;
 import android.widget.Toast;
 
@@ -783,10 +784,6 @@ public class SavingService extends NotificationService
 
 				if (!enableExifTagOrientation)
 					exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-
-				DocumentFile parent = file.getParentFile();
-				String path = parent.toString().toLowerCase();
-				String name = parent.getName().toLowerCase();
 
 				values = new ContentValues();
 				values.put(
@@ -1607,8 +1604,8 @@ public class SavingService extends NotificationService
 		} catch (IOException e)
 		{
 			creator.close();
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			Log.e("Open Camera", "saveDNGPicture error: " + e.getMessage());
 		}
 
 		creator.close();
