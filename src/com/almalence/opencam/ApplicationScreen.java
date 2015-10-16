@@ -1500,7 +1500,8 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 					// if (surfaceCreated && (Camera2.getCamera2() != null))
 					if (surfaceCreated)
 					{
-						configureCamera(!CameraController.isUseCamera2() || modeName.contains("video"));
+						configureCamera(!CameraController.isUseCamera2() || modeName.contains("video")
+								|| (CameraController.isNexus6 && modeName.contains("preshot")));
 						mCameraStarted = true;
 					}
 				} else

@@ -98,7 +98,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		camera2Preference = prefs.getBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false);
 		
-		if(Build.MODEL.equals("Nexus 6") && camera2Preference)
+		if(CameraController.isNexus6 && camera2Preference)
 		{
 			prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false).commit();
 			CameraController.setUseCamera2(false);

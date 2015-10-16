@@ -172,7 +172,7 @@
 			
 	</mode>
 	 
-	<mode id="pixfix" name="preshot_mode_name"  savename="PRESHOT">
+	<mode id="preshot" name="preshot_mode_name"  savename="PRESHOT">
 	
 	    <icon		id="gui_almalence_mode_backintime"/>
 	    

@@ -79,7 +79,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 {
 	public PreshotProcessingPlugin()
 	{
-		super("com.almalence.plugins.preshotprocessing", "pixfix", R.xml.preferences_processing_preshot, 0, 0, null);
+		super("com.almalence.plugins.preshotprocessing", "preshot", R.xml.preferences_processing_preshot, 0, 0, null);
 
 		this.mSavingDialog = new ProgressDialog(ApplicationScreen.instance);
 		this.mSavingDialog.setIndeterminate(true);

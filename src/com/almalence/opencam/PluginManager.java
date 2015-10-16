@@ -610,7 +610,7 @@ public class PluginManager extends PluginManagerBase
 			AddModeSettings("video", pf);
 		} else if ("preshot".equals(settings))
 		{
-			AddModeSettings("pixfix", pf);
+			AddModeSettings("preshot", pf);
 		} else if ("multishot".equals(settings))
 		{
 			AddModeSettings("multishot", pf);
@@ -1317,7 +1317,7 @@ public class PluginManager extends PluginManagerBase
 		String modeID = getActiveModeID();
 
 		if (modeID.equals("video")
-				|| (Build.MODEL.contains("Nexus 6") && (modeID.equals("pixfix") || modeID.equals("panorama_augmented")))
+				|| (Build.MODEL.contains("Nexus 6") && (modeID.equals("preshot") || modeID.equals("panorama_augmented")))
 				|| ((CameraController.isFlex2 /*|| CameraController.isG4*/) && (modeID.equals("hdrmode") || modeID.equals("expobracketing"))))
 			return false;
 		else
