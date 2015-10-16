@@ -1185,22 +1185,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 
 		if (lock)
 		{
-			Camera.Parameters params = CameraController.getCameraParameters();
-			if (params != null)
-			{
-				if (CameraController.isWhiteBalanceLockSupported() && !params.getAutoWhiteBalanceLock())
-				{
-					params.setAutoWhiteBalanceLock(true);
-					CameraController.setCameraParameters(params);
-					wbLockedByPanorama = true;
-				}
-				if (CameraController.isExposureLockSupported() && !params.getAutoExposureLock())
-				{
-					params.setAutoExposureLock(true);
-					CameraController.setCameraParameters(params);
-					aeLockedByPanorama = true;
-				}
-			}
+			if (CameraController.isWhiteBalanceLockSupported() && !CameraController.isWhiteBalanceLocked())
+				wbLockedByPanorama = CameraController.setAutoWhiteBalanceLock(true);
+			if (CameraController.isExposureLockSupported() && !CameraController.isExposureLocked())
+				aeLockedByPanorama = CameraController.setAutoExposureLock(true);
 		}
 		lock = false;
 		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_AEWB_CHANGED);
@@ -1208,28 +1196,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 
 	private void unlockAEWB()
 	{
-		Camera.Parameters params = CameraController.getCameraParameters();
-		if (params != null)
-		{
-			if (wbLockedByPanorama)
-			{
-				if (CameraController.isWhiteBalanceLockSupported() && params.getAutoWhiteBalanceLock())
-				{
-					params.setAutoWhiteBalanceLock(false);
-					CameraController.setCameraParameters(params);
-				}
-				wbLockedByPanorama = false;
-			}
-			if (aeLockedByPanorama)
-			{
-				if (CameraController.isExposureLockSupported() && params.getAutoExposureLock())
-				{
-					params.setAutoExposureLock(false);
-					CameraController.setCameraParameters(params);
-				}
-				aeLockedByPanorama = false;
-			}
-		}
+		if (wbLockedByPanorama && CameraController.isWhiteBalanceLockSupported() && CameraController.isWhiteBalanceLocked())
+			wbLockedByPanorama = CameraController.setAutoWhiteBalanceLock(false);
+		if (aeLockedByPanorama && CameraController.isExposureLockSupported() && CameraController.isExposureLocked())
+			aeLockedByPanorama = CameraController.setAutoExposureLock(false);
 		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_AEWB_CHANGED);
 	}
 

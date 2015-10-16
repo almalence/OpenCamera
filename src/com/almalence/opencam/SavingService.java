@@ -978,7 +978,7 @@ public class SavingService extends NotificationService
 			if (tag_model == null)
 				tag_model = Build.MODEL; 
 			ei.setAttribute(ExifInterface.TAG_MODEL, tag_model);
-			if (tag_make != null)
+			if (tag_make == null)
 				tag_make = Build.MANUFACTURER;	
 			ei.setAttribute(ExifInterface.TAG_MAKE, tag_make);
 			ei.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(exif_orientation));
