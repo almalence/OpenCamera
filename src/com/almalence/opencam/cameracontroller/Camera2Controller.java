@@ -855,7 +855,7 @@ public class Camera2Controller
 	 * Camera parameters interfaces (scene mode, white balance, exposure lock and etc)
 	 */
 	
-	public static void setAutoExposureLock(boolean lock)
+	public static boolean setAutoExposureLock(boolean lock)
 	{
 		if (previewRequestBuilder != null && Camera2Controller.getInstance().camDevice != null)
 		{
@@ -864,10 +864,14 @@ public class Camera2Controller
 			
 			PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).edit()
 			.putBoolean(ApplicationScreen.sAELockPref, lock).commit();
+			
+			return true;
 		}
+		
+		return false;
 	}
 	
-	public static void setAutoWhiteBalanceLock(boolean lock)
+	public static boolean setAutoWhiteBalanceLock(boolean lock)
 	{
 		if (previewRequestBuilder != null && Camera2Controller.getInstance().camDevice != null)
 		{
@@ -876,7 +880,32 @@ public class Camera2Controller
 			
 			PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).edit()
 			.putBoolean(ApplicationScreen.sAWBLockPref, lock).commit();
+			
+			return true;
 		}
+		
+		return false;
+	}
+	
+	public static boolean isExposureLocked()
+	{
+		if (previewRequestBuilder != null && Camera2Controller.getInstance().camDevice != null)
+		{
+			return PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getBoolean(ApplicationScreen.sAELockPref, false);
+		}
+		
+		return false;
+	}
+	
+	
+	public static boolean isWhiteBalanceLocked()
+	{
+		if (previewRequestBuilder != null && Camera2Controller.getInstance().camDevice != null)
+		{
+			return PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getBoolean(ApplicationScreen.sAWBLockPref, false);
+		}
+		
+		return false;
 	}
 	
 	

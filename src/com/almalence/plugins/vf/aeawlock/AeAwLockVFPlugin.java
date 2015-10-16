@@ -250,9 +250,9 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 	@Override
 	public void onCaptureFinished()
 	{
-		if (aeLocked && CameraController.isExposureLockSupported() && !CameraController.isExposureLock())
+		if (aeLocked && CameraController.isExposureLockSupported() && !CameraController.isExposureLocked())
 			AeUnlock();
-		if (awLocked && CameraController.isWhiteBalanceLockSupported() && !CameraController.isWhiteBalanceLock())
+		if (awLocked && CameraController.isWhiteBalanceLockSupported() && !CameraController.isWhiteBalanceLocked())
 			AwUnlock();
 	}
 
@@ -273,7 +273,7 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 	{
 		if (arg1 == ApplicationInterface.MSG_AEWB_CHANGED)
 		{
-			if (CameraController.isExposureLockSupported() && CameraController.isExposureLock())
+			if (CameraController.isExposureLockSupported() && CameraController.isExposureLocked())
 			{
 				Drawable icon = ApplicationScreen.getMainContext().getResources().getDrawable(icon_ae_lock);
 				if (aeLockButton!=null)
@@ -285,7 +285,7 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 				if (aeLockButton!=null)
 					aeLockButton.setImageDrawable(icon);
 			}
-			if (CameraController.isWhiteBalanceLockSupported() && CameraController.isWhiteBalanceLock())
+			if (CameraController.isWhiteBalanceLockSupported() && CameraController.isWhiteBalanceLocked())
 			{
 				Drawable icon = ApplicationScreen.getMainContext().getResources().getDrawable(icon_aw_lock);
 				if (awLockButton!=null)

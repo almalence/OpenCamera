@@ -2005,7 +2005,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 
-	public static boolean isExposureLock()
+	public static boolean isExposureLocked()
 	{
 		try
 		{
@@ -2018,7 +2018,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 					return camera.getParameters().getAutoExposureLock();
 				} else
-					return true;
+					return Camera2Controller.isExposureLocked();
 			} else
 			{
 				return false;
@@ -2030,7 +2030,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 
-	public static void setAutoExposureLock(boolean lock)
+	public static boolean setAutoExposureLock(boolean lock)
 	{
 		try
 		{
@@ -2039,17 +2039,23 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				if (!CameraController.isCamera2)
 				{
 					if (camera == null || (camera != null && camera.getParameters() == null))
-						return;
+						return false;
 
 					Camera.Parameters params = camera.getParameters();
 					params.setAutoExposureLock(lock);
 					camera.setParameters(params);
 				} else
-					Camera2Controller.setAutoExposureLock(lock);
+					return Camera2Controller.setAutoExposureLock(lock);
 			}
+			else
+				return false;
 		} catch (Exception e)
 		{
 			e.printStackTrace();
+		}
+		finally
+		{
+			return true;
 		}
 	}
 
@@ -2078,7 +2084,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 
-	public static boolean isWhiteBalanceLock()
+	public static boolean isWhiteBalanceLocked()
 	{
 		try
 		{
@@ -2091,8 +2097,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 					return camera.getParameters().getAutoWhiteBalanceLock();
 				} else
-					return PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext())
-							.getBoolean(ApplicationScreen.sAWBLockPref, false);
+					return Camera2Controller.isWhiteBalanceLocked();
 			} else
 			{
 				return false;
@@ -2104,7 +2109,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 
-	public static void setAutoWhiteBalanceLock(boolean lock)
+	public static boolean setAutoWhiteBalanceLock(boolean lock)
 	{
 		try
 		{
@@ -2113,17 +2118,23 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				if (!CameraController.isCamera2)
 				{
 					if (camera == null || (camera != null && camera.getParameters() == null))
-						return;
+						return false;
 
 					Camera.Parameters params = camera.getParameters();
 					params.setAutoWhiteBalanceLock(lock);
 					camera.setParameters(params);
 				} else
-					Camera2Controller.setAutoWhiteBalanceLock(lock);
+					return Camera2Controller.setAutoWhiteBalanceLock(lock);
 			}
+			else
+				return false;
 		} catch (Exception e)
 		{
 			e.printStackTrace();
+		}
+		finally
+		{
+			return true;
 		}
 	}
 
