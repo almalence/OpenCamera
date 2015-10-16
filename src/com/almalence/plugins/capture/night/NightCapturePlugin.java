@@ -41,6 +41,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.util.FloatMath;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.LinearLayout;
@@ -555,6 +556,7 @@ public class NightCapturePlugin extends PluginCapture
 	// there is no warranty what comes first:
 	// onImageTaken or onCaptureCompleted, so
 	// this function can be called from either once both were called
+	@TargetApi(21)
 	public void AdjustExposureCaptureBurst()
 	{
 		takingImageForExposure = false;
@@ -582,8 +584,8 @@ public class NightCapturePlugin extends PluginCapture
 			// find updated exposure and ISO parameters
 			// Exposure compensation is not working in an optimal way
 			// (appear to be changing exposure time, while it is optimal for us to reduce ISO, if possible) 
-			float UnclipLinear = 2.0f;
-			
+			float fUnclip = -0.7f;
+			float UnclipLinear = FloatMath.pow(2, -fUnclip);
 			// first - attempt to reduce sensor ISO, but only if exposure time is short (<50msec)
 			if ((sensorGain > minSensitivity) && (exposureTime <= 50000000))
 			{
@@ -606,7 +608,7 @@ public class NightCapturePlugin extends PluginCapture
 			}
 			else
 				burstExposure = minExposure;
-			
+
 			int[] burstGainArray = new int[total_frames];
 			long[] burstExposureArray = new long[total_frames];
 			Arrays.fill(burstGainArray, burstGain);
@@ -757,8 +759,6 @@ public class NightCapturePlugin extends PluginCapture
 		if (usingSuperMode)
 		{
 			// ToDo: implement waiting for lens to finish it's focusing movement (like in camera3test)
-			
-			// ToDo: Lock AE, AWB, etc. for the duration of this image capture and the burst
 			
 			// capture single YUV image to figure out correct ISO/exposure for the consequent burst capture
 			Log.wtf("SUPER", "takePicture. First frame. create IDList size 1");
