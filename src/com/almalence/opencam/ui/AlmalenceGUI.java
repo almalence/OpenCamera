@@ -6463,7 +6463,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	}
 
 	@Override
-	protected void removeInfoView(View view)
+	public void removeInfoView(View view)
 	{
 		if (view.getParent() != null)
 			((ViewGroup) view.getParent()).removeView(view);

@@ -25,6 +25,7 @@ package com.almalence.opencam;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -696,6 +697,10 @@ public abstract class Plugin
 	// method is used by children of class Plugin
 	protected void clearInfoViews()
 	{
+		Iterator<View> it = infoViews.iterator();
+		while(it.hasNext())
+			ApplicationScreen.getGUIManager().removeInfoView(it.next());
+		
 		infoViews.clear();
 	}
 
@@ -708,6 +713,7 @@ public abstract class Plugin
 	protected void removeInfoView(View view)
 	{
 		infoViews.remove(view);
+		ApplicationScreen.getGUIManager().removeInfoView(view);
 	}
 
 	// used by GUIManager to obtain list of view for current plugin
