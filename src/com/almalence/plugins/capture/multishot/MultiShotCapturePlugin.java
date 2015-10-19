@@ -99,7 +99,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 		resultCompleted = 0;
 		createRequestIDList(imageAmount);
 		CameraController.captureImagesWithParams(imageAmount, CameraController.YUV,
-				CameraController.isCamera2Supported()?pauseBetweenShotsCamera2:pauseBetweenShots, null, null, null, true, true);
+				CameraController.isCamera2Supported()?pauseBetweenShotsCamera2:pauseBetweenShots, null, null, null, false, true, true);
 	}
 
 	@Override

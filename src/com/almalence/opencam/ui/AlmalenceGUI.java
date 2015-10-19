@@ -1214,6 +1214,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 //		ApplicationScreen.instance.findViewById(R.id.mainLayout1).invalidate();
 //		ApplicationScreen.instance.findViewById(R.id.mainLayout1).requestLayout();
 		
+		PluginManager.getInstance().onCreate(); //TODO: Find appropriate place for this method.
+		
 		// Calculate right sizes for plugin's controls
 		DisplayMetrics metrics = new DisplayMetrics();
 		ApplicationScreen.instance.getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -1726,7 +1728,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		}
 		// Recreate plugin views
 		removePluginViews();
-//		createPluginViews();
+		createPluginViews();
 
 		// add self-timer control
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());

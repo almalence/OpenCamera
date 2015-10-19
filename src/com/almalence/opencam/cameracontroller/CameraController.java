@@ -3857,7 +3857,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	// Note: per-frame 'gain' and 'exposure' parameters are only effective for
 	// Camera2 API at the moment
 	public static int captureImagesWithParams(int nFrames, int format, int[] pause, int[] evRequested, int[] gain,
-			long[] exposure, boolean resInHeap, boolean indicate)
+			long[] exposure, boolean setPowerGamma, boolean resInHeap, boolean indicate)
 	{
 		pauseBetweenShots = pause;
 		evValues = evRequested;
@@ -3906,7 +3906,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				}
 				return 0;
 			} else
-				return Camera2Controller.captureImageWithParamsCamera2(nFrames, format, pause, evRequested, gain, exposure,
+				return Camera2Controller.captureImageWithParamsCamera2(nFrames, format, pause, evRequested, gain, exposure, setPowerGamma,
 						resultInHeap, indicateCapturing);
 		} else
 		{

@@ -144,7 +144,7 @@ public class BestShotCapturePlugin extends PluginCapture
 		imagesTaken = 0;
 		resultCompleted = 0;
 		createRequestIDList(imageAmount);
-		CameraController.captureImagesWithParams(imageAmount, CameraController.YUV, null, null, null, null, true, true);
+		CameraController.captureImagesWithParams(imageAmount, CameraController.YUV, null, null, null, null, false, true, true);
 	}
 
 	@Override

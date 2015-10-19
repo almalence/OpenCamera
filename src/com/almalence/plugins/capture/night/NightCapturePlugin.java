@@ -426,9 +426,11 @@ public class NightCapturePlugin extends PluginCapture
 					} else if (CameraController.isModeAvailable(focusModes, CameraParameters.AF_MODE_AUTO))
 					{
 						CameraController.setCameraFocusMode(CameraParameters.AF_MODE_AUTO);
-						editor.putInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
-								: ApplicationScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
+						editor.putInt(CameraController.isFrontCamera() ? ApplicationScreen.sFrontFocusModePref
+								: ApplicationScreen.sRearFocusModePref, CameraParameters.AF_MODE_AUTO);
 					}
+					
+					editor.commit();
 				}
 
 				ApplicationScreen.instance.setSceneModePref(CameraController.getSceneMode());
@@ -513,7 +515,6 @@ public class NightCapturePlugin extends PluginCapture
 	{
 		if (!inCapture)
 		{
-			Log.wtf("SUPER", "onShutterClick. inCapture == false. inCapture = true!");
 			inCapture = true;
 			
 			if (!aboutToTakePicture)
@@ -614,21 +615,19 @@ public class NightCapturePlugin extends PluginCapture
 			Arrays.fill(burstGainArray, burstGain);
 			Arrays.fill(burstExposureArray, burstExposure);
 			
-			Log.wtf("SUPER", "AdjustExposureCaptureBurst. create IDList size " + total_frames);
 			resultCompleted = 0; //Reset to get right capture result indexes in burst capturing.
 			createRequestIDList(total_frames);
 			// capture the burst
 			CameraController.captureImagesWithParams(
-					total_frames, CameraController.YUV_RAW, null, null, burstGainArray, burstExposureArray, true, true);
+					total_frames, CameraController.YUV_RAW, null, null, burstGainArray, burstExposureArray, true, true, true);
 		}
 		else
 		{
-			Log.wtf("SUPER", "AdjustExposureCaptureBurst. create IDList size " + total_frames);
 			resultCompleted = 0; //Reset to get right capture result indexes in burst capturing.
 			createRequestIDList(total_frames);
 			// capture the burst
 			CameraController.captureImagesWithParams(
-					total_frames, CameraController.YUV_RAW, null, null, null, null, true, true);
+					total_frames, CameraController.YUV_RAW, null, null, null, null, true, true, true);
 		}
 	}
 	
@@ -764,13 +763,13 @@ public class NightCapturePlugin extends PluginCapture
 			Log.wtf("SUPER", "takePicture. First frame. create IDList size 1");
 			createRequestIDList(1);
 			takingImageForExposure = true;
-			CameraController.captureImagesWithParams(1, CameraController.YUV_RAW, null, null, null, null, true, false);
+			CameraController.captureImagesWithParams(1, CameraController.YUV_RAW, null, null, null, null, true, true, false);
 		}
 		else
 		{
 			createRequestIDList(total_frames);
 			takingImageForExposure = false;
-			CameraController.captureImagesWithParams(total_frames, CameraController.YUV_RAW, null, null, null, null, true, true);
+			CameraController.captureImagesWithParams(total_frames, CameraController.YUV_RAW, null, null, null, null, false, true, true);
 		}
 	}
 

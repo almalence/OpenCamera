@@ -51,6 +51,7 @@ import android.hardware.camera2.params.ColorSpaceTransform;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.hardware.camera2.params.RggbChannelVector;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.hardware.camera2.params.TonemapCurve;
 import android.media.Image;
 import android.media.ImageReader;
 import android.media.MediaRecorder;
@@ -112,6 +113,8 @@ public class Camera2Controller
 	private static int 					currentSensitivity 			= 0;    //Sensor sensitivity (ISO) of last captured frame
 	private static int 					blevel			 			= 0;    //Black level offset
 	private static int 					wlevel 						= 1024; //Maximum raw value output by sensor.
+	
+	private static boolean				manualPowerGamma			= false; //Used only for Almalence's SuperSensor mode
 	
 	private static RggbChannelVector 	rggbChannelVector 			= null; //Gains applying to raw color channels for manual white-balance logic
 	
@@ -1903,6 +1906,29 @@ public class Camera2Controller
 			}
 		}
 	}
+	
+	
+	private static CaptureRequest.Builder setConstantPowerGamma(CaptureRequest.Builder request)
+	{
+		// using constant power 2.2 tone-mapping
+		// so that manipulations with the luminance do not skew the colors
+		
+		request.set(CaptureRequest.TONEMAP_MODE,
+				CaptureRequest.TONEMAP_MODE_CONTRAST_CURVE);
+		
+		float[] t22 = new float[]{
+		            0.0000f, 0.0000f, 0.0667f, 0.2920f, 0.1333f, 0.4002f, 0.2000f, 0.4812f,
+		            0.2667f, 0.5484f, 0.3333f, 0.6069f, 0.4000f, 0.6594f, 0.4667f, 0.7072f,
+		            0.5333f, 0.7515f, 0.6000f, 0.7928f, 0.6667f, 0.8317f, 0.7333f, 0.8685f,
+		            0.8000f, 0.9035f, 0.8667f, 0.9370f, 0.9333f, 0.9691f, 1.0000f, 1.0000f };
+		// linear
+		// float[] t22 = new float[]{ 0,0, 1,1};
+		
+		TonemapCurve t22curve = new TonemapCurve(t22, t22, t22);
+		request.set(CaptureRequest.TONEMAP_CURVE, t22curve);
+		
+		return request;
+	}
 
 	
 	/*
@@ -1928,7 +1954,7 @@ public class Camera2Controller
 	//Call next methods only when capture become allowed (preview is focused)
 	public static int captureImageWithParamsCamera2(final int nFrames, final int format, final int[] pause,
 													final int[] evRequested, final int[] gain, final long[] exposure,
-													final boolean resInHeap, final boolean indication)
+													final boolean setPowerGamma, final boolean resInHeap, final boolean indication)
 	{
 //		inCapture = true; Debug variable. Used in logic to capture RAW in Super mode on Galaxy S6
 		int requestID = -1;
@@ -1961,18 +1987,18 @@ public class Camera2Controller
 					if (captureAllowed)
 					{
 						this.cancel();
-						captureImageWithParamsCamera2Allowed(nFrames, format, pause, evRequested, gain, exposure, resInHeap, indication);
+						captureImageWithParamsCamera2Allowed(nFrames, format, pause, evRequested, gain, exposure, setPowerGamma, resInHeap, indication);
 					}
 				}
 
 				public void onFinish()
 				{
-					captureImageWithParamsCamera2Allowed(nFrames, format, pause, evRequested, gain, exposure, resInHeap, indication);
+					captureImageWithParamsCamera2Allowed(nFrames, format, pause, evRequested, gain, exposure, setPowerGamma, resInHeap, indication);
 				}
 			}.start();
 		}
 		else
-			captureImageWithParamsCamera2Allowed(nFrames, format, pause, evRequested, gain, exposure, resInHeap, indication);
+			captureImageWithParamsCamera2Allowed(nFrames, format, pause, evRequested, gain, exposure, setPowerGamma, resInHeap, indication);
 		
 		return requestID;
 	}
@@ -1982,11 +2008,19 @@ public class Camera2Controller
 	//First of all make pre-capture request for exposure metering
 	//For all devices lower that HARDWARE_LEVEL_FULL or LIMITED just call capture method without pre-capture
 	public static void captureImageWithParamsCamera2Allowed (final int nFrames, final int format, final int[] pause,
-			final int[] evRequested, final int[] gain, final long[] exposure, final boolean resInHeap, final boolean indication) {
+			final int[] evRequested, final int[] gain, final long[] exposure, final boolean setPowerGamma, final boolean resInHeap, final boolean indication) {
 		try
 		{
 			lastCaptureFormat = format;
 			CreateRequests(format);
+			
+			if(setPowerGamma)
+			{
+				stillRequestBuilder = setConstantPowerGamma(stillRequestBuilder);
+				precaptureRequestBuilder = setConstantPowerGamma(precaptureRequestBuilder);
+				if (format == CameraController.RAW)
+					rawRequestBuilder = setConstantPowerGamma(rawRequestBuilder);
+			}
 			
 			// Nexus 5 fix flash in dark conditions and exposure set to 0.
 			if(CameraController.isNexus5)
@@ -2018,14 +2052,14 @@ public class Camera2Controller
 											CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
 									
 									captureImageWithParamsCamera2Simple(nFrames, format, pause,
-											evRequested, gain, exposure, resInHeap, indication);
+											evRequested, gain, exposure, setPowerGamma, resInHeap, indication);
 								}
 							}, null);
 				}
 			} else
 			{
 				captureImageWithParamsCamera2Simple(nFrames, format, pause,
-						evRequested, gain, exposure, resInHeap, indication);
+						evRequested, gain, exposure, setPowerGamma, resInHeap, indication);
 			}
 		} catch (CameraAccessException e)
 		{
@@ -2040,7 +2074,7 @@ public class Camera2Controller
 	//Exact here we request capture session to capture frame
 	public static int captureImageWithParamsCamera2Simple(final int nFrames, final int format, final int[] pause,
 														  final int[] evRequested, final int[] gain, final long[] exposure,
-														  final boolean resInHeap, final boolean indication)
+														  final boolean setPowerGamma, final boolean resInHeap, final boolean indication)
 	{
 		
 		int requestID = -1;
@@ -2069,6 +2103,8 @@ public class Camera2Controller
 		resultInHeap = resInHeap;
 		indicateCapturing = indication;
 		
+		manualPowerGamma = setPowerGamma;
+		
 		int selectedEvCompensation = 0;
 		selectedEvCompensation = appInterface.getEVPref();
 		
@@ -2084,7 +2120,7 @@ public class Camera2Controller
 									   pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
 									   evCompensation == null ? selectedEvCompensation : evCompensation[currentFrameIndex],
 									   sensorGain == null ? currentSensitivity : sensorGain[currentFrameIndex],
-									   exposureTime == null ? 0 : exposureTime[currentFrameIndex]);
+									   exposureTime == null ? 0 : exposureTime[currentFrameIndex], manualPowerGamma);
 		} else
 		{
 			pauseBetweenShots = new int[totalFrames];
@@ -2143,13 +2179,21 @@ public class Camera2Controller
 	//Method to capture next image in case of multishot requested
 	//Called for all frames instead very first frame
 	public static int captureNextImageWithParams(final int format, final int frameIndex, final int pause, final int evRequested,
-			final int gain, final long exposure)
+			final int gain, final long exposure, final boolean setPowerGamma)
 	{
 		int requestID = -1;
 
 		try
 		{
 			CreateRequests(format);
+			
+			if(setPowerGamma)
+			{
+				stillRequestBuilder = setConstantPowerGamma(stillRequestBuilder);
+				precaptureRequestBuilder = setConstantPowerGamma(precaptureRequestBuilder);
+				if (format == CameraController.RAW)
+					rawRequestBuilder = setConstantPowerGamma(rawRequestBuilder);
+			}
 
 			final boolean isRAWCapture = (format == CameraController.RAW);
 			SetupPerFrameParameters(evRequested, gain, exposure, isRAWCapture);
@@ -3069,7 +3113,7 @@ public class Camera2Controller
 							pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
 							evCompensation == null ? 0 : evCompensation[currentFrameIndex],
 							sensorGain == null ? currentSensitivity : sensorGain[currentFrameIndex],
-							exposureTime == null ? 0 : exposureTime[currentFrameIndex]);
+							exposureTime == null ? 0 : exposureTime[currentFrameIndex], manualPowerGamma);
 			}
 
 			// Image should be closed after we are done with it

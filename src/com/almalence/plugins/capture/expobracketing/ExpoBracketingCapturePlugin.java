@@ -603,10 +603,10 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		createRequestIDList(captureRAW? total_frames*2 : total_frames);
 		if (captureRAW)
 			CameraController.captureImagesWithParams(total_frames, CameraController.RAW, null, evValues, null, null,
-					true, true);
+					false, true, true);
 		else
 			CameraController.captureImagesWithParams(total_frames, isHDRMode ? CameraController.YUV
-					: CameraController.JPEG, null, evValues, null, null, true, true);
+					: CameraController.JPEG, null, evValues, null, null, false, true, true);
 	}
 
 	public void onAutoFocus(boolean paramBoolean)

@@ -391,7 +391,7 @@ public class MainScreen extends ApplicationScreen
 //		guiManager.onCreate();
 
 		// init plugin manager
-		PluginManager.getInstance().onCreate();
+//		PluginManager.getInstance().onCreate();
 
 		Intent intent = this.getIntent();
 		goShopping = intent.getBooleanExtra(EXTRA_SHOP, false);

@@ -511,7 +511,7 @@ public class PreshotCapturePlugin extends PluginCapture
 				return;
 	
 			createRequestIDList(1);
-			CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, false, true);
+			CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, false, false, true);
 			counter++;
 		}
 	}
