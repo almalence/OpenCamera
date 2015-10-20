@@ -84,6 +84,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	private static String		sEvPref;
 	private static String		sRefocusPref;
 	private static String		sUseLumaPref;
+	
+	private boolean				camera2Preference;
 
 	public ExpoBracketingCapturePlugin()
 	{
@@ -105,6 +107,18 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	public void onStart()
 	{
 		getPrefs();
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		camera2Preference = prefs.getBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false);
+		
+		if(CameraController.isFlex2 && camera2Preference)
+		{
+			prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false).commit();
+			CameraController.setUseCamera2(false);
+			
+			CameraController.isOldCameraOneModeLaunched = true;
+			PluginManager.getInstance().setSwitchModeType(true);
+		}
 	}
 
 	@Override
@@ -123,7 +137,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		preferenceSceneMode = ApplicationScreen.instance.getSceneModePref();
 		preferenceFlashMode = ApplicationScreen.instance.getFlashModePref(ApplicationScreen.sDefaultFlashValue);
 		
-		if (CameraController.isUseCamera2() && CameraController.isNexus)
+		if (CameraController.isUseCamera2() && CameraController.isNexus5or6)
 			ApplicationScreen.instance.setFlashModePref(CameraParameters.FLASH_MODE_OFF);
 
 		cdt = null;
@@ -146,10 +160,23 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		ApplicationScreen.instance.setEVPref(preferenceEVCompensationValue);
 		ApplicationScreen.instance.setSceneModePref(preferenceSceneMode);
 
-		if (CameraController.isUseCamera2() && CameraController.isNexus)
+		if (CameraController.isUseCamera2() && CameraController.isNexus5or6)
 		{
 			prefs.edit().putInt(ApplicationScreen.sFlashModePref, preferenceFlashMode).commit();
 			CameraController.setCameraFlashMode(preferenceFlashMode);
+		}
+		
+		prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), camera2Preference).commit();
+	}
+	
+	
+	@Override
+	public void onStop()
+	{
+		if(CameraController.isFlex2 && camera2Preference)
+		{
+			CameraController.useCamera2OnRelaunch(true);
+			CameraController.setUseCamera2(camera2Preference);
 		}
 	}
 
@@ -159,7 +186,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		ApplicationScreen.instance.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, true, false, true);
 		ApplicationScreen.instance.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, true, true);
 
-		if (CameraController.isUseCamera2() && CameraController.isNexus)
+		if (CameraController.isUseCamera2() && CameraController.isNexus5or6)
 			ApplicationScreen.instance.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false, true);
 	}
 
@@ -183,7 +210,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		try
 		{
 			int[] flashModes = CameraController.getSupportedFlashModes();
-			if (flashModes != null && flashModes.length > 0 && CameraController.isUseCamera2() && CameraController.isNexus)
+			if (flashModes != null && flashModes.length > 0 && CameraController.isUseCamera2() && CameraController.isNexus5or6)
 			{
 				SharedPreferences.Editor editor = prefs.edit();
 				editor.putInt(ApplicationScreen.sFlashModePref, CameraParameters.FLASH_MODE_OFF);

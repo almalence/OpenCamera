@@ -136,7 +136,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	{
 		ApplicationScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
 		
-		if(Build.MODEL.equals("Nexus 6") && camera2Preference)
+		if(CameraController.isNexus6 && camera2Preference)
 		{
 			CameraController.useCamera2OnRelaunch(true);
 			CameraController.setUseCamera2(camera2Preference);
@@ -316,7 +316,7 @@ public class PreshotCapturePlugin extends PluginCapture
 			PreShot.FreeBuffer();
 			ApplicationScreen.getGUIManager().startContinuousCaptureIndication();
 			preview_fps = CameraController.getPreviewFrameRate();
-			if (Build.MODEL.contains("HTC One"))
+			if (CameraController.isHTCOne)
 				preview_fps = 30;
 
 			imW = ApplicationScreen.getPreviewWidth();

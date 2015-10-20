@@ -1058,7 +1058,7 @@ public class Camera2Controller
 	{
 		if (Camera2Controller.getInstance().camCharacter != null
 				&& Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES) != null
-				&& !Build.MODEL.contains("Nexus 6")) //Disable manual WB for Nexus 6 - it manages WB wrong
+				&& !CameraController.isNexus6) //Disable manual WB for Nexus 6 - it manages WB wrong
 		{
 			int[] wb = Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES);
 			
@@ -1618,7 +1618,7 @@ public class Camera2Controller
 
 			return alpha;
 
-		} else if (Build.MODEL.contains("Nexus"))
+		} else if (CameraController.isNexus)
 			return 46.66f;
 
 		return 42.7f;
@@ -1642,7 +1642,7 @@ public class Camera2Controller
 			float alpha = (float) (alphaRad * (180 / Math.PI));
 
 			return alpha;
-		} else if (Build.MODEL.contains("Nexus"))
+		} else if (CameraController.isNexus)
 			return 59.63f;
 
 		return 55.4f;
@@ -1860,7 +1860,7 @@ public class Camera2Controller
 		// explicitly disable AWB for the duration of still/burst capture to get
 		// full burst with the same WB
 		// WB does not apply to RAW, so no need for this in rawRequestBuilder
-		if (!Build.MODEL.contains("G925") && !Build.MODEL.contains("G920"))
+		if (!CameraController.isGalaxyS6)
 		{
 			stillRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_OFF);
 			precaptureRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_OFF);

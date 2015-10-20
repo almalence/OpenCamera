@@ -322,7 +322,7 @@ public class NightCapturePlugin extends PluginCapture
 		FocusPreference = prefs.getString(nightCaptureFocusPref, defaultFocus);
 		if (!usingSuperMode)
 		{
-			if (Build.MODEL.contains("Nexus 6"))
+			if (CameraController.isNexus6)
 				OpenGLPreference = prefs.getBoolean(nightVisionLayerShowPref, false);
 			else
 				OpenGLPreference = prefs.getBoolean(nightVisionLayerShowPref, true);
@@ -391,7 +391,7 @@ public class NightCapturePlugin extends PluginCapture
 		// exlude also LG G3 and some others modifications to prevent camera error in takePicture call.
 		// FixMe: probably Nexus should not be excluded if using Camera2 interface
 		if (sceneModes != null && CameraController.isModeAvailable(sceneModes, CameraParameters.SCENE_MODE_NIGHT)
-				&& (!Build.MODEL.contains("Nexus") && !Build.MODEL.contains("LG-D")) && !usingSuperMode)
+				&& (!CameraController.isNexus && !CameraController.isG3) && !usingSuperMode)
 		{
 			CameraController.setCameraSceneMode(CameraParameters.SCENE_MODE_NIGHT);
 			ApplicationScreen.instance.setSceneModePref(CameraParameters.SCENE_MODE_NIGHT);
@@ -801,7 +801,7 @@ public class NightCapturePlugin extends PluginCapture
 						dataRotated = new byte[dataS.length];
 						
 						////////////REMOVE THIS TO NORMAL CODE!!!!! SM 29.12.14
-						if (Build.MODEL.contains("Nexus 6"))
+						if (CameraController.isNexus6)
 							ImageConversion.TransformNV21(dataS, dataRotated, imageWidth, imageHeight, 0, 1, 0);
 						else
 						////////////REMOVE THIS TO NORMAL CODE!!!!! SM 29.12.14

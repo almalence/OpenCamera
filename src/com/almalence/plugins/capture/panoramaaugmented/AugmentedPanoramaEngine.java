@@ -1317,7 +1317,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 								
 								if (CameraController.isFrontCamera())
 								{
-									if (Build.MODEL.contains("Nexus 6"))
+									if (CameraController.isNexus6)
 										ImageConversion.TransformNV21N(yuv_address,
 												yuv_address,
 												AugmentedPanoramaEngine.this.height,

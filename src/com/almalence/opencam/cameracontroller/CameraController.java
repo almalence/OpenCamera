@@ -95,11 +95,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	protected static final long						MPIX_1080		= 1920 * 1080;
 
 	//Device models markers. Used to separate device dependent program's logic
-	public static boolean							isNexus			= Build.MODEL.contains("Nexus 5") ||
-																	  Build.MODEL.contains("Nexus 6");
-
-	public static boolean							isNexus5		= Build.MODEL.contains("Nexus 5");
-	public static boolean							isNexus6		= Build.MODEL.contains("Nexus 6");
+	public static boolean							isNexus5		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus 5");
+	public static boolean							isNexus6		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus 6");
+	public static boolean							isNexus13		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus 13");
+	
+	public static boolean							isNexus5or6		= CameraController.isNexus5 ||
+			  														  CameraController.isNexus6;
+	
+	public static boolean							isNexus			= CameraController.isNexus5or6 ||
+			  														  CameraController.isNexus13;
 
 	public static boolean							isFlex2			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h959") ||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-f510") ||
@@ -117,19 +121,40 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-ls991") ||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-vs986") ||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-us991");
+	
+	public static boolean							isG3			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-d85")   ||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-d72")   ||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-d69")   ||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-vs985") ||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-ls990");
+	
+	public static boolean							isG2			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-d80") ||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-vs980") ||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-ls980");
 
 	public static boolean							isAndroidOne	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("micromax aq4501");
 
-	public static boolean							isGalaxyS6		= Build.MODEL.contains("SM-G920") ||
-														  			  Build.MODEL.contains("SM-G925");
+	public static boolean							isGalaxyS6		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g920") ||
+														  			  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g925");
 	
-	public static boolean							isGalaxyS5		= Build.MODEL.contains("SM-G900");
+	public static boolean							isGalaxyS5		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g900");
 	
-	public static boolean							isGalaxyNote4	= Build.MODEL.contains("SM-N910");
+	public static boolean							isGalaxyS4		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("gt-i95");
+	
+	public static boolean							isGalaxyS4Mini	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("gt-i9190");
+	
+	public static boolean							isGalaxyNote3	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-n900") ||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g900");
+	
+	public static boolean							isGalaxyNote4	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-n910");
+	
+	public static boolean							isHTCOne		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("htc one");
+	public static boolean							isHTCOneX		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("htc one x");
 	
 	public static boolean							isSony			= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("sony");
 	
 	public static boolean							isHuawei		= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("huawei");
+	
 	
 
 	// Android camera parameters constants
@@ -754,7 +779,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			//Now only LG Flex2, G4, Nexus 5\6 and Andoid One devices support camera2 without critical problems
 			//We have to test Samsung Galaxy S6 to include in this list of allowed devices
 			if (!(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService("camera") != null)
-					|| (!isFlex2 && !isNexus && !isAndroidOne  /*&& !isGalaxyS6 &&*/ /* && !isG4*/))
+					|| (!isFlex2 && !isNexus5or6 && !isAndroidOne  /*&& !isGalaxyS6 &&*/ /* && !isG4*/))
 			{
 				isCamera2 = false;
 				isCamera2Supported = false;
@@ -1020,7 +1045,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			// hard-code to enable these only, as we have no profiles for
 			// other models at the moment
-			if (CameraController.isNexus || CameraController.isFlex2/*
+			if (CameraController.isNexus5or6 || CameraController.isFlex2/*
 																	 * ||
 																	 * CameraController
 																	 * .
@@ -1321,7 +1346,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		if (cs == null)
 			return;
 
-		if (Build.MODEL.contains("HTC One X"))
+		if (CameraController.isHTCOneX)
 		{
 			if (!CameraController.isFrontCamera())
 			{
@@ -1344,7 +1369,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			int highestSizeHeight = sHighest.height;
 
 			//Drop buggy image size on some Samsung device
-			if (Build.MODEL.contains("GT-I9190") && isFrontCamera() && (currSizeWidth * currSizeHeight == 1920 * 1080))
+			if (CameraController.isGalaxyS4Mini && isFrontCamera() && (currSizeWidth * currSizeHeight == 1920 * 1080))
 				continue;
 
 			if ((long) currSizeWidth * currSizeHeight > (long) highestSizeWidth * highestSizeHeight)
@@ -3772,7 +3797,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return Camera2Controller.getHorizontalViewAngle();
 		}
 
-		if (Build.MODEL.contains("Nexus"))
+		if (CameraController.isNexus)
 			return 59.63f;
 
 		//Default value
@@ -3797,7 +3822,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return Camera2Controller.getVerticalViewAngle();
 		}
 
-		if (Build.MODEL.contains("Nexus"))
+		if (CameraController.isNexus)
 			return 46.66f;
 
 		//Default value
@@ -4409,10 +4434,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			// if true - evLatency will be doubled.
 			boolean isSlow = prefs.getBoolean("PreferenceExpoSlow", false);
 
-			// Note 3 & LG G3 need more time to change exposure.
-			if (Build.MODEL.contains("SM-N900") || Build.MODEL.contains("SM-N910"))
+			// Note 3 (and probably 4) & LG G3 need more time to change exposure.
+			if (CameraController.isGalaxyNote3 || CameraController.isGalaxyNote4)
 				evLatency = 20 * (isSlow ? 2 : 1);
-			else if (Build.MODEL.contains("LG-D855"))
+			else if (CameraController.isG3)
 				evLatency = 30 * (isSlow ? 2 : 1);
 			else
 			{

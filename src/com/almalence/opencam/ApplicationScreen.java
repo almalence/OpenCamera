@@ -1089,7 +1089,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 				try
 				{
 					// Nexus 5 is giving preview which is too dark without this
-					if (Build.MODEL.contains("Nexus 5"))
+					if (CameraController.isNexus5)
 					{
 						cp.setPreviewFpsRange(7000, 30000);
 						CameraController.setCameraParameters(cp);
@@ -1501,7 +1501,8 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 					if (surfaceCreated)
 					{
 						configureCamera(!CameraController.isUseCamera2() || modeName.contains("video")
-								|| (CameraController.isNexus6 && modeName.contains("preshot")));
+								|| (CameraController.isNexus6 && modeName.contains("preshot"))
+								|| (CameraController.isFlex2 && (modeName.contains("hdrmode") || modeName.contains("expobracketing"))));
 						mCameraStarted = true;
 					}
 				} else

@@ -574,7 +574,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 				bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 			}
 
-			if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
+			if (CameraController.isNexus6 && CameraController.isFrontCamera())
 			{	
 				Matrix matrix = new Matrix();
 				matrix.postRotate(180);
@@ -605,7 +605,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 				photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
 			}
 
-			if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
+			if (CameraController.isNexus6 && CameraController.isFrontCamera())
 			{	
 				Matrix matrix = new Matrix();
 				matrix.postRotate(180);

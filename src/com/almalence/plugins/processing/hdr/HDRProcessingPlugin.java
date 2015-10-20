@@ -260,7 +260,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 
 		int nf = HDRProcessingPlugin.getNoise();
 		
-		if(Build.MODEL.contains("Nexus 6") && CameraController.isUseCamera2())
+		if(CameraController.isNexus6 && CameraController.isUseCamera2())
 			nf = -1;
 
 		AlmaShotHDR.HDRPreview(imagesAmount, mImageWidth, mImageHeight, pview, HDRProcessingPlugin.getExposure(true),
@@ -279,7 +279,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	private void HDRProcessing()
 	{
 		if (HDRProcessingPlugin.SaveInputPreference == 0)
-		if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
+		if (CameraController.isNexus6 && CameraController.isFrontCamera())
 		{
 			if (mDisplayOrientationOnStartProcessing==0 || mDisplayOrientationOnStartProcessing==90)
 				mDisplayOrientationOnStartProcessing+=180;
@@ -512,7 +512,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		canvas.drawBitmap(bitmapCropped, rect, rect, paint);
 
 		if (HDRProcessingPlugin.SaveInputPreference == 0)
-			if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
+			if (CameraController.isNexus6 && CameraController.isFrontCamera())
 			{	
 				Matrix matrix = new Matrix();
 				matrix.postRotate(180);
@@ -1243,7 +1243,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 				this.previewTaskCurrent = null;
 
 				if (HDRProcessingPlugin.SaveInputPreference == 0)
-					if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
+					if (CameraController.isNexus6 && CameraController.isFrontCamera())
 					{	
 						Matrix matrix = new Matrix();
 						matrix.postRotate(180);

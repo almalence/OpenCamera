@@ -264,7 +264,7 @@ public class VideoCapturePlugin extends PluginCapture
 				if (isChecked)
 				{
 					ModePreference = "0";
-					if (Build.MODEL.contains("Nexus 6"))
+					if (CameraController.isNexus6)
 					{
 						Toast.makeText(ApplicationScreen.getMainContext(),
 								"Not suported on Nexus 6 currently. Will be fixed in next release.", Toast.LENGTH_LONG)
@@ -1027,7 +1027,7 @@ public class VideoCapturePlugin extends PluginCapture
 				stopRecording();
 			}
 
-			if (camera != null && !Build.MODEL.contains("GT-I9505") && !Build.MODEL.contains("SM-G900"))
+			if (camera != null && !CameraController.isGalaxyS4 && !CameraController.isGalaxyNote3)
 			{
 				try
 				{
@@ -1232,10 +1232,10 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 
 		Camera.Parameters cp = CameraController.getCameraParameters();
-		if (cp != null && !Build.MODEL.contains("GT-I9505") && !Build.MODEL.contains("SM-G900"))
+		if (cp != null && !CameraController.isGalaxyS4 && !CameraController.isGalaxyNote3)
 		{
 			cp.setPreviewFrameRate(30);
-			if (!Build.MODEL.contains("GT-I9505") && !Build.MODEL.contains("SM-G900"))
+			if (!CameraController.isGalaxyS4 && !CameraController.isGalaxyNote3)
 				cp.setRecordingHint(true);
 
 			CameraController.setCameraParameters(cp);
@@ -2251,7 +2251,7 @@ public class VideoCapturePlugin extends PluginCapture
 		// Step 5: Set the preview output
 		mMediaRecorder.setPreviewDisplay(ApplicationScreen.getPreviewSurfaceHolder().getSurface());
 
-		if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
+		if (CameraController.isNexus6 && CameraController.isFrontCamera())
 		{
 			mMediaRecorder.setOrientationHint(ApplicationScreen.getWantLandscapePhoto() ? (ApplicationScreen
 					.getGUIManager().getDisplayOrientation() + 180) % 360 : (ApplicationScreen.getGUIManager()

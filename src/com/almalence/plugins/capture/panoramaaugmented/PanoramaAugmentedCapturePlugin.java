@@ -230,9 +230,10 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 		// (and no data will arrive from it either)
 		// so, use gravity sensor only on models where accelerometer sensor is
 		// no good
-		if (Build.MODEL.contains("LG-D80") // Accelerometer on LG G2 is very
-											// slow (D80x models)
-		)
+		
+		// Accelerometer on LG G2 is very
+		// slow (D80x models)
+		if (CameraController.isG2) 
 		{
 			this.sensorManager.registerListener(this.rotationListener, this.sensorGravity,
 					SensorManager.SENSOR_DELAY_GAME);
@@ -448,7 +449,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		camera2Preference = prefs.getBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false);
 		
-		if(Build.MODEL.equals("Nexus 6") && camera2Preference)
+		if(CameraController.isNexus6 && camera2Preference)
 		{
 			prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false).commit();
 			CameraController.setUseCamera2(false);
@@ -522,7 +523,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 	{
 		ApplicationScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
 		
-		if(Build.MODEL.equals("Nexus 6") && camera2Preference)
+		if(CameraController.isNexus6 && camera2Preference)
 		{
 			CameraController.useCamera2OnRelaunch(true);
 			CameraController.setUseCamera2(camera2Preference);
@@ -587,7 +588,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 			size = cs.get(PanoramaAugmentedCapturePlugin.prefResolution);
 		}
 		
-		if (Build.MODEL.contains("HTC One X"))
+		if (CameraController.isHTCOneX)
 		{
 			if (!CameraController.isFrontCamera())
 			{
@@ -637,7 +638,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 			return;
 		}
 		
-		if (Build.MODEL.contains("HTC One X"))
+		if (CameraController.isHTCOneX)
 		{
 			if (!CameraController.isFrontCamera())
 			{
@@ -916,7 +917,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 		ResolutionsPictureSizesList.clear();
 
 		final List<CameraController.Size> cs = CameraController.getSupportedPictureSizes();
-		if (Build.MODEL.contains("HTC One X"))
+		if (CameraController.isHTCOneX)
 		{
 			if (!CameraController.isFrontCamera())
 			{

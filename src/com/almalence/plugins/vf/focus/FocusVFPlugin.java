@@ -641,7 +641,7 @@ public class FocusVFPlugin extends PluginViewfinder
 					&& preferenceFocusMode != CameraParameters.MF_MODE)
 			{
 				CameraController.setCameraFocusMode(preferenceFocusMode);
-			} else if (Build.MODEL.contains("SM-N900") && preferenceFocusMode != CameraParameters.MF_MODE)
+			} else if (CameraController.isGalaxyNote3 && preferenceFocusMode != CameraParameters.MF_MODE)
 			// Kind of hack to
 			// prevent Note 3 of
 			// permanent 'auto focus
@@ -772,7 +772,7 @@ public class FocusVFPlugin extends PluginViewfinder
 
 	public void onTouchMeteringArea(MotionEvent e)
 	{
-		if (!mMeteringAreaSupported || Build.MODEL.contains("SM-N900") || Build.MODEL.contains("SM-G900"))
+		if (!mMeteringAreaSupported || CameraController.isGalaxyNote3)
 		{
 			if (e.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN
 					|| e.getActionMasked() == MotionEvent.ACTION_DOWN)
@@ -971,7 +971,7 @@ public class FocusVFPlugin extends PluginViewfinder
 			mMeteringArea.add(new Area(new Rect(), 1000));
 		}
 
-		boolean isNexus6 = Build.MODEL.contains("Nexus 6");
+		boolean isNexus6 = CameraController.isNexus6;
 		// Convert the coordinates to driver format.
 		// AE area is bigger because exposure is sensitive and
 		// easy to over- or underexposure if area is too small.

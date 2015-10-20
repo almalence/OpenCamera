@@ -327,8 +327,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	{
 		String modeName = mode.modeID;
 		if (modeName.equals("video")
-				|| (Build.MODEL.equals("Nexus 6") && (modeName.equals("panorama_augmented") || modeName
-						.equals("preshot"))))
+			|| (CameraController.isNexus6 && (modeName.equals("panorama_augmented") || modeName.equals("preshot")))
+			|| (CameraController.isFlex2 && (modeName.equals("hdrmode") || modeName.equals("expobracketing"))))
 			switchToOldCameraInterface = true;
 		else
 			switchToOldCameraInterface = false;
