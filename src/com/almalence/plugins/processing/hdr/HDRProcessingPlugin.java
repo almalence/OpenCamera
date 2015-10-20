@@ -227,12 +227,17 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 						ev_mark -= 2.0;
 
 					String evmark = String.format("_%+3.1fEv", ev_mark);
+					
+					//If device is not support exposure compensation we have to add current number of frame
+					//to avoid rewriting of same exposed files, because in that case file names will be equals
+					if(!CameraController.isExposureCompensationSupported() && tmpImagesAmount > 1)
+						evmark = evmark + String.format("_%d", i+1);
 
 					byte[] buffer = SwapHeap.CopyFromHeap(compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]],
 							compressed_frame_len[ExpoBracketingCapturePlugin.evIdx[i]]);
 					int yuvBuffer = compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]];
 			
-					if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
+					if (CameraController.isNexus6 && CameraController.isFrontCamera())
 					{
 						int imageWidth = ApplicationScreen.getPreviewWidth();
 						int imageHeight = ApplicationScreen.getPreviewHeight();
