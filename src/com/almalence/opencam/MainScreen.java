@@ -854,7 +854,7 @@ public class MainScreen extends ApplicationScreen
 
 		if (cp != null)
 		{
-			if (!CameraController.isCamera2Supported())
+			if (!CameraController.isCamera2Allowed())
 				cp.setEnabled(false);
 			else
 				cp.setEnabled(true);

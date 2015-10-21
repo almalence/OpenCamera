@@ -157,6 +157,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public static boolean							isHuawei		= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("huawei");
 	
+	public static boolean							isGionee		= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("gionee");
+	
 	
 
 	// Android camera parameters constants
@@ -292,7 +294,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean							isOldCameraOneModeLaunched		= false;
 
 	private static boolean							isCamera2						= false; //Flag of using camera2 interface
-	private static boolean							isCamera2Supported				= false;
+	private static boolean							isCamera2Allowed				= false; //Flag to show whether OpenCamera support camera2 mode on current device
+	private static boolean							isCamera2Supported				= false; //Flag to show whether camera2 is available on current device
 	protected static boolean						isRAWCaptureSupported			= false; //Only HARDWARE_LEVEL_FULL devices may capture RAW frames
 	protected static boolean						isManualSensorSupported			= false; //Manual sensor means user's control of white balance and exposure time
 
@@ -778,34 +781,39 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		try
 		{
+			//General support of camera2 interface. OpenCamera allows to use camera2 not on all devices which implements camera2
+			if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService("camera") != null)
+				isCamera2Supported = true;
+			
 			//Now only LG Flex2, G4, Nexus 5\6 and Andoid One devices support camera2 without critical problems
 			//We have to test Samsung Galaxy S6 to include in this list of allowed devices
 			if (!(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService("camera") != null)
 					|| (!isFlex2 && !isNexus5or6 && !isAndroidOne  /*&& !isGalaxyS6 &&*/ /* && !isG4*/))
 			{
 				isCamera2 = false;
-				isCamera2Supported = false;
+				isCamera2Allowed = false;
 				prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera2Key), false)
 						.commit();
 			} else
-				isCamera2Supported = true;
+				isCamera2Allowed = true;
 		} catch (Exception e)
 		{
 			e.printStackTrace();
 			isCamera2 = false;
+			isCamera2Allowed = false;
 			isCamera2Supported = false;
 			prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera2Key), false)
 					.commit();
 		}
 
-		if (CameraController.isCamera2Supported)
+		if (CameraController.isCamera2Allowed)
 		{
 			Camera2Controller.onCreateCamera2(mainContext, appInterface, pluginManager, messageHandler);
 			//We supports only devices with hardware level FULL and LIMITED
 			if (!Camera2Controller.checkHardwareLevel())
 			{
 				isCamera2 = false;
-				isCamera2Supported = false;
+				isCamera2Allowed = false;
 				prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera2Key), false)
 						.commit();
 			}
@@ -816,7 +824,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static void createCamera2Manager()
 	{
-		if (CameraController.isCamera2Supported)
+		if (CameraController.isCamera2Allowed)
 			Camera2Controller.onCreateCamera2(mainContext, appInterface, pluginManager, messageHandler);
 	}
 
@@ -847,7 +855,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			total_frames = 0;
 
-			if (CameraController.isCamera2Supported)
+			if (CameraController.isCamera2Allowed)
 				Camera2Controller.onResumeCamera2();
 		}
 	}
@@ -889,11 +897,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				{
 					camera.setPreviewCallback(null);
 					//Sony devices, some Huawei devices and Samsung Galaxy S5 has unexpected behavior if preview isn't stopped until mode changes
-					if (isSony || isGalaxyS5 || isHuawei)
+					if (isSony || isGalaxyS5 || isHuawei || isGionee)
 						camera.stopPreview();
 					if (!isModeSwitching)
 					{
-						if (!isSony && !isGalaxyS5 && !isHuawei)
+						if (!isSony && !isGalaxyS5 && !isHuawei && !isGionee)
 							camera.stopPreview();
 						camera.release();
 						camera = null;
@@ -985,9 +993,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return isCamera2;
 	}
 	
-	public static boolean isCamera2Supported()
+	public static boolean isCamera2Allowed()
 	{
-		return isCamera2Supported;
+		return isCamera2Allowed;
 	}
 	
 	//returns camera2 supported level. -1 if not suppoerted.
@@ -1022,7 +1030,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		boolean SuperModeOk = false;
 
-		if (isCamera2Supported)
+		if (isCamera2Allowed)
 		{
 			// if we're working via Camera2 API -
 			// check if device conform to Super Mode requirements
