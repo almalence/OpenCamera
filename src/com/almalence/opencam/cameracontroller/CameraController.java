@@ -98,14 +98,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean							isNexus5		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus 5");
 	public static boolean							isNexus6		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus 6");
 	public static boolean							isNexus7		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus 7");
-	public static boolean							isNexus13		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus 13");
+	public static boolean							isNexus9		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus 9");
 	
 	public static boolean							isNexus5or6		= CameraController.isNexus5 ||
 			  														  CameraController.isNexus6;
 	
 	public static boolean							isNexus			= CameraController.isNexus5or6 ||
 																	  CameraController.isNexus7    ||
-			  														  CameraController.isNexus13;
+			  														  CameraController.isNexus9;
 
 	public static boolean							isFlex2			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h959") ||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-f510") ||
