@@ -1339,6 +1339,7 @@ public class SavingService extends NotificationService
 				separatorString = " ";
 				break;
 			default:
+				separatorString = " ";
 			}
 
 			switch (dateFormat)
