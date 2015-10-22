@@ -95,10 +95,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	protected static final long						MPIX_1080		= 1920 * 1080;
 
 	//Device models markers. Used to separate device dependent program's logic
-	public static boolean							isNexus5		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus 5");
-	public static boolean							isNexus6		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus 6");
-	public static boolean							isNexus7		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus 7");
-	public static boolean							isNexus9		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus 9");
+	public static boolean							isNexus5		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus5");
+	public static boolean							isNexus6		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus6");
+	public static boolean							isNexus7		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus7");
+	public static boolean							isNexus9		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus9");
 	
 	public static boolean							isNexus5or6		= CameraController.isNexus5 ||
 			  														  CameraController.isNexus6;
@@ -134,7 +134,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-vs980") ||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-ls980");
 
-	public static boolean							isAndroidOne	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("micromax aq4501");
+	public static boolean							isAndroidOne	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("micromaxaq4501");
 
 	public static boolean							isGalaxyS6		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g920") ||
 														  			  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g925");
@@ -150,8 +150,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public static boolean							isGalaxyNote4	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-n910");
 	
-	public static boolean							isHTCOne		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("htc one");
-	public static boolean							isHTCOneX		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("htc one x");
+	public static boolean							isHTCOne		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("htcone");
+	public static boolean							isHTCOneX		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("htconex");
 	
 	public static boolean							isSony			= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("sony");
 	
@@ -782,12 +782,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		try
 		{
 			//General support of camera2 interface. OpenCamera allows to use camera2 not on all devices which implements camera2
-			if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService("camera") != null)
+			if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService(Context.CAMERA_SERVICE) != null)
 				isCamera2Supported = true;
 			
 			//Now only LG Flex2, G4, Nexus 5\6 and Andoid One devices support camera2 without critical problems
 			//We have to test Samsung Galaxy S6 to include in this list of allowed devices
-			if (!(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService("camera") != null)
+			if (!(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService(Context.CAMERA_SERVICE) != null)
 					|| (!isFlex2 && !isNexus5or6 && !isAndroidOne  /*&& !isGalaxyS6 &&*/ /* && !isG4*/))
 			{
 				isCamera2 = false;
@@ -1183,7 +1183,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						e.printStackTrace();
 					}
 				}
-			} else
+			}
+			else
 				Camera2Controller.openCameraCamera2();
 
 			pluginManager.selectDefaults();

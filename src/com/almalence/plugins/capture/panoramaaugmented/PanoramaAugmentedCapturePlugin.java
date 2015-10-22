@@ -47,7 +47,6 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.util.FloatMath;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -1319,7 +1318,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 		}.start();
 	}
 
-	@SuppressLint("FloatMath")
 	private void stopCapture()
 	{
 		//show standard bottom gui and hide stop button  
@@ -1432,24 +1430,24 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 
 				CameraController.Size imageSize = CameraController.getCameraImageSize();
 				// convert rotation around center into rotation around top-left corner
-				PixelsShiftX += imageSize.getWidth() / 2 * (1 - FloatMath.cos(angleR))
-						+ imageSize.getHeight() / 2 * FloatMath.sin(angleR);
-				PixelsShiftY += -imageSize.getWidth() / 2 * FloatMath.sin(angleR) + imageSize.getHeight()
-						/ 2 * (1 - FloatMath.cos(angleR));
+				PixelsShiftX += imageSize.getWidth() / 2 * (1 - (float)Math.cos(angleR))
+						+ imageSize.getHeight() / 2 * (float)Math.sin(angleR);
+				PixelsShiftY += -imageSize.getWidth() / 2 * (float)Math.sin(angleR) + imageSize.getHeight()
+						/ 2 * (1 - (float)Math.cos(angleR));
 
 				PluginManager.getInstance().addToSharedMem("pano_frame" + (frame_cursor + 1) + "." + SessionID,
 						String.valueOf(frame.getNV21address()));
 
 				PluginManager.getInstance().addToSharedMem("pano_frametrs" + (frame_cursor + 1) + ".00." + SessionID,
-						String.valueOf(FloatMath.cos(angleR)));
+						String.valueOf((float)Math.cos(angleR)));
 				PluginManager.getInstance().addToSharedMem("pano_frametrs" + (frame_cursor + 1) + ".01." + SessionID,
-						String.valueOf(-FloatMath.sin(angleR)));
+						String.valueOf(-(float)Math.sin(angleR)));
 				PluginManager.getInstance().addToSharedMem("pano_frametrs" + (frame_cursor + 1) + ".02." + SessionID,
 						String.valueOf(PixelsShiftX));
 				PluginManager.getInstance().addToSharedMem("pano_frametrs" + (frame_cursor + 1) + ".10." + SessionID,
-						String.valueOf(FloatMath.sin(angleR)));
+						String.valueOf((float)Math.sin(angleR)));
 				PluginManager.getInstance().addToSharedMem("pano_frametrs" + (frame_cursor + 1) + ".11." + SessionID,
-						String.valueOf(FloatMath.cos(angleR)));
+						String.valueOf((float)Math.cos(angleR)));
 				PluginManager.getInstance().addToSharedMem("pano_frametrs" + (frame_cursor + 1) + ".12." + SessionID,
 						String.valueOf(PixelsShiftY));
 				PluginManager.getInstance().addToSharedMem("pano_frametrs" + (frame_cursor + 1) + ".20." + SessionID,

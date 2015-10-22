@@ -41,7 +41,6 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.util.FloatMath;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.LinearLayout;
@@ -586,7 +585,7 @@ public class NightCapturePlugin extends PluginCapture
 			// Exposure compensation is not working in an optimal way
 			// (appear to be changing exposure time, while it is optimal for us to reduce ISO, if possible) 
 			float fUnclip = -0.7f;
-			float UnclipLinear = FloatMath.pow(2, -fUnclip);
+			float UnclipLinear = (float)Math.pow(2, -fUnclip);
 			// first - attempt to reduce sensor ISO, but only if exposure time is short (<50msec)
 			if ((sensorGain > minSensitivity) && (exposureTime <= 50000000))
 			{
