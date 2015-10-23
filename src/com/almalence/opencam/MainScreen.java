@@ -2842,7 +2842,7 @@ public class MainScreen extends ApplicationScreen
 		if (!projDir.exists())
 		{
 			projDir.mkdirs();
-			WriteLaunches(projDir, 10);
+			WriteLaunches(projDir, 6);
 		}
 		int left = ReadLaunches(projDir);
 		return left;
@@ -2856,7 +2856,7 @@ public class MainScreen extends ApplicationScreen
 		if (!projDir.exists())
 		{
 			projDir.mkdirs();
-			WriteLaunches(projDir, 10);
+			WriteLaunches(projDir, 6);
 		}
 
 		int left = ReadLaunches(projDir);
@@ -2913,7 +2913,7 @@ public class MainScreen extends ApplicationScreen
 			return true;
 		if (mode.SKU.isEmpty())
 		{
-			int launchesLeft = MainScreen.thiz.getLeftLaunches(mode.modeID);
+			int launchesLeft = MainScreen.getLeftLaunches(mode.modeID);
 
 			if ((1 == launchesLeft) || (3 == launchesLeft))
 			{

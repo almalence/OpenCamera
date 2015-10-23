@@ -493,24 +493,21 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 	{
 		if (keyCode == KeyEvent.KEYCODE_BACK)
 		{
-			if (this.inCapture)
+			if (this.inCapture && this.engine != null)
 			{
-				if (this.engine != null)
+				synchronized (this.engine)
 				{
-					synchronized (this.engine)
+					final int result = this.engine.cancelFrame();
+
+					if (result <= 0)
 					{
-						final int result = this.engine.cancelFrame();
-
-						if (result <= 0)
-						{
-							this.stopCapture();
-							PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED_NORESULT,
-									String.valueOf(SessionID));
-
-						}
-
-						return true;
+						this.stopCapture();
+						PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED_NORESULT,
+								String.valueOf(SessionID));
+						if (modeSwitcher != null && !inCapture)
+							modeSwitcher.setEnabled(true);
 					}
+					return true;
 				}
 			}
 		}
