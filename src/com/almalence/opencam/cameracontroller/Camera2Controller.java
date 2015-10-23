@@ -188,7 +188,7 @@ public class Camera2Controller
 
 		// Camera2 code ---------------------------------------------------------
 		// get manager for camera devices
-		Camera2Controller.getInstance().manager = (CameraManager) mainContext.getSystemService("camera");
+		Camera2Controller.getInstance().manager = (CameraManager) mainContext.getSystemService(Context.CAMERA_SERVICE);
 
 		// get list of camera id's (usually it will contain just {"0", "1"}
 		try

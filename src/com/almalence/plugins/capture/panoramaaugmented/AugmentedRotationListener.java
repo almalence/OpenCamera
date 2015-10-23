@@ -18,14 +18,11 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.capture.panoramaaugmented;
 
-import android.annotation.SuppressLint;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.FloatMath;
 
-@SuppressLint("FloatMath")
 public class AugmentedRotationListener implements SensorEventListener
 {
 	public interface AugmentedRotationReceiver
@@ -180,7 +177,7 @@ public class AugmentedRotationListener implements SensorEventListener
 		int idx = acc_filt_idx;
 		for (int i = 0; i < ACC_FILT_LEN; ++i)
 		{
-			float g = FloatMath.sqrt(acc_filter[idx][0] * acc_filter[idx][0] + acc_filter[idx][1] * acc_filter[idx][1]
+			float g = (float)Math.sqrt(acc_filter[idx][0] * acc_filter[idx][0] + acc_filter[idx][1] * acc_filter[idx][1]
 					+ acc_filter[idx][2] * acc_filter[idx][2]);
 
 			// the farther the measured g from 9.81 the less the weight in a
@@ -281,7 +278,7 @@ public class AugmentedRotationListener implements SensorEventListener
 			this.filt_magnetic[i] = event.values[i] = (this.filt_magnetic[i] + event.values[i]) / 2;
 		}
 
-		float norm = FloatMath.sqrt(event.values[0] * event.values[0] + event.values[1] * event.values[1]
+		float norm = (float)Math.sqrt(event.values[0] * event.values[0] + event.values[1] * event.values[1]
 				+ event.values[2] * event.values[2]);
 
 		if (norm > 1) // normally earth magnetic field is 25-65 uTesla, but some
@@ -455,7 +452,7 @@ public class AugmentedRotationListener implements SensorEventListener
 		float[] normValues = new float[3];
 
 		// Calculate the angular speed of the sample
-		float omegaMagnitude = FloatMath.sqrt(gyroValues[0] * gyroValues[0] + gyroValues[1] * gyroValues[1]
+		float omegaMagnitude = (float)Math.sqrt(gyroValues[0] * gyroValues[0] + gyroValues[1] * gyroValues[1]
 				+ gyroValues[2] * gyroValues[2]);
 
 		// Normalize the rotation vector if it's big enough to get the axis
@@ -471,8 +468,8 @@ public class AugmentedRotationListener implements SensorEventListener
 		// We will convert this axis-angle representation of the delta rotation
 		// into a quaternion before turning it into the rotation matrix.
 		float thetaOverTwo = omegaMagnitude * timeFactor;
-		float sinThetaOverTwo = FloatMath.sin(thetaOverTwo);
-		float cosThetaOverTwo = FloatMath.cos(thetaOverTwo);
+		float sinThetaOverTwo = (float)Math.sin(thetaOverTwo);
+		float cosThetaOverTwo = (float)Math.cos(thetaOverTwo);
 		deltaRotationVector[0] = sinThetaOverTwo * normValues[0];
 		deltaRotationVector[1] = sinThetaOverTwo * normValues[1];
 		deltaRotationVector[2] = sinThetaOverTwo * normValues[2];
@@ -504,12 +501,12 @@ public class AugmentedRotationListener implements SensorEventListener
 		float[] yM = new float[9];
 		float[] zM = new float[9];
 
-		float sinX = FloatMath.sin(o[1]);
-		float cosX = FloatMath.cos(o[1]);
-		float sinY = FloatMath.sin(o[2]);
-		float cosY = FloatMath.cos(o[2]);
-		float sinZ = FloatMath.sin(o[0]);
-		float cosZ = FloatMath.cos(o[0]);
+		float sinX = (float)Math.sin(o[1]);
+		float cosX = (float)Math.cos(o[1]);
+		float sinY = (float)Math.sin(o[2]);
+		float cosY = (float)Math.cos(o[2]);
+		float sinZ = (float)Math.sin(o[0]);
+		float cosZ = (float)Math.cos(o[0]);
 
 		// rotation about x-axis (pitch)
 		xM[0] = 1.0f;

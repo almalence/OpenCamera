@@ -1053,7 +1053,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onExportFinished();
 
-			Toast.makeText(ApplicationScreen.getMainContext(), "Can't save data - seems no free space left.",
+			Toast.makeText(ApplicationScreen.getMainContext(), "Can't save data - no free space left or problems while saving occurred.",
 					Toast.LENGTH_LONG).show();
 
 			ApplicationScreen.getGUIManager().lockControls = false;
