@@ -36,10 +36,8 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
-import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
-import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
@@ -103,7 +101,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 	private final static int			MIN_HEIGHT_SUPPORTED			= 640;
 	private final static List<Point>	ResolutionsPictureSizesList		= new ArrayList<Point>();
 	
-	private static boolean takingAlready = false;
+	private static boolean 				takingAlready = false;
 	
 	private boolean	camera2Preference;
 	
@@ -148,7 +146,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 	private int							previewHeight				= -1;
 
 	private volatile boolean			isFirstFrame				= false;
-	private volatile boolean glContextCreated = false;
+	private volatile boolean 			glContextCreated = false;
 
 	private volatile boolean			coordsRecorded;
 	private volatile boolean			previewRestartFlag;
@@ -180,7 +178,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 		this.sensorManager = (SensorManager) ApplicationScreen.getMainContext().getSystemService(Context.SENSOR_SERVICE);
 		this.sensorGravity = this.sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
 		this.sensorAccelerometer = this.sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		this.sensorGyroscope = this.sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+		sensorGyroscope = this.sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 	}
 
 	private void init()
@@ -205,7 +203,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 	{
 		if (this.prefHardwareGyroscope)
 		{
-			this.sensorManager.registerListener(this.rotationListener, this.sensorGyroscope,
+			this.sensorManager.registerListener(this.rotationListener, sensorGyroscope,
 					SensorManager.SENSOR_DELAY_GAME);
 		} else
 		{
@@ -245,7 +243,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 	{
 		if (this.prefHardwareGyroscope)
 		{
-			this.sensorManager.unregisterListener(this.rotationListener, this.sensorGyroscope);
+			this.sensorManager.unregisterListener(this.rotationListener, sensorGyroscope);
 		} else
 		{
 			if (null != this.sensorSoftGyroscope)
@@ -649,14 +647,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 		// Paranoia check. In some unusual cases prefResolution value may be more then cs.size.
 		if (PanoramaAugmentedCapturePlugin.prefResolution >= picture_sizes.size()) {
 			int iPrefResolution = PanoramaAugmentedCapturePlugin.prefResolution;
-			while (iPrefResolution >= picture_sizes.size()) {
+			while (iPrefResolution >= picture_sizes.size())
 				iPrefResolution--;
-			}
 			
 			size = picture_sizes.get(iPrefResolution);
-		} else {
+		} else
 			size = picture_sizes.get(PanoramaAugmentedCapturePlugin.prefResolution);
-		}
 		
 		this.pictureWidth = size.getWidth();
 		this.pictureHeight = size.getHeight();
@@ -786,7 +782,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 	{
 		synchronized (this.engine)
 		{
-			if (!this.takingAlready)
+			if (!takingAlready)
 			{
 				if (this.inCapture)
 				{
@@ -844,16 +840,16 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 
 		try
 		{
-			this.prefResolution = Integer
+			prefResolution = Integer
 					.parseInt(prefs.getString(CameraController.getCameraIndex() == 0 ? ApplicationScreen.sImageSizePanoramaBackPref
 							: ApplicationScreen.sImageSizePanoramaFrontPref, "0"));
 		} catch (final Exception e)
 		{
 			e.printStackTrace();
 			Log.e("Panorama", "getPrefs exception: " + e.getMessage());
-			this.prefResolution = 0;
+			prefResolution = 0;
 		}
-		this.prefHardwareGyroscope = prefs.getBoolean(PREFERENCES_KEY_USE_DEVICE_GYRO, this.sensorGyroscope != null);
+		this.prefHardwareGyroscope = prefs.getBoolean(PREFERENCES_KEY_USE_DEVICE_GYRO, sensorGyroscope != null);
 
 		this.prefMemoryRelax = prefs.getBoolean(sMemoryPref, false);
 
@@ -889,12 +885,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 							return false;
 						showGyroWarnOnce = true;
 						ad.show();
-
 						return false;
 					} else
-					{
 						return true;
-					}
 				}
 			});
 		}
@@ -1087,7 +1080,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 							.sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_FORCE_FINISH_CAPTURE);
 			} else
 			{
-				this.takingAlready = true;
+				takingAlready = true;
 				ApplicationScreen.takePicture();
 			}
 		}
@@ -1105,7 +1098,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 
 		synchronized (this.engine)
 		{
-			if (!this.takingAlready && this.glContextCreated)
+			if (!takingAlready && this.glContextCreated)
 			{
 				final int state = this.engine.getPictureTakingState(this.modeSweep ? true : 
 									CameraController.getFocusMode() == CameraParameters.AF_MODE_AUTO);
@@ -1113,12 +1106,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 				if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE || this.isFirstFrame)
 				{
 					if (this.modeSweep)
-					{
 						this.takePictureUnimode(SwapHeap.SwapToHeap(dataOrig));
-					} else
-					{
+					else
 						this.takePictureUnimode(0);
-					}
 				}
 			}
 		}
@@ -1226,13 +1216,11 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 		
 		synchronized (this.engine)
 		{
-			this.takingAlready = false;
+			takingAlready = false;
 			this.engine.notifyAll();
 
 			if (!this.coordsRecorded)
-			{
 				this.engine.recordCoordinates();
-			}
 
 			if (frame == 0)
 			{
