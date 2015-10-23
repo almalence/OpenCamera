@@ -223,6 +223,11 @@ public abstract class Plugin
 	{
 		return false;
 	}
+	
+	public boolean onMultiTouch(View view, MotionEvent e)
+	{
+		return false;
+	}
 
 	public void onOrientationChanged(int orientation)
 	{

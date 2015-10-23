@@ -7207,26 +7207,87 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private static float	XtoRightInvisible	= 0;
 	private static float	XtoRightVisible		= 0;
 
-	private MotionEvent		prevEvent;
-	private MotionEvent		downEvent;
-	private boolean			scrolling			= false;
-	private boolean			multiTouch			= false;
+	private MotionEvent			prevEvent;
+	private MotionEvent			downEvent;
+	private boolean				scrolling			= false;
+	
+	private boolean				multiTouch			= false;
+	private boolean				singleTouch			= false;
+	private boolean				buffered			= false;
+	private List<MotionEvent>	bufferedEvents		= new ArrayList<MotionEvent>();
+	private static final int	MAX_BUFFERED_EVENTS	= 10;
+	private View				bufferedView		= null;
 
 	@Override
 	public boolean onTouch(View view, MotionEvent event)
 	{
-		// Handle MultiTouch event.
-		// Actually we need this only for FocusVFPlugin.
-		if (event.getPointerCount() > 1)
+		// Pinch to zoom and preview sliding stuff.
+		// MultiTouch event can start from first, second, third or later
+		// MotionEvent. To correct handle such events,
+		// we will buffer up to MAX_BUFFERED_EVENTS MotionEvents, and will
+		// actually handle them only if be sure, that deal with single
+		// MotuinEvents. If during buffering, we get MultiTouch event, then drop
+		// buffered events and until touch wouldn't be released
+		// (event.getAction() == MotionEvent.ACTION_UP),
+		// we handle all incoming MotionEvents as multitouch.
+		// All this stuff is required only for Preview view.
+		if (view == ApplicationScreen.getPreviewSurfaceView()) {
+			if (event.getAction() == MotionEvent.ACTION_DOWN && !buffered)
+			{
+				// Start buffering.
+				singleTouch = false;
+				multiTouch = false;
+				bufferedEvents.add(MotionEvent.obtain(event));
+				bufferedView = view;
+				buffered = true;
+				return true;
+			}
+			
+			if (event.getPointerCount() > 1 && !singleTouch) {
+				// If we are not in singleTouch mode and get MultiTouch event,
+				// then clear all buffered data and switch to multiTouch mode.
+				// All further events will be handled as MultiTouch until touch released.
+				downEvent = null;
+				prevEvent = null;
+				buffered = false;
+				bufferedEvents.clear();
+				bufferedView = null;
+				multiTouch = true;
+				ApplicationScreen.getPluginManager().onMultiTouch(view, event);
+				return true;
+			} else if (!singleTouch && !multiTouch) {
+				// If mode not detected yet, then buffer current MotionEvent.
+				if (bufferedEvents.size() == MAX_BUFFERED_EVENTS || event.getAction() == MotionEvent.ACTION_UP) {
+					// If buffer size got to limit or we get ACTION_UP event,
+					// then switch to singleTouch mode and handle all buffered
+					// events, before continue.
+					singleTouch = true;
+					for (MotionEvent e : bufferedEvents)
+					{
+						onTouch(bufferedView, e);
+					}
+					bufferedView = null;
+					bufferedEvents.clear();
+					buffered = false;
+				} else if (event.getAction() != MotionEvent.ACTION_DOWN) {
+					bufferedEvents.add(MotionEvent.obtain(event));
+				}
+			}
+		} else {
+			singleTouch = true;
+		}
+		
+		// If mode is not detected yet, then don't do anything.
+		if (!multiTouch && !singleTouch)
 		{
-			multiTouch = true;
-			ApplicationScreen.getPluginManager().onTouch(view, event);
 			return true;
 		}
-		if (multiTouch && event.getAction() == MotionEvent.ACTION_DOWN)
+		
+		// End MultiTiuch mode.
+		if (multiTouch && event.getAction() == MotionEvent.ACTION_UP)
 		{
-			ApplicationScreen.getPluginManager().onTouch(view, event);
 			multiTouch = false;
+			return true;
 		}
 
 		// We can't move on while staying in MultiTouch mode.
@@ -7234,7 +7295,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			return true;
 		}
-		// -- Handle MultiTouch event.
+		// -- Pinch to zoom and preview sliding stuff.
 
 		// hide hint screen
 		if (guiView.findViewById(R.id.hintLayout).getVisibility() == View.VISIBLE)

@@ -95,10 +95,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	protected static final long						MPIX_1080		= 1920 * 1080;
 
 	//Device models markers. Used to separate device dependent program's logic
-	public static boolean							isNexus5		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus 5");
-	public static boolean							isNexus6		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus 6");
-	public static boolean							isNexus7		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus 7");
-	public static boolean							isNexus9		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus 9");
+	public static boolean							isNexus5		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus5");
+	public static boolean							isNexus6		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus6");
+	public static boolean							isNexus7		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus7");
+	public static boolean							isNexus9		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus9");
 	
 	public static boolean							isNexus5or6		= CameraController.isNexus5 ||
 			  														  CameraController.isNexus6;
@@ -2200,7 +2200,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 
-	public static int getMaxZoom()
+	public static float getMaxZoom()
 	{
 		if (!CameraController.isRemoteCamera())
 		{
@@ -2216,9 +2216,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				} else
 				{
 					//In camera2 interface zoom range lay between 1 and max scale factor
-					//getMaxZoomCamera2 returns zoom value multiplied to 10 for convenience
-					float maxZoom = Camera2Controller.getMaxZoomCamera2();
-					return (int) (maxZoom - 10.0f);
+					return Camera2Controller.getMaxZoomCamera2();
 				}
 			} catch (Exception e)
 			{
@@ -2231,7 +2229,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 
-	public static void setZoom(int value)
+	public static void setZoom(float value)
 	{
 		if (!CameraController.isRemoteCamera())
 		{
@@ -2240,11 +2238,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				Camera.Parameters cp = getCameraParameters();
 				if (cp != null)
 				{
-					cp.setZoom(value);
+					cp.setZoom((int)value);
 					setCameraParameters(cp);
 				}
 			} else
-				Camera2Controller.setZoom(value / 10.0f + 1f);
+				Camera2Controller.setZoom(value);
 		}
 	}
 

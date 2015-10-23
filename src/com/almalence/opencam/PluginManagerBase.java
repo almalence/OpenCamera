@@ -547,6 +547,16 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		return (res > 0 ? true : false);
 	}
 
+	public boolean onMultiTouch(View view, MotionEvent e)
+	{
+		int res = 0;
+		for (int i = 0; i < activeVF.size(); i++)
+			res += (pluginList.get(activeVF.get(i)).onMultiTouch(view, e) ? 1 : 0);
+		if (null != pluginList.get(activeCapture))
+			res += (pluginList.get(activeCapture).onMultiTouch(view, e) ? 1 : 0);
+		return (res > 0 ? true : false);
+	}
+	
 	public Plugin getPlugin(String id)
 	{
 		return pluginList.get(id);
