@@ -1027,7 +1027,7 @@ public class VideoCapturePlugin extends PluginCapture
 				stopRecording();
 			}
 
-			if (camera != null && !CameraController.isGalaxyS4 && !CameraController.isGalaxyNote3)
+			if (camera != null && !CameraController.isGalaxyS4 && !CameraController.isGalaxyNote3 && !CameraController.isGalaxyNote4)
 			{
 				try
 				{
