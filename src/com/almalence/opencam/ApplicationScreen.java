@@ -1080,12 +1080,12 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	protected void onCameraConfigured()
 	{
 		ApplicationScreen.getPluginManager().setupCameraParameters();
-		Camera.Parameters cp = CameraController.getCameraParameters();
 
 		if (!CameraController.isRemoteCamera())
 		{
 			if (!CameraController.isUseCamera2())
 			{
+				Camera.Parameters cp = CameraController.getCameraParameters();
 				try
 				{
 					// Nexus 5 is giving preview which is too dark without this

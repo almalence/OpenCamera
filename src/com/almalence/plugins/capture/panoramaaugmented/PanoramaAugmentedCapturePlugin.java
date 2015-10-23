@@ -146,7 +146,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 	private int							previewHeight				= -1;
 
 	private volatile boolean			isFirstFrame				= false;
-	private volatile boolean 			glContextCreated = false;
+	private volatile boolean 			glContextCreated 			= false;
 
 	private volatile boolean			coordsRecorded;
 	private volatile boolean			previewRestartFlag;
@@ -462,6 +462,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 		CameraController.setNeedPreviewFrame(true);
 		ApplicationScreen.instance.muteShutter(false);
 
+		takingAlready = false;
 		showGyroWarnOnce = false;
 		aeLockedByPanorama = false;
 		wbLockedByPanorama = false;
@@ -502,7 +503,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 						this.stopCapture();
 						PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED_NORESULT,
 								String.valueOf(SessionID));
-						if (modeSwitcher != null && !inCapture)
+						if (modeSwitcher != null)
 							modeSwitcher.setEnabled(true);
 					}
 					return true;
