@@ -1013,25 +1013,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 																								.getInteger(
 																										R.integer.screen_type);
 
-	private Handler											manualControlsHandler;
-	private static final int								CLOSE_MANUAL_CONTROLS		= 0;
-	private static final int								CLOSE_MANUAL_CONTROLS_DELAY	= 3000;
-
-	private class MainHandler extends Handler
-	{
-		@Override
-		public void handleMessage(Message msg)
-		{
-			if (msg.what == CLOSE_MANUAL_CONTROLS)
-				hideManualControls();
-		}
-	}
-
 	public AlmalenceGUI()
 	{
-
-		manualControlsHandler = new MainHandler();
-
 		mThumbnail = null;
 		topMenuButtons = new HashMap<Integer, View>();
 		topMenuPluginButtons = new HashMap<String, View>();
@@ -1083,7 +1066,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	protected void hideManualControls()
 	{
 		guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
-		guiView.findViewById(R.id.expandManualControls).setVisibility(View.VISIBLE);
 	}
 
 	/*
@@ -1240,11 +1222,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			public void onClick(View v)
 			{
-				guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
-				guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
-
-				manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
-				manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
+				RelativeLayout manualControlsLayout = (RelativeLayout) guiView.findViewById(R.id.manualControlsLayout);
+				if (manualControlsLayout.getVisibility() == View.VISIBLE)
+				{
+					manualControlsLayout.setVisibility(View.GONE);
+				} else
+				{
+					manualControlsLayout.setVisibility(View.VISIBLE);
+				}
 			}
 		});
 
@@ -1765,37 +1750,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			}
 		});
 
-		RelativeLayout specialLayout3 = (RelativeLayout) ApplicationScreen.instance
-				.findViewById(R.id.specialPluginsLayout3);
-		int id = 0;
-		for (int i = 0; i < specialLayout3.getChildCount(); i++)
-		{
-			View pluginView = specialLayout3.getChildAt(i);
-			RelativeLayout.LayoutParams pm = (RelativeLayout.LayoutParams) pluginView.getLayoutParams();
-			int[] rules = pm.getRules();
-			if (rules[RelativeLayout.ALIGN_PARENT_TOP] == -1 && rules[RelativeLayout.ALIGN_PARENT_RIGHT] == -1)
-			{
-				String name = pluginView.getClass().getName();
-				String nameSwitch = com.almalence.ui.Switch.Switch.class.getName();
-				if (name.equals(nameSwitch))
-					id = pluginView.getId();
-			}
-		}
-
-		RelativeLayout manualControlsLayout = (RelativeLayout) ApplicationScreen.instance
-				.findViewById(R.id.manualControlsLayout);
-		RelativeLayout.LayoutParams pm = (RelativeLayout.LayoutParams) manualControlsLayout.getLayoutParams();
-		if (id > 0)
-		{
-			pm.addRule(RelativeLayout.LEFT_OF, id);
-			manualControlsLayout.setLayoutParams(pm);
-		} else
-		{
-			float width = ApplicationScreen.instance.getResources().getDimension(R.dimen.exposureSeekBarWidth);
-			pm.width = (int) width;
-			manualControlsLayout.setLayoutParams(pm);
-		}
-
 		final View blockingLayout = guiView.findViewById(R.id.blockingLayout);
 		final View postProcessingLayout = guiView.findViewById(R.id.postprocessingLayout);
 		final View topPanel = guiView.findViewById(R.id.topPanel);
@@ -1822,6 +1776,43 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		}
 	}
 
+	@Override
+	public void onGUICreateDone()
+	{
+		RelativeLayout specialLayout3 = (RelativeLayout) ApplicationScreen.instance
+				.findViewById(R.id.specialPluginsLayout3);
+		int id = 0;
+		for (int i = 0; i < specialLayout3.getChildCount(); i++)
+		{
+			View pluginView = specialLayout3.getChildAt(i);
+			RelativeLayout.LayoutParams pm = (RelativeLayout.LayoutParams) pluginView.getLayoutParams();
+			int[] rules = pm.getRules();
+			if (rules[RelativeLayout.ALIGN_PARENT_TOP] == -1 && rules[RelativeLayout.ALIGN_PARENT_RIGHT] == -1)
+			{
+				String name = pluginView.getClass().getName();
+				String nameSwitch = com.almalence.ui.Switch.Switch.class.getName();
+				if (name.equals(nameSwitch))
+					id = pluginView.getId();
+			}
+		}
+
+		RelativeLayout manualControlsLayout = (RelativeLayout) ApplicationScreen.instance
+				.findViewById(R.id.manualControlsLayout);
+		RelativeLayout.LayoutParams pm = (RelativeLayout.LayoutParams) manualControlsLayout.getLayoutParams();
+		if (id > 0)
+		{
+			pm.addRule(RelativeLayout.LEFT_OF, id);
+			manualControlsLayout.setLayoutParams(pm);
+		} else
+		{
+			float width = ApplicationScreen.instance.getResources().getDimension(R.dimen.manualControlsWidth);
+			pm.width = (int) width;
+			manualControlsLayout.setLayoutParams(pm);
+		}
+		
+		manualControlsLayout.requestLayout();
+	}
+	
 	@Override
 	public void setupViewfinderPreviewSize(CameraController.Size previewSize)
 	{
@@ -2233,6 +2224,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 								Log.d("set Manual white balance failed", "icons_wbs.get exception: " + e.getMessage());
 							}
 
+							guiView.findViewById(R.id.expandManualControls).setVisibility(View.VISIBLE);
 							guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 							guiView.findViewById(R.id.manualWBLayout).setVisibility(View.VISIBLE);
 
@@ -2262,9 +2254,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							quickControlsVisible = false;
 
 							guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
-							manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
-							manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS,
-									CLOSE_MANUAL_CONTROLS_DELAY);
 
 							// preferences
 							// .edit()
@@ -2448,6 +2437,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 								Log.d("set Manual focus failed", "icons_focus.get exception: " + e.getMessage());
 							}
 
+							guiView.findViewById(R.id.expandManualControls).setVisibility(View.VISIBLE);
 							guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 							guiView.findViewById(R.id.focusDistanceLayout).setVisibility(View.VISIBLE);
 
@@ -2472,11 +2462,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 							guiView.findViewById(R.id.topPanel).setVisibility(View.VISIBLE);
 							quickControlsVisible = false;
-
-							guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
-							manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
-							manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS,
-									CLOSE_MANUAL_CONTROLS_DELAY);
 
 							ApplicationScreen.instance.setFocusModePref(CameraParameters.MF_MODE);
 						}
@@ -2768,12 +2753,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							Log.d("set Manual exposure time failed", "icons_focus.get exception: " + e.getMessage());
 						}
 
+						guiView.findViewById(R.id.expandManualControls).setVisibility(View.VISIBLE);
 						guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 						guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.VISIBLE);
 						if (mManualWhiteBalanceSupported)
 							guiView.findViewById(R.id.manualWBLayout).setVisibility(View.VISIBLE);
-
+						
 						mMeteringMode = CameraParameters.meteringModeManual;
+						ApplicationScreen.instance.setCameraMeteringMode(mMeteringMode);
 
 						// Trigger focus to lock AF, before CONTROL_AE_MODE will
 						// be set to OFF
@@ -2796,14 +2783,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						initSettingsMenu(true);
 						hideSecondaryMenus();
 						unselectPrimaryTopMenuButtons(-1);
-
+						
 						guiView.findViewById(R.id.topPanel).setVisibility(View.VISIBLE);
 						quickControlsVisible = false;
-
-						guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
-						manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
-						manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS,
-								CLOSE_MANUAL_CONTROLS_DELAY);
 					}
 				});
 
@@ -2888,8 +2870,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.VISIBLE);
 					if (mManualWhiteBalanceSupported)
 						guiView.findViewById(R.id.manualWBLayout).setVisibility(View.VISIBLE);
-
-					manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 
 					// Trigger focus to lock AF, before CONTROL_AE_MODE will be
 					// set to OFF
@@ -2979,7 +2959,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		if (!isManualControlsUsed)
 		{
-			manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 			guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
 			guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
 		}
@@ -5820,7 +5799,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			{
 				guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
 				guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
-				manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 			}
 		}
 
@@ -5881,7 +5859,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
 			guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
-			manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 		}
 
 		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
@@ -5963,7 +5940,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
 			guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
-			manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
 		}
 
 		preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, true).commit();
@@ -7608,9 +7584,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 				final TextView expTimeValueText = (TextView) guiView.findViewById(R.id.exposureTimeValueText);
 				expTimeValueText.setText(EXPOSURE_TIME_NAMES.get(expIndex));
-
-				manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
-				manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
 			}
 		} else if (seekBar == (SeekBar) guiView.findViewById(R.id.focusDistanceSeekBar))
 		{
@@ -7618,9 +7591,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			CameraController.setCameraFocusDistance(iDistance / 100);
 			preferences.edit().putFloat(MainScreen.sFocusDistancePref, (float) iDistance / 100).commit();
 			mFocusDistance = iDistance / 100;
-
-			manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
-			manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
 		} else if (seekBar == (SeekBar) guiView.findViewById(R.id.manualWBSeekBar))
 		{
 			int iReadableTemp = (progress + 10) * 100;
@@ -7632,9 +7602,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			// iReadableTemp).commit();
 			TextView wbText = (TextView) guiView.findViewById(R.id.manualWBText);
 			wbText.setText(String.valueOf(iReadableTemp) + "K");
-
-			manualControlsHandler.removeMessages(CLOSE_MANUAL_CONTROLS);
-			manualControlsHandler.sendEmptyMessageDelayed(CLOSE_MANUAL_CONTROLS, CLOSE_MANUAL_CONTROLS_DELAY);
 		}
 	}
 

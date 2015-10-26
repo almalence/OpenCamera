@@ -49,14 +49,14 @@
 		<!-- +++
    		<activity android:name="com.almalence.opencam_plus.MainScreen"
                   android:label="@string/app_name"
-                  android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"
+                  android:theme="@style/AppThemeGraySeekBar"
                   android:screenOrientation="portrait">
 		+++ -->
 		<!-- -+-  -->
 		<activity android:name="com.almalence.opencam.MainScreen"
                   android:label="@string/app_name"
                   android:launchMode="singleInstance"
-                  android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"
+                  android:theme="@style/AppThemeGraySeekBar"
                   android:screenOrientation="portrait">
 		<!--  -+- -->
                     

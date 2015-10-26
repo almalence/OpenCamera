@@ -366,6 +366,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
+            android:layout_toRightOf="@+id/expandManualControls"
             android:background="@drawable/ev_background"
             android:orientation="vertical"
             android:visibility="visible" >
