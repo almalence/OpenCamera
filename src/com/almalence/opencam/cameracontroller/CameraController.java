@@ -4183,7 +4183,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public void onPreviewFrame(byte[] data, Camera camera)
 	{
 		pluginManager.onPreviewFrame(data);
-		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
+		if(pviewBuffer != null)
+			CameraController.getCamera().addCallbackBuffer(pviewBuffer);
 
 		//If capture plugin request image with size equals size of preview frame
 		//These tricky logic isn't affects capture plugin. It still request and received image as usual
@@ -4240,8 +4241,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			if (!CameraController.isCamera2)
 			{
-				CameraController.getCamera().setPreviewCallbackWithBuffer(CameraController.getInstance());
-				CameraController.getCamera().addCallbackBuffer(CameraController.pviewBuffer);
+				//If preview buffer are allocated use preview callback with buffer
+				//instead use preview callback without buffer - it may to slow preview frame rate
+				if(CameraController.pviewBuffer != null)
+				{
+					CameraController.getCamera().setPreviewCallbackWithBuffer(CameraController.getInstance());
+					CameraController.getCamera().addCallbackBuffer(CameraController.pviewBuffer);
+				}
+				else
+					CameraController.getCamera().setPreviewCallback(CameraController.getInstance());
 			}
 		}
 	}

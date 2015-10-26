@@ -1034,7 +1034,11 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		instance.surfaceHolder.addCallback(instance);
 	}
 
-	boolean	isCameraConfiguring	= false;
+	boolean	isCameraConfiguring		= false;
+	
+	//Is used to implement google's advice how to prevent surfaceView bug in Android 6
+	//Will be removed when google will fix the bug
+	boolean	isSurfaceConfiguring	= false; 
 
 	@Override
 	public void configureCamera(boolean createGUI)

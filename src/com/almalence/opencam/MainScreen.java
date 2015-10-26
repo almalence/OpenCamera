@@ -585,10 +585,18 @@ public class MainScreen extends ApplicationScreen
 			preview.setOnTouchListener(MainScreen.this);
 			preview.setKeepScreenOn(true);
 
+			//Due to google's advice how to prevent surfaceView bug in Android 6
+			//we have to force reconfigure of surfaceView (surfaceChanged callback will be call)
+			//and only after it we may configure surfaceView with desired size
 			if (CameraController.isUseCamera2())
 			{
+				isSurfaceConfiguring = true;
+				//If call method only once surfaceChanged will not be call, so we have to set fake size twice
+				MainScreen.setSurfaceHolderSize(0, 0);
 				MainScreen.setSurfaceHolderSize(1, 1);
 			}
+			else
+				isSurfaceConfiguring = false; //In camera1 mode logic isn't changed
 
 			if (CameraController.isUseCamera2())
 			{
@@ -790,11 +798,16 @@ public class MainScreen extends ApplicationScreen
 	{
 		mCameraSurface = holder.getSurface();
 
-		if (isCameraConfiguring)
+		//In camera2 mode we have to wait a second call of surfaceChanged to continue configuring of camera
+		//First call of this function occurs after setSurfaceFixedSize(1, 1) call in onResumeCamera method.
+		//Variable isSurfaceConfiguring is used to separate first 'fake' call on surfaceChanged from second 'real' call
+		//when we set desired surfaceView size
+		//More info read from: https://code.google.com/p/android/issues/detail?id=191251
+		if (isCameraConfiguring && !isSurfaceConfiguring)
 		{
 			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_SURFACE_CONFIGURED, 0);
 			isCameraConfiguring = false;
-		} else if (!isCreating)
+		} else if (!isCreating && !isSurfaceConfiguring)
 		{
 			new CountDownTimer(50, 50)
 			{
@@ -827,10 +840,14 @@ public class MainScreen extends ApplicationScreen
 					}
 				}
 			}.start();
-		} else
+		} else if(isSurfaceConfiguring)
 		{
-			updatePreferences();
+			//Section for first 'fake' call (setSurfaceFixedSize(1, 1))
+			//We change flag to allow next surfaceChanged call to continue configuring of camera
+			isSurfaceConfiguring = false;
 		}
+		else
+			updatePreferences();
 	}
 
 	public void getCameraParametersBundle()
@@ -1625,8 +1642,6 @@ public class MainScreen extends ApplicationScreen
 		surfaceCreated = true;
 
 		mCameraSurface = surfaceHolder.getSurface();
-
-		Log.d("MainScreen", "SURFACE CREATED");
 	}
 
 	// Probably used only by Panorama plugin. Added to avoid non direct
