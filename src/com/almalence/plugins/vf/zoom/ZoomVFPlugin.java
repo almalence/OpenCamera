@@ -82,22 +82,22 @@ public class ZoomVFPlugin extends PluginViewfinder
 	private LinearLayout	zoomPanel			= null;
 	private int				zoomPanelWidth		= 0;
 
-	private boolean			mZoomDisabled		= false;
+	//private boolean			mZoomDisabled		= false;
 
-	private boolean			isEnabled			= true;
+	//private boolean			isEnabled			= true;
 	
 	private ScaleGestureDetector  scaleGestureDetector;
 
 	public ZoomVFPlugin()
 	{
-		super("com.almalence.plugins.zoomvf", R.xml.preferences_vf_zoom, 0, 0, null);
+		super("com.almalence.plugins.zoomvf", 0, 0, 0, null);
 	}
 
 	@Override
 	public void onCreate()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		isEnabled = prefs.getBoolean("enabledPrefZoom", true);
+//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+//		isEnabled = prefs.getBoolean("enabledPrefZoom", true);
 
 		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 		zoomPanelView = inflator.inflate(R.layout.plugin_vf_zoom_layout, null, false);
@@ -270,8 +270,8 @@ public class ZoomVFPlugin extends PluginViewfinder
 	@Override
 	public void onStart()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		isEnabled = prefs.getBoolean("enabledPrefZoom", true);
+//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+//		isEnabled = prefs.getBoolean("enabledPrefZoom", true);
 	}
 
 	@Override
@@ -355,8 +355,8 @@ public class ZoomVFPlugin extends PluginViewfinder
 	@Override
 	public void onResume()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		isEnabled = prefs.getBoolean("enabledPrefZoom", true);
+//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+//		isEnabled = prefs.getBoolean("enabledPrefZoom", true);
 		showZoomControls();
 	}
 
@@ -365,13 +365,14 @@ public class ZoomVFPlugin extends PluginViewfinder
 		if (!CameraController.isRemoteCamera())
 		{
 			zoomPanel.findViewById(R.id.zoom_buttons_container).setVisibility(View.GONE);
-		} else
-		{
-			if (!isEnabled)
-				zoomPanel.findViewById(R.id.zoom_buttons_container).setVisibility(View.GONE);
-			else
-				zoomPanel.findViewById(R.id.zoom_buttons_container).setVisibility(View.VISIBLE);
 		}
+//		else
+//		{
+//			if (!isEnabled)
+//				zoomPanel.findViewById(R.id.zoom_buttons_container).setVisibility(View.GONE);
+//			else
+//				zoomPanel.findViewById(R.id.zoom_buttons_container).setVisibility(View.VISIBLE);
+//		}
 	}
 
 	@Override
@@ -443,17 +444,17 @@ public class ZoomVFPlugin extends PluginViewfinder
 	static final int	ZOOM	= 2;
 	int					mode	= NONE;
 
-	@Override
-	public boolean onBroadcast(int arg1, int arg2)
-	{
-		if (!isEnabled)
-			return false;
-		if (arg1 == ApplicationInterface.MSG_CONTROL_LOCKED)
-			mZoomDisabled = true;
-		else if (arg1 == ApplicationInterface.MSG_CONTROL_UNLOCKED)
-			mZoomDisabled = false;
-		return false;
-	}
+//	@Override
+//	public boolean onBroadcast(int arg1, int arg2)
+//	{
+//		if (!isEnabled)
+//			return false;
+//		if (arg1 == ApplicationInterface.MSG_CONTROL_LOCKED)
+//			mZoomDisabled = true;
+//		else if (arg1 == ApplicationInterface.MSG_CONTROL_UNLOCKED)
+//			mZoomDisabled = false;
+//		return false;
+//	}
 	
 	@Override
 	public boolean onMultiTouch(View view, MotionEvent e)
