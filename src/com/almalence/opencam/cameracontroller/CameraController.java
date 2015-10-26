@@ -2201,7 +2201,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 
-	public static int getMaxZoom()
+	public static float getMaxZoom()
 	{
 		if (!CameraController.isRemoteCamera())
 		{
@@ -2217,9 +2217,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				} else
 				{
 					//In camera2 interface zoom range lay between 1 and max scale factor
-					//getMaxZoomCamera2 returns zoom value multiplied to 10 for convenience
-					float maxZoom = Camera2Controller.getMaxZoomCamera2();
-					return (int) (maxZoom - 10.0f);
+					return Camera2Controller.getMaxZoomCamera2();
 				}
 			} catch (Exception e)
 			{
@@ -2232,7 +2230,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 
-	public static void setZoom(int value)
+	public static void setZoom(float value)
 	{
 		if (!CameraController.isRemoteCamera())
 		{
@@ -2241,11 +2239,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				Camera.Parameters cp = getCameraParameters();
 				if (cp != null)
 				{
-					cp.setZoom(value);
+					cp.setZoom((int)value);
 					setCameraParameters(cp);
 				}
 			} else
-				Camera2Controller.setZoom(value / 10.0f + 1f);
+				Camera2Controller.setZoom(value);
 		}
 	}
 

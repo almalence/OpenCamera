@@ -928,7 +928,7 @@ public class Camera2Controller
 	{
 		if (Camera2Controller.getInstance().camCharacter != null
 				&& Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM) != null)
-			return Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM) * 10.0f;
+			return Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM);
 
 		return 0;
 	}

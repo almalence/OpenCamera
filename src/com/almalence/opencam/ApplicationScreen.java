@@ -556,19 +556,23 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	public static void setCaptureFormat(int capture)
 	{
-		if(CameraController.isCaptureFormatSupported(capture))
-		{
-			instance.captureFormat = capture;
-			
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-				CameraController.setCaptureFormat(capture);
-		}
-		else if(CameraController.isCaptureFormatSupported(CameraController.JPEG))
-		{
+		if (!CameraController.isRemoteCamera()) {			
+			if(CameraController.isCaptureFormatSupported(capture))
+			{
+				instance.captureFormat = capture;
+				
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+					CameraController.setCaptureFormat(capture);
+			}
+			else if(CameraController.isCaptureFormatSupported(CameraController.JPEG))
+			{
+				instance.captureFormat = CameraController.JPEG;
+				
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+					CameraController.setCaptureFormat(CameraController.JPEG);
+			}
+		} else {
 			instance.captureFormat = CameraController.JPEG;
-			
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-				CameraController.setCaptureFormat(CameraController.JPEG);
 		}
 	}
 

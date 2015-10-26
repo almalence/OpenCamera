@@ -36,10 +36,8 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
-import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
-import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
@@ -103,7 +101,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 	private final static int			MIN_HEIGHT_SUPPORTED			= 640;
 	private final static List<Point>	ResolutionsPictureSizesList		= new ArrayList<Point>();
 	
-	private static boolean takingAlready = false;
+	private static boolean 				takingAlready = false;
 	
 	private boolean	camera2Preference;
 	
@@ -494,24 +492,21 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 	{
 		if (keyCode == KeyEvent.KEYCODE_BACK)
 		{
-			if (this.inCapture)
+			if (this.inCapture && this.engine != null)
 			{
-				if (this.engine != null)
+				synchronized (this.engine)
 				{
-					synchronized (this.engine)
+					final int result = this.engine.cancelFrame();
+
+					if (result <= 0)
 					{
-						final int result = this.engine.cancelFrame();
-
-						if (result <= 0)
-						{
-							this.stopCapture();
-							PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED_NORESULT,
-									String.valueOf(SessionID));
+						this.stopCapture();
+						PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED_NORESULT,
+								String.valueOf(SessionID));
+						if (modeSwitcher != null)
 							modeSwitcher.setEnabled(true);
-						}
-
-						return true;
 					}
+					return true;
 				}
 			}
 		}
@@ -653,14 +648,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 		// Paranoia check. In some unusual cases prefResolution value may be more then cs.size.
 		if (PanoramaAugmentedCapturePlugin.prefResolution >= picture_sizes.size()) {
 			int iPrefResolution = PanoramaAugmentedCapturePlugin.prefResolution;
-			while (iPrefResolution >= picture_sizes.size()) {
+			while (iPrefResolution >= picture_sizes.size())
 				iPrefResolution--;
-			}
 			
 			size = picture_sizes.get(iPrefResolution);
-		} else {
+		} else
 			size = picture_sizes.get(PanoramaAugmentedCapturePlugin.prefResolution);
-		}
 		
 		this.pictureWidth = size.getWidth();
 		this.pictureHeight = size.getHeight();
@@ -893,12 +886,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 							return false;
 						showGyroWarnOnce = true;
 						ad.show();
-
 						return false;
 					} else
-					{
 						return true;
-					}
 				}
 			});
 		}
@@ -1117,12 +1107,9 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 				if (state == AugmentedPanoramaEngine.STATE_TAKINGPICTURE || this.isFirstFrame)
 				{
 					if (this.modeSweep)
-					{
 						this.takePictureUnimode(SwapHeap.SwapToHeap(dataOrig));
-					} else
-					{
+					else
 						this.takePictureUnimode(0);
-					}
 				}
 			}
 		}
@@ -1234,9 +1221,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 			this.engine.notifyAll();
 
 			if (!this.coordsRecorded)
-			{
 				this.engine.recordCoordinates();
-			}
 
 			if (frame == 0)
 			{
