@@ -999,8 +999,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private int												iInfoViewMaxHeight;
 	private int												iInfoViewMaxWidth;
 	private int												iInfoViewHeight;
-	private int 											iInfoControlsRemainingHeight;
-	
+	private int												iInfoControlsRemainingHeight;
 
 	private int												iCenterViewMaxHeight;
 	private int												iCenterViewMaxWidth;
@@ -1193,11 +1192,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	{
 		this.createInitialGUI();
 		this.onCreateGUI();
-//		ApplicationScreen.instance.findViewById(R.id.mainLayout1).invalidate();
-//		ApplicationScreen.instance.findViewById(R.id.mainLayout1).requestLayout();
-		
-		PluginManager.getInstance().onCreate(); //TODO: Find appropriate place for this method.
-		
+		// ApplicationScreen.instance.findViewById(R.id.mainLayout1).invalidate();
+		// ApplicationScreen.instance.findViewById(R.id.mainLayout1).requestLayout();
+
+		PluginManager.getInstance().onCreate(); // TODO: Find appropriate place
+												// for this method.
+
 		// Calculate right sizes for plugin's controls
 		DisplayMetrics metrics = new DisplayMetrics();
 		ApplicationScreen.instance.getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -1314,8 +1314,30 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 				((TextView) guiView.findViewById(R.id.blockingText)).setRotation(-AlmalenceGUI.mDeviceOrientation);
 
-				store.setOrientation();
+				((RotateImageView) guiView.findViewById(R.id.expandManualControls))
+						.setOrientation(AlmalenceGUI.mDeviceOrientation);
+				
+				RelativeLayout manualControlsLayout = (RelativeLayout) guiView.findViewById(R.id.manualControlsLayout);
+				RelativeLayout.LayoutParams mlp = (RelativeLayout.LayoutParams) manualControlsLayout.getLayoutParams();
+				if (AlmalenceGUI.mDeviceOrientation == 90 || AlmalenceGUI.mDeviceOrientation == 270)
+				{
+					guiView.findViewById(R.id.seekBarLeftText).setRotation(AlmalenceGUI.mDeviceOrientation + 180);
+					guiView.findViewById(R.id.seekBarRightText).setRotation(AlmalenceGUI.mDeviceOrientation + 180);
+					guiView.findViewById(R.id.seekBarCenterText).setRotation(AlmalenceGUI.mDeviceOrientation + 180);
+					guiView.findViewById(R.id.evMinusButton).setRotation(AlmalenceGUI.mDeviceOrientation + 180);
+					manualControlsLayout.setRotation(AlmalenceGUI.mDeviceOrientation + 180);
+					mlp.leftMargin = guiView.findViewById(R.id.expandManualControls).getWidth() - (manualControlsLayout.getWidth() - manualControlsLayout.getHeight()) / 2;
+				} else {
+					guiView.findViewById(R.id.seekBarLeftText).setRotation(AlmalenceGUI.mDeviceOrientation);
+					guiView.findViewById(R.id.seekBarRightText).setRotation(AlmalenceGUI.mDeviceOrientation);
+					guiView.findViewById(R.id.seekBarCenterText).setRotation(AlmalenceGUI.mDeviceOrientation);
+					guiView.findViewById(R.id.evMinusButton).setRotation(AlmalenceGUI.mDeviceOrientation);
+					manualControlsLayout.setRotation(AlmalenceGUI.mDeviceOrientation);
+					mlp.leftMargin = guiView.findViewById(R.id.expandManualControls).getWidth();
+				}
 
+				store.setOrientation();
+				
 				AlmalenceGUI.mPreviousDeviceOrientation = AlmalenceGUI.mDeviceOrientation;
 
 				ApplicationScreen.getPluginManager().onOrientationChanged(getDisplayOrientation());
@@ -1342,8 +1364,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		Mode mode = ConfigParser.getInstance().getMode(defaultModeName);
 		try
 		{
-			((RotateImageView) guiView.findViewById(R.id.buttonSelectMode)).setImageResource(ApplicationScreen.instance.getResources().getIdentifier
-					(CameraController.isUseSuperMode() ? mode.iconHAL : mode.icon, "drawable",ApplicationScreen.instance.getPackageName()));
+			((RotateImageView) guiView.findViewById(R.id.buttonSelectMode)).setImageResource(ApplicationScreen.instance
+					.getResources().getIdentifier(CameraController.isUseSuperMode() ? mode.iconHAL : mode.icon,
+							"drawable", ApplicationScreen.instance.getPackageName()));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -1509,18 +1532,22 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	public void createInitialGUI()
 	{
 		guiView = ApplicationScreen.instance.findViewById(R.id.almalence_gui);
-		//guiView = LayoutInflater.from(ApplicationScreen.getMainContext()).inflate(R.layout.gui_almalence_layout, null);
+		// guiView =
+		// LayoutInflater.from(ApplicationScreen.getMainContext()).inflate(R.layout.gui_almalence_layout,
+		// null);
 		// Add GUI Layout to main layout of OpenCamera
-		//((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.mainLayout1)).addView(guiView);
+		// ((RelativeLayout)
+		// ApplicationScreen.instance.findViewById(R.id.mainLayout1)).addView(guiView);
 	}
 
 	// Create standard OpenCamera's buttons and theirs OnClickListener
 	@Override
 	public void onCreate()
 	{
-		
+
 	}
-//	@Override
+
+	// @Override
 	public void onCreateGUI()
 	{
 		// Get application preferences object
@@ -1777,43 +1804,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	}
 
 	@Override
-	public void onGUICreateDone()
-	{
-		RelativeLayout specialLayout3 = (RelativeLayout) ApplicationScreen.instance
-				.findViewById(R.id.specialPluginsLayout3);
-		int id = 0;
-		for (int i = 0; i < specialLayout3.getChildCount(); i++)
-		{
-			View pluginView = specialLayout3.getChildAt(i);
-			RelativeLayout.LayoutParams pm = (RelativeLayout.LayoutParams) pluginView.getLayoutParams();
-			int[] rules = pm.getRules();
-			if (rules[RelativeLayout.ALIGN_PARENT_TOP] == -1 && rules[RelativeLayout.ALIGN_PARENT_RIGHT] == -1)
-			{
-				String name = pluginView.getClass().getName();
-				String nameSwitch = com.almalence.ui.Switch.Switch.class.getName();
-				if (name.equals(nameSwitch))
-					id = pluginView.getId();
-			}
-		}
-
-		RelativeLayout manualControlsLayout = (RelativeLayout) ApplicationScreen.instance
-				.findViewById(R.id.manualControlsLayout);
-		RelativeLayout.LayoutParams pm = (RelativeLayout.LayoutParams) manualControlsLayout.getLayoutParams();
-		if (id > 0)
-		{
-			pm.addRule(RelativeLayout.LEFT_OF, id);
-			manualControlsLayout.setLayoutParams(pm);
-		} else
-		{
-			float width = ApplicationScreen.instance.getResources().getDimension(R.dimen.manualControlsWidth);
-			pm.width = (int) width;
-			manualControlsLayout.setLayoutParams(pm);
-		}
-		
-		manualControlsLayout.requestLayout();
-	}
-	
-	@Override
 	public void setupViewfinderPreviewSize(CameraController.Size previewSize)
 	{
 		Log.e("GUI",
@@ -1838,33 +1828,45 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		if (prefs.getBoolean("changePreviewProportions", false))
 		{
-			// If preview size is smaller then surface size, we need to extend preview to fit surface. 
-			if (previewSize.getHeight() < previewSurfaceWidth && previewSize.getWidth() < previewSurfaceHeight) {
-				// If aspect ratios are different, only one dimension (width or height) will fit.
-				if (Math.abs(surfaceAspect - cameraAspect) > 0.05d) {
+			// If preview size is smaller then surface size, we need to extend
+			// preview to fit surface.
+			if (previewSize.getHeight() < previewSurfaceWidth && previewSize.getWidth() < previewSurfaceHeight)
+			{
+				// If aspect ratios are different, only one dimension (width or
+				// height) will fit.
+				if (Math.abs(surfaceAspect - cameraAspect) > 0.05d)
+				{
 					double diffRatio = (double) previewSurfaceWidth / previewSize.getHeight();
 					lp.width = previewSurfaceWidth;
 					lp.height = (int) (previewSize.getWidth() * diffRatio);
-					
-					// If we extend preview width to fit surface width and calculated height is lower or equals to surface height,
+
+					// If we extend preview width to fit surface width and
+					// calculated height is lower or equals to surface height,
 					// then everything is ok, and we just calculate topMargin.
-					if (lp.height <= previewSurfaceHeight) {
+					if (lp.height <= previewSurfaceHeight)
+					{
 						lp.topMargin = (screen_height - lp.height) / 2;
-					} else {
-						// Else if calculated height is greater then surface height, then we extend height to fit surface,
+					} else
+					{
+						// Else if calculated height is greater then surface
+						// height, then we extend height to fit surface,
 						// and calculate width and leftMargin.
 						diffRatio = (double) previewSurfaceHeight / previewSize.getWidth();
 						lp.height = previewSurfaceHeight;
 						lp.width = (int) (previewSize.getHeight() * diffRatio);
 						lp.leftMargin = (screen_width - lp.width) / 2;
 					}
-				} else {
-					// If aspect ratios are equals, then just use surface size values.
+				} else
+				{
+					// If aspect ratios are equals, then just use surface size
+					// values.
 					lp.width = previewSurfaceWidth;
 					lp.height = previewSurfaceHeight;
 				}
-			} else {
-				// If preview size is greater or equals than surface, then just use preview size values.
+			} else
+			{
+				// If preview size is greater or equals than surface, then just
+				// use preview size values.
 				lp.width = previewSize.getHeight();
 				lp.height = previewSize.getWidth();
 				lp.topMargin = (screen_height - lp.height) / 2;
@@ -2707,7 +2709,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			{
 				int metering_name = it.next();
 
-				// Samsung Galaxy Note 3 supports only center-weighted metering mode
+				// Samsung Galaxy Note 3 supports only center-weighted metering
+				// mode
 				if ((metering_name == 3 || metering_name == 1) && CameraController.isGalaxyNote3)
 					continue;
 
@@ -2758,7 +2761,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.VISIBLE);
 						if (mManualWhiteBalanceSupported)
 							guiView.findViewById(R.id.manualWBLayout).setVisibility(View.VISIBLE);
-						
+
 						mMeteringMode = CameraParameters.meteringModeManual;
 						ApplicationScreen.instance.setCameraMeteringMode(mMeteringMode);
 
@@ -2783,7 +2786,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						initSettingsMenu(true);
 						hideSecondaryMenus();
 						unselectPrimaryTopMenuButtons(-1);
-						
+
 						guiView.findViewById(R.id.topPanel).setVisibility(View.VISIBLE);
 						quickControlsVisible = false;
 					}
@@ -2914,7 +2917,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		}
 
 		if (!PluginManager.getInstance().getActiveModeID().equals("video")
-				&& !(PluginManager.getInstance().getActiveModeID().equals("nightmode") && CameraController.isUseCamera2()))
+				&& !(PluginManager.getInstance().getActiveModeID().equals("nightmode") && CameraController
+						.isUseCamera2()))
 		{
 			RotateImageView buttonImageSize = (RotateImageView) topMenuButtons.get(MODE_IMAGE_SIZE);
 			buttonImageSize.setImageResource(ICON_IMAGE_SIZE);
@@ -3093,9 +3097,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				@Override
 				public void onShutterChecked(int newState)
 				{
-					if (newState == ShutterSwitch.STATE_VIDEO_ACTIVE) {
+					if (newState == ShutterSwitch.STATE_VIDEO_ACTIVE)
+					{
 						changeMode(videoModeView);
-					} else {
+					} else
+					{
 						changeMode(lastPhotoModeView);
 					}
 				}
@@ -3624,7 +3630,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 				} else if (modeId.equals("nightmode") || modeId.equals("multishot"))
 				{
-					int currentIdx = Integer.parseInt(CameraController.MultishotResolutionsIdxesList.get(MainScreen.thiz.selectImageDimensionMultishot()));
+					int currentIdx = Integer.parseInt(CameraController.MultishotResolutionsIdxesList
+							.get(MainScreen.thiz.selectImageDimensionMultishot()));
 
 					selectedSize = getSizeName(CameraController.getMultishotResolutionsNamesList(),
 							CameraController.getMultishotResolutionsSizeList(),
@@ -5146,10 +5153,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 			infoLayout.removeView(view);
 		}
-		
-		
+
 		List<View> specialpluginsView = new ArrayList<View>();
-		RelativeLayout specialpluginsLayout = (RelativeLayout) ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout);
+		RelativeLayout specialpluginsLayout = (RelativeLayout) ApplicationScreen.instance
+				.findViewById(R.id.specialPluginsLayout);
 		for (int i = 0; i < specialpluginsLayout.getChildCount(); i++)
 			specialpluginsView.add(specialpluginsLayout.getChildAt(i));
 
@@ -5161,10 +5168,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 			specialpluginsLayout.removeView(view);
 		}
-		
-		
+
 		List<View> specialplugins2View = new ArrayList<View>();
-		RelativeLayout specialplugins2Layout = (RelativeLayout) ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout2);
+		RelativeLayout specialplugins2Layout = (RelativeLayout) ApplicationScreen.instance
+				.findViewById(R.id.specialPluginsLayout2);
 		for (int i = 0; i < specialplugins2Layout.getChildCount(); i++)
 			specialplugins2View.add(specialplugins2Layout.getChildAt(i));
 
@@ -6404,8 +6411,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		// Calculate appropriate size of added plugin's view
 		android.widget.LinearLayout.LayoutParams viewLayoutParams = (android.widget.LinearLayout.LayoutParams) infoView
 				.getLayoutParams();
-		viewLayoutParams = this.getTunedLinearLayoutParams(infoView, viewLayoutParams,
-				iInfoViewMaxWidth, iInfoViewMaxHeight);
+		viewLayoutParams = this.getTunedLinearLayoutParams(infoView, viewLayoutParams, iInfoViewMaxWidth,
+				iInfoViewMaxHeight);
 
 		if (iInfoControlsRemainingHeight >= viewLayoutParams.height)
 		{
@@ -6413,13 +6420,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			this.addInfoView(infoView, viewLayoutParams);
 		}
 	}
-	
-	
+
 	@Override
 	protected void addInfoView(View view, android.widget.LinearLayout.LayoutParams viewLayoutParams)
 	{
-		
-		
+
 		if (((LinearLayout) guiView.findViewById(R.id.infoLayout)).getChildCount() != 0)
 			viewLayoutParams.topMargin = 4;
 		else
@@ -6430,7 +6435,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			{
 				infoParams.rightMargin = 0;
 				infoLayout.setLayoutParams(infoParams);
-			}	
+			}
 		}
 
 		((LinearLayout) guiView.findViewById(R.id.infoLayout)).addView(view, viewLayoutParams);
@@ -6523,9 +6528,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				{
 					videoModeView = mode;
 				}
-				
+
 				String lastPhotoModePref = MainScreen.getInstance().getLastPhotoModePref();
-				if (tmp.modeID.equals(lastPhotoModePref)) {
+				if (tmp.modeID.equals(lastPhotoModePref))
+				{
 					lastPhotoModeView = mode;
 				}
 
@@ -6536,8 +6542,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							R.drawable.thumbnail_background_selected_inner);
 
 					activeMode = (ViewGroup) mode;
-					
-					if (!tmp.modeID.equals("video")) {
+
+					if (!tmp.modeID.equals("video"))
+					{
 						lastPhotoModeView = mode;
 					}
 				}
@@ -6582,7 +6589,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				ApplicationScreen.instance.startActivity(intent);
 				return true;
 			}
-		} else {
+		} else
+		{
 			MainScreen.getInstance().setLastPhotoModePref(mode.modeID);
 			lastPhotoModeView = v;
 		}
@@ -6606,8 +6614,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		}.start();
 
 		// set modes icon
-		((RotateImageView) guiView.findViewById(R.id.buttonSelectMode)).setImageResource(ApplicationScreen.instance.getResources().getIdentifier
-				(CameraController.isUseSuperMode() ? mode.iconHAL : mode.icon, "drawable",ApplicationScreen.instance.getPackageName()));
+		((RotateImageView) guiView.findViewById(R.id.buttonSelectMode)).setImageResource(ApplicationScreen.instance
+				.getResources().getIdentifier(CameraController.isUseSuperMode() ? mode.iconHAL : mode.icon, "drawable",
+						ApplicationScreen.instance.getPackageName()));
 
 		int rid = ApplicationScreen.getAppResources().getIdentifier(tmpActiveMode.howtoText, "string",
 				ApplicationScreen.instance.getPackageName());
@@ -7171,22 +7180,22 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	 * <<<<<<<<<< END
 	 ***********************************************************************************************/
 
-	private static float	X					= 0;
+	private static float		X					= 0;
 
-	private static float	Xprev				= 0;
+	private static float		Xprev				= 0;
 
-	private static float	Xoffset				= 0;
+	private static float		Xoffset				= 0;
 
-	private static float	XtoLeftInvisible	= 0;
-	private static float	XtoLeftVisible		= 0;
+	private static float		XtoLeftInvisible	= 0;
+	private static float		XtoLeftVisible		= 0;
 
-	private static float	XtoRightInvisible	= 0;
-	private static float	XtoRightVisible		= 0;
+	private static float		XtoRightInvisible	= 0;
+	private static float		XtoRightVisible		= 0;
 
 	private MotionEvent			prevEvent;
 	private MotionEvent			downEvent;
 	private boolean				scrolling			= false;
-	
+
 	private boolean				multiTouch			= false;
 	private boolean				singleTouch			= false;
 	private boolean				buffered			= false;
@@ -7207,7 +7216,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		// (event.getAction() == MotionEvent.ACTION_UP),
 		// we handle all incoming MotionEvents as multitouch.
 		// All this stuff is required only for Preview view.
-		if (view == ApplicationScreen.getPreviewSurfaceView()) {
+		if (view == ApplicationScreen.getPreviewSurfaceView())
+		{
 			if (event.getAction() == MotionEvent.ACTION_DOWN && !buffered)
 			{
 				// Start buffering.
@@ -7218,11 +7228,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				buffered = true;
 				return true;
 			}
-			
-			if (event.getPointerCount() > 1 && !singleTouch) {
+
+			if (event.getPointerCount() > 1 && !singleTouch)
+			{
 				// If we are not in singleTouch mode and get MultiTouch event,
 				// then clear all buffered data and switch to multiTouch mode.
-				// All further events will be handled as MultiTouch until touch released.
+				// All further events will be handled as MultiTouch until touch
+				// released.
 				downEvent = null;
 				prevEvent = null;
 				buffered = false;
@@ -7231,9 +7243,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				multiTouch = true;
 				ApplicationScreen.getPluginManager().onMultiTouch(view, event);
 				return true;
-			} else if (!singleTouch && !multiTouch) {
+			} else if (!singleTouch && !multiTouch)
+			{
 				// If mode not detected yet, then buffer current MotionEvent.
-				if (bufferedEvents.size() == MAX_BUFFERED_EVENTS || event.getAction() == MotionEvent.ACTION_UP) {
+				if (bufferedEvents.size() == MAX_BUFFERED_EVENTS || event.getAction() == MotionEvent.ACTION_UP)
+				{
 					// If buffer size got to limit or we get ACTION_UP event,
 					// then switch to singleTouch mode and handle all buffered
 					// events, before continue.
@@ -7245,20 +7259,22 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					bufferedView = null;
 					bufferedEvents.clear();
 					buffered = false;
-				} else if (event.getAction() != MotionEvent.ACTION_DOWN) {
+				} else if (event.getAction() != MotionEvent.ACTION_DOWN)
+				{
 					bufferedEvents.add(MotionEvent.obtain(event));
 				}
 			}
-		} else {
+		} else
+		{
 			singleTouch = true;
 		}
-		
+
 		// If mode is not detected yet, then don't do anything.
 		if (!multiTouch && !singleTouch)
 		{
 			return true;
 		}
-		
+
 		// End MultiTiuch mode.
 		if (multiTouch && event.getAction() == MotionEvent.ACTION_UP)
 		{

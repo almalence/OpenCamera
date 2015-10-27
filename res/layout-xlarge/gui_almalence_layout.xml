@@ -354,19 +354,20 @@
 
         <com.almalence.ui.RotateImageView
             android:id="@+id/expandManualControls"
-            android:layout_width="40dip"
-            android:layout_height="40dip"
-            android:layout_gravity="top|left"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="left"
+            android:layout_centerVertical="true"
             android:background="@android:color/transparent"
             android:src="@drawable/gui_almalence_manual_expand"
             android:visibility="gone" />
 
         <RelativeLayout
             android:id="@+id/manualControlsLayout"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/manualControlsWidth"
             android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:layout_toRightOf="@+id/expandManualControls"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="40dp"
             android:background="@drawable/ev_background"
             android:orientation="vertical"
             android:visibility="visible" >
@@ -818,8 +819,10 @@
                         android:id="@+id/seekBarLeftText"
                         android:layout_width="@dimen/exposureTitleWidth"
                         android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:paddingLeft="10dp"
+                        android:gravity="center"
+                        android:layout_gravity="left"
+                        android:layout_marginLeft="-10dp"
+                        android:layout_marginRight="10dp"
                         android:textSize="@dimen/exposureTitleSize"
                         android:textStyle="bold" />
 
@@ -836,8 +839,9 @@
                         android:id="@+id/seekBarRightText"
                         android:layout_width="@dimen/exposureTitleWidth"
                         android:layout_height="wrap_content"
-                        android:gravity="right"
-                        android:paddingRight="10dp"
+                        android:gravity="center"
+                        android:layout_gravity="right"
+                        android:layout_marginLeft="10dp"
                         android:textSize="@dimen/exposureTitleSize"
                         android:textStyle="bold" />
                 </LinearLayout>

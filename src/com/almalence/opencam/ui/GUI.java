@@ -141,9 +141,6 @@ public abstract class GUI
 	// onGUICreate called when main layout is rendered and size's variables is
 	// available
 	abstract public void onGUICreate();
-	
-	// onGUICreateDone called when all plugins have configured their views. 
-	abstract public void onGUICreateDone();
 
 	public void removeViews(View viewElement, int layoutId)
 	{
