@@ -137,6 +137,8 @@ public class VideoCapturePlugin extends PluginCapture
 	private boolean								mRecordingTimeCountsDown	= false;
 
 	private boolean								shutterOff					= false;
+	
+	private boolean 							preferenceVideoMuteMode		= false;
 
 	// vars to work with files for android < 5
 	private static File							fileSaved					= null;
@@ -951,14 +953,14 @@ public class VideoCapturePlugin extends PluginCapture
 	public void onResume()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		boolean preferenceVideoMuteMode = prefs.getBoolean("preferenceVideoMuteMode", false);
-		if (preferenceVideoMuteMode)
-		{
-//			AudioManager audioMgr = (AudioManager) ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE);
-//			soundVolume = audioMgr.getStreamVolume(AudioManager.STREAM_RING);
-//			audioMgr.setStreamVolume(AudioManager.STREAM_RING, 0, 0);
-			muteAllSounds();
-		}
+		preferenceVideoMuteMode = prefs.getBoolean("preferenceVideoMuteMode", false);
+//		if (preferenceVideoMuteMode)
+//		{
+////			AudioManager audioMgr = (AudioManager) ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE);
+////			soundVolume = audioMgr.getStreamVolume(AudioManager.STREAM_RING);
+////			audioMgr.setStreamVolume(AudioManager.STREAM_RING, 0, 0);
+//			muteAllSounds();
+//		}
 
 		preferenceFocusMode = prefs.getInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
 				: ApplicationScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
@@ -1064,14 +1066,13 @@ public class VideoCapturePlugin extends PluginCapture
 		{
 			this.droEngine.onPause();
 		}
-
-		boolean preferenceVideoMuteMode = prefs.getBoolean("preferenceVideoMuteMode", false);
-		if (preferenceVideoMuteMode)
-		{
-//			AudioManager audioMgr = (AudioManager) ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE);
-//			audioMgr.setStreamVolume(AudioManager.STREAM_RING, soundVolume, 0);
-			unmuteAllSounds();
-		}
+//
+//		if (preferenceVideoMuteMode)
+//		{
+////			AudioManager audioMgr = (AudioManager) ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE);
+////			audioMgr.setStreamVolume(AudioManager.STREAM_RING, soundVolume, 0);
+//			unmuteAllSounds();
+//		}
 	}
 
 	@Override
@@ -1905,7 +1906,11 @@ public class VideoCapturePlugin extends PluginCapture
 			return;
 		Camera camera = CameraController.getCamera();
 		if (null == camera)
+		{
+			if(preferenceVideoMuteMode)
+				unmuteAllSounds();
 			return;
+		}
 
 		// stop recording and release camera
 		try
@@ -1913,6 +1918,8 @@ public class VideoCapturePlugin extends PluginCapture
 			mMediaRecorder.stop(); // stop the recording
 		} catch (Exception e)
 		{
+			if(preferenceVideoMuteMode)
+				unmuteAllSounds();
 			e.printStackTrace();
 			Log.e("video onShutterClick", "mMediaRecorder.stop() exception: " + e.getMessage());
 		}
@@ -1928,6 +1935,8 @@ public class VideoCapturePlugin extends PluginCapture
 				fileSavedNewFd.close();
 			} catch (IOException e)
 			{
+				if(preferenceVideoMuteMode)
+					unmuteAllSounds();
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -1972,6 +1981,9 @@ public class VideoCapturePlugin extends PluginCapture
 			}
 		};
 		new Thread(runnable).start();
+		
+		if(preferenceVideoMuteMode)
+			unmuteAllSounds();
 	}
 
 	private void startVideoRecording()
@@ -2268,6 +2280,8 @@ public class VideoCapturePlugin extends PluginCapture
 		// Step 6: Prepare configured MediaRecorder
 		try
 		{
+			if(preferenceVideoMuteMode)
+				muteAllSounds();
 			mMediaRecorder.prepare();
 
 			// Camera is available and unlocked, MediaRecorder is prepared,
@@ -2287,6 +2301,9 @@ public class VideoCapturePlugin extends PluginCapture
 			camera.lock(); // take camera access back from MediaRecorder
 			camera.stopPreview();
 			camera.startPreview();
+			
+			if(preferenceVideoMuteMode)
+				unmuteAllSounds();
 			
 			return;
 		}
@@ -2318,21 +2335,41 @@ public class VideoCapturePlugin extends PluginCapture
 	
 	protected void muteAllSounds()
 	{
-		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamVolume(AudioManager.STREAM_ALARM, 0, 0);
-		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamVolume(AudioManager.STREAM_DTMF, 0, 0);
-		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
-		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamVolume(AudioManager.STREAM_RING, 0, 0);
-		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamVolume(AudioManager.STREAM_SYSTEM, 0, 0);
-		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamVolume(AudioManager.STREAM_VOICE_CALL, 0, 0);		
+		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamMute(AudioManager.STREAM_ALARM, true);
+		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamMute(AudioManager.STREAM_DTMF, true);
+		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamMute(AudioManager.STREAM_MUSIC, true);
+		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamMute(AudioManager.STREAM_RING, true);
+		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamMute(AudioManager.STREAM_SYSTEM, true);
+		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamMute(AudioManager.STREAM_VOICE_CALL, true);
+//		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamVolume(AudioManager.STREAM_ALARM, 0, 0);
+//		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamVolume(AudioManager.STREAM_DTMF, 0, 0);
+//		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+//		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamVolume(AudioManager.STREAM_RING, 0, 0);
+//		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamVolume(AudioManager.STREAM_SYSTEM, 0, 0);
+//		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamVolume(AudioManager.STREAM_VOICE_CALL, 0, 0);
+		
+//		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).adjustStreamVolume(AudioManager.STREAM_ALARM, AudioManager.ADJUST_MUTE, 0);
+//		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).adjustStreamVolume(AudioManager.STREAM_DTMF, AudioManager.ADJUST_MUTE, 0);
+//		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
+//		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).adjustStreamVolume(AudioManager.STREAM_RING, AudioManager.ADJUST_MUTE, 0);
+//		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).adjustStreamVolume(AudioManager.STREAM_SYSTEM, AudioManager.ADJUST_MUTE, 0);
+//		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).adjustStreamVolume(AudioManager.STREAM_VOICE_CALL, AudioManager.ADJUST_MUTE, 0);
 	}
 	
 	protected void unmuteAllSounds()
 	{
-		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamVolume(AudioManager.STREAM_ALARM, 0, 0);
-		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamVolume(AudioManager.STREAM_DTMF, 0, 0);
-		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
-		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamVolume(AudioManager.STREAM_RING, 0, 0);
-		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamVolume(AudioManager.STREAM_SYSTEM, 0, 0);
+		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamMute(AudioManager.STREAM_ALARM, false);
+		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamMute(AudioManager.STREAM_DTMF, false);
+		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamMute(AudioManager.STREAM_MUSIC, false);
+		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamMute(AudioManager.STREAM_RING, false);
+		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamMute(AudioManager.STREAM_SYSTEM, false);
+		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamMute(AudioManager.STREAM_VOICE_CALL, false);
+		
+//		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamVolume(AudioManager.STREAM_ALARM, 0, 0);
+//		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamVolume(AudioManager.STREAM_DTMF, 0, 0);
+//		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+//		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamVolume(AudioManager.STREAM_RING, 0, 0);
+//		((AudioManager)ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE)).setStreamVolume(AudioManager.STREAM_SYSTEM, 0, 0);
 	}
 
 	@Override
