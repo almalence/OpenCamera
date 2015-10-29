@@ -520,7 +520,7 @@ public class Camera2Controller
 
 	public static CameraController.Size getMaxCameraImageSizeCamera2(int captureFormat)
 	{
-		CameraCharacteristics params = getCameraParameters2();
+		CameraCharacteristics params = getCameraCharacteristics();
 		StreamConfigurationMap configMap = params.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 		final Size[] cs = configMap.getOutputSizes(captureFormat);
 
@@ -540,7 +540,7 @@ public class Camera2Controller
 		CameraController.FastIdxelist = new ArrayList<Integer>();
 
 		int minMPIX = CameraController.MIN_MPIX_SUPPORTED;
-		CameraCharacteristics params = getCameraParameters2();
+		CameraCharacteristics params = getCameraCharacteristics();
 		StreamConfigurationMap configMap = params.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 		Size[] cs = configMap.getOutputSizes(captureFormat);
 		Size highestSize = findMaximumSize(cs);
@@ -846,7 +846,7 @@ public class Camera2Controller
 		return Camera2Controller.getInstance().camDevice;
 	}
 
-	public static CameraCharacteristics getCameraParameters2()
+	public static CameraCharacteristics getCameraCharacteristics()
 	{
 		if (Camera2Controller.getInstance().camCharacter != null)
 			return Camera2Controller.getInstance().camCharacter;
@@ -1648,12 +1648,21 @@ public class Camera2Controller
 		return 55.4f;
 	}
 
-	public static int getSensorOrientation()
+	public static int getSensorOrientation(int cameraIndex)
 	{
-		if (Camera2Controller.getInstance().camCharacter != null)
+		if(CameraController.cameraIdList == null || CameraController.cameraIdList.length == 0)
+			return -1;
+		try
+		{
+			Camera2Controller.getInstance().camCharacter = Camera2Controller.getInstance().manager
+					.getCameraCharacteristics(CameraController.cameraIdList[cameraIndex]);
+			
 			return Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_ORIENTATION);
-
-		return -1;
+		} catch (CameraAccessException e)
+		{
+			e.printStackTrace();
+			return -1;
+		}
 	}
 
 	
@@ -1849,7 +1858,35 @@ public class Camera2Controller
 				Camera2Controller.rawRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, exTime);
 			}
 		}
+		
+//		if(CameraController.isNexus5x)
+//		{
+//			int jpeg_orientation = getJpegOrientation();
+//			Camera2Controller.stillRequestBuilder.set(CaptureRequest.JPEG_ORIENTATION, 180);
+//			Camera2Controller.precaptureRequestBuilder.set(CaptureRequest.JPEG_ORIENTATION, 180);
+//		}
+		
 	}
+	
+	public static int getJpegOrientation()
+	{
+		int deviceOrientation = ApplicationScreen.getGUIManager().getDisplayOrientation();//appInterface.getMainActivity().getWindowManager().getDefaultDisplay().getRotation();
+		if (deviceOrientation == android.view.OrientationEventListener.ORIENTATION_UNKNOWN) return 0;
+		int sensorOrientation = Camera2Controller.getCameraCharacteristics().get(CameraCharacteristics.SENSOR_ORIENTATION);
+		
+		// Round device orientation to a multiple of 90
+		deviceOrientation = (deviceOrientation + 45) / 90 * 90;
+		
+		// Reverse device orientation for front-facing cameras
+		boolean facingFront = Camera2Controller.getCameraCharacteristics().get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT;
+		if (facingFront) deviceOrientation = -deviceOrientation;
+		
+		// Calculate desired JPEG orientation relative to camera orientation to make
+		// the image upright relative to the device orientation
+		int jpegOrientation = (sensorOrientation + deviceOrientation + 360) % 360;
+		
+		return jpegOrientation;
+	 }
 
 	//Used in case of multishot capturing to setting up request for each frame
 	// ev - exposure compensation

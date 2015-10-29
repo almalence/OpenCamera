@@ -95,8 +95,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	protected static final long						MPIX_1080		= 1920 * 1080;
 
 	//Device models markers. Used to separate device dependent program's logic
-	public static boolean							isNexus5		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus5");
-	public static boolean							isNexus6		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus6");
+	public static boolean							isNexus5x		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").equals("nexus5x");
+	public static boolean							isNexus6p		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").equals("nexus6p");
+	public static boolean							isNexus5		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").equals("nexus5");
+	public static boolean							isNexus6		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").equals("nexus6");
 	public static boolean							isNexus7		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus7");
 	public static boolean							isNexus9		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus9");
 	
@@ -1931,7 +1933,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	@TargetApi(21)
 	public static CameraCharacteristics getCameraCharacteristics()
 	{
-		return Camera2Controller.getCameraParameters2();
+		return Camera2Controller.getCameraCharacteristics();
 	}
 
 	public static void startCameraPreview()
@@ -3838,7 +3840,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return 42.7f;
 	}
 
-	public static int getSensorOrientation()
+	public static int getSensorOrientation(int cameraIndex)
 	{
 		if (!isRemoteCamera())
 		{
@@ -3848,7 +3850,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				Camera.getCameraInfo(CameraIndex, cameraInfo);
 				return cameraInfo.orientation;
 			} else
-				return Camera2Controller.getInstance().getSensorOrientation();
+				return Camera2Controller.getInstance().getSensorOrientation(cameraIndex);
 		} else
 		{
 			return -1;

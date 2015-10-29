@@ -364,12 +364,12 @@ public class SavingService extends NotificationService
 				}
 
 				String orientation_tag = String.valueOf(0);
-				int sensorOrientation = CameraController.getSensorOrientation();
-				int displayOrientation = CameraController.getDisplayOrientation();
-				sensorOrientation = (360 + sensorOrientation + (cameraMirrored ? -displayOrientation
-						: displayOrientation)) % 360;
+//				int sensorOrientation = CameraController.getSensorOrientation();
+//				int displayOrientation = CameraController.getDisplayOrientation();
+//				sensorOrientation = (360 + sensorOrientation + (cameraMirrored ? -displayOrientation
+//						: displayOrientation)) % 360;
 
-				if (Build.MODEL.equals("Nexus 6") && cameraMirrored)
+				if (CameraController.isNexus6 && cameraMirrored)
 					orientation = (orientation + 180) % 360;
 
 				switch (orientation)
@@ -714,12 +714,12 @@ public class SavingService extends NotificationService
 				}
 
 				String orientation_tag = String.valueOf(0);
-				int sensorOrientation = CameraController.getSensorOrientation();
-				int displayOrientation = CameraController.getDisplayOrientation();
-				sensorOrientation = (360 + sensorOrientation + (cameraMirrored ? -displayOrientation
-						: displayOrientation)) % 360;
+//				int sensorOrientation = CameraController.getSensorOrientation();
+//				int displayOrientation = CameraController.getDisplayOrientation();
+//				sensorOrientation = (360 + sensorOrientation + (cameraMirrored ? -displayOrientation
+//						: displayOrientation)) % 360;
 
-				if (Build.MODEL.equals("Nexus 6") && cameraMirrored)
+				if (CameraController.isNexus6 && cameraMirrored)
 					orientation = (orientation + 180) % 360;
 
 				switch (orientation)
