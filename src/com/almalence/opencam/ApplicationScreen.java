@@ -1529,7 +1529,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 				createCaptureSession();
 				ApplicationScreen.getGUIManager().onGUICreate();
 				ApplicationScreen.getPluginManager().onGUICreate();
-//				ApplicationScreen.getGUIManager().onGUICreate();
 				mCameraStarted = true;
 			}
 			break;

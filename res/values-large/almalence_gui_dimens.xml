@@ -43,6 +43,8 @@
    
    <dimen name="buttonsLayoutMarginTop">0dp</dimen>
    
+   <dimen name="manualControlsWidth">495dp</dimen>
+   
    <dimen name="exposureButtonSize">50dp</dimen>
    <dimen name="exposureSeekBarWidth">330dp</dimen>
    <dimen name="exposureTitleWidth">110dp</dimen>

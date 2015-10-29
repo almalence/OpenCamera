@@ -1559,7 +1559,6 @@ public class MainScreen extends ApplicationScreen
 		{
 			MainScreen.getGUIManager().onGUICreate();
 			PluginManager.getInstance().onGUICreate();
-//			MainScreen.getGUIManager().onGUICreate();
 		}
 	}
 

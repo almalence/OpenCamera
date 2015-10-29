@@ -4217,7 +4217,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		//have elapsed since setting new exposure value for camera
 		if (pluginManager.isPreviewDependentMode() && evLatency > 0)
 		{
-			Log.d(TAG, "evLatency = " + evLatency);
+			//Log.d(TAG, "evLatency = " + evLatency);
 			previewWorking = true;
 
 			if (--evLatency == 0)

@@ -196,7 +196,7 @@ public class FocusVFPlugin extends PluginViewfinder
 				
 				updateCurrentTouch(event);
 
-				if (splitMode)
+				if (splitMode || mMeteringIndicatorRotateLayout.getVisibility() == View.GONE)
 				{
 					onTouchFocusArea(event);
 					return true;
@@ -640,7 +640,7 @@ public class FocusVFPlugin extends PluginViewfinder
 				|| mState == STATE_INACTIVE
 				|| mFocusDisabled
 				|| !CameraController.isFocusModeSupported()
-				|| (!(needAutoFocusCall() || isContinuousFocusMode()) && !(ApplicationScreen.instance.isShotOnTap() > 0 && !PluginManager
+				|| (!(needAutoFocusCall() || isContinuousFocusMode() || ApplicationScreen.getMeteringMode() != CameraParameters.meteringModeManual) && !(ApplicationScreen.instance.isShotOnTap() > 0 && !PluginManager
 						.getInstance().getActiveMode().modeID.equals("video"))))
 			return false;
 
@@ -919,7 +919,7 @@ public class FocusVFPlugin extends PluginViewfinder
 			mMeteringArea = null;
 
 		// Set the focus area and metering area.
-		if ((mFocusAreaSupported && needAutoFocusCall() && (e.getAction() == MotionEvent.ACTION_UP)) || CameraController.isRemoteCamera())
+		if ((mFocusAreaSupported && needAutoFocusCall() && (e.getAction() == MotionEvent.ACTION_UP)) || (e.getAction() == MotionEvent.ACTION_UP && CameraController.isRemoteCamera()))
 		{
 			CameraController.cancelAutoFocus();
 			if (preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_PICTURE
@@ -1214,6 +1214,14 @@ public class FocusVFPlugin extends PluginViewfinder
 				mMeteringIndicatorRotateLayout.setVisibility(View.VISIBLE);				
 			}
 		}
+		
+		if (ApplicationScreen.getMeteringMode() == CameraParameters.meteringModeManual) {
+			mMeteringIndicatorRotateLayout.setVisibility(View.GONE);	
+		}
+		
+		if (CameraController.getFocusMode() == CameraParameters.MF_MODE) {
+			focusIndicator.clear();	
+		}
 	}
 
 	public void resetTouchFocus()
@@ -1410,7 +1418,10 @@ public class FocusVFPlugin extends PluginViewfinder
 		{
 			int fm = CameraController.getFocusMode();
 			if (fm != -1)
+			{
 				preferenceFocusMode = fm;
+				cancelAutoFocus();
+			}
 		} else if (arg1 == ApplicationInterface.MSG_PREVIEW_CHANGED)
 		{
 			initialize(CameraController.isFrontCamera(), 90);
