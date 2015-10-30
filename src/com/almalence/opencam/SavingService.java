@@ -186,6 +186,9 @@ public class SavingService extends NotificationService
 			additionalRotationValue = 180;
 			break;
 		}
+		
+//		if(CameraController.isNexus5x)
+//			additionalRotationValue = 180;
 	}
 
 	// save result pictures method for android < 5.0
@@ -714,11 +717,16 @@ public class SavingService extends NotificationService
 				}
 
 				String orientation_tag = String.valueOf(0);
-//				int sensorOrientation = CameraController.getSensorOrientation();
+//				int sensorOrientation = CameraController.getSensorOrientation(CameraController.getCameraIndex());
 //				int displayOrientation = CameraController.getDisplayOrientation();
-//				sensorOrientation = (360 + sensorOrientation + (cameraMirrored ? -displayOrientation
-//						: displayOrientation)) % 360;
-
+////				sensorOrientation = (360 + sensorOrientation + (cameraMirrored ? -displayOrientation
+////						: displayOrientation)) % 360;
+//				if (cameraMirrored) displayOrientation = -displayOrientation;
+//				
+//				// Calculate desired JPEG orientation relative to camera orientation to make
+//				// the image upright relative to the device orientation
+//				orientation = (sensorOrientation + displayOrientation + 360) % 360;
+				
 				if (CameraController.isNexus6 && cameraMirrored)
 					orientation = (orientation + 180) % 360;
 
@@ -782,7 +790,7 @@ public class SavingService extends NotificationService
 					}
 				}
 
-				if (!enableExifTagOrientation)
+				if (!enableExifTagOrientation || CameraController.isNexus5x)
 					exif_orientation = ExifInterface.ORIENTATION_NORMAL;
 
 				values = new ContentValues();

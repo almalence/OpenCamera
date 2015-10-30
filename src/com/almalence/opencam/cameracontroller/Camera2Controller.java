@@ -1862,8 +1862,8 @@ public class Camera2Controller
 //		if(CameraController.isNexus5x)
 //		{
 //			int jpeg_orientation = getJpegOrientation();
-//			Camera2Controller.stillRequestBuilder.set(CaptureRequest.JPEG_ORIENTATION, 180);
-//			Camera2Controller.precaptureRequestBuilder.set(CaptureRequest.JPEG_ORIENTATION, 180);
+//			Camera2Controller.stillRequestBuilder.set(CaptureRequest.JPEG_ORIENTATION, jpeg_orientation);
+//			Camera2Controller.precaptureRequestBuilder.set(CaptureRequest.JPEG_ORIENTATION, jpeg_orientation);
 //		}
 		
 	}
@@ -1879,7 +1879,7 @@ public class Camera2Controller
 		
 		// Reverse device orientation for front-facing cameras
 		boolean facingFront = Camera2Controller.getCameraCharacteristics().get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT;
-		if (facingFront) deviceOrientation = -deviceOrientation;
+		if (!facingFront) deviceOrientation = -deviceOrientation;
 		
 		// Calculate desired JPEG orientation relative to camera orientation to make
 		// the image upright relative to the device orientation
