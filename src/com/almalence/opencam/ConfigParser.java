@@ -21,7 +21,6 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
-
 //-+- -->
 
 import java.io.IOException;
@@ -34,7 +33,12 @@ import java.util.Locale;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+/* <!-- +++
+import com.almalence.opencam_plus.cameracontroller.CameraController;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
+//-+- -->
 
 import android.content.Context;
 import android.content.res.AssetManager;
