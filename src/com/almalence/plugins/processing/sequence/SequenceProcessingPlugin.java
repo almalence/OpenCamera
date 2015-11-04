@@ -283,7 +283,8 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 		if (PreviewBmp != null)
 		{
 			Matrix matrix = new Matrix();
-			matrix.postRotate(90);
+			//Workaround for Nexus5x, image is flipped because of sensor orientation
+			matrix.postRotate(CameraController.isNexus5x? (mCameraMirrored ? 90 : -90) : 90);
 			Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
 					matrix, true);
 			mImgView.setImageBitmap(rotated);
@@ -298,9 +299,15 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 		{
 			Bitmap bmp = thumbnails.get(i);
 			Matrix matrix = new Matrix();
-			matrix.postRotate(mCameraMirrored ? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 270
-					: 90)
-					: 90);
+			//Workaround for Nexus5x, image is flipped because of sensor orientation
+			if(CameraController.isNexus5x)
+				matrix.postRotate(mCameraMirrored ? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 270
+						: 90)
+						: 270);
+			else
+				matrix.postRotate(mCameraMirrored ? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 270
+						: 90)
+						: 90);	
 			Bitmap rotated = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
 			thumbnailsArray[i] = rotated;
 		}
@@ -432,7 +439,8 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 			if (PreviewBmp != null)
 			{
 				Matrix matrix = new Matrix();
-				matrix.postRotate(90);
+				//Workaround for Nexus5x, image is flipped because of sensor orientation
+				matrix.postRotate(CameraController.isNexus5x? (mCameraMirrored ? 90 : -90) : 90);
 				Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
 						matrix, true);
 				mImgView.setImageBitmap(rotated);

@@ -630,7 +630,11 @@ public class SavingService extends NotificationService
 				// Take only one result frame from several results
 				// Used for PreShot plugin that may decide which result to save
 				if (imagesAmount == 1 && imageIndex != 0)
+				{
 					i = imageIndex;
+					//With changed frame index we have to get appropriate frame format
+					format = getFromSharedMem("resultframeformat" + i + Long.toString(sessionID));
+				}
 
 				String resultOrientation = getFromSharedMem("resultframeorientation" + i + Long.toString(sessionID));
 				int orientation = 0;
@@ -790,7 +794,7 @@ public class SavingService extends NotificationService
 					}
 				}
 
-				if (!enableExifTagOrientation || CameraController.isNexus5x)
+				if (!enableExifTagOrientation)
 					exif_orientation = ExifInterface.ORIENTATION_NORMAL;
 
 				values = new ContentValues();

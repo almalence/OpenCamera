@@ -265,10 +265,10 @@ public class VideoCapturePlugin extends PluginCapture
 				if (isChecked)
 				{
 					ModePreference = "0";
-					if (CameraController.isNexus6)
+					if (CameraController.isNexus6 || CameraController.isNexus5x)
 					{
 						Toast.makeText(ApplicationScreen.getMainContext(),
-								"Not suported on Nexus 6 currently. Will be fixed in next release.", Toast.LENGTH_LONG)
+								"Not suported on Nexus 6 and Nexus 5x currently. Will be fixed in next release.", Toast.LENGTH_LONG)
 								.show();
 						ModePreference = "1";
 						modeSwitcher.setChecked(false);
@@ -2267,14 +2267,14 @@ public class VideoCapturePlugin extends PluginCapture
 		if (CameraController.isNexus6 && CameraController.isFrontCamera())
 		{
 			mMediaRecorder.setOrientationHint(ApplicationScreen.getWantLandscapePhoto() ? (ApplicationScreen
-					.getGUIManager().getDisplayOrientation() + 180) % 360 : (ApplicationScreen.getGUIManager()
-					.getDisplayOrientation()) % 360);
+					.getGUIManager().getImageDataOrientation() + 180) % 360 : (ApplicationScreen.getGUIManager()
+					.getImageDataOrientation()) % 360);
 		} else
 		{
 			mMediaRecorder.setOrientationHint(CameraController.isFrontCamera() ? (ApplicationScreen
-					.getWantLandscapePhoto() ? ApplicationScreen.getGUIManager().getDisplayOrientation()
-					: (ApplicationScreen.getGUIManager().getDisplayOrientation() + 180) % 360) : ApplicationScreen
-					.getGUIManager().getDisplayOrientation());
+					.getWantLandscapePhoto() ? ApplicationScreen.getGUIManager().getImageDataOrientation()
+					: (ApplicationScreen.getGUIManager().getImageDataOrientation() + 180) % 360) : ApplicationScreen
+					.getGUIManager().getImageDataOrientation());
 		}
 
 		// Step 6: Prepare configured MediaRecorder
@@ -3067,7 +3067,7 @@ public class VideoCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem("frame1" + SessionID, String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem("framelen1" + SessionID, String.valueOf(frame_len));
 		PluginManager.getInstance().addToSharedMem("frameorientation1" + SessionID,
-				String.valueOf(ApplicationScreen.getGUIManager().getDisplayOrientation()));
+				String.valueOf(ApplicationScreen.getGUIManager().getImageDataOrientation()));
 		PluginManager.getInstance().addToSharedMem("framemirrored1" + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
 

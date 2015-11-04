@@ -261,7 +261,8 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 		if (PreviewBmp != null)
 		{
 			Matrix matrix = new Matrix();
-			matrix.postRotate(90);
+			//Workaround for Nexus5x, image is flipped because of sensor orientation
+			matrix.postRotate(CameraController.isNexus5x? (mCameraMirrored ? 90 : -90) : 90);
 			Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
 					matrix, true);
 			mImgView.setImageBitmap(rotated);
@@ -307,8 +308,19 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 				{
 					if (finishing)
 						return true;
-					float x = event.getY();
-					float y = mDisplayHeight - 1 - event.getX();
+					float x = 0;
+					float y = 0;
+					//Workaround for Nexus5x, image is flipped horizontally & vertically because of sensor orientation
+					if(CameraController.isNexus5x && !mCameraMirrored)
+					{
+						x = mDisplayWidth - event.getY();
+						y = event.getX();	
+					}
+					else
+					{
+						x = event.getY();
+						y = mDisplayHeight - 1 - event.getX();
+					}
 					int objIndex = 0;
 					try
 					{
@@ -438,7 +450,8 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 			if (PreviewBmp != null)
 			{
 				Matrix matrix = new Matrix();
-				matrix.postRotate(90);
+				//Workaround for Nexus5x, image is flipped because of sensor orientation
+				matrix.postRotate(CameraController.isNexus5x? (mCameraMirrored ? 90 : -90) : 90);
 				Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
 						matrix, true);
 				mImgView.setImageBitmap(rotated);

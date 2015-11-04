@@ -306,7 +306,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			PluginManager.getInstance().addToSharedMem("framelen" + (imagesTakenRAW + 3) + SessionID,
 					String.valueOf(frame_len));
 			PluginManager.getInstance().addToSharedMem("frameorientation" + (imagesTakenRAW + 3) + SessionID,
-					String.valueOf(ApplicationScreen.getGUIManager().getDisplayOrientation()));
+					String.valueOf(ApplicationScreen.getGUIManager().getImageDataOrientation()));
 			PluginManager.getInstance().addToSharedMem("framemirrored" + (imagesTakenRAW + 3) + SessionID,
 					String.valueOf(CameraController.isFrontCamera()));
 
@@ -321,7 +321,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			PluginManager.getInstance().addToSharedMem("frame" + (n + 1) + SessionID, String.valueOf(frame));
 			PluginManager.getInstance().addToSharedMem("framelen" + (n + 1) + SessionID, String.valueOf(frame_len));
 			PluginManager.getInstance().addToSharedMem("frameorientation" + (n + 1) + SessionID,
-					String.valueOf(ApplicationScreen.getGUIManager().getDisplayOrientation()));
+					String.valueOf(ApplicationScreen.getGUIManager().getImageDataOrientation()));
 			PluginManager.getInstance().addToSharedMem("framemirrored" + (n + 1) + SessionID,
 					String.valueOf(CameraController.isFrontCamera()));
 

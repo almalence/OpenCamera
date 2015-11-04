@@ -305,6 +305,12 @@ public abstract class GUI
 	{
 		return (mDeviceOrientation + 90) % 360;
 	} // used to operate with image's data
+	
+	public int getImageDataOrientation()
+	{
+		//Workaround for Nexus5x, image is flipped because of sensor orientation
+		return (mDeviceOrientation + (CameraController.isNexus5x? (CameraController.isFrontCamera()? 90 : 270) : 90)) % 360;
+	} // used to operate with image's data
 
 	public int getLayoutOrientation()
 	{

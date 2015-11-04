@@ -352,6 +352,7 @@ public class PreshotCapturePlugin extends PluginCapture
 				Log.i("Preshot capture", "StartBuffering failed, can't allocate native buffer!");
 				return;
 			}
+			PluginManager.getInstance().addToSharedMem("cameraMirrored" + SessionID, String.valueOf(CameraController.isFrontCamera()));
 			PluginManager.getInstance().addToSharedMem("IsSlowMode" + SessionID, "true");
 
 			StartCaptureSequence();
@@ -401,7 +402,7 @@ public class PreshotCapturePlugin extends PluginCapture
 			if (frmCnt == 1)
 				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
 
-			PreShot.InsertToBuffer(data, ApplicationScreen.getGUIManager().getDisplayOrientation());
+			PreShot.InsertToBuffer(data, ApplicationScreen.getGUIManager().getImageDataOrientation());
 		}
 		frmCnt++;
 	}
@@ -437,7 +438,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	@Override
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, int format)
 	{
-		PreShot.InsertToBuffer(frameData, ApplicationScreen.getGUIManager().getDisplayOrientation());
+		PreShot.InsertToBuffer(frameData, ApplicationScreen.getGUIManager().getImageDataOrientation());
 
 		try
 		{
