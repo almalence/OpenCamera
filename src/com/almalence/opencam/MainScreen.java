@@ -3091,20 +3091,20 @@ public class MainScreen extends ApplicationScreen
 	}
 
 	public static boolean isAppturboUnlockable(Context context) {
-    	try
-    	{
-	        List<PackageInfo> packages = context.getPackageManager().getInstalledPackages(0); 
-	        for(PackageInfo pi : packages){ 
-	            if (pi.packageName.equalsIgnoreCase("com.appturbo.appturboCA2015") 
-	                    || pi.packageName.equalsIgnoreCase("com.appturbo.appoftheday2015") ){ 
-	                return true; 
-	            } 
-	        } 
-    	}
-    	catch (Exception e)
-    	{
-    		e.printStackTrace();
-    	}
+//    	try
+//    	{
+//	        List<PackageInfo> packages = context.getPackageManager().getInstalledPackages(0); 
+//	        for(PackageInfo pi : packages){ 
+//	            if (pi.packageName.equalsIgnoreCase("com.appturbo.appturboCA2015") 
+//	                    || pi.packageName.equalsIgnoreCase("com.appturbo.appoftheday2015") ){ 
+//	                return true; 
+//	            } 
+//	        } 
+//    	}
+//    	catch (Exception e)
+//    	{
+//    		e.printStackTrace();
+//    	}
     	return false;
     }
 	// -+- -->
