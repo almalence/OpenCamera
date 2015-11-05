@@ -302,6 +302,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static boolean							isCamera2Supported				= false; //Flag to show whether camera2 is available on current device
 	protected static boolean						isRAWCaptureSupported			= false; //Only HARDWARE_LEVEL_FULL devices may capture RAW frames
 	protected static boolean						isManualSensorSupported			= false; //Manual sensor means user's control of white balance and exposure time
+	
+	public static boolean							openCameraWaiting				= false; //TODO: Requesting Permissions at runtime
 
 	protected static String[]						cameraIdList					= { "" }; //Id's of front and back cameras
 
@@ -1192,7 +1194,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				}
 			}
 			else
-				Camera2Controller.openCameraCamera2();
+			{
+				 if(ApplicationScreen.isCameraPermissionGranted())
+					 Camera2Controller.openCameraCamera2();
+				 else
+					openCameraWaiting = true; 
+			}
 
 			pluginManager.selectDefaults();
 

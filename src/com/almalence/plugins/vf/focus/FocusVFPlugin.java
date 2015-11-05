@@ -395,7 +395,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		mPreviewHeight = ApplicationScreen.getPreviewSurfaceLayoutHeight();
 
 		Matrix matrix = new Matrix();
-		Util.prepareMatrix(matrix, mirror, 90, mPreviewWidth, mPreviewHeight);
+		Util.prepareMatrix(matrix, mirror, (CameraController.isNexus5x && !mirror)? 270 : 90 , mPreviewWidth, mPreviewHeight);
 		// In face detection, the matrix converts the driver coordinates to UI
 		// coordinates. In tap focus, the inverted matrix converts the UI
 		// coordinates to driver coordinates.
@@ -986,14 +986,13 @@ public class FocusVFPlugin extends PluginViewfinder
 			mMeteringArea.add(new Area(new Rect(), 1000));
 		}
 
-		boolean isNexus6 = CameraController.isNexus6;
 		// Convert the coordinates to driver format.
 		// AE area is bigger because exposure is sensitive and
 		// easy to over- or underexposure if area is too small.
 		calculateTapArea(focusWidth, focusHeight, 1f, x, y, ApplicationScreen.getPreviewSurfaceView().getWidth(), ApplicationScreen
 				.getPreviewSurfaceView().getHeight(), mFocusArea.get(0).rect);
 		if (ApplicationScreen.getMeteringMode() != -1 && ApplicationScreen.getMeteringMode() == CameraParameters.meteringModeSpot)
-			calculateTapArea(20 + (isNexus6 ? focusWidth : 0), 20 + (isNexus6 ? focusHeight : 0), 1f, x, y, ApplicationScreen
+			calculateTapArea(20 + (CameraController.isNexus6 ? focusWidth : 0), 20 + (CameraController.isNexus6 ? focusHeight : 0), 1f, x, y, ApplicationScreen
 					.getPreviewSurfaceView().getWidth(), ApplicationScreen.getPreviewSurfaceView().getHeight(),
 					mMeteringArea.get(0).rect);
 		else
