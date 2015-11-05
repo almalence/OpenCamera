@@ -28,12 +28,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
@@ -55,6 +57,8 @@ import android.os.StatFs;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -70,6 +74,7 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.almalence.opencam.cameracontroller.Camera2Controller;
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.ui.GLLayer;
@@ -260,8 +265,11 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public static int					iMinColorTemperatureValue		= 1000;
 	public static int					iMaxColorTemperatureValue		= 10000;
 
-	private static File					forceFilename				= null;
+	private static File					forceFilename					= null;
 	private static Uri					forceFilenameUri;
+	
+	private final static int			CAMERA_PERMISSION_CODE			= 0;
+	private static boolean				cameraPermissionGranted			= true; //TODO: grand permissions on runtime
 
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -350,6 +358,10 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		getWindow().addFlags(
 				WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
 						| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+		
+		
+//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+//			grandPermissions();
 
 		// set some common view here
 //		setContentView(R.layout.opencamera_main_layout);
@@ -484,6 +496,74 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		}
 
 		afterOnCreate();
+	}
+	
+	@TargetApi(23)
+	protected void grandPermissions()
+	{
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+		{
+			cameraPermissionGranted = false;
+		    // Should we show an explanation?
+		    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA))
+		    {
+		
+		        // Show an explanation to the user *asynchronously* -- don't block
+		        // this thread waiting for the user's response! After the user
+		        // sees the explanation, try again to request the permission.
+		
+		    }
+		    else 
+		    {
+		
+		        // No explanation needed, we can request the permission.
+		
+		        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, ApplicationScreen.CAMERA_PERMISSION_CODE);
+		
+		        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+		        // app-defined int constant. The callback method gets the
+		        // result of the request.
+		    }
+		}
+		else
+			cameraPermissionGranted = true;
+	}
+	
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
+	{
+	    switch (requestCode)
+	    {
+	        case ApplicationScreen.CAMERA_PERMISSION_CODE:
+	        {
+	            // If request is cancelled, the result arrays are empty.
+	            if (grantResults.length > 0
+	                && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+	            {
+
+	            	cameraPermissionGranted = true;
+	                // permission was granted, yay! Do the
+	                // contacts-related task you need to do.
+	            	if(CameraController.openCameraWaiting)
+	            		Camera2Controller.openCameraCamera2();
+
+	            }
+	            else {
+
+	                // permission denied, boo! Disable the
+	                // functionality that depends on this permission.
+	            }
+	            return;
+	        }
+
+	        // other 'case' lines to check for other
+	        // permissions this app might request
+	    }
+	}
+	
+	public static boolean isCameraPermissionGranted()
+	{
+		return cameraPermissionGranted;
 	}
 
 	abstract protected void createPluginManager();
