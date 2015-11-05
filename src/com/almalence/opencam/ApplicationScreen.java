@@ -42,6 +42,7 @@ import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.media.AudioManager;
 import android.media.ImageReader;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
@@ -538,6 +539,9 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	@TargetApi(19)
 	@Override
 	abstract public Surface getRAWImageSurface();
+	
+	@Override
+	abstract public MediaRecorder getMediaRecorder();
 
 	public static SurfaceHolder getPreviewSurfaceHolder()
 	{

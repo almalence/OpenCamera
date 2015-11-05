@@ -59,6 +59,7 @@ import android.media.AudioManager;
 import android.media.CamcorderProfile;
 import android.media.ImageReader;
 import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.os.Build;
@@ -149,6 +150,7 @@ public class MainScreen extends ApplicationScreen
 	private ImageReader			mImageReaderYUV;
 	private ImageReader			mImageReaderJPEG;
 	private ImageReader			mImageReaderRAW;
+	private MediaRecorder		mMediaRecorder;
 
 	// Common preferences
 	private int					imageSizeIdxPreference;
@@ -475,6 +477,11 @@ public class MainScreen extends ApplicationScreen
         
 		isCameraConfiguring = false;
 
+		if (PluginManager.getInstance().getActiveModeID().contains("video"))
+		{
+			mMediaRecorder = new MediaRecorder();
+		}
+
 		mWifiHandler.register();
 		if (mNfcAdapter != null) {
 			mNfcAdapter.enableForegroundDispatch(this, NFCHandler.getPendingIntent(this),
@@ -644,6 +651,12 @@ public class MainScreen extends ApplicationScreen
 			onResumeTimer.cancel();
 		}
 
+		if (mMediaRecorder != null) 
+		{
+			mMediaRecorder.release();
+			mMediaRecorder = null;
+		}
+		
 		mApplicationStarted = false;
 
 		MainScreen.getGUIManager().onPause();
@@ -953,6 +966,12 @@ public class MainScreen extends ApplicationScreen
 	public Surface getRAWImageSurface()
 	{
 		return mImageReaderRAW.getSurface();
+	}
+	
+	@Override
+	public MediaRecorder getMediaRecorder()
+	{
+		return mMediaRecorder;
 	}
 
 	@Override
@@ -1520,7 +1539,6 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	public void configureCamera(boolean createGUI)
 	{
-		Log.e("MainScreen", "configureCamera()");
 		switchingMode = false;
 
 		CameraController.updateCameraFeatures();
@@ -1566,10 +1584,17 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	public void createCaptureSession()
 	{
+		Log.e("TAG", "createCaptureSession");
 //		CameraController.setupImageReadersCamera2();
 		mCameraSurface = surfaceHolder.getSurface();
 		surfaceList.add(mCameraSurface); // surface for viewfinder preview
 
+		String modeId = PluginManager.getInstance().getActiveModeID();
+		if (modeId.contains("video"))
+		{
+			surfaceList.add(mMediaRecorder.getSurface()); // surface for MediaRecorder
+		}
+		
 		// if (captureFormat != CameraController.RAW) // when capture RAW
 		// preview frames is not available
 		if(mImageReaderPreviewYUV != null)

@@ -28,6 +28,7 @@ import com.almalence.sony.cameraremote.SimpleStreamSurfaceView;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.media.ImageReader;
+import android.media.MediaRecorder;
 import android.view.Surface;
 
 /*
@@ -146,6 +147,8 @@ public interface ApplicationInterface
 
 	@TargetApi(19)
 	public Surface getRAWImageSurface();
+	
+	public MediaRecorder getMediaRecorder();
 	
 	public SimpleStreamSurfaceView getSimpleStreamSurfaceView();
 	
