@@ -1584,7 +1584,6 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	public void createCaptureSession()
 	{
-		Log.e("TAG", "createCaptureSession");
 //		CameraController.setupImageReadersCamera2();
 		mCameraSurface = surfaceHolder.getSurface();
 		surfaceList.add(mCameraSurface); // surface for viewfinder preview
