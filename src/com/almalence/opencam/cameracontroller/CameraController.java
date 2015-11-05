@@ -46,6 +46,7 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.media.Image;
+import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -321,6 +322,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static float							expoCompensationStep			= 0;
 
 	protected static boolean						mVideoStabilizationSupported	= false;
+	protected static boolean						mVideoSnapshotSupported	= false;
 
 	private static int[]							supportedSceneModes;
 	private static int[]							supportedWBModes;
@@ -1170,6 +1172,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 				if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 					cameraController.mVideoStabilizationSupported = getVideoStabilizationSupported();
+				
+				cameraController.mVideoSnapshotSupported = getVideoSnapshotSupported();
 
 				// screen rotation
 				if (!pluginManager.shouldPreviewToGPU())
@@ -1982,6 +1986,22 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			camera.unlock();
 	}
 
+	public static void setRecordingHint(boolean hint)
+	{
+		if (!CameraController.isRemoteCamera())
+		{
+			if (!CameraController.isCamera2)
+			{
+				if (camera != null && camera.getParameters() != null)
+				{
+					Camera.Parameters cp = CameraController.getCameraParameters();
+					cp.setRecordingHint(hint);
+					CameraController.setCameraParameters(cp);
+				}
+			}
+		}
+	}
+	
 	@TargetApi(15)
 	public static void setVideoStabilization(boolean stabilization)
 	{
@@ -2024,8 +2044,38 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return false;
 		}
 	}
+	
+	public static boolean getVideoSnapshotSupported()
+	{
+		try
+		{
+			if (!CameraController.isRemoteCamera())
+			{
+				if (!CameraController.isCamera2)
+				{
+					if (camera == null || (camera != null && camera.getParameters() == null))
+						return false;
+
+					return camera.getParameters().isVideoSnapshotSupported();
+				} else
+					return true;
+			} else
+			{
+				return false;
+			}
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+	}
 
 	public static boolean isVideoStabilizationSupported()
+	{
+		return mVideoStabilizationSupported;
+	}
+	
+	public static boolean isVideoSnapshotSupported()
 	{
 		return mVideoStabilizationSupported;
 	}
@@ -3760,6 +3810,22 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return false;
 	}
 
+	public static void setPreviewFrameRate(int frameRate)
+	{
+		if (!CameraController.isRemoteCamera())
+		{
+			if (!CameraController.isCamera2)
+			{
+				if (camera != null && CameraController.getCameraParameters() != null)
+				{
+					Camera.Parameters cp = CameraController.getCameraParameters();
+					cp.setPreviewFrameRate(frameRate);
+					CameraController.setCameraParameters(cp);
+				}
+			}
+		}
+	}
+	
 	public static int getPreviewFrameRate()
 	{
 		if (!CameraController.isCamera2)
@@ -3902,6 +3968,17 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		SonyRemoteCamera.stopMovieRec();
 	}
 
+	public static void configureMediaRecorder(MediaRecorder mediaRecorder)
+	{
+		if (!CameraController.isRemoteCamera())
+		{
+			if (!CameraController.isCamera2)
+			{
+				mediaRecorder.setCamera(camera);		
+			}
+		}
+	}
+	
 	// Note: per-frame 'gain' and 'exposure' parameters are only effective for
 	// Camera2 API at the moment
 	public static int captureImagesWithParams(int nFrames, int format, int[] pause, int[] evRequested, int[] gain,

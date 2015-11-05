@@ -46,7 +46,6 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.hardware.Camera;
 import android.media.AudioManager;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
@@ -104,6 +103,7 @@ import com.almalence.util.Util;
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.CameraParameters;
+import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
@@ -265,10 +265,10 @@ public class VideoCapturePlugin extends PluginCapture
 				if (isChecked)
 				{
 					ModePreference = "0";
-					if (CameraController.isNexus6 || CameraController.isNexus5x)
+					if (CameraController.isNexus6)
 					{
 						Toast.makeText(ApplicationScreen.getMainContext(),
-								"Not suported on Nexus 6 and Nexus 5x currently. Will be fixed in next release.", Toast.LENGTH_LONG)
+								"Not suported on Nexus 6 currently. Will be fixed in next release.", Toast.LENGTH_LONG)
 								.show();
 						ModePreference = "1";
 						modeSwitcher.setChecked(false);
@@ -302,14 +302,14 @@ public class VideoCapturePlugin extends PluginCapture
 				try
 				{
 					CameraController.stopCameraPreview();
-					Camera.Parameters cp = CameraController.getCameraParameters();
-					if (cp != null)
-					{
+//					Camera.Parameters cp = CameraController.getCameraParameters();
+//					if (cp != null)
+//					{
 						setCameraPreviewSize();
 						CameraController.Size sz = new CameraController.Size(ApplicationScreen.getPreviewWidth(),
 								ApplicationScreen.getPreviewHeight());
 						ApplicationScreen.getGUIManager().setupViewfinderPreviewSize(sz);
-					}
+//					}
 					if (VideoCapturePlugin.this.modeDRO())
 					{
 						takePictureButton.setVisibility(View.GONE);
@@ -327,24 +327,24 @@ public class VideoCapturePlugin extends PluginCapture
 
 						droEngine.onPause();
 
-						Camera camera = CameraController.getCamera();
-						if (camera != null)
-							try
-							{
-								camera.setDisplayOrientation(90);
-							} catch (RuntimeException e)
-							{
-								e.printStackTrace();
-							}
-
-						if (camera != null)
-							try
-							{
-								camera.setPreviewDisplay(ApplicationScreen.getPreviewSurfaceHolder());
-							} catch (IOException e)
-							{
-								e.printStackTrace();
-							}
+//						Camera camera = CameraController.getCamera();
+//						if (camera != null)
+//							try
+//							{
+//								camera.setDisplayOrientation(90);
+//							} catch (RuntimeException e)
+//							{
+//								e.printStackTrace();
+//							}
+//
+//						if (camera != null)
+//							try
+//							{
+//								camera.setPreviewDisplay(ApplicationScreen.getPreviewSurfaceHolder());
+//							} catch (IOException e)
+//							{
+//								e.printStackTrace();
+//							}
 						CameraController.startCameraPreview();
 						ApplicationScreen.instance.hideOpenGLLayer();
 					}
@@ -542,16 +542,8 @@ public class VideoCapturePlugin extends PluginCapture
 		timeLapseButton = (RotateImageView) buttonsLayout.findViewById(R.id.buttonTimeLapse);
 		pauseVideoButton = (RotateImageView) ApplicationScreen.instance.findViewById(R.id.buttonVideoPause);
 		stopVideoButton = (RotateImageView) ApplicationScreen.instance.findViewById(R.id.buttonVideoStop);
-		Camera camera = CameraController.getCamera();
-		if (camera != null)
-		{
-			Camera.Parameters cp = CameraController.getCameraParameters();
-			if (cp != null)
-			{
-				if (cp.isVideoSnapshotSupported())
-					snapshotSupported = true;
-			}
-		}
+
+		snapshotSupported = CameraController.isVideoSnapshotSupported();
 		takePictureButton = (RotateImageView) buttonsLayout.findViewById(R.id.buttonCaptureImage);
 
 		timeLapseButton.setOnClickListener(new OnClickListener()
@@ -806,14 +798,15 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 
 		CameraController.stopCameraPreview();
-		Camera.Parameters cp = CameraController.getCameraParameters();
-		if (cp != null)
-		{
+//		Camera.Parameters cp = CameraController.getCameraParameters();
+//		if (cp != null)
+//		{
 			setCameraPreviewSize();
-			Camera.Size sz = CameraController.getCameraParameters().getPreviewSize();
+//			Camera.Size sz = CameraController.getCameraParameters().getPreviewSize();
+			CameraController.Size sz = ApplicationScreen.instance.getPreviewSize();
 			ApplicationScreen.getGUIManager()
-					.setupViewfinderPreviewSize(new CameraController.Size(sz.width, sz.height));
-		}
+					.setupViewfinderPreviewSize(new CameraController.Size(sz.getWidth(), sz.getHeight()));
+//		}
 		CameraController.startCameraPreview();
 
 		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST,
@@ -1020,8 +1013,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 		if (!CameraController.isRemoteCamera())
 		{
-			Camera camera = CameraController.getCamera();
-			if (null == camera)
+			if (null == CameraController.getCamera())
 				return;
 
 			if (this.isRecording)
@@ -1029,13 +1021,14 @@ public class VideoCapturePlugin extends PluginCapture
 				stopRecording();
 			}
 
-			if (camera != null && !CameraController.isGalaxyS4 && !CameraController.isGalaxyNote3 && !CameraController.isGalaxyNote4)
+			if (!CameraController.isGalaxyS4 && !CameraController.isGalaxyNote3 && !CameraController.isGalaxyNote4)
 			{
 				try
 				{
-					Camera.Parameters cp = CameraController.getCameraParameters();
-					cp.setRecordingHint(false);
-					CameraController.setCameraParameters(cp);
+					CameraController.setRecordingHint(false);
+//					Camera.Parameters cp = CameraController.getCameraParameters();
+//					cp.setRecordingHint(false);
+//					CameraController.setCameraParameters(cp);
 				} catch (Exception e)
 				{
 					e.printStackTrace();
@@ -1233,14 +1226,10 @@ public class VideoCapturePlugin extends PluginCapture
 			quickControlIconID = -1;
 		}
 
-		Camera.Parameters cp = CameraController.getCameraParameters();
-		if (cp != null && !CameraController.isGalaxyS4 && !CameraController.isGalaxyNote3)
+		if (!CameraController.isGalaxyS4 && !CameraController.isGalaxyNote3)
 		{
-			cp.setPreviewFrameRate(30);
-			if (!CameraController.isGalaxyS4 && !CameraController.isGalaxyNote3)
-				cp.setRecordingHint(true);
-
-			CameraController.setCameraParameters(cp);
+			CameraController.setPreviewFrameRate(30);
+			CameraController.setRecordingHint(true);
 		}
 	}
 
@@ -1403,7 +1392,7 @@ public class VideoCapturePlugin extends PluginCapture
 		if (mMediaRecorder != null)
 		{
 			mMediaRecorder.reset(); // clear recorder configuration
-			mMediaRecorder.release(); // release the recorder object
+			//mMediaRecorder.release(); // release the recorder object
 			mMediaRecorder = null;
 			CameraController.lockCamera(); // lock camera for later use
 		}
@@ -1416,7 +1405,6 @@ public class VideoCapturePlugin extends PluginCapture
 	private boolean					lastUseProf;
 	private CamcorderProfile		lastCamcorderProfile;
 	private CameraController.Size	lastSz;
-	private Camera					lastCamera;
 
 	private boolean modeDRO()
 	{
@@ -1826,9 +1814,9 @@ public class VideoCapturePlugin extends PluginCapture
 
 	private void startRecording()
 	{
-		Camera camera = CameraController.getCamera();
-		if (null == camera)
-			return;
+//		Camera camera = CameraController.getCamera();
+//		if (null == camera)
+//			return;
 
 		filesList = new ArrayList<File>();
 		filesListNew = new ArrayList<DocumentFile>();
@@ -1904,13 +1892,13 @@ public class VideoCapturePlugin extends PluginCapture
 	{
 		if (shutterOff)
 			return;
-		Camera camera = CameraController.getCamera();
-		if (null == camera)
-		{
-			if(preferenceVideoMuteMode)
-				unmuteAllSounds();
-			return;
-		}
+//		Camera camera = CameraController.getCamera();
+//		if (null == camera)
+//		{
+//			if(preferenceVideoMuteMode)
+//				unmuteAllSounds();
+//			return;
+//		}
 
 		// stop recording and release camera
 		try
@@ -1925,7 +1913,6 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 
 		releaseMediaRecorder(); // release the MediaRecorder object
-		// camera.lock(); // take camera access back from MediaRecorder
 
 		// This condition normally should be TRUE only for Android >= 5.
 		if (fileSavedNewFd != null)
@@ -1943,16 +1930,16 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 
 		CameraController.stopCameraPreview();
-		Camera.Parameters cp = CameraController.getCameraParameters();
-		if (cp != null)
-		{
+//		Camera.Parameters cp = CameraController.getCameraParameters();
+//		if (cp != null)
+//		{
 			setCameraPreviewSize();
 			CameraController.Size sz = new CameraController.Size(ApplicationScreen.getPreviewWidth(),
 					ApplicationScreen.getPreviewHeight());
 			ApplicationScreen.getGUIManager().setupViewfinderPreviewSize(sz);
 			if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH && videoStabilization)
 				CameraController.setVideoStabilization(false);
-		}	
+//		}	
 		CameraController.startCameraPreview();
 
 		ApplicationScreen.getGUIManager().lockControls = false;
@@ -1989,9 +1976,9 @@ public class VideoCapturePlugin extends PluginCapture
 	private void startVideoRecording()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		Camera camera = CameraController.getCamera();
-
-		lastCamera = camera;
+//		Camera camera = CameraController.getCamera();
+//
+//		lastCamera = camera;
 
 		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH && videoStabilization)
 			CameraController.setVideoStabilization(true);
@@ -1999,10 +1986,10 @@ public class VideoCapturePlugin extends PluginCapture
 		shutterOff = true;
 		mRecordingStartTime = SystemClock.uptimeMillis();
 
-		mMediaRecorder = new MediaRecorder();
+		mMediaRecorder = ApplicationScreen.instance.getMediaRecorder();
 		CameraController.stopCameraPreview();
 		CameraController.unlockCamera();
-		mMediaRecorder.setCamera(camera);
+		CameraController.configureMediaRecorder(mMediaRecorder);
 
 		// Step 2: Set sources
 		mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
@@ -2234,9 +2221,9 @@ public class VideoCapturePlugin extends PluginCapture
 			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST,
 					ApplicationInterface.MSG_CONTROL_UNLOCKED);
 			releaseMediaRecorder(); // release the MediaRecorder object
-			camera.lock(); // take camera access back from MediaRecorder
-			camera.stopPreview();
-			camera.startPreview();
+			CameraController.lockCamera(); // take camera access back from MediaRecorder
+			CameraController.stopCameraPreview();
+			CameraController.startCameraPreview();
 
 			return;
 		}
@@ -2267,14 +2254,14 @@ public class VideoCapturePlugin extends PluginCapture
 		if (CameraController.isNexus6 && CameraController.isFrontCamera())
 		{
 			mMediaRecorder.setOrientationHint(ApplicationScreen.getWantLandscapePhoto() ? (ApplicationScreen
-					.getGUIManager().getImageDataOrientation() + 180) % 360 : (ApplicationScreen.getGUIManager()
-					.getImageDataOrientation()) % 360);
+					.getGUIManager().getDisplayOrientation() + 180) % 360 : (ApplicationScreen.getGUIManager()
+					.getDisplayOrientation()) % 360);
 		} else
 		{
 			mMediaRecorder.setOrientationHint(CameraController.isFrontCamera() ? (ApplicationScreen
-					.getWantLandscapePhoto() ? ApplicationScreen.getGUIManager().getImageDataOrientation()
-					: (ApplicationScreen.getGUIManager().getImageDataOrientation() + 180) % 360) : ApplicationScreen
-					.getGUIManager().getImageDataOrientation());
+					.getWantLandscapePhoto() ? ApplicationScreen.getGUIManager().getDisplayOrientation()
+					: (ApplicationScreen.getGUIManager().getDisplayOrientation() + 180) % 360) : ApplicationScreen
+					.getGUIManager().getDisplayOrientation());
 		}
 
 		// Step 6: Prepare configured MediaRecorder
@@ -2298,9 +2285,9 @@ public class VideoCapturePlugin extends PluginCapture
 			ApplicationScreen.getGUIManager().lockControls = false;
 			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST,
 					ApplicationInterface.MSG_CONTROL_UNLOCKED);
-			camera.lock(); // take camera access back from MediaRecorder
-			camera.stopPreview();
-			camera.startPreview();
+			CameraController.lockCamera(); // take camera access back from MediaRecorder
+			CameraController.stopCameraPreview();
+			CameraController.startCameraPreview();
 			
 			if(preferenceVideoMuteMode)
 				unmuteAllSounds();
@@ -2641,9 +2628,9 @@ public class VideoCapturePlugin extends PluginCapture
 
 	private void pauseVideoRecording()
 	{
-		Camera camera = CameraController.getCamera();
-		if (null == camera)
-			return;
+//		Camera camera = CameraController.getCamera();
+//		if (null == camera)
+//			return;
 
 		if (!isRecording)
 			return;
@@ -3067,7 +3054,7 @@ public class VideoCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem("frame1" + SessionID, String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem("framelen1" + SessionID, String.valueOf(frame_len));
 		PluginManager.getInstance().addToSharedMem("frameorientation1" + SessionID,
-				String.valueOf(ApplicationScreen.getGUIManager().getImageDataOrientation()));
+				String.valueOf(ApplicationScreen.getGUIManager().getDisplayOrientation()));
 		PluginManager.getInstance().addToSharedMem("framemirrored1" + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
 

@@ -34,7 +34,6 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CaptureResult;
 import android.opengl.GLES10;
 import android.opengl.GLU;
-import android.os.Build;
 import android.os.Message;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -324,7 +323,7 @@ public class NightCapturePlugin extends PluginCapture
 			if (CameraController.isNexus6)
 				OpenGLPreference = prefs.getBoolean(nightVisionLayerShowPref, false);
 			else
-				OpenGLPreference = prefs.getBoolean(nightVisionLayerShowPref, true);
+				OpenGLPreference = prefs.getBoolean(nightVisionLayerShowPref, false);//set to false. sm. 5/11/15
 		}
 		else
 			OpenGLPreference = false;
