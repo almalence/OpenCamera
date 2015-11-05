@@ -186,6 +186,9 @@ public class SavingService extends NotificationService
 			additionalRotationValue = 180;
 			break;
 		}
+		
+//		if(CameraController.isNexus5x)
+//			additionalRotationValue = 180;
 	}
 
 	// save result pictures method for android < 5.0
@@ -627,7 +630,11 @@ public class SavingService extends NotificationService
 				// Take only one result frame from several results
 				// Used for PreShot plugin that may decide which result to save
 				if (imagesAmount == 1 && imageIndex != 0)
+				{
 					i = imageIndex;
+					//With changed frame index we have to get appropriate frame format
+					format = getFromSharedMem("resultframeformat" + i + Long.toString(sessionID));
+				}
 
 				String resultOrientation = getFromSharedMem("resultframeorientation" + i + Long.toString(sessionID));
 				int orientation = 0;
@@ -714,11 +721,16 @@ public class SavingService extends NotificationService
 				}
 
 				String orientation_tag = String.valueOf(0);
-//				int sensorOrientation = CameraController.getSensorOrientation();
+//				int sensorOrientation = CameraController.getSensorOrientation(CameraController.getCameraIndex());
 //				int displayOrientation = CameraController.getDisplayOrientation();
-//				sensorOrientation = (360 + sensorOrientation + (cameraMirrored ? -displayOrientation
-//						: displayOrientation)) % 360;
-
+////				sensorOrientation = (360 + sensorOrientation + (cameraMirrored ? -displayOrientation
+////						: displayOrientation)) % 360;
+//				if (cameraMirrored) displayOrientation = -displayOrientation;
+//				
+//				// Calculate desired JPEG orientation relative to camera orientation to make
+//				// the image upright relative to the device orientation
+//				orientation = (sensorOrientation + displayOrientation + 360) % 360;
+				
 				if (CameraController.isNexus6 && cameraMirrored)
 					orientation = (orientation + 180) % 360;
 

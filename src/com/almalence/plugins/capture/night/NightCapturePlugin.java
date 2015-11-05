@@ -34,7 +34,6 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CaptureResult;
 import android.opengl.GLES10;
 import android.opengl.GLU;
-import android.os.Build;
 import android.os.Message;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -324,7 +323,7 @@ public class NightCapturePlugin extends PluginCapture
 			if (CameraController.isNexus6)
 				OpenGLPreference = prefs.getBoolean(nightVisionLayerShowPref, false);
 			else
-				OpenGLPreference = prefs.getBoolean(nightVisionLayerShowPref, true);
+				OpenGLPreference = prefs.getBoolean(nightVisionLayerShowPref, false);//set to false. sm. 5/11/15
 		}
 		else
 			OpenGLPreference = false;
@@ -654,7 +653,7 @@ public class NightCapturePlugin extends PluginCapture
 			// ToDo: there is no need to pass orientation for every frame, just for the first one
 			// also, amountofcapturedframes can be set only once to total_frames
 			PluginManager.getInstance().addToSharedMem("frameorientation" + (imagesTaken + 1) + SessionID,
-					String.valueOf(ApplicationScreen.getGUIManager().getDisplayOrientation()));
+					String.valueOf(ApplicationScreen.getGUIManager().getImageDataOrientation()));
 			PluginManager.getInstance().addToSharedMem("framemirrored" + (imagesTaken + 1) + SessionID,
 					String.valueOf(CameraController.isFrontCamera()));
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
@@ -807,8 +806,19 @@ public class NightCapturePlugin extends PluginCapture
 							ImageConversion.TransformNV21(dataS, dataRotated, imageWidth, imageHeight, 1, 0, 0);
 	
 						yuvData = dataRotated;
-					} else
-						yuvData = dataS;
+					}
+					else
+					{
+						//Workaround for Nexus5x, image is flipped because of sensor orientation
+						if(CameraController.isNexus5x)
+						{
+							dataRotated = new byte[dataS.length];
+							ImageConversion.TransformNV21(dataS, dataRotated, imageWidth, imageHeight, 1, 1, 0);
+							yuvData = dataRotated;
+						}
+						else
+							yuvData = dataS;
+					}
 									
 					data1 = data2;
 					data2 = null;

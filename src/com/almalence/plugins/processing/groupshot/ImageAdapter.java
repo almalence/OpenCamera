@@ -202,7 +202,11 @@ public class ImageAdapter extends BaseAdapter
 			bm.recycle();
 
 		Matrix matrix = new Matrix();
-		matrix.postRotate(mCameraMirrored ? (mIsLandscape ? (-90 + 180) % 360 : -90) : 90);
+		//Workaround for Nexus5x, image is flipped because of sensor orientation
+		if(CameraController.isNexus5x)
+			matrix.postRotate(mCameraMirrored ? (mIsLandscape ? 90 : 270) : 270);
+		else
+			matrix.postRotate(mCameraMirrored ? (mIsLandscape ? 90 : -90) : 90);
 
 		return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 	}
@@ -238,7 +242,11 @@ public class ImageAdapter extends BaseAdapter
 				scaledHeight, Config.RGB_565);
 
 		Matrix matrix = new Matrix();
-		matrix.postRotate(mCameraMirrored ? (mIsLandscape ? (-90 + 180) % 360 : -90) : 90);
+		//Workaround for Nexus5x, image is flipped because of sensor orientation
+		if(CameraController.isNexus5x)
+			matrix.postRotate(mCameraMirrored ? (mIsLandscape ? 90 : 270) : 270);
+		else
+			matrix.postRotate(mCameraMirrored ? (mIsLandscape ? 90 : -90) : 90);
 
 		Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 		bitmap.recycle();

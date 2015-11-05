@@ -138,10 +138,10 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		int orientation = ApplicationScreen.getGUIManager().getLayoutOrientation();
 		mLayoutOrientationCurrent = orientation == 0 || orientation == 180 ? orientation : (orientation + 180) % 360;
 		
+		sessionID = SessionID;
+		
 		mCameraMirrored = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem(
 				"cameraMirrored" + sessionID));
-
-		sessionID = SessionID;
 
 		ApplicationScreen.getPluginManager().addToSharedMem("modeSaveName" + sessionID,
 				ConfigParser.getInstance().getMode(mode).modeSaveName);
@@ -574,7 +574,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 				bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 			}
 
-			if (CameraController.isNexus6 && CameraController.isFrontCamera())
+			if ((CameraController.isNexus6 && mCameraMirrored) || (CameraController.isNexus5x && !mCameraMirrored))
 			{	
 				Matrix matrix = new Matrix();
 				matrix.postRotate(180);
@@ -585,7 +585,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		} else
 		{// slow mode
 			byte[] data = PreShot.GetFromBufferToShowInSlow(index, ApplicationScreen.getPreviewHeight(),
-					ApplicationScreen.getPreviewWidth(), CameraController.isFrontCamera());
+					ApplicationScreen.getPreviewWidth());
 
 			if (data.length == 0)
 			{
@@ -605,7 +605,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 				photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
 			}
 
-			if (CameraController.isNexus6 && CameraController.isFrontCamera())
+			if ((CameraController.isNexus6 && mCameraMirrored) || (CameraController.isNexus5x && !mCameraMirrored))
 			{	
 				Matrix matrix = new Matrix();
 				matrix.postRotate(180);
@@ -917,8 +917,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 
 		} else if (isSlowMode)
 		{
-			CameraController.Size imageSize = CameraController.getCameraImageSize();
-			byte[] data = PreShot.GetFromBufferSimpleNV21(i, imageSize.getWidth(), imageSize.getHeight());
+			byte[] data = PreShot.GetFromBufferSimpleNV21(i);
 
 			if (data.length == 0)
 				return;

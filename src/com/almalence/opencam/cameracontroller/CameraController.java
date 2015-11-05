@@ -103,8 +103,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean							isNexus7		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus7");
 	public static boolean							isNexus9		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus9");
 	
-	public static boolean							isNexus5or6		= CameraController.isNexus5 ||
-			  														  CameraController.isNexus6;
+	public static boolean							isNexus5or6		= CameraController.isNexus5  ||
+																	  CameraController.isNexus5x ||
+																	  CameraController.isNexus6  ||
+			  														  CameraController.isNexus6p;
 	
 	public static boolean							isNexus			= CameraController.isNexus5or6 ||
 																	  CameraController.isNexus7    ||
@@ -1059,7 +1061,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			// hard-code to enable these only, as we have no profiles for
 			// other models at the moment
-			if (CameraController.isNexus5or6 || CameraController.isFlex2/*
+			if ((CameraController.isNexus5or6 || CameraController.isFlex2)
+					&& (!CameraController.isNexus5x && !CameraController.isNexus6p)
+					
+					/*
 																	 * ||
 																	 * CameraController
 																	 * .

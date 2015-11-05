@@ -146,7 +146,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
 				ConfigParser.getInstance().getMode(mode).modeSaveName);
 
-		mDisplayOrientationOnStartProcessing = ApplicationScreen.getGUIManager().getDisplayOrientation();
+		mDisplayOrientationOnStartProcessing = ApplicationScreen.getGUIManager().getImageDataOrientation();
 		mDisplayOrientationCurrent = ApplicationScreen.getGUIManager().getDisplayOrientation();
 		int orientation = ApplicationScreen.getGUIManager().getLayoutOrientation();
 		mLayoutOrientationCurrent = orientation == 0 || orientation == 180 ? orientation : (orientation + 180) % 360;

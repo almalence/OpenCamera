@@ -271,7 +271,7 @@ public class CapturePlugin extends PluginCapture
 		
 		
 		PluginManager.getInstance().addToSharedMem("frameorientation" + framesCaptured + SessionID,
-				String.valueOf(ApplicationScreen.getGUIManager().getDisplayOrientation()));
+				String.valueOf(ApplicationScreen.getGUIManager().getImageDataOrientation()));
 		PluginManager.getInstance().addToSharedMem("framemirrored" + framesCaptured + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
 
