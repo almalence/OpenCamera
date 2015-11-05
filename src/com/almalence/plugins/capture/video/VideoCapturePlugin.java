@@ -265,10 +265,10 @@ public class VideoCapturePlugin extends PluginCapture
 				if (isChecked)
 				{
 					ModePreference = "0";
-					if (CameraController.isNexus6 || CameraController.isNexus5x)
+					if (CameraController.isNexus6 || CameraController.isNexus5x || CameraController.isNexus6p)
 					{
 						Toast.makeText(ApplicationScreen.getMainContext(),
-								"Not suported on Nexus 6 and Nexus 5x currently. Will be fixed in next release.", Toast.LENGTH_LONG)
+								"Not suported currently on your device. Will be available later.", Toast.LENGTH_LONG)
 								.show();
 						ModePreference = "1";
 						modeSwitcher.setChecked(false);
