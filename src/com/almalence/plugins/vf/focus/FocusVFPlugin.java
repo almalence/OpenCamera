@@ -1215,7 +1215,7 @@ public class FocusVFPlugin extends PluginViewfinder
 			}
 		}
 		
-		if (ApplicationScreen.getMeteringMode() == CameraParameters.meteringModeManual) {
+		if (ApplicationScreen.getMeteringMode() == CameraParameters.meteringModeManual || !mMeteringAreaSupported) {
 			mMeteringIndicatorRotateLayout.setVisibility(View.GONE);	
 		}
 		
