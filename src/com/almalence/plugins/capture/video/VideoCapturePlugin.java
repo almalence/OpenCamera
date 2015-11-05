@@ -265,10 +265,10 @@ public class VideoCapturePlugin extends PluginCapture
 				if (isChecked)
 				{
 					ModePreference = "0";
-					if (CameraController.isNexus6 || CameraController.isNexus5x)
+					if (CameraController.isNexus6)
 					{
 						Toast.makeText(ApplicationScreen.getMainContext(),
-								"Not suported on Nexus 6 and Nexus 5x currently. Will be fixed in next release.", Toast.LENGTH_LONG)
+								"Not suported on Nexus 6 currently. Will be fixed in next release.", Toast.LENGTH_LONG)
 								.show();
 						ModePreference = "1";
 						modeSwitcher.setChecked(false);
@@ -2254,14 +2254,14 @@ public class VideoCapturePlugin extends PluginCapture
 		if (CameraController.isNexus6 && CameraController.isFrontCamera())
 		{
 			mMediaRecorder.setOrientationHint(ApplicationScreen.getWantLandscapePhoto() ? (ApplicationScreen
-					.getGUIManager().getImageDataOrientation() + 180) % 360 : (ApplicationScreen.getGUIManager()
-					.getImageDataOrientation()) % 360);
+					.getGUIManager().getDisplayOrientation() + 180) % 360 : (ApplicationScreen.getGUIManager()
+					.getDisplayOrientation()) % 360);
 		} else
 		{
 			mMediaRecorder.setOrientationHint(CameraController.isFrontCamera() ? (ApplicationScreen
-					.getWantLandscapePhoto() ? ApplicationScreen.getGUIManager().getImageDataOrientation()
-					: (ApplicationScreen.getGUIManager().getImageDataOrientation() + 180) % 360) : ApplicationScreen
-					.getGUIManager().getImageDataOrientation());
+					.getWantLandscapePhoto() ? ApplicationScreen.getGUIManager().getDisplayOrientation()
+					: (ApplicationScreen.getGUIManager().getDisplayOrientation() + 180) % 360) : ApplicationScreen
+					.getGUIManager().getDisplayOrientation());
 		}
 
 		// Step 6: Prepare configured MediaRecorder
@@ -2382,17 +2382,17 @@ public class VideoCapturePlugin extends PluginCapture
 
 		camera2Preference = prefs.getBoolean(
 				ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false);
-//		prefs.edit()
-//				.putBoolean(
-//						ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key),
-//						false).commit();
-//		CameraController.setUseCamera2(false);
-//
-//		if (camera2Preference)
-//		{
-//			CameraController.isOldCameraOneModeLaunched = true;
-//			PluginManager.getInstance().setSwitchModeType(true);
-//		}
+		prefs.edit()
+				.putBoolean(
+						ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key),
+						false).commit();
+		CameraController.setUseCamera2(false);
+
+		if (camera2Preference)
+		{
+			CameraController.isOldCameraOneModeLaunched = true;
+			PluginManager.getInstance().setSwitchModeType(true);
+		}
 
 		videoStabilization = prefs.getBoolean("videoStabilizationPref", false);
 
@@ -3054,7 +3054,7 @@ public class VideoCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem("frame1" + SessionID, String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem("framelen1" + SessionID, String.valueOf(frame_len));
 		PluginManager.getInstance().addToSharedMem("frameorientation1" + SessionID,
-				String.valueOf(ApplicationScreen.getGUIManager().getImageDataOrientation()));
+				String.valueOf(ApplicationScreen.getGUIManager().getDisplayOrientation()));
 		PluginManager.getInstance().addToSharedMem("framemirrored1" + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
 
