@@ -1215,7 +1215,7 @@ public class FocusVFPlugin extends PluginViewfinder
 			}
 		}
 		
-		if (ApplicationScreen.getMeteringMode() == CameraParameters.meteringModeManual || !mMeteringAreaSupported) {
+		if (ApplicationScreen.getMeteringMode() == CameraParameters.meteringModeManual || !mMeteringAreaSupported || CameraController.isGalaxyNote3) {
 			mMeteringIndicatorRotateLayout.setVisibility(View.GONE);	
 		}
 		
