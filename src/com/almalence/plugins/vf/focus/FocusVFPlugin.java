@@ -46,7 +46,6 @@ import android.widget.Toast;
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.CameraParameters;
-import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
@@ -401,7 +400,6 @@ public class FocusVFPlugin extends PluginViewfinder
 		mFocusAreaSupported = (CameraController.getMaxFocusAreasSupported() > 0 && isSupported(
 				CameraParameters.AF_MODE_AUTO, CameraController.getSupportedFocusModes()));
 		mMeteringAreaSupported = CameraController.getMaxMeteringAreasSupported() > 0;
-		mMeteringAreaSupported = false;
 	}
 
 	public void initialize(boolean mirror, int displayOrientation)
