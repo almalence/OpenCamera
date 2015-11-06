@@ -95,6 +95,7 @@ public interface ApplicationInterface
 	public static final int				MSG_ISO_CHANGED							= 65;
 	public static final int				MSG_AEWB_CHANGED						= 66;
 	public static final int				MSG_REMOTE_CAMERA_PARAMETR_CHANGED		= 67;
+	public static final int				MSG_EXPOSURE_CHANGED					= 68;
 	
 	public static final int				MSG_FOCUS_LOCKED						= 663;
 	public static final int				MSG_FOCUS_UNLOCKED						= 664;
