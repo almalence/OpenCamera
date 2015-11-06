@@ -26,7 +26,6 @@ package com.almalence.opencam;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -74,15 +73,17 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.almalence.opencam.cameracontroller.Camera2Controller;
+
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.Camera2Controller;
  import com.almalence.opencam_plus.ui.GLLayer;
  import com.almalence.opencam_plus.ui.GUI;
  import com.almalence.opencam_plus.R;
  +++ --> */
 //<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam.cameracontroller.Camera2Controller;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
 import com.almalence.opencam.R;

@@ -1600,7 +1600,7 @@ public class MainScreen extends ApplicationScreen
 			surfaceList.add(mImageReaderPreviewYUV.getSurface()); // surface for
 																	// preview yuv
 		// images
-		if (captureFormat == CameraController.YUV)
+		if (captureFormat == CameraController.YUV && mImageReaderYUV != null)
 		{
 			Log.d("MainScreen",
 					"add mImageReaderYUV " + mImageReaderYUV.getWidth() + " x " + mImageReaderYUV.getHeight());
@@ -1617,14 +1617,14 @@ public class MainScreen extends ApplicationScreen
 //				surfaceList.add(mImageReaderYUV.getSurface());
 //			}
 			// capture
-		} else if (captureFormat == CameraController.JPEG)
+		} else if (captureFormat == CameraController.JPEG && mImageReaderJPEG != null)
 		{
 			Log.d("MainScreen",
 					"add mImageReaderJPEG " + mImageReaderJPEG.getWidth() + " x " + mImageReaderJPEG.getHeight());
 			surfaceList.add(mImageReaderJPEG.getSurface()); // surface for jpeg
 															// image
 			// capture
-		} else if (captureFormat == CameraController.RAW)
+		} else if (captureFormat == CameraController.RAW && mImageReaderJPEG != null && mImageReaderRAW != null)
 		{
 			Log.d("MainScreen", "add mImageReaderRAW + mImageReaderJPEG " + mImageReaderRAW.getWidth() + " x "
 					+ mImageReaderRAW.getHeight());

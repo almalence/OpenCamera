@@ -26,7 +26,6 @@ package com.almalence.opencam.cameracontroller;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -55,7 +54,6 @@ import android.hardware.camera2.params.TonemapCurve;
 import android.media.Image;
 import android.media.ImageReader;
 import android.media.MediaRecorder;
-import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -180,7 +178,7 @@ public class Camera2Controller
 
 	public static void onCreateCamera2(Context context, ApplicationInterface app, PluginManagerInterface pluginManagerBase, Handler msgHandler)
 	{
-		Log.e(TAG, "onCreateCamera2");
+//		Log.e(TAG, "onCreateCamera2");
 		mainContext = context;
 		appInterface = app;
 		pluginManager = pluginManagerBase;
@@ -284,7 +282,7 @@ public class Camera2Controller
 	{
 		try
 		{
-			Log.e(TAG, "onResumeCamera2. CameraIndex = " + CameraController.CameraIndex);
+//			Log.e(TAG, "onResumeCamera2. CameraIndex = " + CameraController.CameraIndex);
 			Camera2Controller.getInstance().camCharacter = Camera2Controller.getInstance().manager
 					.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
 
@@ -352,7 +350,7 @@ public class Camera2Controller
 
 	public static void openCameraCamera2()
 	{
-		Log.e(TAG, "openCameraCamera2()");
+//		Log.e(TAG, "openCameraCamera2()");
 		// Camera2 open camera
 		// -----------------------------------------------------------------
 		if (Camera2Controller.getCamera2() != null)
@@ -401,7 +399,7 @@ public class Camera2Controller
 		}
 		wlevel = Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_WHITE_LEVEL);
 
-		Log.d(TAG, "HARWARE_SUPPORT_LEVEL = " + Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL));
+//		Log.d(TAG, "HARWARE_SUPPORT_LEVEL = " + Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL));
 		
 		// check that full hw level is supported
 		if (Camera2Controller.isFullHardwareLevel())
@@ -429,7 +427,7 @@ public class Camera2Controller
 			CameraCharacteristics cc = Camera2Controller.getInstance().manager.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
 			StreamConfigurationMap configMap = cc.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 			isSupported = configMap.isOutputSupportedFor(captureFormat);
-			Log.d(TAG, "Capture format " + captureFormat + " is supported? " + isSupported);
+//			Log.d(TAG, "Capture format " + captureFormat + " is supported? " + isSupported);
 			return isSupported;
 			
 		} catch (CameraAccessException e)
@@ -442,7 +440,7 @@ public class Camera2Controller
 
 	public static void setCaptureFormat(int captureFormat)
 	{
-		Log.e(TAG, "set captureFormat.");
+//		Log.e(TAG, "set captureFormat.");
 		Camera2Controller.captureFormat = captureFormat;
 	}
 
@@ -453,7 +451,7 @@ public class Camera2Controller
 			CameraDevice camera = Camera2Controller.getCamera2();
 			if(camera == null)
 				return false;
-			Log.d(TAG, "Create capture session. Surface list size = " + sfl.size());
+//			Log.d(TAG, "Create capture session. Surface list size = " + sfl.size());
 			// Here, we create a CameraCaptureSession for camera preview.
 			camera.createCaptureSession(sfl, Camera2Controller.captureSessionStateCallback, null);
 		} catch (IllegalArgumentException e)
@@ -469,54 +467,54 @@ public class Camera2Controller
 	}
 
 	
-	public static void dumpCameraCharacteristics()
-	{
-		Log.i(TAG, "Total cameras found: " + CameraController.cameraIdList.length);
-
-		for (int i = 0; i < CameraController.cameraIdList.length; ++i)
-			Log.i(TAG, "Camera Id: " + CameraController.cameraIdList[i]);
-
-		// Query a device for Capabilities
-		CameraCharacteristics cc = null;
-		try
-		{
-			cc = Camera2Controller.getInstance().manager
-					.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
-		} catch (CameraAccessException e)
-		{
-			Log.d(TAG, "getCameraCharacteristics failed");
-			e.printStackTrace();
-		}
-
-		// dump all the keys from CameraCharacteristics
-		List<Key<?>> ck = cc.getKeys();
-
-		for (int i = 0; i < ck.size(); ++i)
-		{
-			Key<?> cm = ck.get(i);
-
-			if (cm.getName() == android.util.Size[].class.getName())
-			{
-				android.util.Size[] s = (android.util.Size[]) cc.get(cm);
-				Log.i(TAG, "Camera characteristics: " + cm.getName() + ": " + s[0].toString());
-			} else
-			{
-				String cmTypeName = cm.getName();
-				Log.i(TAG, "Camera characteristics: " + cm.getName() + "(" + cmTypeName + "): " + cc.get(cm));
-			}
-		}
-
-		StreamConfigurationMap configMap = cc.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-		// dump supported image formats (all of preview, video and still image)
-		int[] cintarr = configMap.getOutputFormats();
-		for (int k = 0; k < cintarr.length; ++k)
-			Log.i(TAG, "Scaler supports format: " + cintarr[k]);
-
-		// dump supported image sizes (all of preview, video and still image)
-		android.util.Size[] imSizes = configMap.getOutputSizes(ImageFormat.YUV_420_888);
-		for (int i = 0; i < imSizes.length; ++i)
-			Log.i(TAG, "Scaler supports output size: " + imSizes[i].getWidth() + "x" + imSizes[i].getHeight());
-	}
+//	public static void dumpCameraCharacteristics()
+//	{
+////		Log.i(TAG, "Total cameras found: " + CameraController.cameraIdList.length);
+//
+////		for (int i = 0; i < CameraController.cameraIdList.length; ++i)
+////			Log.i(TAG, "Camera Id: " + CameraController.cameraIdList[i]);
+//
+//		// Query a device for Capabilities
+//		CameraCharacteristics cc = null;
+//		try
+//		{
+//			cc = Camera2Controller.getInstance().manager
+//					.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
+//		} catch (CameraAccessException e)
+//		{
+//			Log.d(TAG, "getCameraCharacteristics failed");
+//			e.printStackTrace();
+//		}
+//
+//		// dump all the keys from CameraCharacteristics
+//		List<Key<?>> ck = cc.getKeys();
+//
+//		for (int i = 0; i < ck.size(); ++i)
+//		{
+//			Key<?> cm = ck.get(i);
+//
+//			if (cm.getName() == android.util.Size[].class.getName())
+//			{
+//				android.util.Size[] s = (android.util.Size[]) cc.get(cm);
+////				Log.i(TAG, "Camera characteristics: " + cm.getName() + ": " + s[0].toString());
+//			} else
+//			{
+//				String cmTypeName = cm.getName();
+////				Log.i(TAG, "Camera characteristics: " + cm.getName() + "(" + cmTypeName + "): " + cc.get(cm));
+//			}
+//		}
+//
+//		StreamConfigurationMap configMap = cc.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+//		// dump supported image formats (all of preview, video and still image)
+//		int[] cintarr = configMap.getOutputFormats();
+//		for (int k = 0; k < cintarr.length; ++k)
+//			Log.i(TAG, "Scaler supports format: " + cintarr[k]);
+//
+//		// dump supported image sizes (all of preview, video and still image)
+//		android.util.Size[] imSizes = configMap.getOutputSizes(ImageFormat.YUV_420_888);
+//		for (int i = 0; i < imSizes.length; ++i)
+//			Log.i(TAG, "Scaler supports output size: " + imSizes[i].getWidth() + "x" + imSizes[i].getHeight());
+//	}
 
 	public static CameraController.Size getMaxCameraImageSizeCamera2(int captureFormat)
 	{
@@ -736,7 +734,7 @@ public class Camera2Controller
 
 	public static void fillPictureSizeList(List<CameraController.Size> pictureSizes)
 	{
-		Log.e(TAG, "fillPictureSizeList. USE captureFormat.");
+//		Log.e(TAG, "fillPictureSizeList. USE captureFormat.");
 		CameraCharacteristics camCharacter = Camera2Controller.getInstance().camCharacter;
 		StreamConfigurationMap configMap = camCharacter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 		Size[] cs = configMap.getOutputSizes(captureFormat);
@@ -2220,7 +2218,7 @@ public class Camera2Controller
 								public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request,
 										TotalCaptureResult result)
 								{
-									Log.e(TAG, "TRIGER CAPTURE COMPLETED");
+//									Log.e(TAG, "TRIGER CAPTURE COMPLETED");
 									
 									precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
 											CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
@@ -2421,7 +2419,7 @@ public class Camera2Controller
 		
 		int colorEffect = appInterface.getColorEffectPref();
 
-		Log.e(TAG, "configurePreviewRequest()");
+//		Log.e(TAG, "configurePreviewRequest()");
 		previewRequestBuilder = camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
 		
 		previewRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, colorEffect);
@@ -2570,7 +2568,7 @@ public class Camera2Controller
 //			RggbChannelVector rggb = new RggbChannelVector(R, 1.0f, 1.0f, B);
 			
 //			Log.e(TAG, "RGGB: R:" + R + " G:" + G_even + " B:" + B);
-			Log.e(TAG, "RGGB vector: " + rggbVector.toString());
+//			Log.e(TAG, "RGGB vector: " + rggbVector.toString());
 			previewRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_GAINS, rggbVector);
 			previewRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_TRANSFORM, new ColorSpaceTransform(colorTransformMatrix));
 		}
@@ -2659,7 +2657,7 @@ public class Camera2Controller
 		@Override
 		public void onDisconnected(CameraDevice arg0)
 		{
-			Log.e(TAG, "CameraDevice.StateCallback.onDisconnected");
+//			Log.e(TAG, "CameraDevice.StateCallback.onDisconnected");
 			if (Camera2Controller.getInstance().camDevice != null)
 			{
 				try
@@ -2685,7 +2683,7 @@ public class Camera2Controller
 		@Override
 		public void onOpened(CameraDevice arg0)
 		{
-			Log.e(TAG, "CameraDevice.StateCallback.onOpened");
+//			Log.e(TAG, "CameraDevice.StateCallback.onOpened");
 
 			Camera2Controller.getInstance().camDevice = arg0;
 
@@ -2695,7 +2693,7 @@ public class Camera2Controller
 		@Override
 		public void onClosed(CameraDevice arg0)
 		{
-			Log.d(TAG,"CameraDevice.StateCallback.onClosed");
+//			Log.d(TAG,"CameraDevice.StateCallback.onClosed");
 			CameraController.sendMessage(ApplicationInterface.MSG_CAMERA_STOPED, 0);
 		}
 	};
@@ -2733,7 +2731,7 @@ public class Camera2Controller
 						appInterface.relaunchCamera();
 					} else
 					{
-						Log.e(TAG, "Session.onConfigured");
+//						Log.e(TAG, "Session.onConfigured");
 						CameraController.sendMessage(ApplicationInterface.MSG_CAMERA_CONFIGURED, 0);
 					}
 				}
@@ -2875,14 +2873,14 @@ public class Camera2Controller
 				CaptureRequest request,
 				TotalCaptureResult result)
 		{
-			Log.e(TAG, "CAPTURE COMPLETED");
+//			Log.e(TAG, "CAPTURE COMPLETED");
 			RggbChannelVector rggb = result.get(CaptureResult.COLOR_CORRECTION_GAINS);
 			ColorSpaceTransform transformMatrix = result.get(CaptureResult.COLOR_CORRECTION_TRANSFORM);
-			Log.e(TAG, "RGGB = R: " + rggb.getRed() + " G_even: " + rggb.getGreenEven()+ " G_odd: " + rggb.getGreenOdd() + " B: " + rggb.getBlue());
-			Log.e(TAG, "Transform Matrix: " + transformMatrix.toString());
-			Log.e(TAG, "Exposure time = " + result.get(CaptureResult.SENSOR_EXPOSURE_TIME));
-			Log.e(TAG, "Frame duration = " + result.get(CaptureResult.SENSOR_FRAME_DURATION));
-			Log.e(TAG, "Sensor sensitivity = " + result.get(CaptureResult.SENSOR_SENSITIVITY));
+//			Log.e(TAG, "RGGB = R: " + rggb.getRed() + " G_even: " + rggb.getGreenEven()+ " G_odd: " + rggb.getGreenOdd() + " B: " + rggb.getBlue());
+//			Log.e(TAG, "Transform Matrix: " + transformMatrix.toString());
+//			Log.e(TAG, "Exposure time = " + result.get(CaptureResult.SENSOR_EXPOSURE_TIME));
+//			Log.e(TAG, "Frame duration = " + result.get(CaptureResult.SENSOR_FRAME_DURATION));
+//			Log.e(TAG, "Sensor sensitivity = " + result.get(CaptureResult.SENSOR_SENSITIVITY));
 			pluginManager.onCaptureCompleted(result);
 		}
 	};
@@ -3009,7 +3007,7 @@ public class Camera2Controller
 
 				} else if (im.getFormat() == ImageFormat.JPEG)
 				{
-					Log.e(TAG, "captured JPEG");
+//					Log.e(TAG, "captured JPEG");
 					ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
 
 					frame_len = jpeg.limit();
@@ -3088,7 +3086,7 @@ public class Camera2Controller
 						isYUV = true;
 						
 					} else {
-						Log.e(TAG, "captured RAW");
+//						Log.e(TAG, "captured RAW");
 						ByteBuffer raw = im.getPlanes()[0].getBuffer();
 						
 						frame_len = raw.limit();
