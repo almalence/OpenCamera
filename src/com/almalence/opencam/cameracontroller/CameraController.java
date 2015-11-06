@@ -976,7 +976,25 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	/* Preview buffer methods */
 	public static void allocatePreviewBuffer(double size)
 	{
-		pviewBuffer = new byte[(int) Math.ceil(size)];
+		try
+		{
+			pviewBuffer = new byte[(int) Math.ceil(size)];
+		}
+		catch(OutOfMemoryError e)
+		{
+			e.printStackTrace();
+
+		    System.gc();
+
+		    try
+		    {
+		    	pviewBuffer = new byte[(int) Math.ceil(size)];
+		    }
+		    catch (OutOfMemoryError e2)
+		    {
+		      e2.printStackTrace();
+		    }
+		}
 	}
 
 	public static byte[] getPreviewBuffer()
@@ -1370,6 +1388,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		CameraController.FastIdxelist = new ArrayList<Integer>();
 
 		Camera.Parameters cp = getCameraParameters();
+		if(cp == null)
+			return;
 		List<Camera.Size> cs = cp.getSupportedPictureSizes();
 
 		if (cs == null)
