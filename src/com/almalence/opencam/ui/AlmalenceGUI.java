@@ -2764,6 +2764,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 						mMeteringMode = CameraParameters.meteringModeManual;
 						ApplicationScreen.instance.setCameraMeteringMode(mMeteringMode);
+						ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
+								ApplicationInterface.MSG_EXPOSURE_CHANGED);
 
 						// Trigger focus to lock AF, before CONTROL_AE_MODE will
 						// be set to OFF
@@ -2905,6 +2907,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				}
 
 				MainScreen.getInstance().setCameraMeteringMode(mMeteringMode);
+				ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
+						ApplicationInterface.MSG_EXPOSURE_CHANGED);
 			} else
 			{
 				mMeteringAreasSupported = false;
@@ -5978,6 +5982,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 			preferences.edit().putInt(ApplicationScreen.sMeteringModePref, newMode).commit();
 			ApplicationScreen.instance.setCameraMeteringMode(newMode);
+			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
+					ApplicationInterface.MSG_EXPOSURE_CHANGED);
 		}
 
 		RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_MET);

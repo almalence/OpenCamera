@@ -196,7 +196,7 @@ public class FocusVFPlugin extends PluginViewfinder
 				
 				updateCurrentTouch(event);
 
-				if (splitMode || mMeteringIndicatorRotateLayout.getVisibility() == View.GONE)
+				if (splitMode)
 				{
 					onTouchFocusArea(event);
 					return true;
@@ -231,26 +231,39 @@ public class FocusVFPlugin extends PluginViewfinder
 			@Override
 			public boolean onTouch(View v, MotionEvent event)
 			{
+				updateCurrentTouch(event);
+				
 				if (event.getAction() == MotionEvent.ACTION_MOVE)
 					splitMode = true;
 				
 				// Check if it's double click
-				if (event.getAction() == MotionEvent.ACTION_UP && !splitMode)
+				if (event.getAction() == MotionEvent.ACTION_UP && (!splitMode || CameraController.getFocusMode() == CameraParameters.MF_MODE))
 				{
 					lastTouchTime1 = lastTouchTime2;
 					lastTouchTime2 = System.currentTimeMillis();
 
 					if (lastTouchTime2 - lastTouchTime1 < 1000)
 					{
-						isDoubleClick = true;
-						splitMode = false;
+						if (ApplicationScreen.instance.isShotOnTap() == 2 && (mState == STATE_SUCCESS || CameraController.getFocusMode() == CameraParameters.MF_MODE))
+						{
+							String modeID = PluginManager.getInstance().getActiveMode().modeID;
+							if (!modeID.equals("video") && !currentTouch)
+							{
+								ApplicationScreen.getGUIManager().onHardwareShutterButtonPressed();
+								
+							}
+							isDoubleClick = false;
+							splitMode = false;
+						}
+						else {
+							isDoubleClick = true;
+							splitMode = false;
+						}
 					} else
 					{
 						isDoubleClick = false;
 					}
 				}
-				
-				updateCurrentTouch(event);
 
 				onTouchMeteringArea(event);
 				return true;
@@ -600,7 +613,11 @@ public class FocusVFPlugin extends PluginViewfinder
 		}
 
 		// Check if it's double click
-		if (e.getAction() == MotionEvent.ACTION_UP)
+		if (e.getAction() == MotionEvent.ACTION_UP
+				&& (
+						(CameraController.getFocusMode() == CameraParameters.MF_MODE && ApplicationScreen.getMeteringMode() == CameraParameters.meteringModeManual) 
+						|| mFocusIndicator.isVisible()
+						|| (CameraController.getFocusMode() == CameraParameters.MF_MODE && mMeteringIndicatorRotateLayout.getVisibility() == View.VISIBLE)))
 		{
 			lastTouchTime1 = lastTouchTime2;
 			lastTouchTime2 = System.currentTimeMillis();
@@ -616,7 +633,7 @@ public class FocusVFPlugin extends PluginViewfinder
 					mHandler.removeMessages(START_TOUCH_FOCUS);
 
 					// If state is Focused start capture
-					if (mState == STATE_SUCCESS)
+					if (mState == STATE_SUCCESS || CameraController.getFocusMode() == CameraParameters.MF_MODE)
 					{
 						String modeID = PluginManager.getInstance().getActiveMode().modeID;
 						if (!modeID.equals("video") && !currentTouch)
@@ -696,6 +713,8 @@ public class FocusVFPlugin extends PluginViewfinder
 			}
 		case MotionEvent.ACTION_UP:
 			mHandler.removeMessages(START_TOUCH_FOCUS);
+			lastTouchTime1 = lastTouchTime2;
+			lastTouchTime2 = System.currentTimeMillis();
 			if (focusCanceled || delayedFocus)
 				return true;
 			break;
@@ -849,6 +868,8 @@ public class FocusVFPlugin extends PluginViewfinder
 		if (e.getActionMasked() == MotionEvent.ACTION_POINTER_UP || e.getActionMasked() == MotionEvent.ACTION_UP)
 		{
 			setMeteringParameters();
+			mHandler.removeMessages(RESET_TOUCH_FOCUS);
+			mHandler.sendEmptyMessageDelayed(RESET_TOUCH_FOCUS, RESET_TOUCH_FOCUS_DELAY);
 		}
 
 		mMeteringIndicatorRotateLayout.requestLayout();
@@ -912,7 +933,7 @@ public class FocusVFPlugin extends PluginViewfinder
 				ApplicationScreen.getPreviewSurfaceView().getWidth(), ApplicationScreen.getPreviewSurfaceView().getHeight(),
 				mFocusArea.get(0).rect);
 
-		if (ApplicationScreen.getMeteringMode() != -1 && ApplicationScreen.getMeteringMode() == CameraParameters.meteringModeSpot)
+		if (ApplicationScreen.getMeteringMode() != -1 && (ApplicationScreen.getMeteringMode() == CameraParameters.meteringModeSpot || CameraController.getFocusMode() == CameraParameters.MF_MODE))
 			calculateTapAreaByTopLeft(focusWidth, focusHeight, 1f, top, left, ApplicationScreen.getPreviewSurfaceView()
 					.getWidth(), ApplicationScreen.getPreviewSurfaceView().getHeight(), mMeteringArea.get(0).rect);
 		else
@@ -932,6 +953,18 @@ public class FocusVFPlugin extends PluginViewfinder
 			setMeteringParameters();
 			autoFocus();
 
+		} else if (mMeteringArea != null && ApplicationScreen.getMeteringMode() != CameraParameters.meteringModeManual)
+		{
+			setMeteringParameters();
+			updateFocusUI();
+			
+			mHandler.removeMessages(RESET_TOUCH_FOCUS);
+			mHandler.sendEmptyMessageDelayed(RESET_TOUCH_FOCUS, RESET_TOUCH_FOCUS_DELAY);
+
+			if (e.getAction() == MotionEvent.ACTION_UP && ApplicationScreen.instance.isShotOnTap() == 1
+					&& !PluginManager.getInstance().getActiveMode().modeID.equals("video") && !currentTouch)
+				ApplicationScreen.getGUIManager().onHardwareShutterButtonPressed();
+			
 		} else if (e.getAction() == MotionEvent.ACTION_UP && ApplicationScreen.instance.isShotOnTap() == 1
 				&& !PluginManager.getInstance().getActiveMode().modeID.equals("video") && !currentTouch)
 		{
@@ -1182,8 +1215,13 @@ public class FocusVFPlugin extends PluginViewfinder
 		{
 			if (mFocusArea == null) {
 				focusIndicator.clear();
-				//mFocusIndicatorRotateLayout.setVisibility(View.GONE);
-				mMeteringIndicatorRotateLayout.setVisibility(View.GONE);
+				if (mMeteringArea == null)
+				{
+					mMeteringIndicatorRotateLayout.setVisibility(View.GONE);
+				}
+				else {
+					mMeteringIndicatorRotateLayout.setVisibility(View.VISIBLE);
+				}
 			}
 			else
 			{
@@ -1421,6 +1459,9 @@ public class FocusVFPlugin extends PluginViewfinder
 				preferenceFocusMode = fm;
 				cancelAutoFocus();
 			}
+		} else if (arg1 == ApplicationInterface.MSG_EXPOSURE_CHANGED)
+		{
+			cancelAutoFocus();
 		} else if (arg1 == ApplicationInterface.MSG_PREVIEW_CHANGED)
 		{
 			initialize(CameraController.isFrontCamera(), 90);
