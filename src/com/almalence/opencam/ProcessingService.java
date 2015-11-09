@@ -58,6 +58,7 @@ public class ProcessingService extends NotificationService
 		@Override
 		protected Void doInBackground(Void... params)
 		{
+			android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_DEFAULT);
 			Plugin processing;
 			Plugin export;
 
@@ -70,6 +71,7 @@ public class ProcessingService extends NotificationService
 
 			if (null != processing)
 			{
+//				Log.wtf("AlmaShot", "Processing ThreadPriority: " + android.os.Process.getThreadPriority(android.os.Process.myTid()));
 				processing.onStartProcessing(sessionID);
 				
 				if (processing.isPostProcessingNeeded())

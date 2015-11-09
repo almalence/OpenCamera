@@ -76,7 +76,8 @@ public class AlarmReceiver extends BroadcastReceiver
 
 		try
 		{
-			if (ApplicationScreen.instance == null || ApplicationScreen.getCameraController() == null || (CameraController.getCamera() == null && CameraController.getCamera2() == null))
+			if (ApplicationScreen.instance == null || ApplicationScreen.getCameraController() == null ||
+				(CameraController.isUseCamera2()? CameraController.getCamera2() == null : CameraController.getCamera() == null))
 			{
 				Intent dialogIntent = new Intent(context, MainScreen.class);
 				dialogIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT

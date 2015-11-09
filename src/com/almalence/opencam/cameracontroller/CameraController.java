@@ -46,6 +46,7 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.media.Image;
+import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -95,11 +96,21 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	protected static final long						MPIX_1080		= 1920 * 1080;
 
 	//Device models markers. Used to separate device dependent program's logic
-	public static boolean							isNexus			= Build.MODEL.contains("Nexus 5") ||
-																	  Build.MODEL.contains("Nexus 6");
-
-	public static boolean							isNexus5		= Build.MODEL.contains("Nexus 5");
-	public static boolean							isNexus6		= Build.MODEL.contains("Nexus 6");
+	public static boolean							isNexus5x		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").equals("nexus5x");
+	public static boolean							isNexus6p		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").equals("nexus6p");
+	public static boolean							isNexus5		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").equals("nexus5");
+	public static boolean							isNexus6		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").equals("nexus6");
+	public static boolean							isNexus7		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus7");
+	public static boolean							isNexus9		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("nexus9");
+	
+	public static boolean							isNexus5or6		= CameraController.isNexus5  ||
+																	  CameraController.isNexus5x ||
+																	  CameraController.isNexus6  ||
+			  														  CameraController.isNexus6p;
+	
+	public static boolean							isNexus			= CameraController.isNexus5or6 ||
+																	  CameraController.isNexus7    ||
+			  														  CameraController.isNexus9;
 
 	public static boolean							isFlex2			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h959") ||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-f510") ||
@@ -117,17 +128,42 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-ls991") ||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-vs986") ||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-us991");
+	
+	public static boolean							isG3			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-d85")   ||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-d72")   ||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-d69")   ||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-vs985") ||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-ls990");
+	
+	public static boolean							isG2			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-d80") ||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-vs980") ||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-ls980");
 
-	public static boolean							isAndroidOne	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("micromax aq4501");
+	public static boolean							isAndroidOne	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("micromaxaq4501");
 
-	public static boolean							isGalaxyS6		= Build.MODEL.contains("SM-G920") ||
-														  			  Build.MODEL.contains("SM-G925");
+	public static boolean							isGalaxyS6		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g920") ||
+														  			  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g925");
 	
-	public static boolean							isGalaxyS5		= Build.MODEL.contains("SM-G900");
+	public static boolean							isGalaxyS5		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g900");
 	
-	public static boolean							isGalaxyNote4	= Build.MODEL.contains("SM-N910");
+	public static boolean							isGalaxyS4		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("gt-i95");
 	
-	public static boolean							isSony			= Build.BRAND.contains("sony");
+	public static boolean							isGalaxyS4Mini	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("gt-i9190");
+	
+	public static boolean							isGalaxyNote3	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-n900") ||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g900");
+	
+	public static boolean							isGalaxyNote4	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-n910");
+	
+	public static boolean							isHTCOne		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("htcone");
+	public static boolean							isHTCOneX		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("htconex");
+	
+	public static boolean							isSony			= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("sony");
+	
+	public static boolean							isHuawei		= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("huawei");
+	
+	public static boolean							isGionee		= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("gionee");
+	
 	
 
 	// Android camera parameters constants
@@ -263,9 +299,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean							isOldCameraOneModeLaunched		= false;
 
 	private static boolean							isCamera2						= false; //Flag of using camera2 interface
-	private static boolean							isCamera2Supported				= false;
+	private static boolean							isCamera2Allowed				= false; //Flag to show whether OpenCamera support camera2 mode on current device
+	private static boolean							isCamera2Supported				= false; //Flag to show whether camera2 is available on current device
 	protected static boolean						isRAWCaptureSupported			= false; //Only HARDWARE_LEVEL_FULL devices may capture RAW frames
 	protected static boolean						isManualSensorSupported			= false; //Manual sensor means user's control of white balance and exposure time
+	
+	public static boolean							openCameraWaiting				= false; //TODO: Requesting Permissions at runtime
 
 	protected static String[]						cameraIdList					= { "" }; //Id's of front and back cameras
 
@@ -283,6 +322,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static float							expoCompensationStep			= 0;
 
 	protected static boolean						mVideoStabilizationSupported	= false;
+	protected static boolean						mVideoSnapshotSupported	= false;
 
 	private static int[]							supportedSceneModes;
 	private static int[]							supportedWBModes;
@@ -749,34 +789,39 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		try
 		{
+			//General support of camera2 interface. OpenCamera allows to use camera2 not on all devices which implements camera2
+			if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService(Context.CAMERA_SERVICE) != null)
+				isCamera2Supported = true;
+			
 			//Now only LG Flex2, G4, Nexus 5\6 and Andoid One devices support camera2 without critical problems
 			//We have to test Samsung Galaxy S6 to include in this list of allowed devices
-			if (!(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService("camera") != null)
-					|| (!isFlex2 && !isNexus && !isAndroidOne  /*&& !isGalaxyS6 &&*/ /* && !isG4*/))
+			if (!(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService(Context.CAMERA_SERVICE) != null)
+					|| (!isFlex2 && !isNexus5or6 && !isAndroidOne  /*&& !isGalaxyS6 &&*/ /* && !isG4*/))
 			{
 				isCamera2 = false;
-				isCamera2Supported = false;
+				isCamera2Allowed = false;
 				prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera2Key), false)
 						.commit();
 			} else
-				isCamera2Supported = true;
+				isCamera2Allowed = true;
 		} catch (Exception e)
 		{
 			e.printStackTrace();
 			isCamera2 = false;
+			isCamera2Allowed = false;
 			isCamera2Supported = false;
 			prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera2Key), false)
 					.commit();
 		}
 
-		if (CameraController.isCamera2Supported)
+		if (CameraController.isCamera2Allowed)
 		{
 			Camera2Controller.onCreateCamera2(mainContext, appInterface, pluginManager, messageHandler);
 			//We supports only devices with hardware level FULL and LIMITED
 			if (!Camera2Controller.checkHardwareLevel())
 			{
 				isCamera2 = false;
-				isCamera2Supported = false;
+				isCamera2Allowed = false;
 				prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera2Key), false)
 						.commit();
 			}
@@ -787,7 +832,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static void createCamera2Manager()
 	{
-		if (CameraController.isCamera2Supported)
+		if (CameraController.isCamera2Allowed)
 			Camera2Controller.onCreateCamera2(mainContext, appInterface, pluginManager, messageHandler);
 	}
 
@@ -818,7 +863,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			total_frames = 0;
 
-			if (CameraController.isCamera2Supported)
+			if (CameraController.isCamera2Allowed)
 				Camera2Controller.onResumeCamera2();
 		}
 	}
@@ -859,12 +904,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				if (camera != null)
 				{
 					camera.setPreviewCallback(null);
-					//Sony devices and Samsung Galaxy S5 has unexpected behavior if preview isn't stopped until mode changes
-					if (isSony || isGalaxyS5)
+					//Sony devices, some Huawei devices and Samsung Galaxy S5 has unexpected behavior if preview isn't stopped until mode changes
+					if (isSony || isGalaxyS5 || isHuawei || isGionee)
 						camera.stopPreview();
 					if (!isModeSwitching)
 					{
-						if (!isSony || isGalaxyS5)
+						if (!isSony && !isGalaxyS5 && !isHuawei && !isGionee)
 							camera.stopPreview();
 						camera.release();
 						camera = null;
@@ -931,7 +976,25 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	/* Preview buffer methods */
 	public static void allocatePreviewBuffer(double size)
 	{
-		pviewBuffer = new byte[(int) Math.ceil(size)];
+		try
+		{
+			pviewBuffer = new byte[(int) Math.ceil(size)];
+		}
+		catch(OutOfMemoryError e)
+		{
+			e.printStackTrace();
+
+		    System.gc();
+
+		    try
+		    {
+		    	pviewBuffer = new byte[(int) Math.ceil(size)];
+		    }
+		    catch (OutOfMemoryError e2)
+		    {
+		      e2.printStackTrace();
+		    }
+		}
 	}
 
 	public static byte[] getPreviewBuffer()
@@ -956,9 +1019,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return isCamera2;
 	}
 	
-	public static boolean isCamera2Supported()
+	public static boolean isCamera2Allowed()
 	{
-		return isCamera2Supported;
+		return isCamera2Allowed;
 	}
 	
 	//returns camera2 supported level. -1 if not suppoerted.
@@ -993,7 +1056,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		boolean SuperModeOk = false;
 
-		if (isCamera2Supported)
+		if (isCamera2Allowed)
 		{
 			// if we're working via Camera2 API -
 			// check if device conform to Super Mode requirements
@@ -1018,7 +1081,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			// hard-code to enable these only, as we have no profiles for
 			// other models at the moment
-			if (CameraController.isNexus || CameraController.isFlex2/*
+			if ((CameraController.isNexus5or6 || CameraController.isFlex2)
+					&& (!CameraController.isNexus5x && !CameraController.isNexus6p)
+					
+					/*
 																	 * ||
 																	 * CameraController
 																	 * .
@@ -1124,6 +1190,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 				if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 					cameraController.mVideoStabilizationSupported = getVideoStabilizationSupported();
+				
+				cameraController.mVideoSnapshotSupported = getVideoSnapshotSupported();
 
 				// screen rotation
 				if (!pluginManager.shouldPreviewToGPU())
@@ -1146,8 +1214,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						e.printStackTrace();
 					}
 				}
-			} else
-				Camera2Controller.openCameraCamera2();
+			}
+			else
+			{
+				 if(ApplicationScreen.isCameraPermissionGranted())
+					 Camera2Controller.openCameraCamera2();
+				 else
+					openCameraWaiting = true; 
+			}
 
 			pluginManager.selectDefaults();
 
@@ -1279,11 +1353,25 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		CameraController.SupportedPictureSizesList = new ArrayList<CameraController.Size>();
 		if (!isCamera2)
 		{
-			if (camera != null && camera.getParameters() != null)
+			if (camera != null)
 			{
-				List<Camera.Size> list = camera.getParameters().getSupportedPictureSizes();
-				for (Camera.Size sz : list)
-					CameraController.SupportedPictureSizesList.add(new CameraController.Size(sz.width, sz.height));
+				try
+				{
+					Camera.Parameters params = camera.getParameters();
+					if(params != null)
+					{
+						List<Camera.Size> list = camera.getParameters().getSupportedPictureSizes();
+						for (Camera.Size sz : list)
+							CameraController.SupportedPictureSizesList.add(new CameraController.Size(sz.width, sz.height));
+					}
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+					camera.release();
+					camera = null;
+					ApplicationScreen.instance.finish();
+				}
 			}
 		} else
 			Camera2Controller.fillPictureSizeList(CameraController.SupportedPictureSizesList);
@@ -1300,12 +1388,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		CameraController.FastIdxelist = new ArrayList<Integer>();
 
 		Camera.Parameters cp = getCameraParameters();
+		if(cp == null)
+			return;
 		List<Camera.Size> cs = cp.getSupportedPictureSizes();
 
 		if (cs == null)
 			return;
 
-		if (Build.MODEL.contains("HTC One X"))
+		if (CameraController.isHTCOneX)
 		{
 			if (!CameraController.isFrontCamera())
 			{
@@ -1328,7 +1418,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			int highestSizeHeight = sHighest.height;
 
 			//Drop buggy image size on some Samsung device
-			if (Build.MODEL.contains("GT-I9190") && isFrontCamera() && (currSizeWidth * currSizeHeight == 1920 * 1080))
+			if (CameraController.isGalaxyS4Mini && isFrontCamera() && (currSizeWidth * currSizeHeight == 1920 * 1080))
 				continue;
 
 			if ((long) currSizeWidth * currSizeHeight > (long) highestSizeWidth * highestSizeHeight)
@@ -1637,16 +1727,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				//Camera2 interface doesn't have direct settings of camera preview size
 				//Instead of this in camera2 interface we have to create ImageReaders of desired sizes
-//				Camera2Controller.setupImageReadersCamera2();
+				Camera2Controller.setupImageReadersCamera2();
 			}
 		}
 	}
 	
-	public static void setupImageReadersCamera2()
-	{
-		if (!CameraController.isRemoteCamera() && CameraController.isCamera2)
-				Camera2Controller.setupImageReadersCamera2();
-	}
+//	public static void setupImageReadersCamera2()
+//	{
+//		if (!CameraController.isRemoteCamera() && CameraController.isCamera2)
+//				Camera2Controller.setupImageReadersCamera2();
+//	}
 
 	//Setup camera logic in camera2 interface
 	public static void setSurfaceHolderFixedSize(int width, int height)
@@ -1879,7 +1969,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	@TargetApi(21)
 	public static CameraCharacteristics getCameraCharacteristics()
 	{
-		return Camera2Controller.getCameraParameters2();
+		return Camera2Controller.getCameraCharacteristics();
 	}
 
 	public static void startCameraPreview()
@@ -1916,6 +2006,22 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			camera.unlock();
 	}
 
+	public static void setRecordingHint(boolean hint)
+	{
+		if (!CameraController.isRemoteCamera())
+		{
+			if (!CameraController.isCamera2)
+			{
+				if (camera != null && camera.getParameters() != null)
+				{
+					Camera.Parameters cp = CameraController.getCameraParameters();
+					cp.setRecordingHint(hint);
+					CameraController.setCameraParameters(cp);
+				}
+			}
+		}
+	}
+	
 	@TargetApi(15)
 	public static void setVideoStabilization(boolean stabilization)
 	{
@@ -1958,8 +2064,38 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return false;
 		}
 	}
+	
+	public static boolean getVideoSnapshotSupported()
+	{
+		try
+		{
+			if (!CameraController.isRemoteCamera())
+			{
+				if (!CameraController.isCamera2)
+				{
+					if (camera == null || (camera != null && camera.getParameters() == null))
+						return false;
+
+					return camera.getParameters().isVideoSnapshotSupported();
+				} else
+					return true;
+			} else
+			{
+				return false;
+			}
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+	}
 
 	public static boolean isVideoStabilizationSupported()
+	{
+		return mVideoStabilizationSupported;
+	}
+	
+	public static boolean isVideoSnapshotSupported()
 	{
 		return mVideoStabilizationSupported;
 	}
@@ -1989,7 +2125,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 
-	public static boolean isExposureLock()
+	public static boolean isExposureLocked()
 	{
 		try
 		{
@@ -2002,7 +2138,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 					return camera.getParameters().getAutoExposureLock();
 				} else
-					return true;
+					return Camera2Controller.isExposureLocked();
 			} else
 			{
 				return false;
@@ -2014,7 +2150,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 
-	public static void setAutoExposureLock(boolean lock)
+	public static boolean setAutoExposureLock(boolean lock)
 	{
 		try
 		{
@@ -2023,17 +2159,23 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				if (!CameraController.isCamera2)
 				{
 					if (camera == null || (camera != null && camera.getParameters() == null))
-						return;
+						return false;
 
 					Camera.Parameters params = camera.getParameters();
 					params.setAutoExposureLock(lock);
 					camera.setParameters(params);
 				} else
-					Camera2Controller.setAutoExposureLock(lock);
+					return Camera2Controller.setAutoExposureLock(lock);
 			}
+			else
+				return false;
 		} catch (Exception e)
 		{
 			e.printStackTrace();
+		}
+		finally
+		{
+			return true;
 		}
 	}
 
@@ -2062,7 +2204,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 
-	public static boolean isWhiteBalanceLock()
+	public static boolean isWhiteBalanceLocked()
 	{
 		try
 		{
@@ -2075,8 +2217,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 					return camera.getParameters().getAutoWhiteBalanceLock();
 				} else
-					return PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext())
-							.getBoolean(ApplicationScreen.sAWBLockPref, false);
+					return Camera2Controller.isWhiteBalanceLocked();
 			} else
 			{
 				return false;
@@ -2088,7 +2229,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 
-	public static void setAutoWhiteBalanceLock(boolean lock)
+	public static boolean setAutoWhiteBalanceLock(boolean lock)
 	{
 		try
 		{
@@ -2097,17 +2238,23 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				if (!CameraController.isCamera2)
 				{
 					if (camera == null || (camera != null && camera.getParameters() == null))
-						return;
+						return false;
 
 					Camera.Parameters params = camera.getParameters();
 					params.setAutoWhiteBalanceLock(lock);
 					camera.setParameters(params);
 				} else
-					Camera2Controller.setAutoWhiteBalanceLock(lock);
+					return Camera2Controller.setAutoWhiteBalanceLock(lock);
 			}
+			else
+				return false;
 		} catch (Exception e)
 		{
 			e.printStackTrace();
+		}
+		finally
+		{
+			return true;
 		}
 	}
 
@@ -2138,7 +2285,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 
-	public static int getMaxZoom()
+	public static float getMaxZoom()
 	{
 		if (!CameraController.isRemoteCamera())
 		{
@@ -2154,9 +2301,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				} else
 				{
 					//In camera2 interface zoom range lay between 1 and max scale factor
-					//getMaxZoomCamera2 returns zoom value multiplied to 10 for convenience
-					float maxZoom = Camera2Controller.getMaxZoomCamera2();
-					return (int) (maxZoom - 10.0f);
+					return Camera2Controller.getMaxZoomCamera2();
 				}
 			} catch (Exception e)
 			{
@@ -2169,7 +2314,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 
-	public static void setZoom(int value)
+	public static void setZoom(float value)
 	{
 		if (!CameraController.isRemoteCamera())
 		{
@@ -2178,11 +2323,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				Camera.Parameters cp = getCameraParameters();
 				if (cp != null)
 				{
-					cp.setZoom(value);
+					cp.setZoom((int)value);
 					setCameraParameters(cp);
 				}
 			} else
-				Camera2Controller.setZoom(value / 10.0f + 1f);
+				Camera2Controller.setZoom(value);
 		}
 	}
 
@@ -3685,6 +3830,22 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return false;
 	}
 
+	public static void setPreviewFrameRate(int frameRate)
+	{
+		if (!CameraController.isRemoteCamera())
+		{
+			if (!CameraController.isCamera2)
+			{
+				if (camera != null && CameraController.getCameraParameters() != null)
+				{
+					Camera.Parameters cp = CameraController.getCameraParameters();
+					cp.setPreviewFrameRate(frameRate);
+					CameraController.setCameraParameters(cp);
+				}
+			}
+		}
+	}
+	
 	public static int getPreviewFrameRate()
 	{
 		if (!CameraController.isCamera2)
@@ -3745,7 +3906,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return Camera2Controller.getHorizontalViewAngle();
 		}
 
-		if (Build.MODEL.contains("Nexus"))
+		if (CameraController.isNexus)
 			return 59.63f;
 
 		//Default value
@@ -3770,14 +3931,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return Camera2Controller.getVerticalViewAngle();
 		}
 
-		if (Build.MODEL.contains("Nexus"))
+		if (CameraController.isNexus)
 			return 46.66f;
 
 		//Default value
 		return 42.7f;
 	}
 
-	public static int getSensorOrientation()
+	public static int getSensorOrientation(int cameraIndex)
 	{
 		if (!isRemoteCamera())
 		{
@@ -3787,7 +3948,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				Camera.getCameraInfo(CameraIndex, cameraInfo);
 				return cameraInfo.orientation;
 			} else
-				return Camera2Controller.getInstance().getSensorOrientation();
+				return Camera2Controller.getInstance().getSensorOrientation(cameraIndex);
 		} else
 		{
 			return -1;
@@ -3827,10 +3988,21 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		SonyRemoteCamera.stopMovieRec();
 	}
 
+	public static void configureMediaRecorder(MediaRecorder mediaRecorder)
+	{
+		if (!CameraController.isRemoteCamera())
+		{
+			if (!CameraController.isCamera2)
+			{
+				mediaRecorder.setCamera(camera);		
+			}
+		}
+	}
+	
 	// Note: per-frame 'gain' and 'exposure' parameters are only effective for
 	// Camera2 API at the moment
 	public static int captureImagesWithParams(int nFrames, int format, int[] pause, int[] evRequested, int[] gain,
-			long[] exposure, boolean resInHeap, boolean indicate)
+			long[] exposure, boolean setPowerGamma, boolean resInHeap, boolean indicate)
 	{
 		pauseBetweenShots = pause;
 		evValues = evRequested;
@@ -3848,14 +4020,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 		if (!isRemoteCamera())
 		{
-			if (appInterface.getFlashModePref(ApplicationScreen.sDefaultFlashValue) == CameraParameters.FLASH_MODE_CAPTURE_TORCH)
-			{
-				// If current flash mode is FLASH_MODE_CAPTURE_TORCH, then turn on torch before capturing.
-				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_TORCH);
-			}
-
 			if (!CameraController.isCamera2)
 			{
+				if (appInterface.getFlashModePref(ApplicationScreen.sDefaultFlashValue) == CameraParameters.FLASH_MODE_CAPTURE_TORCH)
+				{
+					// If current flash mode is FLASH_MODE_CAPTURE_TORCH, then turn on torch before capturing.
+					CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_TORCH);
+				}
+				
 				takeYUVFrame = (format == CameraController.YUV) || (format == CameraController.YUV_RAW);
 				if (evRequested != null && evRequested.length >= total_frames)
 					CameraController.setExposure();
@@ -3879,7 +4051,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				}
 				return 0;
 			} else
-				return Camera2Controller.captureImageWithParamsCamera2(nFrames, format, pause, evRequested, gain, exposure,
+				return Camera2Controller.captureImageWithParamsCamera2(nFrames, format, pause, evRequested, gain, exposure, setPowerGamma,
 						resultInHeap, indicateCapturing);
 		} else
 		{
@@ -4120,7 +4292,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public void onPreviewFrame(byte[] data, Camera camera)
 	{
 		pluginManager.onPreviewFrame(data);
-		CameraController.getCamera().addCallbackBuffer(pviewBuffer);
+		if(pviewBuffer != null)
+			CameraController.getCamera().addCallbackBuffer(pviewBuffer);
 
 		//If capture plugin request image with size equals size of preview frame
 		//These tricky logic isn't affects capture plugin. It still request and received image as usual
@@ -4153,7 +4326,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		//have elapsed since setting new exposure value for camera
 		if (pluginManager.isPreviewDependentMode() && evLatency > 0)
 		{
-			Log.d(TAG, "evLatency = " + evLatency);
+			//Log.d(TAG, "evLatency = " + evLatency);
 			previewWorking = true;
 
 			if (--evLatency == 0)
@@ -4177,8 +4350,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			if (!CameraController.isCamera2)
 			{
-				CameraController.getCamera().setPreviewCallbackWithBuffer(CameraController.getInstance());
-				CameraController.getCamera().addCallbackBuffer(CameraController.pviewBuffer);
+				//If preview buffer are allocated use preview callback with buffer
+				//instead use preview callback without buffer - it may to slow preview frame rate
+				if(CameraController.pviewBuffer != null)
+				{
+					CameraController.getCamera().setPreviewCallbackWithBuffer(CameraController.getInstance());
+					CameraController.getCamera().addCallbackBuffer(CameraController.pviewBuffer);
+				}
+				else
+					CameraController.getCamera().setPreviewCallback(CameraController.getInstance());
 			}
 		}
 	}
@@ -4382,10 +4562,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			// if true - evLatency will be doubled.
 			boolean isSlow = prefs.getBoolean("PreferenceExpoSlow", false);
 
-			// Note 3 & LG G3 need more time to change exposure.
-			if (Build.MODEL.contains("SM-N900") || Build.MODEL.contains("SM-N910"))
+			// Note 3 (and probably 4) & LG G3 need more time to change exposure.
+			if (CameraController.isGalaxyNote3 || CameraController.isGalaxyNote4)
 				evLatency = 20 * (isSlow ? 2 : 1);
-			else if (Build.MODEL.contains("LG-D855"))
+			else if (CameraController.isG3)
 				evLatency = 30 * (isSlow ? 2 : 1);
 			else
 			{

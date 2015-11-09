@@ -574,9 +574,15 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		}
 
 		mImgView.setImageBitmap(PreviewBmpInitial);
-		mImgView.setRotation(mCameraMirrored ? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0
-				: 180)
-				: 0);
+		//Workaround for Nexus5x, image is flipped because of sensor orientation
+		if(CameraController.isNexus5x)
+			mImgView.setRotation(mCameraMirrored ? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0
+					: 180)
+					: 180);
+		else
+			mImgView.setRotation(mCameraMirrored ? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0
+					: 180)
+					: 0);
 
 		textVeiw = ((TextView) postProcessingView.findViewById(R.id.groupshotTextView));
 		textVeiw.setText("Loading image ...");
@@ -779,9 +785,15 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		{
 			updateBitmap();
 			mImgView.setImageBitmap(PreviewBmp);
-			mImgView.setRotation(mCameraMirrored ? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0
-					: 180)
-					: 0);
+			//Workaround for Nexus5x, image is flipped because of sensor orientation
+			if(CameraController.isNexus5x)
+				mImgView.setRotation(mCameraMirrored ? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0
+						: 180)
+						: 180);
+			else
+				mImgView.setRotation(mCameraMirrored ? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0
+						: 180)
+						: 0);
 		}
 
 		mImgView.setOnTouchListener(new View.OnTouchListener()
@@ -816,9 +828,15 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 											if (PreviewBmp != null)
 											{
 												mImgView.setImageBitmap(PreviewBmp);
-												mImgView.setRotation(mCameraMirrored ? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0
-														: 180)
-														: 0);
+												//Workaround for Nexus5x, image is flipped because of sensor orientation
+												if(CameraController.isNexus5x)
+													mImgView.setRotation(mCameraMirrored ? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0
+															: 180)
+															: 180);
+												else
+													mImgView.setRotation(mCameraMirrored ? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0
+															: 180)
+															: 0);
 											}
 										}
 									});
@@ -992,7 +1010,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 
 		//Nexus 6 has a original front camera sensor orientation, we have to manage it
 		PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID,
-				String.valueOf(((Build.MODEL.contains("Nexus 6") && mCameraMirrored)? 180 : 0)));
+				String.valueOf(((CameraController.isNexus6 && mCameraMirrored)? 180 : 0)));
 		PluginManager.getInstance().addToSharedMem("resultframemirrored1" + sessionID, String.valueOf(mCameraMirrored));
 
 		PluginManager.getInstance().addToSharedMem("amountofresultframes" + sessionID, String.valueOf(1));

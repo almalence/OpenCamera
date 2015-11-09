@@ -25,4 +25,6 @@ public interface FocusIndicator
 	public void showFail();
 
 	public void clear();
+	
+	public boolean isVisible();
 }

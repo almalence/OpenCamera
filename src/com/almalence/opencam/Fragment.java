@@ -620,7 +620,12 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 			break;
 		default:
 			about_string.append("not supported");
-		}		
+		}
+		
+//		about_string.append("\nSensor orientation, back camera: ");
+//		about_string.append(CameraController.getSensorOrientation(0));
+//		about_string.append("\nSensor orientation, front camera: ");
+//		about_string.append(CameraController.getSensorOrientation(1));
 		
 		if (MainScreen.getInstance().preview_sizes != null)
 		{
@@ -781,6 +786,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		alertDialog.show();
 	}
 
+	@TargetApi(19)
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data)
 	{

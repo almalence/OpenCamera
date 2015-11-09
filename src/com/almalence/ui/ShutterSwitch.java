@@ -275,7 +275,7 @@ public class ShutterSwitch extends View
 	public void setThumbDrawable(Drawable thumb)
 	{
 		mThumbDrawable = thumb;
-		requestLayout();
+		invalidate();
 	}
 
 	/**

@@ -47,11 +47,22 @@ extern "C"
 {
 #endif
 
+#if 0 // need testing
+#include <stdlib.h>
+static inline void* fast_malloc(size_t n) {
+	int i; char *a = malloc(n);
+  if (a) for (i = 0; i < n; i += 0x1000) a[i] = 0;
+	return a;
+}
+#define malloc(size) fast_malloc(size) 
+#endif
+
 #if (!defined(__STDC_VERSION__)) || (__STDC_VERSION__ < 199901L)
 // restrict keyword is not known in pre-C99 dialects
 #define restrict
 #endif
 
+#include <stdint.h>
 typedef int Int32;
 typedef short Int16;
 typedef unsigned int Uint32;
@@ -241,19 +252,6 @@ void AlmaShot_ConvertNV21toUYVY
     int sy
 );
 
-void Raw_DemosaicAndColorCorrect
-(
-	Uint8 *restrict in,
-	Uint8 *restrict out,
-	int sx,
-	int sy,
-	int *kelvin,
-	int blevel,
-	int wlevel,
-	int cameraIndex,
-	int outputRGB
-);
-
 void AlmaShot_PauseProcessing(void);
 void AlmaShot_ResumeProcessing(void);
 
@@ -261,8 +259,6 @@ void AlmaShot_ResumeProcessing(void);
 int AlmaShot_MeasureProcessingTimeSuperZoom(int sx, int sy);
 int AlmaShot_MeasureProcessingTimeHdr(int sx, int sy);
 int AlmaShot_MeasureProcessingTimeBlurLess(int sx, int sy);
-
-
 
 
 #if defined __cplusplus

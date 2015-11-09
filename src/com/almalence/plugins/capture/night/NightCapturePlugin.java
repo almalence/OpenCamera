@@ -34,7 +34,6 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CaptureResult;
 import android.opengl.GLES10;
 import android.opengl.GLU;
-import android.os.Build;
 import android.os.Message;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -321,10 +320,10 @@ public class NightCapturePlugin extends PluginCapture
 		FocusPreference = prefs.getString(nightCaptureFocusPref, defaultFocus);
 		if (!usingSuperMode)
 		{
-			if (Build.MODEL.contains("Nexus 6"))
+			if (CameraController.isNexus6)
 				OpenGLPreference = prefs.getBoolean(nightVisionLayerShowPref, false);
 			else
-				OpenGLPreference = prefs.getBoolean(nightVisionLayerShowPref, true);
+				OpenGLPreference = prefs.getBoolean(nightVisionLayerShowPref, false);//set to false. sm. 5/11/15
 		}
 		else
 			OpenGLPreference = false;
@@ -390,7 +389,7 @@ public class NightCapturePlugin extends PluginCapture
 		// exlude also LG G3 and some others modifications to prevent camera error in takePicture call.
 		// FixMe: probably Nexus should not be excluded if using Camera2 interface
 		if (sceneModes != null && CameraController.isModeAvailable(sceneModes, CameraParameters.SCENE_MODE_NIGHT)
-				&& (!Build.MODEL.contains("Nexus") && !Build.MODEL.contains("LG-D")) && !usingSuperMode)
+				&& (!CameraController.isNexus && !CameraController.isG3) && !usingSuperMode)
 		{
 			CameraController.setCameraSceneMode(CameraParameters.SCENE_MODE_NIGHT);
 			ApplicationScreen.instance.setSceneModePref(CameraParameters.SCENE_MODE_NIGHT);
@@ -425,9 +424,11 @@ public class NightCapturePlugin extends PluginCapture
 					} else if (CameraController.isModeAvailable(focusModes, CameraParameters.AF_MODE_AUTO))
 					{
 						CameraController.setCameraFocusMode(CameraParameters.AF_MODE_AUTO);
-						editor.putInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
-								: ApplicationScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
+						editor.putInt(CameraController.isFrontCamera() ? ApplicationScreen.sFrontFocusModePref
+								: ApplicationScreen.sRearFocusModePref, CameraParameters.AF_MODE_AUTO);
 					}
+					
+					editor.commit();
 				}
 
 				ApplicationScreen.instance.setSceneModePref(CameraController.getSceneMode());
@@ -512,7 +513,6 @@ public class NightCapturePlugin extends PluginCapture
 	{
 		if (!inCapture)
 		{
-			Log.wtf("SUPER", "onShutterClick. inCapture == false. inCapture = true!");
 			inCapture = true;
 			
 			if (!aboutToTakePicture)
@@ -555,6 +555,7 @@ public class NightCapturePlugin extends PluginCapture
 	// there is no warranty what comes first:
 	// onImageTaken or onCaptureCompleted, so
 	// this function can be called from either once both were called
+	@TargetApi(21)
 	public void AdjustExposureCaptureBurst()
 	{
 		takingImageForExposure = false;
@@ -582,8 +583,8 @@ public class NightCapturePlugin extends PluginCapture
 			// find updated exposure and ISO parameters
 			// Exposure compensation is not working in an optimal way
 			// (appear to be changing exposure time, while it is optimal for us to reduce ISO, if possible) 
-			float UnclipLinear = 2.0f;
-			
+			float fUnclip = -0.7f;
+			float UnclipLinear = (float)Math.pow(2, -fUnclip);
 			// first - attempt to reduce sensor ISO, but only if exposure time is short (<50msec)
 			if ((sensorGain > minSensitivity) && (exposureTime <= 50000000))
 			{
@@ -606,27 +607,25 @@ public class NightCapturePlugin extends PluginCapture
 			}
 			else
 				burstExposure = minExposure;
-			
+
 			int[] burstGainArray = new int[total_frames];
 			long[] burstExposureArray = new long[total_frames];
 			Arrays.fill(burstGainArray, burstGain);
 			Arrays.fill(burstExposureArray, burstExposure);
 			
-			Log.wtf("SUPER", "AdjustExposureCaptureBurst. create IDList size " + total_frames);
 			resultCompleted = 0; //Reset to get right capture result indexes in burst capturing.
 			createRequestIDList(total_frames);
 			// capture the burst
 			CameraController.captureImagesWithParams(
-					total_frames, CameraController.YUV_RAW, null, null, burstGainArray, burstExposureArray, true, true);
+					total_frames, CameraController.YUV_RAW, null, null, burstGainArray, burstExposureArray, true, true, true);
 		}
 		else
 		{
-			Log.wtf("SUPER", "AdjustExposureCaptureBurst. create IDList size " + total_frames);
 			resultCompleted = 0; //Reset to get right capture result indexes in burst capturing.
 			createRequestIDList(total_frames);
 			// capture the burst
 			CameraController.captureImagesWithParams(
-					total_frames, CameraController.YUV_RAW, null, null, null, null, true, true);
+					total_frames, CameraController.YUV_RAW, null, null, null, null, true, true, true);
 		}
 	}
 	
@@ -654,7 +653,7 @@ public class NightCapturePlugin extends PluginCapture
 			// ToDo: there is no need to pass orientation for every frame, just for the first one
 			// also, amountofcapturedframes can be set only once to total_frames
 			PluginManager.getInstance().addToSharedMem("frameorientation" + (imagesTaken + 1) + SessionID,
-					String.valueOf(ApplicationScreen.getGUIManager().getDisplayOrientation()));
+					String.valueOf(ApplicationScreen.getGUIManager().getImageDataOrientation()));
 			PluginManager.getInstance().addToSharedMem("framemirrored" + (imagesTaken + 1) + SessionID,
 					String.valueOf(CameraController.isFrontCamera()));
 			PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID,
@@ -758,19 +757,17 @@ public class NightCapturePlugin extends PluginCapture
 		{
 			// ToDo: implement waiting for lens to finish it's focusing movement (like in camera3test)
 			
-			// ToDo: Lock AE, AWB, etc. for the duration of this image capture and the burst
-			
 			// capture single YUV image to figure out correct ISO/exposure for the consequent burst capture
 			Log.wtf("SUPER", "takePicture. First frame. create IDList size 1");
 			createRequestIDList(1);
 			takingImageForExposure = true;
-			CameraController.captureImagesWithParams(1, CameraController.YUV_RAW, null, null, null, null, true, false);
+			CameraController.captureImagesWithParams(1, CameraController.YUV_RAW, null, null, null, null, true, true, false);
 		}
 		else
 		{
 			createRequestIDList(total_frames);
 			takingImageForExposure = false;
-			CameraController.captureImagesWithParams(total_frames, CameraController.YUV_RAW, null, null, null, null, true, true);
+			CameraController.captureImagesWithParams(total_frames, CameraController.YUV_RAW, null, null, null, null, false, true, true);
 		}
 	}
 
@@ -802,15 +799,26 @@ public class NightCapturePlugin extends PluginCapture
 						dataRotated = new byte[dataS.length];
 						
 						////////////REMOVE THIS TO NORMAL CODE!!!!! SM 29.12.14
-						if (Build.MODEL.contains("Nexus 6"))
+						if (CameraController.isNexus6)
 							ImageConversion.TransformNV21(dataS, dataRotated, imageWidth, imageHeight, 0, 1, 0);
 						else
 						////////////REMOVE THIS TO NORMAL CODE!!!!! SM 29.12.14
 							ImageConversion.TransformNV21(dataS, dataRotated, imageWidth, imageHeight, 1, 0, 0);
 	
 						yuvData = dataRotated;
-					} else
-						yuvData = dataS;
+					}
+					else
+					{
+						//Workaround for Nexus5x, image is flipped because of sensor orientation
+						if(CameraController.isNexus5x)
+						{
+							dataRotated = new byte[dataS.length];
+							ImageConversion.TransformNV21(dataS, dataRotated, imageWidth, imageHeight, 1, 1, 0);
+							yuvData = dataRotated;
+						}
+						else
+							yuvData = dataS;
+					}
 									
 					data1 = data2;
 					data2 = null;

@@ -146,7 +146,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
 				ConfigParser.getInstance().getMode(mode).modeSaveName);
 
-		mDisplayOrientationOnStartProcessing = ApplicationScreen.getGUIManager().getDisplayOrientation();
+		mDisplayOrientationOnStartProcessing = ApplicationScreen.getGUIManager().getImageDataOrientation();
 		mDisplayOrientationCurrent = ApplicationScreen.getGUIManager().getDisplayOrientation();
 		int orientation = ApplicationScreen.getGUIManager().getLayoutOrientation();
 		mLayoutOrientationCurrent = orientation == 0 || orientation == 180 ? orientation : (orientation + 180) % 360;
@@ -157,6 +157,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		mImageWidth = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("imageWidth" + sessionID));
 		mImageHeight = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("imageHeight" + sessionID));
 
+//		AlmaShotHDR.getAffinity();
 		AlmaShotHDR.Initialize();
 
 		// hdr processing
@@ -226,12 +227,17 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 						ev_mark -= 2.0;
 
 					String evmark = String.format("_%+3.1fEv", ev_mark);
+					
+					//If device is not support exposure compensation we have to add current number of frame
+					//to avoid rewriting of same exposed files, because in that case file names will be equals
+					if(!CameraController.isExposureCompensationSupported() && tmpImagesAmount > 1)
+						evmark = evmark + String.format("_%d", i+1);
 
 					byte[] buffer = SwapHeap.CopyFromHeap(compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]],
 							compressed_frame_len[ExpoBracketingCapturePlugin.evIdx[i]]);
 					int yuvBuffer = compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]];
 			
-					if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
+					if (CameraController.isNexus6 && CameraController.isFrontCamera())
 					{
 						int imageWidth = ApplicationScreen.getPreviewWidth();
 						int imageHeight = ApplicationScreen.getPreviewHeight();
@@ -254,7 +260,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 
 		int nf = HDRProcessingPlugin.getNoise();
 		
-		if(Build.MODEL.contains("Nexus 6") && CameraController.isUseCamera2())
+		if(CameraController.isNexus6 && CameraController.isUseCamera2())
 			nf = -1;
 
 		AlmaShotHDR.HDRPreview(imagesAmount, mImageWidth, mImageHeight, pview, HDRProcessingPlugin.getExposure(true),
@@ -273,7 +279,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	private void HDRProcessing()
 	{
 		if (HDRProcessingPlugin.SaveInputPreference == 0)
-		if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
+		if (CameraController.isNexus6 && CameraController.isFrontCamera())
 		{
 			if (mDisplayOrientationOnStartProcessing==0 || mDisplayOrientationOnStartProcessing==90)
 				mDisplayOrientationOnStartProcessing+=180;
@@ -506,7 +512,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		canvas.drawBitmap(bitmapCropped, rect, rect, paint);
 
 		if (HDRProcessingPlugin.SaveInputPreference == 0)
-			if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
+			if (CameraController.isNexus6 && CameraController.isFrontCamera())
 			{	
 				Matrix matrix = new Matrix();
 				matrix.postRotate(180);
@@ -1237,7 +1243,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 				this.previewTaskCurrent = null;
 
 				if (HDRProcessingPlugin.SaveInputPreference == 0)
-					if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
+					if (CameraController.isNexus6 && CameraController.isFrontCamera())
 					{	
 						Matrix matrix = new Matrix();
 						matrix.postRotate(180);

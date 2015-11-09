@@ -298,48 +298,6 @@ public class AlmalenceStore
 //				else
 //					price.setText("");//MainScreen.getInstance().titleSubscriptionMonth);
 //				break;
-			case 1:
-
-				// HDR
-				icon.setImageResource(R.drawable.store_hdr);
-				description.setText(MainScreen.getAppResources()
-						.getString(R.string.Pref_Upgrde_HDR_Preference_Title));
-				if (MainScreen.getInstance().isPurchasedHDR() || MainScreen.getInstance().isPurchasedAll())
-					price.setText(R.string.already_unlocked);
-				else
-					price.setText(MainScreen.getInstance().titleUnlockHDR);
-				break;
-
-			case 2:
-				// Panorama
-				icon.setImageResource(R.drawable.store_panorama);
-				description.setText(MainScreen.getAppResources()
-						.getString(R.string.Pref_Upgrde_Panorama_Preference_Title));
-				if (MainScreen.getInstance().isPurchasedPanorama() || MainScreen.getInstance().isPurchasedAll())
-					price.setText(R.string.already_unlocked);
-				else
-					price.setText(MainScreen.getInstance().titleUnlockPano);
-				break;
-			case 3:
-				// multishot
-				icon.setImageResource(R.drawable.store_moving);
-				description.setText(MainScreen.getAppResources()
-						.getString(R.string.Pref_Upgrde_Moving_Preference_Title));
-				if (MainScreen.getInstance().isPurchasedMoving() || MainScreen.getInstance().isPurchasedAll())
-					price.setText(R.string.already_unlocked);
-				else
-					price.setText(MainScreen.getInstance().titleUnlockMoving);
-				break;
-//			case 4:
-//				// Groupshot
-//				icon.setImageResource(R.drawable.store_groupshot);
-//				description.setText(MainScreen.getAppResources()
-//						.getString(R.string.Pref_Upgrde_Groupshot_Preference_Title));
-//				if (MainScreen.getInstance().isPurchasedGroupshot() || MainScreen.getInstance().isPurchasedAll())
-//					price.setText(R.string.already_unlocked);
-//				else
-//					price.setText(MainScreen.getInstance().titleUnlockGroup);
-//				break;
 
 			default:
 				break;
@@ -374,21 +332,7 @@ public class AlmalenceStore
 		case 0:// unlock all
 			MainScreen.getInstance().purchaseAll();
 			break;
-//		case 1:// Year subscription
-//			MainScreen.getInstance().purchasedUnlockAllSubscriptionYear();
-//			break;
-//		case 2:// Month subscription
-//			MainScreen.getInstance().purchasedUnlockAllSubscriptionMonth();
-//			break;
-		case 1:// HDR
-			MainScreen.getInstance().purchaseHDR();
-			break;
-		case 2:// Panorama
-			MainScreen.getInstance().purchasePanorama();
-			break;
-		case 3:// multishot
-			MainScreen.getInstance().purchaseMultishot();
-			break;
+
 		default:
 			break;
 		}

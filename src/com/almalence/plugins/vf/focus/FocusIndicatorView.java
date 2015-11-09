@@ -30,6 +30,7 @@ import android.view.View;
 // A view that indicates the focus area or the metering area.
 public class FocusIndicatorView extends View implements FocusIndicator
 {
+	private boolean isVisible = false;
 	public FocusIndicatorView(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
@@ -49,23 +50,35 @@ public class FocusIndicatorView extends View implements FocusIndicator
 	public void showStart()
 	{
 		setDrawable(R.drawable.ic_focus_focusing);
+		setVisibility(View.VISIBLE);
+		isVisible = true;
 	}
 
 	@Override
 	public void showSuccess()
 	{
 		setDrawable(R.drawable.ic_focus_focused);
+		setVisibility(View.VISIBLE);
+		isVisible = true;
 	}
 
 	@Override
 	public void showFail()
 	{
 		setDrawable(R.drawable.ic_focus_failed);
+		setVisibility(View.VISIBLE);
+		isVisible = true;
 	}
 
 	@Override
 	public void clear()
 	{
 		setBackgroundDrawable(null);
+		isVisible = false;
+	}
+	
+	@Override
+	public boolean isVisible() {
+		return isVisible;
 	}
 }

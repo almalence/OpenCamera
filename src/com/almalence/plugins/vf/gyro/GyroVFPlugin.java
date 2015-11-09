@@ -136,7 +136,8 @@ public class GyroVFPlugin extends PluginViewfinder
 				|| (HorizontalViewFromAspect > 1.1f * this.viewAngleX))
 			this.viewAngleX = HorizontalViewFromAspect;
 
-		mSurfacePreviewAugmented.reset(this.pictureHeight, this.pictureWidth, this.viewAngleY);
+		if(mSurfacePreviewAugmented != null)
+			mSurfacePreviewAugmented.reset(this.pictureHeight, this.pictureWidth, this.viewAngleY);
 
 		if (!mPrefHardwareGyroscope)
 		{

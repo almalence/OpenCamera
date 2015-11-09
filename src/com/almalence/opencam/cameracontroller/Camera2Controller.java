@@ -26,7 +26,6 @@ package com.almalence.opencam.cameracontroller;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -51,10 +50,10 @@ import android.hardware.camera2.params.ColorSpaceTransform;
 import android.hardware.camera2.params.MeteringRectangle;
 import android.hardware.camera2.params.RggbChannelVector;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.hardware.camera2.params.TonemapCurve;
 import android.media.Image;
 import android.media.ImageReader;
 import android.media.MediaRecorder;
-import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -112,6 +111,8 @@ public class Camera2Controller
 	private static int 					currentSensitivity 			= 0;    //Sensor sensitivity (ISO) of last captured frame
 	private static int 					blevel			 			= 0;    //Black level offset
 	private static int 					wlevel 						= 1024; //Maximum raw value output by sensor.
+	
+	private static boolean				manualPowerGamma			= false; //Used only for Almalence's SuperSensor mode
 	
 	private static RggbChannelVector 	rggbChannelVector 			= null; //Gains applying to raw color channels for manual white-balance logic
 	
@@ -177,7 +178,7 @@ public class Camera2Controller
 
 	public static void onCreateCamera2(Context context, ApplicationInterface app, PluginManagerInterface pluginManagerBase, Handler msgHandler)
 	{
-		Log.e(TAG, "onCreateCamera2");
+//		Log.e(TAG, "onCreateCamera2");
 		mainContext = context;
 		appInterface = app;
 		pluginManager = pluginManagerBase;
@@ -185,7 +186,7 @@ public class Camera2Controller
 
 		// Camera2 code ---------------------------------------------------------
 		// get manager for camera devices
-		Camera2Controller.getInstance().manager = (CameraManager) mainContext.getSystemService("camera");
+		Camera2Controller.getInstance().manager = (CameraManager) mainContext.getSystemService(Context.CAMERA_SERVICE);
 
 		// get list of camera id's (usually it will contain just {"0", "1"}
 		try
@@ -281,7 +282,7 @@ public class Camera2Controller
 	{
 		try
 		{
-			Log.e(TAG, "onResumeCamera2. CameraIndex = " + CameraController.CameraIndex);
+//			Log.e(TAG, "onResumeCamera2. CameraIndex = " + CameraController.CameraIndex);
 			Camera2Controller.getInstance().camCharacter = Camera2Controller.getInstance().manager
 					.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
 
@@ -349,7 +350,7 @@ public class Camera2Controller
 
 	public static void openCameraCamera2()
 	{
-		Log.e(TAG, "openCameraCamera2()");
+//		Log.e(TAG, "openCameraCamera2()");
 		// Camera2 open camera
 		// -----------------------------------------------------------------
 		if (Camera2Controller.getCamera2() != null)
@@ -398,7 +399,7 @@ public class Camera2Controller
 		}
 		wlevel = Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_WHITE_LEVEL);
 
-		Log.d(TAG, "HARWARE_SUPPORT_LEVEL = " + Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL));
+//		Log.d(TAG, "HARWARE_SUPPORT_LEVEL = " + Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL));
 		
 		// check that full hw level is supported
 		if (Camera2Controller.isFullHardwareLevel())
@@ -426,7 +427,7 @@ public class Camera2Controller
 			CameraCharacteristics cc = Camera2Controller.getInstance().manager.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
 			StreamConfigurationMap configMap = cc.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 			isSupported = configMap.isOutputSupportedFor(captureFormat);
-			Log.d(TAG, "Capture format " + captureFormat + " is supported? " + isSupported);
+//			Log.d(TAG, "Capture format " + captureFormat + " is supported? " + isSupported);
 			return isSupported;
 			
 		} catch (CameraAccessException e)
@@ -439,7 +440,7 @@ public class Camera2Controller
 
 	public static void setCaptureFormat(int captureFormat)
 	{
-		Log.e(TAG, "set captureFormat.");
+//		Log.e(TAG, "set captureFormat.");
 		Camera2Controller.captureFormat = captureFormat;
 	}
 
@@ -450,7 +451,7 @@ public class Camera2Controller
 			CameraDevice camera = Camera2Controller.getCamera2();
 			if(camera == null)
 				return false;
-			Log.d(TAG, "Create capture session. Surface list size = " + sfl.size());
+//			Log.d(TAG, "Create capture session. Surface list size = " + sfl.size());
 			// Here, we create a CameraCaptureSession for camera preview.
 			camera.createCaptureSession(sfl, Camera2Controller.captureSessionStateCallback, null);
 		} catch (IllegalArgumentException e)
@@ -466,58 +467,58 @@ public class Camera2Controller
 	}
 
 	
-	public static void dumpCameraCharacteristics()
-	{
-		Log.i(TAG, "Total cameras found: " + CameraController.cameraIdList.length);
-
-		for (int i = 0; i < CameraController.cameraIdList.length; ++i)
-			Log.i(TAG, "Camera Id: " + CameraController.cameraIdList[i]);
-
-		// Query a device for Capabilities
-		CameraCharacteristics cc = null;
-		try
-		{
-			cc = Camera2Controller.getInstance().manager
-					.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
-		} catch (CameraAccessException e)
-		{
-			Log.d(TAG, "getCameraCharacteristics failed");
-			e.printStackTrace();
-		}
-
-		// dump all the keys from CameraCharacteristics
-		List<Key<?>> ck = cc.getKeys();
-
-		for (int i = 0; i < ck.size(); ++i)
-		{
-			Key<?> cm = ck.get(i);
-
-			if (cm.getName() == android.util.Size[].class.getName())
-			{
-				android.util.Size[] s = (android.util.Size[]) cc.get(cm);
-				Log.i(TAG, "Camera characteristics: " + cm.getName() + ": " + s[0].toString());
-			} else
-			{
-				String cmTypeName = cm.getName();
-				Log.i(TAG, "Camera characteristics: " + cm.getName() + "(" + cmTypeName + "): " + cc.get(cm));
-			}
-		}
-
-		StreamConfigurationMap configMap = cc.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-		// dump supported image formats (all of preview, video and still image)
-		int[] cintarr = configMap.getOutputFormats();
-		for (int k = 0; k < cintarr.length; ++k)
-			Log.i(TAG, "Scaler supports format: " + cintarr[k]);
-
-		// dump supported image sizes (all of preview, video and still image)
-		android.util.Size[] imSizes = configMap.getOutputSizes(ImageFormat.YUV_420_888);
-		for (int i = 0; i < imSizes.length; ++i)
-			Log.i(TAG, "Scaler supports output size: " + imSizes[i].getWidth() + "x" + imSizes[i].getHeight());
-	}
+//	public static void dumpCameraCharacteristics()
+//	{
+////		Log.i(TAG, "Total cameras found: " + CameraController.cameraIdList.length);
+//
+////		for (int i = 0; i < CameraController.cameraIdList.length; ++i)
+////			Log.i(TAG, "Camera Id: " + CameraController.cameraIdList[i]);
+//
+//		// Query a device for Capabilities
+//		CameraCharacteristics cc = null;
+//		try
+//		{
+//			cc = Camera2Controller.getInstance().manager
+//					.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
+//		} catch (CameraAccessException e)
+//		{
+//			Log.d(TAG, "getCameraCharacteristics failed");
+//			e.printStackTrace();
+//		}
+//
+//		// dump all the keys from CameraCharacteristics
+//		List<Key<?>> ck = cc.getKeys();
+//
+//		for (int i = 0; i < ck.size(); ++i)
+//		{
+//			Key<?> cm = ck.get(i);
+//
+//			if (cm.getName() == android.util.Size[].class.getName())
+//			{
+//				android.util.Size[] s = (android.util.Size[]) cc.get(cm);
+////				Log.i(TAG, "Camera characteristics: " + cm.getName() + ": " + s[0].toString());
+//			} else
+//			{
+//				String cmTypeName = cm.getName();
+////				Log.i(TAG, "Camera characteristics: " + cm.getName() + "(" + cmTypeName + "): " + cc.get(cm));
+//			}
+//		}
+//
+//		StreamConfigurationMap configMap = cc.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+//		// dump supported image formats (all of preview, video and still image)
+//		int[] cintarr = configMap.getOutputFormats();
+//		for (int k = 0; k < cintarr.length; ++k)
+//			Log.i(TAG, "Scaler supports format: " + cintarr[k]);
+//
+//		// dump supported image sizes (all of preview, video and still image)
+//		android.util.Size[] imSizes = configMap.getOutputSizes(ImageFormat.YUV_420_888);
+//		for (int i = 0; i < imSizes.length; ++i)
+//			Log.i(TAG, "Scaler supports output size: " + imSizes[i].getWidth() + "x" + imSizes[i].getHeight());
+//	}
 
 	public static CameraController.Size getMaxCameraImageSizeCamera2(int captureFormat)
 	{
-		CameraCharacteristics params = getCameraParameters2();
+		CameraCharacteristics params = getCameraCharacteristics();
 		StreamConfigurationMap configMap = params.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 		final Size[] cs = configMap.getOutputSizes(captureFormat);
 
@@ -537,7 +538,7 @@ public class Camera2Controller
 		CameraController.FastIdxelist = new ArrayList<Integer>();
 
 		int minMPIX = CameraController.MIN_MPIX_SUPPORTED;
-		CameraCharacteristics params = getCameraParameters2();
+		CameraCharacteristics params = getCameraCharacteristics();
 		StreamConfigurationMap configMap = params.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 		Size[] cs = configMap.getOutputSizes(captureFormat);
 		Size highestSize = findMaximumSize(cs);
@@ -733,7 +734,7 @@ public class Camera2Controller
 
 	public static void fillPictureSizeList(List<CameraController.Size> pictureSizes)
 	{
-		Log.e(TAG, "fillPictureSizeList. USE captureFormat.");
+//		Log.e(TAG, "fillPictureSizeList. USE captureFormat.");
 		CameraCharacteristics camCharacter = Camera2Controller.getInstance().camCharacter;
 		StreamConfigurationMap configMap = camCharacter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 		Size[] cs = configMap.getOutputSizes(captureFormat);
@@ -843,7 +844,7 @@ public class Camera2Controller
 		return Camera2Controller.getInstance().camDevice;
 	}
 
-	public static CameraCharacteristics getCameraParameters2()
+	public static CameraCharacteristics getCameraCharacteristics()
 	{
 		if (Camera2Controller.getInstance().camCharacter != null)
 			return Camera2Controller.getInstance().camCharacter;
@@ -855,7 +856,7 @@ public class Camera2Controller
 	 * Camera parameters interfaces (scene mode, white balance, exposure lock and etc)
 	 */
 	
-	public static void setAutoExposureLock(boolean lock)
+	public static boolean setAutoExposureLock(boolean lock)
 	{
 		if (previewRequestBuilder != null && Camera2Controller.getInstance().camDevice != null)
 		{
@@ -864,10 +865,14 @@ public class Camera2Controller
 			
 			PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).edit()
 			.putBoolean(ApplicationScreen.sAELockPref, lock).commit();
+			
+			return true;
 		}
+		
+		return false;
 	}
 	
-	public static void setAutoWhiteBalanceLock(boolean lock)
+	public static boolean setAutoWhiteBalanceLock(boolean lock)
 	{
 		if (previewRequestBuilder != null && Camera2Controller.getInstance().camDevice != null)
 		{
@@ -876,7 +881,32 @@ public class Camera2Controller
 			
 			PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).edit()
 			.putBoolean(ApplicationScreen.sAWBLockPref, lock).commit();
+			
+			return true;
 		}
+		
+		return false;
+	}
+	
+	public static boolean isExposureLocked()
+	{
+		if (previewRequestBuilder != null && Camera2Controller.getInstance().camDevice != null)
+		{
+			return PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getBoolean(ApplicationScreen.sAELockPref, false);
+		}
+		
+		return false;
+	}
+	
+	
+	public static boolean isWhiteBalanceLocked()
+	{
+		if (previewRequestBuilder != null && Camera2Controller.getInstance().camDevice != null)
+		{
+			return PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getBoolean(ApplicationScreen.sAWBLockPref, false);
+		}
+		
+		return false;
 	}
 	
 	
@@ -896,7 +926,7 @@ public class Camera2Controller
 	{
 		if (Camera2Controller.getInstance().camCharacter != null
 				&& Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM) != null)
-			return Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM) * 10.0f;
+			return Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM);
 
 		return 0;
 	}
@@ -1026,7 +1056,7 @@ public class Camera2Controller
 	{
 		if (Camera2Controller.getInstance().camCharacter != null
 				&& Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES) != null
-				&& !Build.MODEL.contains("Nexus 6")) //Disable manual WB for Nexus 6 - it manages WB wrong
+				&& !CameraController.isNexus6) //Disable manual WB for Nexus 6 - it manages WB wrong
 		{
 			int[] wb = Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES);
 			
@@ -1586,7 +1616,7 @@ public class Camera2Controller
 
 			return alpha;
 
-		} else if (Build.MODEL.contains("Nexus"))
+		} else if (CameraController.isNexus)
 			return 46.66f;
 
 		return 42.7f;
@@ -1610,18 +1640,27 @@ public class Camera2Controller
 			float alpha = (float) (alphaRad * (180 / Math.PI));
 
 			return alpha;
-		} else if (Build.MODEL.contains("Nexus"))
+		} else if (CameraController.isNexus)
 			return 59.63f;
 
 		return 55.4f;
 	}
 
-	public static int getSensorOrientation()
+	public static int getSensorOrientation(int cameraIndex)
 	{
-		if (Camera2Controller.getInstance().camCharacter != null)
+		if(CameraController.cameraIdList == null || CameraController.cameraIdList.length == 0)
+			return -1;
+		try
+		{
+			Camera2Controller.getInstance().camCharacter = Camera2Controller.getInstance().manager
+					.getCameraCharacteristics(CameraController.cameraIdList[cameraIndex]);
+			
 			return Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_ORIENTATION);
-
-		return -1;
+		} catch (CameraAccessException e)
+		{
+			e.printStackTrace();
+			return -1;
+		}
 	}
 
 	
@@ -1766,12 +1805,16 @@ public class Camera2Controller
 		if (flashMode == CameraParameters.FLASH_MODE_CAPTURE_TORCH)
 		{
 			// If flashMode == FLASH_MODE_CAPTURE_TORCH, then turn on torch for captureRequests.
+			Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
+			Camera2Controller.previewRequestBuilder.set(CaptureRequest.FLASH_MODE, CameraParameters.FLASH_MODE_TORCH);
+			Camera2Controller.setRepeatingRequest();
+
 			flashMode = CameraParameters.FLASH_MODE_TORCH;
 		}
 		
 		if(isAutoExTime)
 		{
-			if(flashMode == CameraParameters.FLASH_MODE_SINGLE || flashMode == CameraParameters.FLASH_MODE_AUTO || flashMode == CameraParameters.FLASH_MODE_REDEYE || flashMode == CameraParameters.FLASH_MODE_TORCH)
+			if(flashMode == CameraParameters.FLASH_MODE_SINGLE || flashMode == CameraParameters.FLASH_MODE_AUTO || flashMode == CameraParameters.FLASH_MODE_REDEYE)
 			{
 				if(flashMode == CameraParameters.FLASH_MODE_SINGLE)
 					flashMode = CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH;
@@ -1779,9 +1822,7 @@ public class Camera2Controller
 					flashMode = CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH;
 				else if(flashMode == CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH_REDEYE )
 					flashMode = CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH_REDEYE;
-				else if(flashMode == CameraParameters.FLASH_MODE_TORCH )
-					flashMode = CaptureRequest.FLASH_MODE_TORCH;
-				
+								
 				Camera2Controller.stillRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
 				Camera2Controller.stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, flashMode);
 				
@@ -1790,6 +1831,17 @@ public class Camera2Controller
 				
 				Camera2Controller.rawRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
 				Camera2Controller.rawRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, flashMode);
+			}
+			else if(flashMode == CameraParameters.FLASH_MODE_TORCH || flashMode == CameraParameters.FLASH_MODE_OFF)
+			{
+				Camera2Controller.stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
+				Camera2Controller.stillRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
+				
+				Camera2Controller.precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
+				Camera2Controller.precaptureRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
+				
+				Camera2Controller.rawRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
+				Camera2Controller.rawRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
 			}
 		}
 		else //Manual exposure time
@@ -1815,7 +1867,7 @@ public class Camera2Controller
 		// explicitly disable AWB for the duration of still/burst capture to get
 		// full burst with the same WB
 		// WB does not apply to RAW, so no need for this in rawRequestBuilder
-		if (!Build.MODEL.contains("G925") && !Build.MODEL.contains("G920"))
+		if (!CameraController.isGalaxyS6)
 		{
 			stillRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_OFF);
 			precaptureRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_OFF);
@@ -1861,6 +1913,29 @@ public class Camera2Controller
 			}
 		}
 	}
+	
+	
+	private static CaptureRequest.Builder setConstantPowerGamma(CaptureRequest.Builder request)
+	{
+		// using constant power 2.2 tone-mapping
+		// so that manipulations with the luminance do not skew the colors
+		
+		request.set(CaptureRequest.TONEMAP_MODE,
+				CaptureRequest.TONEMAP_MODE_CONTRAST_CURVE);
+		
+		float[] t22 = new float[]{
+		            0.0000f, 0.0000f, 0.0667f, 0.2920f, 0.1333f, 0.4002f, 0.2000f, 0.4812f,
+		            0.2667f, 0.5484f, 0.3333f, 0.6069f, 0.4000f, 0.6594f, 0.4667f, 0.7072f,
+		            0.5333f, 0.7515f, 0.6000f, 0.7928f, 0.6667f, 0.8317f, 0.7333f, 0.8685f,
+		            0.8000f, 0.9035f, 0.8667f, 0.9370f, 0.9333f, 0.9691f, 1.0000f, 1.0000f };
+		// linear
+		// float[] t22 = new float[]{ 0,0, 1,1};
+		
+		TonemapCurve t22curve = new TonemapCurve(t22, t22, t22);
+		request.set(CaptureRequest.TONEMAP_CURVE, t22curve);
+		
+		return request;
+	}
 
 	
 	/*
@@ -1886,14 +1961,14 @@ public class Camera2Controller
 	//Call next methods only when capture become allowed (preview is focused)
 	public static int captureImageWithParamsCamera2(final int nFrames, final int format, final int[] pause,
 													final int[] evRequested, final int[] gain, final long[] exposure,
-													final boolean resInHeap, final boolean indication)
+													final boolean setPowerGamma, final boolean resInHeap, final boolean indication)
 	{
 //		inCapture = true; Debug variable. Used in logic to capture RAW in Super mode on Galaxy S6
 		int requestID = -1;
 
-		if (CameraController.getFocusMode() == CameraParameters.AF_MODE_CONTINUOUS_PICTURE)
+		if (CameraController.getFocusMode() == CameraParameters.AF_MODE_CONTINUOUS_PICTURE && captureAllowed == false)
 		{
-			captureAllowed = false;
+			Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, af_regions);
 			Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
 					CameraCharacteristics.CONTROL_AF_TRIGGER_START);
 			
@@ -1909,9 +1984,6 @@ public class Camera2Controller
 				}
 			}
 		}
-		else
-			captureAllowed = true;
-		
 
 		if (!captureAllowed)
 		{
@@ -1922,18 +1994,18 @@ public class Camera2Controller
 					if (captureAllowed)
 					{
 						this.cancel();
-						captureImageWithParamsCamera2Allowed(nFrames, format, pause, evRequested, gain, exposure, resInHeap, indication);
+						captureImageWithParamsCamera2Allowed(nFrames, format, pause, evRequested, gain, exposure, setPowerGamma, resInHeap, indication);
 					}
 				}
 
 				public void onFinish()
 				{
-					captureImageWithParamsCamera2Allowed(nFrames, format, pause, evRequested, gain, exposure, resInHeap, indication);
+					captureImageWithParamsCamera2Allowed(nFrames, format, pause, evRequested, gain, exposure, setPowerGamma, resInHeap, indication);
 				}
 			}.start();
 		}
 		else
-			captureImageWithParamsCamera2Allowed(nFrames, format, pause, evRequested, gain, exposure, resInHeap, indication);
+			captureImageWithParamsCamera2Allowed(nFrames, format, pause, evRequested, gain, exposure, setPowerGamma, resInHeap, indication);
 		
 		return requestID;
 	}
@@ -1943,20 +2015,31 @@ public class Camera2Controller
 	//First of all make pre-capture request for exposure metering
 	//For all devices lower that HARDWARE_LEVEL_FULL or LIMITED just call capture method without pre-capture
 	public static void captureImageWithParamsCamera2Allowed (final int nFrames, final int format, final int[] pause,
-			final int[] evRequested, final int[] gain, final long[] exposure, final boolean resInHeap, final boolean indication) {
+			final int[] evRequested, final int[] gain, final long[] exposure, final boolean setPowerGamma, final boolean resInHeap, final boolean indication) {
 		try
 		{
 			lastCaptureFormat = format;
 			CreateRequests(format);
 			
+			if(setPowerGamma)
+			{
+				stillRequestBuilder = setConstantPowerGamma(stillRequestBuilder);
+				precaptureRequestBuilder = setConstantPowerGamma(precaptureRequestBuilder);
+				if (format == CameraController.RAW)
+					rawRequestBuilder = setConstantPowerGamma(rawRequestBuilder);
+			}
+			
 			// Nexus 5 fix flash in dark conditions and exposure set to 0.
-			int selectedEvCompensation = 0;
-			selectedEvCompensation = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getInt(ApplicationScreen.sEvPref, 0);
-			if ((stillRequestBuilder.get(CaptureRequest.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH
-					|| stillRequestBuilder.get(CaptureRequest.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH
-					|| stillRequestBuilder.get(CaptureRequest.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH_REDEYE)
-					&& evRequested == null && selectedEvCompensation == 0) {
-				precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, 1);
+			if(CameraController.isNexus5)
+			{
+				int selectedEvCompensation = 0;
+				selectedEvCompensation = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getInt(ApplicationScreen.sEvPref, 0);
+				if ((stillRequestBuilder.get(CaptureRequest.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH
+						|| stillRequestBuilder.get(CaptureRequest.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH
+						|| stillRequestBuilder.get(CaptureRequest.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH_REDEYE)
+						&& evRequested == null && selectedEvCompensation == 0) {
+					precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, 1);
+				}
 			}
 
 			if (checkHardwareLevel())
@@ -1976,14 +2059,14 @@ public class Camera2Controller
 											CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
 									
 									captureImageWithParamsCamera2Simple(nFrames, format, pause,
-											evRequested, gain, exposure, resInHeap, indication);
+											evRequested, gain, exposure, setPowerGamma, resInHeap, indication);
 								}
 							}, null);
 				}
 			} else
 			{
 				captureImageWithParamsCamera2Simple(nFrames, format, pause,
-						evRequested, gain, exposure, resInHeap, indication);
+						evRequested, gain, exposure, setPowerGamma, resInHeap, indication);
 			}
 		} catch (CameraAccessException e)
 		{
@@ -1998,7 +2081,7 @@ public class Camera2Controller
 	//Exact here we request capture session to capture frame
 	public static int captureImageWithParamsCamera2Simple(final int nFrames, final int format, final int[] pause,
 														  final int[] evRequested, final int[] gain, final long[] exposure,
-														  final boolean resInHeap, final boolean indication)
+														  final boolean setPowerGamma, final boolean resInHeap, final boolean indication)
 	{
 		
 		int requestID = -1;
@@ -2027,6 +2110,8 @@ public class Camera2Controller
 		resultInHeap = resInHeap;
 		indicateCapturing = indication;
 		
+		manualPowerGamma = setPowerGamma;
+		
 		int selectedEvCompensation = 0;
 		selectedEvCompensation = appInterface.getEVPref();
 		
@@ -2042,7 +2127,7 @@ public class Camera2Controller
 									   pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
 									   evCompensation == null ? selectedEvCompensation : evCompensation[currentFrameIndex],
 									   sensorGain == null ? currentSensitivity : sensorGain[currentFrameIndex],
-									   exposureTime == null ? 0 : exposureTime[currentFrameIndex]);
+									   exposureTime == null ? 0 : exposureTime[currentFrameIndex], manualPowerGamma);
 		} else
 		{
 			pauseBetweenShots = new int[totalFrames];
@@ -2101,13 +2186,21 @@ public class Camera2Controller
 	//Method to capture next image in case of multishot requested
 	//Called for all frames instead very first frame
 	public static int captureNextImageWithParams(final int format, final int frameIndex, final int pause, final int evRequested,
-			final int gain, final long exposure)
+			final int gain, final long exposure, final boolean setPowerGamma)
 	{
 		int requestID = -1;
 
 		try
 		{
 			CreateRequests(format);
+			
+			if(setPowerGamma)
+			{
+				stillRequestBuilder = setConstantPowerGamma(stillRequestBuilder);
+				precaptureRequestBuilder = setConstantPowerGamma(precaptureRequestBuilder);
+				if (format == CameraController.RAW)
+					rawRequestBuilder = setConstantPowerGamma(rawRequestBuilder);
+			}
 
 			final boolean isRAWCapture = (format == CameraController.RAW);
 			SetupPerFrameParameters(evRequested, gain, exposure, isRAWCapture);
@@ -2125,7 +2218,7 @@ public class Camera2Controller
 								public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request,
 										TotalCaptureResult result)
 								{
-									Log.e(TAG, "TRIGER CAPTURE COMPLETED");
+//									Log.e(TAG, "TRIGER CAPTURE COMPLETED");
 									
 									precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
 											CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
@@ -2326,7 +2419,7 @@ public class Camera2Controller
 		
 		int colorEffect = appInterface.getColorEffectPref();
 
-		Log.e(TAG, "configurePreviewRequest()");
+//		Log.e(TAG, "configurePreviewRequest()");
 		previewRequestBuilder = camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
 		
 		previewRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, colorEffect);
@@ -2348,12 +2441,7 @@ public class Camera2Controller
 		
 		if(isAutoExpTime)
 		{
-			if (flashMode == CameraParameters.FLASH_MODE_TORCH)
-			{
-				previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
-				previewRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
-			}
-			else if(flashMode == CameraParameters.FLASH_MODE_SINGLE || flashMode == CameraParameters.FLASH_MODE_AUTO || flashMode == CameraParameters.FLASH_MODE_REDEYE)
+			if(flashMode == CameraParameters.FLASH_MODE_SINGLE || flashMode == CameraParameters.FLASH_MODE_AUTO || flashMode == CameraParameters.FLASH_MODE_REDEYE)
 			{
 				if(flashMode == CameraParameters.FLASH_MODE_SINGLE)
 					flashMode = CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH;
@@ -2365,8 +2453,9 @@ public class Camera2Controller
 				previewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
 				previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, flashMode);
 			}
-			else if(flashMode == CameraParameters.FLASH_MODE_OFF)
+			else if(flashMode == CameraParameters.FLASH_MODE_TORCH || flashMode == CameraParameters.FLASH_MODE_OFF)
 			{
+				previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
 				previewRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
 			}
 			
@@ -2479,7 +2568,7 @@ public class Camera2Controller
 //			RggbChannelVector rggb = new RggbChannelVector(R, 1.0f, 1.0f, B);
 			
 //			Log.e(TAG, "RGGB: R:" + R + " G:" + G_even + " B:" + B);
-			Log.e(TAG, "RGGB vector: " + rggbVector.toString());
+//			Log.e(TAG, "RGGB vector: " + rggbVector.toString());
 			previewRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_GAINS, rggbVector);
 			previewRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_TRANSFORM, new ColorSpaceTransform(colorTransformMatrix));
 		}
@@ -2541,12 +2630,18 @@ public class Camera2Controller
 				Camera2Controller.previewRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, sensorSensitivity);
 		}
 
-		previewRequestBuilder.addTarget(appInterface.getCameraSurface());
+		Surface cameraSurface = appInterface.getCameraSurface();
+		if(cameraSurface != null)
+			previewRequestBuilder.addTarget(appInterface.getCameraSurface());
 		
 		
 		//Disable Image Reader for Nexus 6 according to slow focusing issue
 		if (!CameraController.isNexus6  && captureFormat != CameraController.RAW)
-			previewRequestBuilder.addTarget(appInterface.getPreviewYUVImageSurface());
+		{
+			Surface previewSurface = appInterface.getPreviewYUVImageSurface();
+			if(previewSurface != null)
+				previewRequestBuilder.addTarget(previewSurface);
+		}
 		
 		if(needZoom && zoomCropPreview != null)
 			previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
@@ -2562,7 +2657,7 @@ public class Camera2Controller
 		@Override
 		public void onDisconnected(CameraDevice arg0)
 		{
-			Log.e(TAG, "CameraDevice.StateCallback.onDisconnected");
+//			Log.e(TAG, "CameraDevice.StateCallback.onDisconnected");
 			if (Camera2Controller.getInstance().camDevice != null)
 			{
 				try
@@ -2588,7 +2683,7 @@ public class Camera2Controller
 		@Override
 		public void onOpened(CameraDevice arg0)
 		{
-			Log.e(TAG, "CameraDevice.StateCallback.onOpened");
+//			Log.e(TAG, "CameraDevice.StateCallback.onOpened");
 
 			Camera2Controller.getInstance().camDevice = arg0;
 
@@ -2598,7 +2693,7 @@ public class Camera2Controller
 		@Override
 		public void onClosed(CameraDevice arg0)
 		{
-			Log.d(TAG,"CameraDevice.StateCallback.onClosed");
+//			Log.d(TAG,"CameraDevice.StateCallback.onClosed");
 			CameraController.sendMessage(ApplicationInterface.MSG_CAMERA_STOPED, 0);
 		}
 	};
@@ -2636,7 +2731,7 @@ public class Camera2Controller
 						appInterface.relaunchCamera();
 					} else
 					{
-						Log.e(TAG, "Session.onConfigured");
+//						Log.e(TAG, "Session.onConfigured");
 						CameraController.sendMessage(ApplicationInterface.MSG_CAMERA_CONFIGURED, 0);
 					}
 				}
@@ -2724,8 +2819,11 @@ public class Camera2Controller
 				if (focusState == CaptureResult.CONTROL_AF_STATE_PASSIVE_SCAN
 						|| focusState == CaptureResult.CONTROL_AF_STATE_PASSIVE_UNFOCUSED)
 					captureAllowed = false;
-				else
+				else if(!captureAllowed)
+				{
+					resetCaptureCallback();
 					captureAllowed = true;
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -2775,14 +2873,14 @@ public class Camera2Controller
 				CaptureRequest request,
 				TotalCaptureResult result)
 		{
-			Log.e(TAG, "CAPTURE COMPLETED");
+//			Log.e(TAG, "CAPTURE COMPLETED");
 			RggbChannelVector rggb = result.get(CaptureResult.COLOR_CORRECTION_GAINS);
 			ColorSpaceTransform transformMatrix = result.get(CaptureResult.COLOR_CORRECTION_TRANSFORM);
-			Log.e(TAG, "RGGB = R: " + rggb.getRed() + " G_even: " + rggb.getGreenEven()+ " G_odd: " + rggb.getGreenOdd() + " B: " + rggb.getBlue());
-			Log.e(TAG, "Transform Matrix: " + transformMatrix.toString());
-			Log.e(TAG, "Exposure time = " + result.get(CaptureResult.SENSOR_EXPOSURE_TIME));
-			Log.e(TAG, "Frame duration = " + result.get(CaptureResult.SENSOR_FRAME_DURATION));
-			Log.e(TAG, "Sensor sensitivity = " + result.get(CaptureResult.SENSOR_SENSITIVITY));
+//			Log.e(TAG, "RGGB = R: " + rggb.getRed() + " G_even: " + rggb.getGreenEven()+ " G_odd: " + rggb.getGreenOdd() + " B: " + rggb.getBlue());
+//			Log.e(TAG, "Transform Matrix: " + transformMatrix.toString());
+//			Log.e(TAG, "Exposure time = " + result.get(CaptureResult.SENSOR_EXPOSURE_TIME));
+//			Log.e(TAG, "Frame duration = " + result.get(CaptureResult.SENSOR_FRAME_DURATION));
+//			Log.e(TAG, "Sensor sensitivity = " + result.get(CaptureResult.SENSOR_SENSITIVITY));
 			pluginManager.onCaptureCompleted(result);
 		}
 	};
@@ -2909,7 +3007,7 @@ public class Camera2Controller
 
 				} else if (im.getFormat() == ImageFormat.JPEG)
 				{
-					Log.e(TAG, "captured JPEG");
+//					Log.e(TAG, "captured JPEG");
 					ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
 
 					frame_len = jpeg.limit();
@@ -2988,7 +3086,7 @@ public class Camera2Controller
 						isYUV = true;
 						
 					} else {
-						Log.e(TAG, "captured RAW");
+//						Log.e(TAG, "captured RAW");
 						ByteBuffer raw = im.getPlanes()[0].getBuffer();
 						
 						frame_len = raw.limit();
@@ -3022,7 +3120,7 @@ public class Camera2Controller
 							pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
 							evCompensation == null ? 0 : evCompensation[currentFrameIndex],
 							sensorGain == null ? currentSensitivity : sensorGain[currentFrameIndex],
-							exposureTime == null ? 0 : exposureTime[currentFrameIndex]);
+							exposureTime == null ? 0 : exposureTime[currentFrameIndex], manualPowerGamma);
 			}
 
 			// Image should be closed after we are done with it

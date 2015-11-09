@@ -66,6 +66,7 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.support.v4.provider.DocumentFile;
+import android.util.Log;
 import android.util.Size;
 import android.widget.Toast;
 
@@ -185,6 +186,9 @@ public class SavingService extends NotificationService
 			additionalRotationValue = 180;
 			break;
 		}
+		
+//		if(CameraController.isNexus5x)
+//			additionalRotationValue = 180;
 	}
 
 	// save result pictures method for android < 5.0
@@ -363,12 +367,12 @@ public class SavingService extends NotificationService
 				}
 
 				String orientation_tag = String.valueOf(0);
-				int sensorOrientation = CameraController.getSensorOrientation();
-				int displayOrientation = CameraController.getDisplayOrientation();
-				sensorOrientation = (360 + sensorOrientation + (cameraMirrored ? -displayOrientation
-						: displayOrientation)) % 360;
+//				int sensorOrientation = CameraController.getSensorOrientation();
+//				int displayOrientation = CameraController.getDisplayOrientation();
+//				sensorOrientation = (360 + sensorOrientation + (cameraMirrored ? -displayOrientation
+//						: displayOrientation)) % 360;
 
-				if (Build.MODEL.equals("Nexus 6") && cameraMirrored)
+				if (CameraController.isNexus6 && cameraMirrored)
 					orientation = (orientation + 180) % 360;
 
 				switch (orientation)
@@ -626,7 +630,11 @@ public class SavingService extends NotificationService
 				// Take only one result frame from several results
 				// Used for PreShot plugin that may decide which result to save
 				if (imagesAmount == 1 && imageIndex != 0)
+				{
 					i = imageIndex;
+					//With changed frame index we have to get appropriate frame format
+					format = getFromSharedMem("resultframeformat" + i + Long.toString(sessionID));
+				}
 
 				String resultOrientation = getFromSharedMem("resultframeorientation" + i + Long.toString(sessionID));
 				int orientation = 0;
@@ -713,12 +721,17 @@ public class SavingService extends NotificationService
 				}
 
 				String orientation_tag = String.valueOf(0);
-				int sensorOrientation = CameraController.getSensorOrientation();
-				int displayOrientation = CameraController.getDisplayOrientation();
-				sensorOrientation = (360 + sensorOrientation + (cameraMirrored ? -displayOrientation
-						: displayOrientation)) % 360;
-
-				if (Build.MODEL.equals("Nexus 6") && cameraMirrored)
+//				int sensorOrientation = CameraController.getSensorOrientation(CameraController.getCameraIndex());
+//				int displayOrientation = CameraController.getDisplayOrientation();
+////				sensorOrientation = (360 + sensorOrientation + (cameraMirrored ? -displayOrientation
+////						: displayOrientation)) % 360;
+//				if (cameraMirrored) displayOrientation = -displayOrientation;
+//				
+//				// Calculate desired JPEG orientation relative to camera orientation to make
+//				// the image upright relative to the device orientation
+//				orientation = (sensorOrientation + displayOrientation + 360) % 360;
+				
+				if (CameraController.isNexus6 && cameraMirrored)
 					orientation = (orientation + 180) % 360;
 
 				switch (orientation)
@@ -783,10 +796,6 @@ public class SavingService extends NotificationService
 
 				if (!enableExifTagOrientation)
 					exif_orientation = ExifInterface.ORIENTATION_NORMAL;
-
-				DocumentFile parent = file.getParentFile();
-				String path = parent.toString().toLowerCase();
-				String name = parent.getName().toLowerCase();
 
 				values = new ContentValues();
 				values.put(
@@ -978,12 +987,13 @@ public class SavingService extends NotificationService
 			ExifInterface ei = new ExifInterface(file.getAbsolutePath());
 			String tag_model = getFromSharedMem("exiftag_model" + Long.toString(sessionID));
 			String tag_make = getFromSharedMem("exiftag_make" + Long.toString(sessionID));
-			if (tag_model != null)
-			{
-				ei.setAttribute(ExifInterface.TAG_MODEL, tag_model);
-				ei.setAttribute(ExifInterface.TAG_MAKE, tag_make);
-				ei.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(exif_orientation));
-			}
+			if (tag_model == null)
+				tag_model = Build.MODEL; 
+			ei.setAttribute(ExifInterface.TAG_MODEL, tag_model);
+			if (tag_make == null)
+				tag_make = Build.MANUFACTURER;	
+			ei.setAttribute(ExifInterface.TAG_MAKE, tag_make);
+			ei.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(exif_orientation));
 			ei.saveAttributes();
 		} catch (IOException e1)
 		{
@@ -1312,6 +1322,9 @@ public class SavingService extends NotificationService
 
 							geoText = (country != null ? country : "") + (locality != null ? (", " + locality) : "")
 									+ (address != null ? (", \n" + address) : "");
+							
+							if (geoText.equals(""))
+								geoText = "lat:" + l.getLatitude() + "\nlng:" + l.getLongitude();
 						}
 					} else
 						geoText = "lat:" + l.getLatitude() + "\nlng:" + l.getLongitude();
@@ -1338,6 +1351,7 @@ public class SavingService extends NotificationService
 				separatorString = " ";
 				break;
 			default:
+				separatorString = " ";
 			}
 
 			switch (dateFormat)
@@ -1603,8 +1617,8 @@ public class SavingService extends NotificationService
 		} catch (IOException e)
 		{
 			creator.close();
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			Log.e("Open Camera", "saveDNGPicture error: " + e.getMessage());
 		}
 
 		creator.close();

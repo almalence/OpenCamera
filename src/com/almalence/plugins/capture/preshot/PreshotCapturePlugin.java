@@ -98,7 +98,7 @@ public class PreshotCapturePlugin extends PluginCapture
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		camera2Preference = prefs.getBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false);
 		
-		if(Build.MODEL.equals("Nexus 6") && camera2Preference)
+		if(CameraController.isNexus6 && camera2Preference)
 		{
 			prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false).commit();
 			CameraController.setUseCamera2(false);
@@ -136,7 +136,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	{
 		ApplicationScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
 		
-		if(Build.MODEL.equals("Nexus 6") && camera2Preference)
+		if(CameraController.isNexus6 && camera2Preference)
 		{
 			CameraController.useCamera2OnRelaunch(true);
 			CameraController.setUseCamera2(camera2Preference);
@@ -316,7 +316,7 @@ public class PreshotCapturePlugin extends PluginCapture
 			PreShot.FreeBuffer();
 			ApplicationScreen.getGUIManager().startContinuousCaptureIndication();
 			preview_fps = CameraController.getPreviewFrameRate();
-			if (Build.MODEL.contains("HTC One"))
+			if (CameraController.isHTCOne)
 				preview_fps = 30;
 
 			imW = ApplicationScreen.getPreviewWidth();
@@ -352,6 +352,7 @@ public class PreshotCapturePlugin extends PluginCapture
 				Log.i("Preshot capture", "StartBuffering failed, can't allocate native buffer!");
 				return;
 			}
+			PluginManager.getInstance().addToSharedMem("cameraMirrored" + SessionID, String.valueOf(CameraController.isFrontCamera()));
 			PluginManager.getInstance().addToSharedMem("IsSlowMode" + SessionID, "true");
 
 			StartCaptureSequence();
@@ -401,7 +402,7 @@ public class PreshotCapturePlugin extends PluginCapture
 			if (frmCnt == 1)
 				PluginManager.getInstance().addToSharedMemExifTagsFromCamera(SessionID);
 
-			PreShot.InsertToBuffer(data, ApplicationScreen.getGUIManager().getDisplayOrientation());
+			PreShot.InsertToBuffer(data, ApplicationScreen.getGUIManager().getImageDataOrientation());
 		}
 		frmCnt++;
 	}
@@ -437,7 +438,7 @@ public class PreshotCapturePlugin extends PluginCapture
 	@Override
 	public void onImageTaken(int frame, byte[] frameData, int frame_len, int format)
 	{
-		PreShot.InsertToBuffer(frameData, ApplicationScreen.getGUIManager().getDisplayOrientation());
+		PreShot.InsertToBuffer(frameData, ApplicationScreen.getGUIManager().getImageDataOrientation());
 
 		try
 		{
@@ -511,7 +512,7 @@ public class PreshotCapturePlugin extends PluginCapture
 				return;
 	
 			createRequestIDList(1);
-			CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, false, true);
+			CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, false, false, true);
 			counter++;
 		}
 	}

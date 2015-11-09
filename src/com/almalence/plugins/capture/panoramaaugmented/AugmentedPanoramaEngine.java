@@ -1317,7 +1317,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 								
 								if (CameraController.isFrontCamera())
 								{
-									if (Build.MODEL.contains("Nexus 6"))
+									if (CameraController.isNexus6)
 										ImageConversion.TransformNV21N(yuv_address,
 												yuv_address,
 												AugmentedPanoramaEngine.this.height,
@@ -1329,6 +1329,18 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 												AugmentedPanoramaEngine.this.height,
 												AugmentedPanoramaEngine.this.width,
 												1, 0, 0);
+								}
+								else
+								{
+									//Workaround for Nexus5x, image is flipped because of sensor orientation
+									if(CameraController.isNexus5x)
+									{
+										ImageConversion.TransformNV21N(yuv_address,
+												yuv_address,
+												AugmentedPanoramaEngine.this.height,
+												AugmentedPanoramaEngine.this.width,
+												1, 1, 0);
+									}
 								}
 
 								ImageConversion.convertNV21toGLN(yuv_address,
