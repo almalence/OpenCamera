@@ -204,10 +204,13 @@ public class Camera2Controller
 	//Method returns TRUE if we support hardware level of current device
 	public static boolean checkHardwareLevel()
 	{
-		if(CameraController.cameraIdList == null || CameraController.cameraIdList.length == 0 || Camera2Controller.getInstance().camCharacter == null)
+		if(CameraController.cameraIdList == null || CameraController.cameraIdList.length == 0)
 			return false;
 		try
 		{
+			if(Camera2Controller.getInstance().camCharacter == null)
+				Camera2Controller.getInstance().camCharacter = Camera2Controller.getInstance().manager
+				.getCameraCharacteristics(CameraController.cameraIdList[0]);
 			int level = Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL);
 			return (level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED || level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL);
 		} catch (Exception e)
