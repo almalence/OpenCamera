@@ -155,8 +155,8 @@ public class DROVideoEngine
 							try
 							{
 								DROVideoEngine.this.encoder = new EglEncoder(path, DROVideoEngine.this.previewWidth,
-										DROVideoEngine.this.previewHeight, 24, 20000000, (ApplicationScreen
-												.getGUIManager().getDisplayOrientation()) % 360, EGL14
+										DROVideoEngine.this.previewHeight, 24, 20000000, ApplicationScreen
+												.getGUIManager().getImageDataOrientation(), EGL14
 												.eglGetCurrentContext());
 							} catch (RuntimeException e)
 							{

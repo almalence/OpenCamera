@@ -21,7 +21,6 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
-
 //-+- -->
 
 import java.io.IOException;
@@ -33,6 +32,13 @@ import java.util.Locale;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+
+/* <!-- +++
+import com.almalence.opencam_plus.cameracontroller.CameraController;
++++ --> */
+//<!-- -+-
+import com.almalence.opencam.cameracontroller.CameraController;
+//-+- -->
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -169,12 +175,9 @@ public class ConfigParser
 		String modeID = parser.getAttributeValue(null, "id");
 		
 		//set super mode by default on these devices
-		if (Build.MODEL.contains("Nexus 5") || 
-		    Build.MODEL.contains("Nexus 6") ||
-		    Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h959") ||
-		    Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h510") ||
-		    Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-f510k")
-		    )
+		if (CameraController.isNexus5 || 
+		    CameraController.isNexus6 ||
+		    CameraController.isFlex2)
 		{
 			Iterator<Mode> it = modes.iterator();
 			while(it.hasNext())

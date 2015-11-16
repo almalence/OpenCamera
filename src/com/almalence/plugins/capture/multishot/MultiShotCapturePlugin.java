@@ -99,7 +99,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 		resultCompleted = 0;
 		createRequestIDList(imageAmount);
 		CameraController.captureImagesWithParams(imageAmount, CameraController.YUV,
-				CameraController.isHALv3Supported()?pauseBetweenShotsCamera2:pauseBetweenShots, null, null, null, true, true);
+				CameraController.isCamera2Allowed()?pauseBetweenShotsCamera2:pauseBetweenShots, null, null, null, false, true, true);
 	}
 
 	@Override
@@ -129,7 +129,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem(frameName + SessionID, String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem(frameLengthName + SessionID, String.valueOf(frame_len));
 		PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken + SessionID,
-				String.valueOf(ApplicationScreen.getGUIManager().getDisplayOrientation()));
+				String.valueOf(ApplicationScreen.getGUIManager().getImageDataOrientation()));
 		PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
 
@@ -234,7 +234,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 
 	public static void selectImageDimensionMultishot()
 	{
-		captureIndex = ApplicationScreen.selectImageDimensionMultishot();
+		captureIndex = ApplicationScreen.instance.selectImageDimensionMultishot();
 		imgCaptureWidth = CameraController.MultishotResolutionsSizeList.get(captureIndex).getWidth();
 		imgCaptureHeight = CameraController.MultishotResolutionsSizeList.get(captureIndex).getHeight();
 	}

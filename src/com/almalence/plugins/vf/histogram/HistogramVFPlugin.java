@@ -96,7 +96,10 @@ public class HistogramVFPlugin extends PluginViewfinder
 		histFacts = new int[256];
 		histPath = new Path();
 		histPath.setFillType(Path.FillType.EVEN_ODD);
-		this.histogram = new HistogramView(ApplicationScreen.getMainContext());
+		if(this.histogram == null)
+			this.histogram = new HistogramView(ApplicationScreen.getMainContext());
+		else
+			removeViewQuick(this.histogram);
 
 		histFactsR = new int[256];
 		histPathR = new Path();
@@ -107,7 +110,10 @@ public class HistogramVFPlugin extends PluginViewfinder
 		histFactsB = new int[256];
 		histPathB = new Path();
 		histPathB.setFillType(Path.FillType.EVEN_ODD);
-		this.histogramRGB = new HistogramRGBView(ApplicationScreen.getMainContext());
+		if(this.histogramRGB == null)
+			this.histogramRGB = new HistogramRGBView(ApplicationScreen.getMainContext());
+		else
+			removeViewQuick(this.histogramRGB);
 
 		UpdatePreferences();
 

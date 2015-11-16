@@ -21,6 +21,8 @@ package com.almalence.plugins.processing.hdr;
 public final class AlmaShotHDR
 {
 	public static synchronized native String Initialize();
+	
+	public static synchronized native void getAffinity();
 
 	public static synchronized native int Release();
 

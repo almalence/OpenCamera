@@ -19,6 +19,10 @@ by Almalence Inc. All Rights Reserved.
 #include <stdio.h>
 #include <string.h>
 #include <jni.h>
+#include <sys/syscall.h>
+#include <unistd.h>
+#include <stdint.h>
+
 #include <android/log.h>
 
 #include "ImageConversionUtils.h"
@@ -39,6 +43,16 @@ static Uint8 *OutPic = NULL;
 void __attribute__((constructor)) initialize_openmp() {}
 void __attribute__((destructor)) release_openmp() {}
 
+extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_hdr_AlmaShotHDR_getAffinity
+(
+	JNIEnv* env,
+	jobject thiz
+)
+{
+	uint32_t mask[2];
+	syscall(__NR_sched_getaffinity, gettid(), sizeof(mask), mask);
+	//__android_log_print(ANDROID_LOG_FATAL, "AlmaShot", "Affinity mask: 0x%x", mask[0]);
+}
 
 extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_hdr_AlmaShotHDR_Initialize
 (

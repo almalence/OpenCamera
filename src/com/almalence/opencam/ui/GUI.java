@@ -204,8 +204,9 @@ public abstract class GUI
 
 	// INFO view
 	abstract protected void addInfoView(View view, android.widget.LinearLayout.LayoutParams viewLayoutParams);
+	abstract public void addInfoView(View info_control);
 
-	abstract protected void removeInfoView(View view);
+	abstract public void removeInfoView(View view);
 
 	// MODE SECTION
 	// AddMode
@@ -303,6 +304,12 @@ public abstract class GUI
 	public int getDisplayOrientation()
 	{
 		return (mDeviceOrientation + 90) % 360;
+	} // used to operate with image's data
+	
+	public int getImageDataOrientation()
+	{
+		//Workaround for Nexus5x, image is flipped because of sensor orientation
+		return (mDeviceOrientation + (CameraController.isNexus5x? (CameraController.isFrontCamera()? 90 : 270) : 90)) % 360;
 	} // used to operate with image's data
 
 	public int getLayoutOrientation()

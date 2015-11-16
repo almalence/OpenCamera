@@ -24,22 +24,15 @@ import com.almalence.opencam_plus.ConfigParser;
 import com.almalence.opencam_plus.PluginManager;
 import com.almalence.opencam_plus.PluginProcessing;
 import com.almalence.opencam_plus.R;
-import com.almalence.opencam_plus.cameracontroller.CameraController;
-import com.almalence.opencam_plus.ApplicationInterface;
 +++ --> */
 //<!-- -+-
-import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.ConfigParser;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
-import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
@@ -114,7 +107,7 @@ public class SimpleProcessingPlugin extends PluginProcessing
 			String isDRO = PluginManager.getInstance().getFromSharedMem("isdroprocessing" + sessionID);
 
 			if (isDRO != null && isDRO.equals("0"))
-			{
+			{//dro processing
 				AlmaShotDRO.Initialize();
 
 				int inputYUV = 0;
@@ -180,7 +173,7 @@ public class SimpleProcessingPlugin extends PluginProcessing
 
 				PluginManager.getInstance().addToSharedMem("resultframe" + i + sessionID, String.valueOf(yuv));
 			} else
-			{
+			{//single shot processing + raw processing
 				int frame = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID));
 				int len = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i + sessionID));
 
@@ -188,7 +181,7 @@ public class SimpleProcessingPlugin extends PluginProcessing
 						"frameisraw" + i + sessionID));
 
 				int frameIndex = isRAW ? (++frameNumRAW) : (imagesAmountRAW + (++frameNum));
-
+				
 				PluginManager.getInstance().addToSharedMem("resultframeformat" + frameIndex + sessionID,
 						isRAW ? "dng" : "jpeg");
 				PluginManager.getInstance().addToSharedMem("resultframe" + frameIndex + sessionID,

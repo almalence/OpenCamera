@@ -24,33 +24,17 @@ package com.almalence.opencam;
 
 //-+- -->
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URI;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Locale;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.AssetFileDescriptor;
-import android.graphics.ImageFormat;
-import android.graphics.Matrix;
-import android.graphics.Rect;
-import android.location.Location;
 import android.media.ExifInterface;
-import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -61,9 +45,6 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.provider.MediaStore;
-import android.provider.MediaStore.Images;
-import android.provider.MediaStore.Images.ImageColumns;
-import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -74,7 +55,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.almalence.SwapHeap;
 import com.almalence.plugins.capture.bestshot.BestShotCapturePlugin;
 import com.almalence.plugins.capture.burst.BurstCapturePlugin;
 import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
@@ -85,7 +65,6 @@ import com.almalence.plugins.capture.preshot.PreshotCapturePlugin;
 import com.almalence.plugins.capture.standard.CapturePlugin;
 import com.almalence.plugins.capture.video.VideoCapturePlugin;
 import com.almalence.plugins.export.standard.ExportPlugin;
-import com.almalence.plugins.export.standard.GPSTagsConverter;
 import com.almalence.plugins.processing.bestshot.BestshotProcessingPlugin;
 import com.almalence.plugins.processing.hdr.HDRProcessingPlugin;
 import com.almalence.plugins.processing.multishot.MultiShotProcessingPlugin;
@@ -101,7 +80,6 @@ import com.almalence.plugins.vf.gyro.GyroVFPlugin;
 import com.almalence.plugins.vf.histogram.HistogramVFPlugin;
 import com.almalence.plugins.vf.infoset.InfosetVFPlugin;
 import com.almalence.plugins.vf.zoom.ZoomVFPlugin;
-import com.almalence.util.MLocation;
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.ui.GUI.ShutterButton;
@@ -358,7 +336,11 @@ public class PluginManager extends PluginManagerBase
 
 		isRestarting = true;
 
-		ApplicationScreen.getGUIManager().removeViews(countdownLayout, R.id.specialPluginsLayout);
+//		if(countdownLayout.getParent() != null)
+//			((ViewGroup) countdownLayout.getParent()).removeView(countdownLayout);
+//		ApplicationScreen.getGUIManager().removeViews(countdownLayout, R.id.specialPluginsLayout);
+//		ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout).invalidate();
+//		ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout).requestLayout();
 
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT,
 				LayoutParams.FILL_PARENT);
@@ -372,7 +354,9 @@ public class PluginManager extends PluginManagerBase
 		this.countdownLayout.requestLayout();
 		this.countdownLayout.setVisibility(View.INVISIBLE);
 
-		ApplicationScreen.getGUIManager().removeViews(photoTimeLapseLayout, R.id.specialPluginsLayout);
+//		if(photoTimeLapseLayout.getParent() != null)
+//			((ViewGroup) photoTimeLapseLayout.getParent()).removeView(photoTimeLapseLayout);
+//		ApplicationScreen.getGUIManager().removeViews(photoTimeLapseLayout, R.id.specialPluginsLayout);
 
 		params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
@@ -449,8 +433,7 @@ public class PluginManager extends PluginManagerBase
 			}
 		} else
 		{
-			if (!showDelayedCapturePrefCommon || delayInterval == 0
-					|| !pluginList.get(activeCapture).delayedCaptureSupported())
+			if (!showDelayedCapturePrefCommon || delayInterval == 0 || !pluginList.get(activeCapture).delayedCaptureSupported())
 			{
 				for (int i = 0; i < activeVF.size(); i++)
 					pluginList.get(activeVF.get(i)).onShutterClick();
@@ -519,7 +502,7 @@ public class PluginManager extends PluginManagerBase
 		} else if ("general_image_size".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_general_image_size);
-			if (CameraController.isUseHALv3())
+			if (CameraController.isUseCamera2())
 			{
 				Preference pref;
 				if (null != (pref = pf.findPreference(ApplicationScreen.sImageSizeMultishotBackPref))
@@ -584,7 +567,7 @@ public class PluginManager extends PluginManagerBase
 		} else if ("processing_night_more".equals(settings))
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_processing_night_more);
-			if (CameraController.isUseHALv3())
+			if (CameraController.isUseCamera2())
 			{
 				PreferenceScreen prefScr;
 				if (null != (prefScr = (PreferenceScreen) pf.findPreference("nightProcessingMoreScreen")))
@@ -627,7 +610,7 @@ public class PluginManager extends PluginManagerBase
 			AddModeSettings("video", pf);
 		} else if ("preshot".equals(settings))
 		{
-			AddModeSettings("pixfix", pf);
+			AddModeSettings("preshot", pf);
 		} else if ("multishot".equals(settings))
 		{
 			AddModeSettings("multishot", pf);
@@ -862,7 +845,7 @@ public class PluginManager extends PluginManagerBase
 			shutterRelease = true;
 
 			/*
-			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more
+			 * Debug code for Galaxy S6 in Super mode. Look at Camera2 for more
 			 * details
 			 */
 			// CameraController.onCaptureFinished();
@@ -877,6 +860,7 @@ public class PluginManager extends PluginManagerBase
 				// If flashMode == FLASH_MODE_CAPTURE_TORCH, then turn off torch
 				// after capturing completed.
 				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
+				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_CAPTURE_TORCH);
 			}
 
 			for (int i = 0; i < activeVF.size(); i++)
@@ -886,7 +870,7 @@ public class PluginManager extends PluginManagerBase
 			ApplicationScreen.getGUIManager().startProcessingAnimation();
 
 			// Returns actual flash mode if it was changed during capturing.
-			if (!CameraController.isUseHALv3())
+			if (!CameraController.isUseCamera2())
 			{
 				int flashMode = ApplicationScreen.instance.getFlashModePref(ApplicationScreen.sDefaultFlashValue);
 				if (flashMode != CameraParameters.FLASH_MODE_CAPTURE_TORCH)
@@ -911,7 +895,7 @@ public class PluginManager extends PluginManagerBase
 
 			Intent mServiceIntent = new Intent(ApplicationScreen.instance, ProcessingService.class);
 
-			// Pass to Service sessionID and some other parameters, that may be required.
+//			// Pass to Service sessionID and some other parameters, that may be required.
 			mServiceIntent.putExtra("sessionID", sessionID);
 			CameraController.Size imageSize = CameraController.getCameraImageSize();
 			PluginManager.getInstance().addToSharedMem("imageWidth" + sessionID, String.valueOf(imageSize.getWidth()));
@@ -921,6 +905,19 @@ public class PluginManager extends PluginManagerBase
 			
 			// Start processing service with current sessionID.
 			ApplicationScreen.instance.startService(mServiceIntent);
+//			new Thread() {
+//				@Override
+//				public void run()
+//				{
+//					android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_DEFAULT);
+//					AlmaShotHDR.getAffinity();
+//				}
+//			}.start();
+//			
+////			android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+//			ProcessingTask task = new ProcessingTask();
+//			task.sessionID = sessionID;
+//			task.start();
 
 			ApplicationScreen.instance.muteShutter(false);
 
@@ -942,7 +939,7 @@ public class PluginManager extends PluginManagerBase
 			shutterRelease = true;
 
 			/*
-			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more
+			 * Debug code for Galaxy S6 in Super mode. Look at Camera2 for more
 			 * details
 			 */
 			// CameraController.onCaptureFinished();
@@ -1318,14 +1315,10 @@ public class PluginManager extends PluginManagerBase
 	public boolean isCamera2InterfaceAllowed()
 	{
 		String modeID = getActiveModeID();
-		// Temp fix HDR modes for LG G Flex 2.
-		boolean isLgGFlex2 = Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h959")
-				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h510")
-				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-f510k");
 
 		if (modeID.equals("video")
-				|| (Build.MODEL.contains("Nexus 6") && (modeID.equals("pixfix") || modeID.equals("panorama_augmented")))
-				|| (isLgGFlex2 && (modeID.equals("hdrmode") || modeID.equals("expobracketing"))))
+				|| (CameraController.isNexus6 && (modeID.equals("preshot") || modeID.equals("panorama_augmented")))
+				|| ((CameraController.isFlex2 /*|| CameraController.isG4*/) && (modeID.equals("hdrmode") || modeID.equals("expobracketing"))))
 			return false;
 		else
 			return true;

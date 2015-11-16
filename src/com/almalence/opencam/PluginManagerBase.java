@@ -32,16 +32,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -53,56 +48,30 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.content.UriPermission;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.ImageFormat;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Paint.Align;
 import android.graphics.Rect;
 import android.hardware.Camera;
 import android.hardware.camera2.CaptureResult;
-import android.hardware.camera2.DngCreator;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.media.ExifInterface;
-import android.net.Uri;
 import android.opengl.GLSurfaceView;
-import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Environment;
-import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.support.v4.provider.DocumentFile;
-import android.util.Log;
-import android.util.Size;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.almalence.SwapHeap;
-
-import com.almalence.plugins.export.ExifDriver.ExifDriver;
-import com.almalence.plugins.export.ExifDriver.ExifManager;
-import com.almalence.plugins.export.ExifDriver.Values.ValueByteArray;
-import com.almalence.plugins.export.ExifDriver.Values.ValueNumber;
-import com.almalence.plugins.export.ExifDriver.Values.ValueRationals;
 import com.almalence.plugins.export.standard.GPSTagsConverter;
 import com.almalence.util.MLocation;
 import com.almalence.util.Util;
@@ -358,8 +327,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	{
 		String modeName = mode.modeID;
 		if (modeName.equals("video")
-				|| (Build.MODEL.equals("Nexus 6") && (modeName.equals("panorama_augmented") || modeName
-						.equals("preshot"))))
+			|| (CameraController.isNexus6 && (modeName.equals("panorama_augmented") || modeName.equals("preshot")))
+			|| (CameraController.isFlex2 && (modeName.equals("hdrmode") || modeName.equals("expobracketing"))))
 			switchToOldCameraInterface = true;
 		else
 			switchToOldCameraInterface = false;
@@ -578,6 +547,16 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		return (res > 0 ? true : false);
 	}
 
+	public boolean onMultiTouch(View view, MotionEvent e)
+	{
+		int res = 0;
+		for (int i = 0; i < activeVF.size(); i++)
+			res += (pluginList.get(activeVF.get(i)).onMultiTouch(view, e) ? 1 : 0);
+		if (null != pluginList.get(activeCapture))
+			res += (pluginList.get(activeCapture).onMultiTouch(view, e) ? 1 : 0);
+		return (res > 0 ? true : false);
+	}
+	
 	public Plugin getPlugin(String id)
 	{
 		return pluginList.get(id);
@@ -585,7 +564,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 
 	protected void AddModeSettings(String modeName, PreferenceFragment pf)
 	{
-		if (modeName.equals("super") && CameraController.isUseHALv3())
+		if (modeName.equals("super") && CameraController.isUseCamera2())
 		{
 			pf.addPreferencesFromResource(R.xml.preferences_processing_super);
 			return;
@@ -910,7 +889,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		case ApplicationInterface.MSG_CAPTURE_FINISHED:
 
 			/*
-			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more
+			 * Debug code for Galaxy S6 in Super mode. Look at Camera2 for more
 			 * details
 			 */
 			// CameraController.onCaptureFinished();
@@ -963,7 +942,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		case ApplicationInterface.MSG_CAPTURE_FINISHED_NORESULT:
 
 			/*
-			 * Debug code for Galaxy S6 in Super mode. Look at HALv3 for more
+			 * Debug code for Galaxy S6 in Super mode. Look at Camera2 for more
 			 * details
 			 */
 			// CameraController.onCaptureFinished();
@@ -1074,7 +1053,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			for (int i = 0; i < activeVF.size(); i++)
 				pluginList.get(activeVF.get(i)).onExportFinished();
 
-			Toast.makeText(ApplicationScreen.getMainContext(), "Can't save data - seems no free space left.",
+			Toast.makeText(ApplicationScreen.getMainContext(), "Can't save data - no free space left or problems while saving occurred.",
 					Toast.LENGTH_LONG).show();
 
 			ApplicationScreen.getGUIManager().lockControls = false;
@@ -1401,7 +1380,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 
 	public String getFileFormat()
 	{
-		if (CameraController.isUseHALv3())
+		if (CameraController.isUseCamera2())
 		{
 			return SavingService.getExportFileName(getActiveMode().modeSaveNameHAL);
 		} else

@@ -93,7 +93,7 @@ public class BurstCapturePlugin extends PluginCapture
 		isAllImagesTaken = false;
 		isAllCaptureResultsCompleted = true;
 
-		if (CameraController.isUseHALv3() && CameraController.isNexus)
+		if (CameraController.isUseCamera2() && CameraController.isNexus5or6)
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 			preferenceFlashMode = prefs.getInt(ApplicationScreen.sFlashModePref, ApplicationScreen.sDefaultFlashValue);
@@ -116,7 +116,7 @@ public class BurstCapturePlugin extends PluginCapture
 	@Override
 	public void onGUICreate()
 	{
-		if (CameraController.isUseHALv3() && CameraController.isNexus)
+		if (CameraController.isUseCamera2() && CameraController.isNexus5or6)
 			ApplicationScreen.instance.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false, true);
 	}
 
@@ -126,8 +126,8 @@ public class BurstCapturePlugin extends PluginCapture
 		try
 		{
 			int[] flashModes = CameraController.getSupportedFlashModes();
-			if (flashModes != null && flashModes.length > 0 && CameraController.isUseHALv3()
-					&& CameraController.isNexus)
+			if (flashModes != null && flashModes.length > 0 && CameraController.isUseCamera2()
+					&& CameraController.isNexus5or6)
 			{
 				CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
 
@@ -145,7 +145,7 @@ public class BurstCapturePlugin extends PluginCapture
 	@Override
 	public void onPause()
 	{
-		if (CameraController.isUseHALv3() && CameraController.isNexus) {
+		if (CameraController.isUseCamera2() && CameraController.isNexus5or6) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 			prefs.edit().putInt(ApplicationScreen.sFlashModePref, preferenceFlashMode).commit();
 			CameraController.setCameraFlashMode(preferenceFlashMode);
@@ -260,10 +260,10 @@ public class BurstCapturePlugin extends PluginCapture
 		createRequestIDList(captureRAW? imageAmount * 2 : imageAmount);
 		if (captureRAW)
 		{
-			CameraController.captureImagesWithParams(imageAmount, CameraController.RAW, pause, null, null, null, true,
+			CameraController.captureImagesWithParams(imageAmount, CameraController.RAW, pause, null, null, null, false, true,
 					true);
 		} else
-			CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, pause, null, null, null, true,
+			CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, pause, null, null, null, false, true,
 					true);
 	}
 
@@ -293,7 +293,7 @@ public class BurstCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem("frameisraw" + imagesTaken + SessionID, String.valueOf(isRAW));
 
 		PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken + SessionID,
-				String.valueOf(ApplicationScreen.getGUIManager().getDisplayOrientation()));
+				String.valueOf(ApplicationScreen.getGUIManager().getImageDataOrientation()));
 		PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
 

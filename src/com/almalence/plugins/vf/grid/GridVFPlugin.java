@@ -105,6 +105,8 @@ public class GridVFPlugin extends PluginViewfinder
 
 		if (grid == null)
 			grid = new ImageView(ApplicationScreen.getMainContext());
+		else
+			removeViewQuick(grid);
 
 		setProperGrid();
 

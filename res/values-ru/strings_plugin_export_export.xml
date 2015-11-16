@@ -5,6 +5,9 @@
 	
 	<string name="Pref_Export_ExportName_Title">Схема названия снимка</string>
 	
+	<string name="Pref_Export_ExportNameSeparator_Title">Разделитель в схеме именования</string>
+	<string name="Pref_Export_ExportNameSeparator_Summary">При активации добавляется разделитель. Пример: 2015-10-30_22:15:45</string>
+	
 	<string name="Pref_Export_ExportFormat_Title">Формат сохранения</string>
 	
 	<string name="Res_Export_SaveJPEG_Text">Формат JPEG</string>

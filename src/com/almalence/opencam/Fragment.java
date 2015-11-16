@@ -107,7 +107,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		if (nightPreference != null)
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-			if (prefs.getBoolean("useHALv3Pref", false))
+			if (prefs.getBoolean("useCamera2Pref", false))
 			{
 				getPreferenceScreen().removePreference(nightPreference);
 			} else
@@ -604,6 +604,29 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 			about_string.append(display_size.y);
 		}
 
+		//show camera 2 support level
+		int level = CameraController.getCamera2Level();
+		about_string.append("\nCamera2 API: ");
+		switch (level)
+		{
+		case 0://limited
+			about_string.append("limited");
+			break;
+		case 1://full
+			about_string.append("full");
+			break;
+		case 2://legacy
+			about_string.append("legacy");
+			break;
+		default:
+			about_string.append("not supported");
+		}
+		
+//		about_string.append("\nSensor orientation, back camera: ");
+//		about_string.append(CameraController.getSensorOrientation(0));
+//		about_string.append("\nSensor orientation, front camera: ");
+//		about_string.append(CameraController.getSensorOrientation(1));
+		
 		if (MainScreen.getInstance().preview_sizes != null)
 		{
 			about_string.append("\nPreview resolutions: ");
@@ -763,6 +786,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		alertDialog.show();
 	}
 
+	@TargetApi(19)
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data)
 	{

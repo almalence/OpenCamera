@@ -250,11 +250,11 @@ public class CapturePlugin extends PluginCapture
 		resultCompleted = 0;
 		createRequestIDList(captureRAW? 2 : 1);
 		if (ModePreference.compareTo("0") == 0)
-			CameraController.captureImagesWithParams(1, CameraController.YUV, null, null, null, null, true, true);
+			CameraController.captureImagesWithParams(1, CameraController.YUV, null, null, null, null, false, true, true);
 		else if(captureRAW)
-			CameraController.captureImagesWithParams(1, CameraController.RAW, null, null, null, null, true, true);
+			CameraController.captureImagesWithParams(1, CameraController.RAW, null, null, null, null, false, true, true);
 		else
-			CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, true, true);
+			CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, false, true, true);
 	}
 
 	
@@ -271,16 +271,18 @@ public class CapturePlugin extends PluginCapture
 		
 		
 		PluginManager.getInstance().addToSharedMem("frameorientation" + framesCaptured + SessionID,
-				String.valueOf(ApplicationScreen.getGUIManager().getDisplayOrientation()));
+				String.valueOf(ApplicationScreen.getGUIManager().getImageDataOrientation()));
 		PluginManager.getInstance().addToSharedMem("framemirrored" + framesCaptured + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
 
 		PluginManager.getInstance().addToSharedMem("amountofcapturedframes" + SessionID, String.valueOf(framesCaptured));
-		PluginManager.getInstance().addToSharedMem("amountofcapturedrawframes" + SessionID, isRAW? "1" : "0");
+		if (isRAW)
+			PluginManager.getInstance().addToSharedMem("amountofcapturedrawframes" + SessionID, "1");
 
 		PluginManager.getInstance().addToSharedMem("isdroprocessing" + SessionID, ModePreference);
 
-		if((captureRAW && framesCaptured == 2) || !captureRAW || ModePreference.compareTo("0") == 0)
+		if((captureRAW && framesCaptured == 2) //if capturing raw (raw and jpeg should be saved) 
+			|| !captureRAW || ModePreference.compareTo("0") == 0) //if dro or single shot without raw - only 1 image should be called
 		{
 			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 			inCapture = false;
@@ -306,7 +308,6 @@ public class CapturePlugin extends PluginCapture
 			PluginManager.getInstance().addRAWCaptureResultToSharedMem("captureResult" + resultCompleted + SessionID, result);
 		}
 	}
-
 	@Override
 	public void onPreviewFrame(byte[] data)
 	{

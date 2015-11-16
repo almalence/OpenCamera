@@ -41,9 +41,14 @@
    <dimen name="viewfinderViewsMarginTop">20dp</dimen>
    
    <dimen name="paramsLayoutHeight">60dp</dimen>
+   <dimen name="paramsLayoutHeightInnerMode">33dp</dimen>
    <dimen name="paramsLayoutHeightScanner">62dp</dimen>
    
    <dimen name="buttonsLayoutMarginTop">70dp</dimen>   
+   
+   <dimen name="manualControlWidth">170dp</dimen>
+   
+   <dimen name="manualControlsWidth">315dp</dimen>
    
    <dimen name="exposureButtonSize">30dp</dimen>
    <dimen name="exposureSeekBarWidth">210dp</dimen>

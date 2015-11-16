@@ -26,14 +26,15 @@ package com.almalence.opencam;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
@@ -42,6 +43,7 @@ import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.media.AudioManager;
 import android.media.ImageReader;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
@@ -54,6 +56,8 @@ import android.os.StatFs;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -69,14 +73,17 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.opencam_plus.cameracontroller.Camera2Controller;
  import com.almalence.opencam_plus.ui.GLLayer;
  import com.almalence.opencam_plus.ui.GUI;
  import com.almalence.opencam_plus.R;
  +++ --> */
 //<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam.cameracontroller.Camera2Controller;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
 import com.almalence.opencam.R;
@@ -108,7 +115,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public Context						mainContext;
 	protected Handler					messageHandler;
 
-	// Interface to HALv3 camera and Old style camera
+	// Interface to Camera2 camera and Old style camera
 	protected CameraController			cameraController			= null;
 
 	protected int						captureFormat				= CameraController.JPEG;
@@ -228,6 +235,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public static String				sAWBLockPref;
 	public static String				sSavePathPref;
 	public static String				sExportNamePref;
+	public static String				sExportNameSeparatorPref;
 	public static String				sExportNamePrefixPref;
 	public static String				sExportNamePostfixPref;
 	public static String				sSaveToPref;
@@ -258,8 +266,11 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	public static int					iMinColorTemperatureValue		= 1000;
 	public static int					iMaxColorTemperatureValue		= 10000;
 
-	private static File					forceFilename				= null;
+	private static File					forceFilename					= null;
 	private static Uri					forceFilenameUri;
+	
+	private final static int			CAMERA_PERMISSION_CODE			= 0;
+	private static boolean				cameraPermissionGranted			= true; //TODO: grand permissions on runtime
 
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -311,6 +322,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		sAntibandingPref = getResources().getString(R.string.Preference_AntibandingValue);
 
 		sExportNamePref = getResources().getString(R.string.Preference_ExportNameValue);
+		sExportNameSeparatorPref = getResources().getString(R.string.Preference_ExportNameSeparatorValue);
 		sExportNamePrefixPref = getResources().getString(R.string.Preference_SavePathPrefixValue);
 		sExportNamePostfixPref = getResources().getString(R.string.Preference_SavePathPostfixValue);
 		sSavePathPref = getResources().getString(R.string.Preference_SavePathValue);
@@ -347,9 +359,13 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		getWindow().addFlags(
 				WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
 						| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+		
+		
+//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+//			grandPermissions();
 
 		// set some common view here
-		setContentView(R.layout.opencamera_main_layout);
+//		setContentView(R.layout.opencamera_main_layout);
 
 		createPluginManager();
 		duringOnCreate();
@@ -368,14 +384,14 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
 
 		// set preview, on click listener and surface buffers
-		findViewById(R.id.SurfaceView02).setVisibility(View.GONE);
-		preview = (SurfaceView) this.findViewById(R.id.SurfaceView01);
-		preview.setOnClickListener(this);
-		preview.setOnTouchListener(this);
-		preview.setKeepScreenOn(true);
-
-		surfaceHolder = preview.getHolder();
-		surfaceHolder.addCallback(this);
+//		findViewById(R.id.SurfaceView02).setVisibility(View.GONE);
+//		preview = (SurfaceView) this.findViewById(R.id.SurfaceView01);
+//		preview.setOnClickListener(this);
+//		preview.setOnTouchListener(this);
+//		preview.setKeepScreenOn(true);
+//
+//		surfaceHolder = preview.getHolder();
+//		surfaceHolder.addCallback(this);
 
 		orientListener = new OrientationEventListener(this)
 		{
@@ -482,6 +498,74 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 		afterOnCreate();
 	}
+	
+	@TargetApi(23)
+	protected void grandPermissions()
+	{
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+		{
+			cameraPermissionGranted = false;
+		    // Should we show an explanation?
+		    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA))
+		    {
+		
+		        // Show an explanation to the user *asynchronously* -- don't block
+		        // this thread waiting for the user's response! After the user
+		        // sees the explanation, try again to request the permission.
+		
+		    }
+		    else 
+		    {
+		
+		        // No explanation needed, we can request the permission.
+		
+		        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, ApplicationScreen.CAMERA_PERMISSION_CODE);
+		
+		        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+		        // app-defined int constant. The callback method gets the
+		        // result of the request.
+		    }
+		}
+		else
+			cameraPermissionGranted = true;
+	}
+	
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
+	{
+	    switch (requestCode)
+	    {
+	        case ApplicationScreen.CAMERA_PERMISSION_CODE:
+	        {
+	            // If request is cancelled, the result arrays are empty.
+	            if (grantResults.length > 0
+	                && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+	            {
+
+	            	cameraPermissionGranted = true;
+	                // permission was granted, yay! Do the
+	                // contacts-related task you need to do.
+	            	if(CameraController.openCameraWaiting)
+	            		Camera2Controller.openCameraCamera2();
+
+	            }
+	            else {
+
+	                // permission denied, boo! Disable the
+	                // functionality that depends on this permission.
+	            }
+	            return;
+	        }
+
+	        // other 'case' lines to check for other
+	        // permissions this app might request
+	    }
+	}
+	
+	public static boolean isCameraPermissionGranted()
+	{
+		return cameraPermissionGranted;
+	}
 
 	abstract protected void createPluginManager();
 
@@ -536,6 +620,9 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	@TargetApi(19)
 	@Override
 	abstract public Surface getRAWImageSurface();
+	
+	@Override
+	abstract public MediaRecorder getMediaRecorder();
 
 	public static SurfaceHolder getPreviewSurfaceHolder()
 	{
@@ -554,19 +641,23 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	public static void setCaptureFormat(int capture)
 	{
-		if(CameraController.isCaptureFormatSupported(capture))
-		{
-			instance.captureFormat = capture;
-			
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-				CameraController.setCaptureFormat(capture);
-		}
-		else if(CameraController.isCaptureFormatSupported(CameraController.JPEG))
-		{
+		if (!CameraController.isRemoteCamera()) {			
+			if(CameraController.isCaptureFormatSupported(capture))
+			{
+				instance.captureFormat = capture;
+				
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+					CameraController.setCaptureFormat(capture);
+			}
+			else if(CameraController.isCaptureFormatSupported(CameraController.JPEG))
+			{
+				instance.captureFormat = CameraController.JPEG;
+				
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+					CameraController.setCaptureFormat(CameraController.JPEG);
+			}
+		} else {
 			instance.captureFormat = CameraController.JPEG;
-			
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-				CameraController.setCaptureFormat(CameraController.JPEG);
 		}
 	}
 
@@ -706,7 +797,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 		if (!CameraController.isRemoteCamera())
 		{
-			if (CameraController.isUseHALv3())
+			if (CameraController.isUseCamera2())
 				stopImageReaders();
 		}
 	}
@@ -739,7 +830,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	protected void onResume()
 	{
 		super.onResume();
-
 		onApplicationResume();
 	}
 
@@ -791,7 +881,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 						surfaceHolder.addCallback(ApplicationScreen.this);
 
 						// One of device camera is selected.
-						if (CameraController.isUseHALv3())
+						if (CameraController.isUseCamera2())
 						{
 							ApplicationScreen.instance.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
 							CameraController.setupCamera(null, true);
@@ -853,7 +943,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	{
 		if (!CameraController.isRemoteCamera())
 		{
-			if (CameraController.isUseHALv3() || ApplicationScreen.getPluginManager().isRestart())
+			if (CameraController.isUseCamera2() || ApplicationScreen.getPluginManager().isRestart())
 			{
 				new CountDownTimer(100, 100)
 				{
@@ -930,7 +1020,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 		if (!CameraController.isRemoteCamera())
 		{
-			if (CameraController.isUseHALv3())
+			if (CameraController.isUseCamera2())
 				stopImageReaders();
 		} else
 		{
@@ -992,7 +1082,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 						ApplicationScreen.instance.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
 						if (!CameraController.isRemoteCamera())
 						{
-							if (!CameraController.isUseHALv3())
+							if (!CameraController.isUseCamera2())
 							{
 								CameraController.setupCamera(holder, true);
 							} else
@@ -1025,10 +1115,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	}
 
 	// Method used only in Almalence's multishot modes
-	public static int selectImageDimensionMultishot()
-	{
-		return 0;
-	}
+	abstract public int selectImageDimensionMultishot();
 
 	@Override
 	public void addSurfaceCallback()
@@ -1036,7 +1123,11 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		instance.surfaceHolder.addCallback(instance);
 	}
 
-	boolean	isCameraConfiguring	= false;
+	boolean	isCameraConfiguring		= false;
+	
+	//Is used to implement google's advice how to prevent surfaceView bug in Android 6
+	//Will be removed when google will fix the bug
+	boolean	isSurfaceConfiguring	= false; 
 
 	@Override
 	public void configureCamera(boolean createGUI)
@@ -1049,8 +1140,8 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		// prepare list of surfaces to be used in capture requests
 		if (!CameraController.isRemoteCamera())
 		{
-			if (CameraController.isUseHALv3())
-				configureHALv3Camera(captureFormat);
+			if (CameraController.isUseCamera2())
+				configureCamera2Camera(captureFormat);
 			else
 			{
 				Camera.Size sz = CameraController.getCameraParameters().getPreviewSize();
@@ -1082,16 +1173,16 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	protected void onCameraConfigured()
 	{
 		ApplicationScreen.getPluginManager().setupCameraParameters();
-		Camera.Parameters cp = CameraController.getCameraParameters();
 
 		if (!CameraController.isRemoteCamera())
 		{
-			if (!CameraController.isUseHALv3())
+			if (!CameraController.isUseCamera2())
 			{
+				Camera.Parameters cp = CameraController.getCameraParameters();
 				try
 				{
 					// Nexus 5 is giving preview which is too dark without this
-					if (Build.MODEL.contains("Nexus 5"))
+					if (CameraController.isNexus5)
 					{
 						cp.setPreviewFpsRange(7000, 30000);
 						CameraController.setCameraParameters(cp);
@@ -1144,7 +1235,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 			prepareMeteringAreas();
 
-			if (!CameraController.isUseHALv3())
+			if (!CameraController.isUseCamera2())
 			{
 				guiManager.onCameraCreate();
 				ApplicationScreen.getPluginManager().onCameraParametersSetup();
@@ -1167,7 +1258,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 			{
 				if (!CameraController.isRemoteCamera())
 				{
-					if (!CameraController.isUseHALv3())
+					if (!CameraController.isUseCamera2())
 					{
 						if (!CameraController.isCameraCreated())
 							return;
@@ -1215,7 +1306,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	}
 
 	@TargetApi(21)
-	protected void configureHALv3Camera(int captureFormat)
+	protected void configureCamera2Camera(int captureFormat)
 	{
 		isCameraConfiguring = true;
 
@@ -1480,7 +1571,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	@Override
 	public boolean handleMessage(Message msg)
 	{
-
 		switch (msg.what)
 		{
 		case ApplicationInterface.MSG_APPLICATION_STOP:
@@ -1500,10 +1590,12 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 				{
 					// if both surface is created and camera device is opened
 					// - ready to set up preview and other things
-					// if (surfaceCreated && (HALv3.getCamera2() != null))
+					// if (surfaceCreated && (Camera2.getCamera2() != null))
 					if (surfaceCreated)
 					{
-						configureCamera(!CameraController.isUseHALv3() || modeName.contains("video"));
+						configureCamera(!CameraController.isUseCamera2() || modeName.contains("video")
+								|| (CameraController.isNexus6 && modeName.contains("preshot"))
+								|| (CameraController.isFlex2 && (modeName.contains("hdrmode") || modeName.contains("expobracketing"))));
 						mCameraStarted = true;
 					}
 				} else
@@ -1520,8 +1612,8 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		case ApplicationInterface.MSG_SURFACE_CONFIGURED:
 			{
 				createCaptureSession();
-				ApplicationScreen.getPluginManager().onGUICreate();
 				ApplicationScreen.getGUIManager().onGUICreate();
+				ApplicationScreen.getPluginManager().onGUICreate();
 				mCameraStarted = true;
 			}
 			break;
@@ -1608,7 +1700,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	{
 		if (!CameraController.isRemoteCamera())
 		{
-			if (CameraController.isUseHALv3())
+			if (CameraController.isUseCamera2())
 			{
 				setSurfaceHolderSize(iWidth, iHeight);
 				setPreviewWidth(iWidth);

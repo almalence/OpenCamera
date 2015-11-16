@@ -23,6 +23,7 @@
 
 #include "YuvToJpegEncoderMT.h"
 #include "almashot.h"
+#include "almashot_raw.h"
 
 static unsigned char *yuv;
 static int SX = 0;
@@ -182,8 +183,10 @@ extern "C" JNIEXPORT int JNICALL Java_com_almalence_YuvImage_CreateYUVImageFromR
 		memcpy (&rawCropped[(y+1)*w*2], &raw[x0 * 2+(y0+y+1)*rowStride], w*2);
 	}
 
+	int16_t colorMatrix[12] = { 256, 0, 0, 0, 0, 256, 0, 0, 0, 0, 256, 0};
 	int kelvin[2] = {kelvin1, kelvin2};
-	Raw_DemosaicAndColorCorrect(rawCropped, yuv, w, h, kelvin, blevel, wlevel, cameraIndex, outputRGB);
+	Raw_DemosaicAndColorCorrect(rawCropped, yuv, w, h, kelvin, colorMatrix, blevel, wlevel, cameraIndex, outputRGB);
+	//Raw_DemosaicAndColorCorrect(rawCropped, yuv, w, h, kelvin, blevel, wlevel, cameraIndex, outputRGB);
 
 	free(rawCropped);
 

@@ -329,16 +329,6 @@ public class AlmalenceStore
 				else
 					price.setText(MainScreen.getInstance().titleUnlockMoving);
 				break;
-//			case 4:
-//				// Groupshot
-//				icon.setImageResource(R.drawable.store_groupshot);
-//				description.setText(MainScreen.getAppResources()
-//						.getString(R.string.Pref_Upgrde_Groupshot_Preference_Title));
-//				if (MainScreen.getInstance().isPurchasedGroupshot() || MainScreen.getInstance().isPurchasedAll())
-//					price.setText(R.string.already_unlocked);
-//				else
-//					price.setText(MainScreen.getInstance().titleUnlockGroup);
-//				break;
 
 			default:
 				break;
@@ -373,12 +363,6 @@ public class AlmalenceStore
 		case 0:// unlock all
 			MainScreen.getInstance().purchaseAll();
 			break;
-//		case 1:// Year subscription
-//			MainScreen.getInstance().purchasedUnlockAllSubscriptionYear();
-//			break;
-//		case 2:// Month subscription
-//			MainScreen.getInstance().purchasedUnlockAllSubscriptionMonth();
-//			break;
 		case 1:// HDR
 			MainScreen.getInstance().purchaseHDR();
 			break;

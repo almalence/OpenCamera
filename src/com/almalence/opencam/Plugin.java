@@ -25,6 +25,7 @@ package com.almalence.opencam;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -222,6 +223,11 @@ public abstract class Plugin
 	{
 		return false;
 	}
+	
+	public boolean onMultiTouch(View view, MotionEvent e)
+	{
+		return false;
+	}
 
 	public void onOrientationChanged(int orientation)
 	{
@@ -380,7 +386,7 @@ public abstract class Plugin
 //		ApplicationScreen.setPreviewHeight(os.getHeight());
 	}
 
-	// Used only in old camera interface (HALv3 don't use it)
+	// Used only in old camera interface (Camera2 don't use it)
 	// called to set specific plugin's camera parameters
 	public void setupCameraParameters()
 	{
@@ -669,6 +675,7 @@ public abstract class Plugin
 	protected void addView(View view, ViewfinderZone position)
 	{
 		pluginViews.put(view, position);
+		ApplicationScreen.getGUIManager().addViewQuick(view, position);
 	}
 
 	protected void addView(View view)
@@ -680,6 +687,11 @@ public abstract class Plugin
 	{
 		pluginViews.remove(view);
 	}
+	
+	protected void removeViewQuick(View view)
+	{
+		ApplicationScreen.getGUIManager().removeViewQuick(view);
+	}
 
 	// used by GUIManager to obtain list of view for current plugin
 	public Map<View, ViewfinderZone> getPluginViews()
@@ -690,17 +702,23 @@ public abstract class Plugin
 	// method is used by children of class Plugin
 	protected void clearInfoViews()
 	{
+		Iterator<View> it = infoViews.iterator();
+		while(it.hasNext())
+			ApplicationScreen.getGUIManager().removeInfoView(it.next());
+		
 		infoViews.clear();
 	}
 
 	protected void addInfoView(View view)
 	{
 		infoViews.add(view);
+		ApplicationScreen.getGUIManager().addInfoView(view);
 	}
 
 	protected void removeInfoView(View view)
 	{
 		infoViews.remove(view);
+		ApplicationScreen.getGUIManager().removeInfoView(view);
 	}
 
 	// used by GUIManager to obtain list of view for current plugin

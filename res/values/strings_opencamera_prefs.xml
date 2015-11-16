@@ -64,6 +64,7 @@
     <string name="Preference_SavePathValue">Preference_SavePathValue</string>
     <string name="Preference_SavePathLollipopValue">Preference_SavePathLollipopValue</string>
     <string name="Preference_ExportNameValue">Preference_ExportName</string>
+    <string name="Preference_ExportNameSeparatorValue">Preference_ExportNameSeparator</string>
     <string name="Preference_SaveToValue">Preference_SaveToValue</string>
     <string name="Preference_LastPhotoModeValue">Preference_LastPhotoModeValue</string>
     <string name="Preference_SortByDataValue">Preference_SortByDataValue</string>
@@ -85,7 +86,7 @@
     <string name="Preference_TimestampColorValue">Preference_TimestampColorValue</string>
     <string name="Preference_TimestampFontSizeValue">Preference_TimestampFontSizeValue</string>
     
-    <string name="Preference_UseCamera2Key">useHALv3Pref</string>
+    <string name="Preference_UseCamera2Key">useCamera2Pref</string>
     <string name="Preference_allowExternalGalleries">allowExternalGalleries</string>
     <string name="Preference_ConnectToSonyCameras">Preference_connectToSonyCameras</string>
     

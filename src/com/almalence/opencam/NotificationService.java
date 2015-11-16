@@ -29,12 +29,9 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 public class NotificationService extends Service
 {
@@ -61,14 +58,15 @@ public class NotificationService extends Service
 		if (notification == null)
 		{
 			Bitmap bigIcon = BitmapFactory.decodeResource(getResources(), R.drawable.icon);
+
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
 			{
 				notification = new Notification.Builder(this).setContentTitle(getString(R.string.app_name))
 						.setContentText(getString(R.string.string_processing_and_saving_image))
-						.setSmallIcon(R.drawable.icon).setLargeIcon(bigIcon).build();
+						.setSmallIcon(getApplicationInfo().icon).setLargeIcon(bigIcon).build();
 			} else
 			{
-				notification = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.icon).setLargeIcon(bigIcon)
+				notification = new NotificationCompat.Builder(this).setSmallIcon(getApplicationInfo().icon).setLargeIcon(bigIcon)
 						.setContentTitle(getString(R.string.app_name))
 						.setContentText(getString(R.string.string_processing_and_saving_image)).build();
 			}

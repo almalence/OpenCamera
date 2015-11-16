@@ -4,15 +4,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	  package="com.almalence.opencam_plus"
       android:installLocation="auto"
-      android:versionCode="90"
-      android:versionName="3.34">
+      android:versionCode="95"
+      android:versionName="3.36">
 +++ -->
 <!-- -+-  -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	  package="com.almalence.opencam"
       android:installLocation="auto"
-      android:versionCode="104"
-      android:versionName="3.34">
+      android:versionCode="111"
+      android:versionName="3.36">
 <!--  -+- -->
 
     <supports-screens       
@@ -49,14 +49,14 @@
 		<!-- +++
    		<activity android:name="com.almalence.opencam_plus.MainScreen"
                   android:label="@string/app_name"
-                  android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"
+                  android:theme="@style/AlmalenceOpenCameraTheme"
                   android:screenOrientation="portrait">
 		+++ -->
 		<!-- -+-  -->
 		<activity android:name="com.almalence.opencam.MainScreen"
                   android:label="@string/app_name"
                   android:launchMode="singleInstance"
-                  android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"
+                  android:theme="@style/AlmalenceOpenCameraTheme"
                   android:screenOrientation="portrait">
 		<!--  -+- -->
                     
