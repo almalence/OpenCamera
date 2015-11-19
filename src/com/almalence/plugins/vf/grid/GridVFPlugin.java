@@ -26,6 +26,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.Plugin;
+import com.almalence.opencamunderground.PluginViewfinder;
+import com.almalence.opencamunderground.R;
+import com.almalence.opencamunderground.cameracontroller.CameraController;
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.ApplicationScreen;
@@ -34,11 +39,6 @@ import android.widget.ImageView.ScaleType;
  import com.almalence.opencam_plus.R;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.Plugin;
-import com.almalence.opencam.PluginViewfinder;
-import com.almalence.opencam.R;
-import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 /***

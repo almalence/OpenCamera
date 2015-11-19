@@ -21,7 +21,6 @@ package com.almalence.plugins.processing.multishot;
 import java.util.ArrayList;
 
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
@@ -35,6 +34,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.almalence.asynctaskmanager.OnTaskCompleteListener;
+import com.almalence.opencamunderground.ApplicationInterface;
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.PluginManager;
+import com.almalence.opencamunderground.PluginProcessing;
+import com.almalence.opencamunderground.R;
+import com.almalence.opencamunderground.cameracontroller.CameraController;
 import com.almalence.plugins.processing.groupshot.GroupShotProcessingPlugin;
 import com.almalence.plugins.processing.objectremoval.ObjectRemovalProcessingPlugin;
 import com.almalence.plugins.processing.sequence.SequenceProcessingPlugin;
@@ -49,12 +54,6 @@ import com.almalence.util.ImageConversion;
  import com.almalence.opencam_plus.ApplicationInterface;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationInterface;
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginProcessing;
-import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.R;
 //-+- -->
 
 /***

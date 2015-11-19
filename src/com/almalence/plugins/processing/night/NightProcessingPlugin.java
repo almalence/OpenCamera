@@ -19,10 +19,15 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.processing.night;
 
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.preference.PreferenceManager;
-import com.almalence.asynctaskmanager.OnTaskCompleteListener;
 
+import com.almalence.asynctaskmanager.OnTaskCompleteListener;
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.ConfigParser;
+import com.almalence.opencamunderground.PluginManager;
+import com.almalence.opencamunderground.PluginProcessing;
+import com.almalence.opencamunderground.R;
+import com.almalence.opencamunderground.cameracontroller.CameraController;
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.ConfigParser;
@@ -32,12 +37,6 @@ import com.almalence.asynctaskmanager.OnTaskCompleteListener;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.ConfigParser;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginProcessing;
-import com.almalence.opencam.R;
-import com.almalence.opencam.cameracontroller.CameraController;
 
 //-+- -->
 

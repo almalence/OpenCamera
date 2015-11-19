@@ -20,12 +20,12 @@
  */
 package com.almalence.util.exifreader.metadata.jpeg;
 
+import java.util.HashMap;
+
 import com.almalence.util.exifreader.lang.annotations.NotNull;
 import com.almalence.util.exifreader.lang.annotations.Nullable;
 import com.almalence.util.exifreader.metadata.Directory;
 import com.almalence.util.exifreader.metadata.MetadataException;
-
-import java.util.HashMap;
 
 /**
  * Directory of tags and values for the SOF0 Jpeg segment.  This segment holds basic metadata about the image.

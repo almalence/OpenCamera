@@ -18,9 +18,9 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.processing.groupshot;
 
-import com.almalence.util.Size;
-
 import android.graphics.Rect;
+
+import com.almalence.util.Size;
 
 public final class AlmaShotSeamless
 {

@@ -30,28 +30,25 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import android.annotation.TargetApi;
+import android.opengl.GLES10;
+import android.opengl.GLSurfaceView.Renderer;
+import android.opengl.GLU;
+import android.util.Log;
+
 import com.almalence.SwapHeap;
 import com.almalence.YuvImage;
-
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.cameracontroller.CameraController;
+import com.almalence.plugins.capture.panoramaaugmented.AugmentedRotationListener.AugmentedRotationReceiver;
+import com.almalence.util.ImageConversion;
+import com.almalence.util.Util;
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
-
-import com.almalence.util.ImageConversion;
-import com.almalence.util.Util;
-import com.almalence.plugins.capture.panoramaaugmented.AugmentedRotationListener.AugmentedRotationReceiver;
-
-import android.annotation.TargetApi;
-import android.opengl.GLES10;
-import android.opengl.GLSurfaceView.Renderer;
-import android.opengl.GLU;
-import android.os.Build;
-import android.util.Log;
 
 public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationReceiver
 {

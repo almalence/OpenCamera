@@ -25,7 +25,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
@@ -49,7 +48,14 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.almalence.SwapHeap;
-
+import com.almalence.opencamunderground.ApplicationInterface;
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.ConfigParser;
+import com.almalence.opencamunderground.PluginManager;
+import com.almalence.opencamunderground.PluginProcessing;
+import com.almalence.opencamunderground.R;
+import com.almalence.opencamunderground.cameracontroller.CameraController;
+import com.almalence.plugins.capture.preshot.PreShot;
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationInterface;
  import com.almalence.opencam_plus.ApplicationScreen;
@@ -60,16 +66,7 @@ import com.almalence.SwapHeap;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationInterface;
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.ConfigParser;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginProcessing;
-import com.almalence.opencam.R;
-import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
-
-import com.almalence.plugins.capture.preshot.PreShot;
 
 /***
  * Implements back in time prcessing plugin. Prepares images for displaying etc.

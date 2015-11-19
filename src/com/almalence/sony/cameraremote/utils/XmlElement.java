@@ -4,12 +4,6 @@
 
 package com.almalence.sony.cameraremote.utils;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
-import android.util.Log;
-import android.util.Xml;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -17,6 +11,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
+import android.util.Log;
+import android.util.Xml;
 
 /**
  * A simple XML parser and Data structure class for sample application.

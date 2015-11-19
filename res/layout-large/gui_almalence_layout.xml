@@ -152,7 +152,7 @@
 
                 <!-- -+-  -->
 				<com.almalence.ui.ShutterSwitch
-                    xmlns:app="http://schemas.android.com/apk/res/com.almalence.opencam"
+                    xmlns:app="http://schemas.android.com/apk/res/com.almalence.opencamunderground"
                     android:id="@+id/switchShutter"
                     android:layout_width="@dimen/shutterSwitchWidth"
                     android:layout_height="@dimen/shutterSwitchHeight"
@@ -1070,7 +1070,7 @@
     <!-- -+-  -->
 
     <com.almalence.ui.Panel
-        xmlns:my="http://schemas.android.com/apk/res/com.almalence.opencam"
+        xmlns:my="http://schemas.android.com/apk/res/com.almalence.opencamunderground"
         android:id="@+id/topPanel"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

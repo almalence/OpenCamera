@@ -20,10 +20,10 @@
  */
 package com.almalence.util.exifreader.metadata.exif;
 
+import java.util.HashMap;
+
 import com.almalence.util.exifreader.lang.annotations.NotNull;
 import com.almalence.util.exifreader.metadata.Directory;
-
-import java.util.HashMap;
 
 /**
  * Describes Exif tags from the SubIFD directory.

@@ -12,12 +12,12 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import com.almalence.opencamunderground.R;
 import com.almalence.sony.cameraremote.ServerDevice.ApiService;
 /* <!-- +++
 import com.almalence.opencam_plus.R;
 +++ --> */
 //<!-- -+-
-import com.almalence.opencam.R;
 //-+- -->
 
 public class DeviceListAdapter extends BaseAdapter {

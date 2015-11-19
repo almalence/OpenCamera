@@ -20,14 +20,14 @@ import java.util.Locale;
 
 import android.app.Activity;
 
+import com.almalence.opencamunderground.R;
+import com.google.zxing.client.result.ParsedResult;
+import com.google.zxing.client.result.URIParsedResult;
 /* <!-- +++
  import com.almalence.opencam_plus.R;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.R;
 //-+- -->
-import com.google.zxing.client.result.ParsedResult;
-import com.google.zxing.client.result.URIParsedResult;
 
 /**
  * Offers appropriate actions for URLS.

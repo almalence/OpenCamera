@@ -20,12 +20,12 @@ package com.almalence.plugins.vf.focus;
  import com.almalence.opencam_plus.R;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.R;
-//-+- -->
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.almalence.opencamunderground.R;
+//-+- -->
 
 // A view that indicates the focus area or the metering area.
 public class FocusIndicatorView extends View implements FocusIndicator

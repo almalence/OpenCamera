@@ -16,17 +16,16 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.R;
+import com.almalence.ui.RotateDialog;
+import com.almalence.ui.RotateLayout;
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.R;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.R;
 //-+- -->
-import com.almalence.ui.RotateLayout;
-import com.almalence.ui.RotateDialog;
 
 public class BarcodeHistoryListDialog extends RotateDialog implements android.view.View.OnClickListener
 {

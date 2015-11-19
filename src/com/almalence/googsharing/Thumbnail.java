@@ -44,9 +44,6 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.provider.DocumentsContract.Document;
-import android.provider.DocumentsContract;
-import android.provider.DocumentsProvider;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.provider.MediaStore.Video;
@@ -54,14 +51,13 @@ import android.provider.MediaStore.Video.VideoColumns;
 import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 
+import com.almalence.opencamunderground.PluginManagerBase;
+import com.almalence.util.Util;
 /* <!-- +++
  import com.almalence.opencam_plus.PluginManagerBase;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.PluginManagerBase;
 //-+- -->
-
-import com.almalence.util.Util;
 
 public class Thumbnail
 {

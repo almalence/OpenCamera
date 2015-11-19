@@ -8,12 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
 /* <!-- +++
  import com.almalence.opencam_plus.R;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.R;
 
 //-+- -->
 public class BarcodeArrayAdapter extends ArrayAdapter<Barcode>

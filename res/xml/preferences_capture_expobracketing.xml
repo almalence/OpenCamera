@@ -12,7 +12,7 @@
 		<!-- -+-  -->
 		<PreferenceScreen 
 		    android:title="@string/moreText"
-    	    android:fragment="com.almalence.opencam.Fragment" 
+    	    android:fragment="com.almalence.opencamunderground.Fragment" 
             >
 			 <extra 
 			     android:name="type" 

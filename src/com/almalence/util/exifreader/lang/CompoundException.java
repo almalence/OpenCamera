@@ -20,11 +20,11 @@
  */
 package com.almalence.util.exifreader.lang;
 
-import com.almalence.util.exifreader.lang.annotations.NotNull;
-import com.almalence.util.exifreader.lang.annotations.Nullable;
-
 import java.io.PrintStream;
 import java.io.PrintWriter;
+
+import com.almalence.util.exifreader.lang.annotations.NotNull;
+import com.almalence.util.exifreader.lang.annotations.Nullable;
 
 /**
  * Represents a compound exception, as modelled in JDK 1.4, but

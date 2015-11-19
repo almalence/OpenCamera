@@ -26,11 +26,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URI;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -64,7 +61,6 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Video;
-import android.provider.MediaStore.Images.ImageColumns;
 import android.provider.MediaStore.Video.VideoColumns;
 import android.support.v4.provider.DocumentFile;
 import android.util.DisplayMetrics;
@@ -86,9 +82,16 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.almalence.opencamunderground.ApplicationInterface;
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.CameraParameters;
+import com.almalence.opencamunderground.PluginCapture;
+import com.almalence.opencamunderground.PluginManager;
+import com.almalence.opencamunderground.R;
+import com.almalence.opencamunderground.cameracontroller.CameraController;
+import com.almalence.opencamunderground.ui.GUI.ShutterButton;
 import com.almalence.ui.RotateImageView;
 import com.almalence.util.Util;
-
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
@@ -100,15 +103,6 @@ import com.almalence.util.Util;
  import com.almalence.opencam_plus.ApplicationInterface;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationInterface;
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.CameraParameters;
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginCapture;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.R;
-import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.ui.GUI.ShutterButton;
 //-+- -->
 
 /***

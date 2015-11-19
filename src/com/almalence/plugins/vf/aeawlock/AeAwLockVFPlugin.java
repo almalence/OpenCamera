@@ -30,6 +30,12 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
 
+import com.almalence.opencamunderground.ApplicationInterface;
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.PluginViewfinder;
+import com.almalence.opencamunderground.R;
+import com.almalence.opencamunderground.cameracontroller.CameraController;
+import com.almalence.ui.RotateImageView;
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.PluginViewfinder;
@@ -38,14 +44,7 @@ import android.widget.RelativeLayout;
  import com.almalence.opencam_plus.ApplicationInterface;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationInterface;
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.PluginViewfinder;
-import com.almalence.opencam.R;
-import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
-
-import com.almalence.ui.RotateImageView;
 
 /***
  * Implements viewfinder plugin - controls Auto exposure and Auto white balance

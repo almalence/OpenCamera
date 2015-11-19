@@ -20,10 +20,13 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.PluginViewfinder;
+import com.almalence.opencamunderground.R;
+import com.almalence.opencamunderground.cameracontroller.CameraController;
 import com.almalence.plugins.capture.panoramaaugmented.AugmentedRotationListener;
 import com.almalence.plugins.capture.panoramaaugmented.VfGyroSensor;
 import com.almalence.ui.RotateImageView;
-
 /* <!-- +++
 import com.almalence.opencam_plus.ApplicationScreen;
 import com.almalence.opencam_plus.PluginViewfinder;
@@ -31,10 +34,6 @@ import com.almalence.opencam_plus.R;
 import com.almalence.opencam_plus.cameracontroller.CameraController;
 +++ --> */
 //<!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.PluginViewfinder;
-import com.almalence.opencam.R;
-import com.almalence.opencam.cameracontroller.CameraController;
 
 //-+- -->
 

@@ -9,8 +9,6 @@ import java.util.Locale;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import com.almalence.util.FpsMeasurer;
-
 import android.content.ContentValues;
 import android.graphics.SurfaceTexture;
 import android.opengl.EGL14;
@@ -20,13 +18,14 @@ import android.provider.MediaStore.Video.VideoColumns;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.ui.EglEncoder;
+import com.almalence.util.FpsMeasurer;
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.ui.EglEncoder;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.ui.EglEncoder;
 
 //-+- -->
 

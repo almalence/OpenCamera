@@ -30,10 +30,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.MainScreen;
+import com.almalence.opencamunderground.R;
 //<!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.R;
 
 //-+- -->
 /* <!-- +++

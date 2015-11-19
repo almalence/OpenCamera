@@ -18,36 +18,25 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.vf.zoom;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import android.annotation.SuppressLint;
-import android.content.SharedPreferences;
 import android.graphics.PointF;
-import android.os.Handler;
-import android.os.Message;
-import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-import android.view.View;
 import android.view.ScaleGestureDetector.OnScaleGestureListener;
+import android.view.View;
 import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.MainScreen;
+import com.almalence.opencamunderground.PluginViewfinder;
+import com.almalence.opencamunderground.R;
+import com.almalence.opencamunderground.cameracontroller.CameraController;
 import com.almalence.sony.cameraremote.ZoomCallbackSonyRemote;
-import com.almalence.ui.VerticalSeekBar;
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.MainScreen;
@@ -56,13 +45,7 @@ import com.almalence.ui.VerticalSeekBar;
  import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.R;
  +++ --> */
-
 // <!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginViewfinder;
-import com.almalence.opencam.R;
-import com.almalence.opencam.cameracontroller.CameraController;
 
 //-+- -->
 

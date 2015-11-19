@@ -21,9 +21,9 @@
 
 package com.almalence.util.exifreader.lang;
 
-import com.almalence.util.exifreader.lang.annotations.NotNull;
-
 import java.util.Iterator;
+
+import com.almalence.util.exifreader.lang.annotations.NotNull;
 
 /** @author Drew Noakes http://drewnoakes.com */
 public class StringUtil

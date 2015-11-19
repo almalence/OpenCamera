@@ -27,9 +27,9 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff.Mode;
-import android.graphics.Matrix;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RadialGradient;
 import android.graphics.Rect;
@@ -42,7 +42,6 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
@@ -66,7 +65,16 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.almalence.SwapHeap;
-
+import com.almalence.asynctaskmanager.OnTaskCompleteListener;
+import com.almalence.opencamunderground.ApplicationInterface;
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.ConfigParser;
+import com.almalence.opencamunderground.PluginManager;
+import com.almalence.opencamunderground.PluginProcessing;
+import com.almalence.opencamunderground.R;
+import com.almalence.opencamunderground.cameracontroller.CameraController;
+import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
+import com.almalence.util.ImageConversion;
 /* <!-- +++
  import com.almalence.opencam_plus.ConfigParser;
  import com.almalence.opencam_plus.ApplicationScreen;
@@ -77,18 +85,7 @@ import com.almalence.SwapHeap;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.ConfigParser;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginProcessing;
-import com.almalence.opencam.R;
-import com.almalence.opencam.ApplicationInterface;
-import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
-
-import com.almalence.util.ImageConversion;
-import com.almalence.asynctaskmanager.OnTaskCompleteListener;
-import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
 
 /***
  * Implements HDR processing plugin.

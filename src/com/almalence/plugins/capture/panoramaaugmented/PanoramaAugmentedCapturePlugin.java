@@ -38,6 +38,7 @@ import android.content.res.Resources;
 import android.graphics.Point;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.hardware.camera2.CaptureResult;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
@@ -58,14 +59,21 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-import android.hardware.camera2.CaptureResult;
 
 import com.almalence.SwapHeap;
+import com.almalence.opencamunderground.ApplicationInterface;
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.CameraParameters;
+import com.almalence.opencamunderground.ConfigParser;
+import com.almalence.opencamunderground.PluginCapture;
+import com.almalence.opencamunderground.PluginManager;
+import com.almalence.opencamunderground.R;
+import com.almalence.opencamunderground.cameracontroller.CameraController;
+import com.almalence.opencamunderground.ui.GUI.CameraParameter;
 import com.almalence.plugins.capture.panoramaaugmented.AugmentedPanoramaEngine.AugmentedFrameTaken;
 import com.almalence.ui.RotateImageView;
 import com.almalence.ui.Switch.Switch;
 import com.almalence.util.HeapUtil;
-
 /* <!-- +++
  import com.almalence.opencam_plus.CameraParameters;
  import com.almalence.opencam_plus.ApplicationScreen;
@@ -78,15 +86,6 @@ import com.almalence.util.HeapUtil;
  import com.almalence.opencam_plus.ApplicationInterface;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.CameraParameters;
-import com.almalence.opencam.ConfigParser;
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.PluginCapture;
-import com.almalence.opencam.ApplicationInterface;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.R;
-import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.ui.GUI.CameraParameter;
 
 //-+- -->
 

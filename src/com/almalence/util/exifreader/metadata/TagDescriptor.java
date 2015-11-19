@@ -20,10 +20,10 @@
  */
 package com.almalence.util.exifreader.metadata;
 
+import java.lang.reflect.Array;
+
 import com.almalence.util.exifreader.lang.annotations.NotNull;
 import com.almalence.util.exifreader.lang.annotations.Nullable;
-
-import java.lang.reflect.Array;
 
 /**
  * Abstract base class for all tag descriptor classes.  Implementations are responsible for

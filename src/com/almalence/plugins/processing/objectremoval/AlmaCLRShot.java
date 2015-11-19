@@ -37,14 +37,12 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.almalence.SwapHeap;
+import com.almalence.opencamunderground.ApplicationScreen;
 import com.almalence.util.Size;
-
 /* <!-- +++
 import com.almalence.opencam_plus.ApplicationScreen;
 +++ --> */
 //<!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-//-+- -->
 
 public class AlmaCLRShot
 {

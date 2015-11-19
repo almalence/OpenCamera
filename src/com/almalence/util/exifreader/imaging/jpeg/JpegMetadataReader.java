@@ -20,6 +20,10 @@
  */
 package com.almalence.util.exifreader.imaging.jpeg;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
 import com.almalence.util.exifreader.lang.ByteArrayReader;
 import com.almalence.util.exifreader.lang.annotations.NotNull;
 import com.almalence.util.exifreader.metadata.Metadata;
@@ -27,10 +31,6 @@ import com.almalence.util.exifreader.metadata.exif.ExifReader;
 import com.almalence.util.exifreader.metadata.jpeg.JpegCommentReader;
 import com.almalence.util.exifreader.metadata.jpeg.JpegDirectory;
 import com.almalence.util.exifreader.metadata.jpeg.JpegReader;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Obtains all available metadata from Jpeg formatted files.

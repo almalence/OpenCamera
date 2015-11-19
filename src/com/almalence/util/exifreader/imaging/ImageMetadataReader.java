@@ -20,6 +20,14 @@
  */
 package com.almalence.util.exifreader.imaging;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+
 import com.almalence.util.exifreader.imaging.jpeg.JpegMetadataReader;
 import com.almalence.util.exifreader.lang.annotations.NotNull;
 import com.almalence.util.exifreader.lang.annotations.Nullable;
@@ -28,14 +36,6 @@ import com.almalence.util.exifreader.metadata.Metadata;
 import com.almalence.util.exifreader.metadata.MetadataException;
 import com.almalence.util.exifreader.metadata.Tag;
 import com.almalence.util.exifreader.metadata.exif.ExifIFD0Directory;
-
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * Obtains metadata from all supported file formats, including JPEG, RAW (NEF/CRw/CR2) and TIFF.

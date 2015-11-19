@@ -21,10 +21,6 @@ import com.almalence.opencam_plus.ApplicationScreen;
 import com.almalence.opencam_plus.R;
 +++ --> */
 //<!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.R;
-//-+- -->
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -37,6 +33,10 @@ import android.util.AttributeSet;
 import android.view.ViewGroup.LayoutParams;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.R;
+//-+- -->
 
 /**
  * A @{code ImageView} which can rotate it's content.

@@ -46,7 +46,16 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.almalence.SwapHeap;
-
+import com.almalence.opencamunderground.ApplicationInterface;
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.CameraParameters;
+import com.almalence.opencamunderground.PluginCapture;
+import com.almalence.opencamunderground.PluginManager;
+import com.almalence.opencamunderground.R;
+import com.almalence.opencamunderground.cameracontroller.CameraController;
+import com.almalence.opencamunderground.ui.GUI.CameraParameter;
+import com.almalence.plugins.processing.night.AlmaShotNight;
+import com.almalence.util.ImageConversion;
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.CameraParameters;
@@ -58,18 +67,7 @@ import com.almalence.SwapHeap;
  import com.almalence.opencam_plus.ApplicationInterface;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.CameraParameters;
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.PluginCapture;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.ui.GUI.CameraParameter;
-import com.almalence.opencam.R;
-import com.almalence.opencam.ApplicationInterface;
 //-+- -->
-import com.almalence.plugins.processing.night.AlmaShotNight;
-
-import com.almalence.util.ImageConversion;
 
 /***
  * Implements night capture plugin - different capture logics available

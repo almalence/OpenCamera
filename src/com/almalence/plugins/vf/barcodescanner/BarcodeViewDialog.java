@@ -13,16 +13,8 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
-/* <!-- +++
- import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.R;
- +++ --> */
-//<!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.R;
-//-+- -->
-
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.R;
 import com.almalence.plugins.vf.barcodescanner.result.ResultButtonListener;
 import com.almalence.plugins.vf.barcodescanner.result.ResultHandler;
 import com.almalence.plugins.vf.barcodescanner.result.ResultHandlerFactory;
@@ -30,6 +22,12 @@ import com.almalence.ui.RotateDialog;
 import com.almalence.ui.RotateLayout;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
+/* <!-- +++
+ import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.opencam_plus.R;
+ +++ --> */
+//<!-- -+-
+//-+- -->
 
 public class BarcodeViewDialog extends RotateDialog
 {

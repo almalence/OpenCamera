@@ -21,12 +21,12 @@
 
 package com.almalence.util.exifreader.metadata.exif;
 
+import java.io.UnsupportedEncodingException;
+
 import com.almalence.util.exifreader.lang.Rational;
 import com.almalence.util.exifreader.lang.annotations.NotNull;
 import com.almalence.util.exifreader.lang.annotations.Nullable;
 import com.almalence.util.exifreader.metadata.TagDescriptor;
-
-import java.io.UnsupportedEncodingException;
 
 /**
  * Provides human-readable string representations of tag values stored in a <code>ExifIFD0Directory</code>.

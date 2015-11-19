@@ -19,14 +19,14 @@ package com.almalence.plugins.vf.barcodescanner.result;
 import android.app.Activity;
 import android.telephony.PhoneNumberUtils;
 
+import com.almalence.opencamunderground.R;
+import com.google.zxing.client.result.ParsedResult;
+import com.google.zxing.client.result.SMSParsedResult;
 /* <!-- +++
  import com.almalence.opencam_plus.R;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.R;
 //-+- -->
-import com.google.zxing.client.result.ParsedResult;
-import com.google.zxing.client.result.SMSParsedResult;
 
 /**
  * Handles SMS addresses, offering a choice of composing a new SMS or MMS

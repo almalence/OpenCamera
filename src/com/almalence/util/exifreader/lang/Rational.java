@@ -21,10 +21,10 @@
 
 package com.almalence.util.exifreader.lang;
 
+import java.io.Serializable;
+
 import com.almalence.util.exifreader.lang.annotations.NotNull;
 import com.almalence.util.exifreader.lang.annotations.Nullable;
-
-import java.io.Serializable;
 
 /**
  * Immutable class for holding a rational number without loss of precision.  Provides

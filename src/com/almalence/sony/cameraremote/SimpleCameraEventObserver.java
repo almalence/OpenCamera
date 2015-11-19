@@ -1,5 +1,9 @@
 package com.almalence.sony.cameraremote;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -7,10 +11,6 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A simple observer class for some status values in Camera. This class supports

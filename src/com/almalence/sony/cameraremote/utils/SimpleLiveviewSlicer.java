@@ -1,12 +1,12 @@
 package com.almalence.sony.cameraremote.utils;
 
-import android.util.Log;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import android.util.Log;
 
 /**
  * A parser class for Liveview data Packet defined by Camera Remote API

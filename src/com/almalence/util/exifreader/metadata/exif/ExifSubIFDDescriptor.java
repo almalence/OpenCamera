@@ -20,16 +20,16 @@
  */
 package com.almalence.util.exifreader.metadata.exif;
 
+import java.io.UnsupportedEncodingException;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.almalence.util.exifreader.imaging.PhotographicConversions;
 import com.almalence.util.exifreader.lang.Rational;
 import com.almalence.util.exifreader.lang.annotations.NotNull;
 import com.almalence.util.exifreader.lang.annotations.Nullable;
 import com.almalence.util.exifreader.metadata.TagDescriptor;
-
-import java.io.UnsupportedEncodingException;
-import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Provides human-readable string representations of tag values stored in a <code>ExifSubIFDDirectory</code>.

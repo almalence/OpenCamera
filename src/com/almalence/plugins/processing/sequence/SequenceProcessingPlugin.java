@@ -28,7 +28,6 @@ import android.graphics.DashPathEffect;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.view.Display;
@@ -43,7 +42,14 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
 import com.almalence.SwapHeap;
-
+import com.almalence.opencamunderground.ApplicationInterface;
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.PluginManager;
+import com.almalence.opencamunderground.R;
+import com.almalence.opencamunderground.cameracontroller.CameraController;
+import com.almalence.plugins.processing.sequence.OrderControl.SequenceListener;
+import com.almalence.util.ImageConversion;
+import com.almalence.util.Size;
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.PluginManager;
@@ -52,16 +58,7 @@ import com.almalence.SwapHeap;
  import com.almalence.opencam_plus.ApplicationInterface;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.R;
-import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.ApplicationInterface;
 //-+- -->
-
-import com.almalence.util.ImageConversion;
-import com.almalence.util.Size;
-import com.almalence.plugins.processing.sequence.OrderControl.SequenceListener;
 
 /***
  * Implements night processing

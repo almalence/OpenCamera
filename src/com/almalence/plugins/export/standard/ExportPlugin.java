@@ -20,24 +20,22 @@ package com.almalence.plugins.export.standard;
 
 import android.content.SharedPreferences;
 import android.location.GpsStatus;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.PluginExport;
+import com.almalence.opencamunderground.R;
+import com.almalence.ui.RotateImageView;
+import com.almalence.util.MLocation;
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.PluginExport;
  import com.almalence.opencam_plus.R;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.PluginExport;
-import com.almalence.opencam.R;
 //-+- -->
-
-import com.almalence.ui.RotateImageView;
-import com.almalence.util.MLocation;
 
 /***
  * Implements simple export plugin - saves image to disc to specified location

@@ -20,10 +20,15 @@
  */
 package com.almalence.util.exifreader.imaging.jpeg;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import com.almalence.util.exifreader.lang.annotations.NotNull;
 import com.almalence.util.exifreader.lang.annotations.Nullable;
-
-import java.io.*;
 
 /**
  * Performs read functions of Jpeg files, returning specific file segments.

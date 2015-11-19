@@ -20,17 +20,21 @@
  */
 package com.almalence.util.exifreader.metadata;
 
-import com.almalence.util.exifreader.lang.Rational;
-import com.almalence.util.exifreader.lang.annotations.NotNull;
-import com.almalence.util.exifreader.lang.annotations.Nullable;
-import com.almalence.util.exifreader.lang.annotations.SuppressWarnings;
-
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
+
+import com.almalence.util.exifreader.lang.Rational;
+import com.almalence.util.exifreader.lang.annotations.NotNull;
+import com.almalence.util.exifreader.lang.annotations.Nullable;
+import com.almalence.util.exifreader.lang.annotations.SuppressWarnings;
 
 /**
  * Abstract base class for all directory implementations, having methods for getting and setting tag values of various

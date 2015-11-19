@@ -15,7 +15,7 @@
     
     <!-- -+-  -->
     <PreferenceScreen
-        android:fragment="com.almalence.opencam.Fragment"
+        android:fragment="com.almalence.opencamunderground.Fragment"
         android:summary="@string/Pref_SaveConfiguration_Summary"
         android:title="@string/Pref_SaveConfiguration_Title" >
         <extra

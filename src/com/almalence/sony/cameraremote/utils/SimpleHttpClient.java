@@ -4,8 +4,6 @@
 
 package com.almalence.sony.cameraremote.utils;
 
-import android.util.Log;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +14,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+
+import android.util.Log;
 
 /**
  * Simple HTTP Client for sample application.

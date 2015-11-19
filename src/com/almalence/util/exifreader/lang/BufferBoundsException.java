@@ -21,9 +21,9 @@
 
 package com.almalence.util.exifreader.lang;
 
-import com.almalence.util.exifreader.lang.annotations.NotNull;
-
 import java.io.IOException;
+
+import com.almalence.util.exifreader.lang.annotations.NotNull;
 
 /**
  * A checked replacement for IndexOutOfBoundsException.  Used by BufferReader.

@@ -24,8 +24,8 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 import android.graphics.ImageFormat;
+import android.graphics.PixelFormat;
 import android.graphics.Rect;
-import android.util.Log;
 
 /**
  * YuvImage contains YUV data and provides a method that compresses a region of

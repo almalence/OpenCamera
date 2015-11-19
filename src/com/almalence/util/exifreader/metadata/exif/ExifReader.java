@@ -20,6 +20,9 @@
  */
 package com.almalence.util.exifreader.metadata.exif;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.almalence.util.exifreader.lang.BufferBoundsException;
 import com.almalence.util.exifreader.lang.BufferReader;
 import com.almalence.util.exifreader.lang.Rational;
@@ -27,9 +30,6 @@ import com.almalence.util.exifreader.lang.annotations.NotNull;
 import com.almalence.util.exifreader.metadata.Directory;
 import com.almalence.util.exifreader.metadata.Metadata;
 import com.almalence.util.exifreader.metadata.MetadataReader;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Decodes Exif binary data, populating a {@link Metadata} object with tag values in {@link ExifSubIFDDirectory},

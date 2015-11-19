@@ -4,8 +4,6 @@
 
 package com.almalence.sony.cameraremote;
 
-import android.util.Log;
-
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.DatagramPacket;
@@ -14,6 +12,8 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
+
+import android.util.Log;
 
 /**
  * A SSDP client class for this sample application. This implementation keeps

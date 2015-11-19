@@ -18,16 +18,6 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.ui.Switch;
 
-import com.almalence.ui.Switch.AllCapsTransformationMethod;
-import com.almalence.ui.Switch.TransformationMethodCompat2;
-
-/* <!-- +++
- import com.almalence.opencam_plus.R;
- +++ --> */
-// <!-- -+-
-import com.almalence.opencam.R;
-//-+- -->
-
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
@@ -48,6 +38,13 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.CompoundButton;
+
+import com.almalence.opencamunderground.R;
+/* <!-- +++
+ import com.almalence.opencam_plus.R;
+ +++ --> */
+// <!-- -+-
+//-+- -->
 
 /**
  * A Switch is a two-state toggle switch widget that can select between two

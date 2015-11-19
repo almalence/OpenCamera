@@ -20,13 +20,13 @@
  */
 package com.almalence.util.exifreader.metadata;
 
-import com.almalence.util.exifreader.lang.annotations.NotNull;
-import com.almalence.util.exifreader.lang.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.almalence.util.exifreader.lang.annotations.NotNull;
+import com.almalence.util.exifreader.lang.annotations.Nullable;
 
 /**
  * A top-level object to hold the various types of metadata (Exif/IPTC/etc) related to one entity (such as a file

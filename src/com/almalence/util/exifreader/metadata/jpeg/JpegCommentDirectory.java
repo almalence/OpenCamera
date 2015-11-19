@@ -20,10 +20,10 @@
  */
 package com.almalence.util.exifreader.metadata.jpeg;
 
+import java.util.HashMap;
+
 import com.almalence.util.exifreader.lang.annotations.NotNull;
 import com.almalence.util.exifreader.metadata.Directory;
-
-import java.util.HashMap;
 
 /**
  * Describes tags used by a JPEG file comment.

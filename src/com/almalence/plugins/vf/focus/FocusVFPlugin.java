@@ -42,16 +42,16 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.almalence.opencamunderground.ApplicationInterface;
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.CameraParameters;
+import com.almalence.opencamunderground.PluginManager;
+import com.almalence.opencamunderground.PluginViewfinder;
+import com.almalence.opencamunderground.R;
+import com.almalence.opencamunderground.SoundPlayer;
+import com.almalence.opencamunderground.cameracontroller.CameraController;
+import com.almalence.util.Util;
 //<!-- -+-
-import com.almalence.opencam.ApplicationInterface;
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.CameraParameters;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginViewfinder;
-import com.almalence.opencam.R;
-import com.almalence.opencam.SoundPlayer;
-import com.almalence.opencam.cameracontroller.CameraController;
-
 //-+- -->
 /* <!-- +++
 import com.almalence.opencam_plus.ApplicationInterface;
@@ -63,8 +63,6 @@ import com.almalence.opencam_plus.PluginViewfinder;
 import com.almalence.opencam_plus.R;
 import com.almalence.opencam_plus.SoundPlayer;
 +++ --> */
-
-import com.almalence.util.Util;
 
 
 

@@ -21,11 +21,11 @@
 
 package com.almalence.util.exifreader.lang;
 
-import com.almalence.util.exifreader.lang.annotations.NotNull;
-
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
+
+import com.almalence.util.exifreader.lang.annotations.NotNull;
 
 /**
  * Provides methods to read specific values from a byte array, with a consistent, checked exception structure for

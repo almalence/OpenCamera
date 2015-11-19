@@ -26,15 +26,15 @@ import com.almalence.opencam_plus.PluginProcessing;
 import com.almalence.opencam_plus.R;
 +++ --> */
 //<!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.ConfigParser;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginProcessing;
-import com.almalence.opencam.R;
-//-+- -->
-
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.ConfigParser;
+import com.almalence.opencamunderground.PluginManager;
+import com.almalence.opencamunderground.PluginProcessing;
+import com.almalence.opencamunderground.R;
+//-+- -->
 
 /***
  * Implements simple processing plugin - just translate shared memory values

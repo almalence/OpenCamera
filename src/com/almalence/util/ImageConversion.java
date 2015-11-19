@@ -20,18 +20,17 @@ package com.almalence.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
-import android.graphics.Bitmap.Config;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.almalence.opencamunderground.ApplicationScreen;
 /* <!-- +++
 import com.almalence.opencam_plus.ApplicationScreen;
 +++ --> */
 //<!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-//-+- -->
 
 public class ImageConversion
 {

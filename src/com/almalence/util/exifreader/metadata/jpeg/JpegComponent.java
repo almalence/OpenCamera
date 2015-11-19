@@ -20,9 +20,9 @@
  */
 package com.almalence.util.exifreader.metadata.jpeg;
 
-import com.almalence.util.exifreader.lang.annotations.Nullable;
-
 import java.io.Serializable;
+
+import com.almalence.util.exifreader.lang.annotations.Nullable;
 
 /**
  * Stores information about a Jpeg image component such as the component id, horiz/vert sampling factor and

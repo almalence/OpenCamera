@@ -20,14 +20,22 @@ package com.almalence.plugins.capture.standard;
 
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
+import android.hardware.camera2.CaptureResult;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
-import android.hardware.camera2.CaptureResult;
 
+import com.almalence.opencamunderground.ApplicationInterface;
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.PluginCapture;
+import com.almalence.opencamunderground.PluginManager;
+import com.almalence.opencamunderground.R;
+import com.almalence.opencamunderground.cameracontroller.CameraController;
+import com.almalence.opencamunderground.cameracontroller.CameraController.Size;
+import com.almalence.ui.Switch.Switch;
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.cameracontroller.CameraController.Size;
@@ -38,15 +46,7 @@ import android.hardware.camera2.CaptureResult;
  import com.almalence.opencam_plus.R;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.PluginCapture;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.R;
-import com.almalence.opencam.ApplicationInterface;
-import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.cameracontroller.CameraController.Size;
 //-+- -->
-import com.almalence.ui.Switch.Switch;
 
 /***
  * Implements standard capture plugin - capture single image and save it in

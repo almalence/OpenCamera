@@ -29,14 +29,13 @@ import javax.microedition.khronos.opengles.GL11Ext;
 import android.content.Context;
 import android.util.Log;
 
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.util.ImageConversion;
 /* <!-- +++
 import com.almalence.opencam_plus.ApplicationScreen;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationScreen;
 //-+- -->
-
-import com.almalence.util.ImageConversion;
 
 /**
  * This class is an object representation of a Square containing the vertex

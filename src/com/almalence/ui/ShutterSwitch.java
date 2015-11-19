@@ -22,10 +22,6 @@ package com.almalence.ui;
  import com.almalence.opencam_plus.R;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.R;
-//-+- -->
-
-import com.almalence.util.Util;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -37,6 +33,10 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
+
+import com.almalence.opencamunderground.R;
+import com.almalence.util.Util;
+//-+- -->
 
 public class ShutterSwitch extends View
 {
