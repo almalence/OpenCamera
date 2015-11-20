@@ -108,7 +108,6 @@ import com.almalence.ui.RotateImageView;
 import com.almalence.ui.ShutterSwitch;
 import com.almalence.ui.ShutterSwitch.OnShutterCheckedListener;
 import com.almalence.ui.ShutterSwitch.OnShutterClickListener;
-import com.almalence.util.AppEditorNotifier;
 import com.almalence.util.Util;
 //<!-- -+-
 
@@ -1229,26 +1228,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			}
 		});
 
-		// <!-- -+-
-		RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
-		unlock.setOnClickListener(new OnClickListener()
-		{
-			public void onClick(View v)
-			{
-				if (guiView.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
-					return;
-
-				if (MainScreen.titleUnlockAll == null || MainScreen.titleUnlockAll.endsWith("check for sale"))
-				{
-					Toast.makeText(MainScreen.getMainContext(),
-							"Error connecting to Google Play. Check internet connection.", Toast.LENGTH_LONG).show();
-					return;
-				}
-				// start store
-				showStore();
-			}
-		});
-		// -+- -->
 	}
 
 	private void initOrientationListener()
@@ -1332,8 +1311,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					mlp.leftMargin = guiView.findViewById(R.id.expandManualControls).getWidth();
 				}
 
-				store.setOrientation();
-				
 				AlmalenceGUI.mPreviousDeviceOrientation = AlmalenceGUI.mDeviceOrientation;
 
 				ApplicationScreen.getPluginManager().onOrientationChanged(getDisplayOrientation());
@@ -1511,10 +1488,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		else
 			guiView.findViewById(R.id.hintLayout).setVisibility(View.VISIBLE);
 
-		// <!-- -+-
-		manageUnlockControl();
-		// -+- -->
-
 		// Create select mode button with appropriate icon
 		createMergedSelectModeButton();
 	}
@@ -1618,30 +1591,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		imageSizeQuickSetting = new ImageSizeQuickSetting(MainScreen.getInstance());
 		collorEffectQuickSetting = new ColorEffectQuickSetting(MainScreen.getInstance());
 
-		store = new AlmalenceStore(guiView);
-		// <!-- -+-
-		manageUnlockControl();
-		// -+- -->
-
 		// Sony remote camera
 		sonyCameraDeviceExplorer = new SonyCameraDeviceExplorer(guiView);
 		// -- Sony remote camera
 	}
 
-	// <!-- -+-
-	private void manageUnlockControl()
-	{
-		// manage unlock control
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		if (prefs.getBoolean("unlock_all_forever", false))
-			store.HideUnlockControl();
-		else
-		{
-			store.ShowUnlockControl();
-		}
-	}
-
-	// -+- -->
 
 	private Map<Integer, View> initCameraParameterModeButtons(Map<Integer, Integer> icons_map,
 			Map<Integer, String> names_map, Map<Integer, View> paramMap, final int mode)
@@ -6597,11 +6551,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			lastPhotoModeView = v;
 		}
 
-		// <!-- -+-
-		if (!MainScreen.checkLaunches(tmpActiveMode))
-			return false;
-		// -+- -->
-
 		new CountDownTimer(100, 100)
 		{
 			public void onTick(long millisUntilFinished)
@@ -7813,30 +7762,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
 				ApplicationInterface.MSG_STOP_CAPTURE);
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		boolean isAllowedExternal = prefs.getBoolean(
-				ApplicationScreen.getAppResources().getString(R.string.Preference_allowExternalGalleries), false);
-		if (isAllowedExternal || isOpenExternal)
-		{
-			openExternalGallery(uri);
-		} else
-		{
-			// if installed - run ABC Editor
-			if (AppEditorNotifier.isABCEditorInstalled(ApplicationScreen.instance))
-			{
-				Intent intent = new Intent("com.almalence.opencameditor.action.REVIEW", uri);
-				intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-				ApplicationScreen.instance.startActivity(intent);// com.almalence.opencameditor
-			}
-			// if not installed - show that we have editor and let user install
-			// it of run standard dialog
-			else
-			{
-				// if not - show default gallery
-				if (!AppEditorNotifier.showEditorNotifierDialogIfNeeded(ApplicationScreen.instance))
-					openExternalGallery(uri);
-			}
-		}
+		openExternalGallery(uri);
 	}
 
 	private void openExternalGallery(Uri uri)

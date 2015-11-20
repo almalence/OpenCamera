@@ -27,8 +27,8 @@
     </header>
     <header 
         android:fragment="com.almalence.opencamunderground.Fragment"
-        android:title="@string/Pref_Unlock_Preference_Title"
-        android:summary="@string/Pref_Unlock_Preference_Summary">
+        android:title="@string/Pref_Help_Preference_Title"
+        android:summary="@string/Pref_Help_Preference_Summary">
         <extra android:name="type" android:value="plugins_settings" />
     </header>
     

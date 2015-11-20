@@ -373,17 +373,6 @@ public class PluginManager extends PluginManagerBase
 	@Override
 	public void onShutterClick()
 	{
-		// <!-- -+-
-		// check if plugin payed
-		if (null != pluginList.get(activeCapture) && !((PluginCapture) pluginList.get(activeCapture)).getInCapture())
-		{
-			if (!MainScreen.checkLaunches(getActiveMode()))
-			{
-				ApplicationScreen.getGUIManager().lockControls = false;
-				return;
-			}
-		}
-		// -+- -->
 		if (!shutterRelease)
 			return;
 
@@ -469,17 +458,6 @@ public class PluginManager extends PluginManagerBase
 	@Override
 	public void onFocusButtonClick()
 	{
-		// <!-- -+-
-		// check if plugin payed
-		if (null != pluginList.get(activeCapture) && !((PluginCapture) pluginList.get(activeCapture)).getInCapture())
-		{
-			if (!MainScreen.checkLaunches(getActiveMode()))
-			{
-				ApplicationScreen.getGUIManager().lockControls = false;
-				return;
-			}
-		}
-		// -+- -->
 		for (int i = 0; i < activeVF.size(); i++)
 			pluginList.get(activeVF.get(i)).onFocusButtonClick();
 		if (null != pluginList.get(activeCapture))
@@ -921,11 +899,6 @@ public class PluginManager extends PluginManagerBase
 
 			ApplicationScreen.instance.muteShutter(false);
 
-			// <!-- -+-
-			// if mode free
-			controlPremiumContent();
-			// -+- -->
-
 			if (!PluginManager.getInstance().getActiveModeID().equals("video"))
 			{
 				ApplicationScreen.getGUIManager().lockControls = false;
@@ -1120,16 +1093,6 @@ public class PluginManager extends PluginManagerBase
 
 		return true;
 	}
-
-	// <!-- -+-
-	public void controlPremiumContent()
-	{
-		Mode mode = getActiveMode();
-		if (mode.SKU != null)
-			MainScreen.getInstance().decrementLeftLaunches(mode.modeID);
-	}
-
-	// -+- -->
 
 	// delayed capture feature
 	private SoundPlayer		countdownPlayer					= null;

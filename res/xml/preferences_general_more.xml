@@ -79,11 +79,6 @@
         android:key="useHWShutterButtonLauncher"
         android:summary="@string/Pref_Common_HWShutter_Summary"
         android:title="@string/Pref_Common_HWShutter_Title" />
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="@string/Preference_allowExternalGalleries"
-        android:summary="@string/Pref_Common_Gallery_Summary"
-        android:title="@string/Pref_Common_Gallery_Title" />
     <ListPreference
         android:defaultValue="3"
         android:entries="@array/antibandingArrayCommon"
