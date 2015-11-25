@@ -343,8 +343,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	private static Size								imageSize; // Current image size of frame to be captured
 
-	private static int								iPreviewWidth;  //Size of preview frames
-	private static int								iPreviewHeight;
+	protected static int							iPreviewWidth;  //Size of preview frames
+	protected static int							iPreviewHeight;
 
 	public static final int							MIN_MPIX_SUPPORTED				= 1280 * 720; //Image sizes less than this will be discarded from settings
 
@@ -381,6 +381,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static int								mFocusState						= FOCUS_STATE_IDLE;
 	private static int								mCaptureState					= CAPTURE_STATE_IDLE;
 
+	protected static MediaRecorder					mMediaRecorder;
+
 	//Used in onImageAvailable to separate frames for preview and still capture frames
 	protected static Surface						mPreviewSurface					= null;
 
@@ -396,7 +398,27 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 		return cameraController;
 	}
+	
+	public static MediaRecorder getMediaRecorder()
+	{
+		if (mMediaRecorder == null)
+		{
+			mMediaRecorder = new MediaRecorder();
+		}
+		
+		return mMediaRecorder;
+	}
 
+	public static void releaseMediaRecorder()
+	{
+		if (mMediaRecorder != null)
+		{
+			mMediaRecorder.reset();
+			mMediaRecorder.release();
+			mMediaRecorder = null;
+		}
+	}
+	
 	private CameraController(){}
 
 	public static void onCreate(Context context, ApplicationInterface app,
@@ -881,6 +903,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			}
 		}
 
+		if (mMediaRecorder != null)
+		{
+			mMediaRecorder.release();
+			mMediaRecorder = null;
+		}
+		
 		total_frames = 0;
 
 		if (!CameraController.isRemoteCamera())
@@ -1218,7 +1246,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			else
 			{
 				 if(ApplicationScreen.isCameraPermissionGranted())
+				 {
 					 Camera2Controller.openCameraCamera2();
+					 cameraController.mVideoStabilizationSupported = getVideoStabilizationSupported();
+				 }
 				 else
 					openCameraWaiting = true; 
 			}
@@ -1727,23 +1758,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				//Camera2 interface doesn't have direct settings of camera preview size
 				//Instead of this in camera2 interface we have to create ImageReaders of desired sizes
-				Camera2Controller.setupImageReadersCamera2();
-			}
-		}
-	}
-	
-//	public static void setupImageReadersCamera2()
-//	{
-//		if (!CameraController.isRemoteCamera() && CameraController.isCamera2)
 //				Camera2Controller.setupImageReadersCamera2();
-//	}
-
-	//Setup camera logic in camera2 interface
-	public static void setSurfaceHolderFixedSize(int width, int height)
-	{
-		if (CameraController.isCamera2)
-		{
-			ApplicationScreen.setSurfaceHolderSize(width, height);
+			}
 		}
 	}
 
@@ -1794,7 +1810,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				Log.d(TAG, "camera == null");
 			}
 		} else
-			videoSizes = null;
+			Camera2Controller.fillVideoSizeList(videoSizes);
 
 		return videoSizes;
 	}
@@ -1974,24 +1990,38 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static void startCameraPreview()
 	{
-		if (camera != null)
+		if (!CameraController.isUseCamera2())
 		{
-			camera.startPreview();
-
-			//Nexus 4 has a buggy behavior
-			if (Build.MODEL.equals("Nexus 4"))
+			if (camera != null)
 			{
-				int initValue = appInterface.getEVPref();
-				CameraController.setCameraExposureCompensation(initValue);
+				camera.startPreview();
+				
+				//Nexus 4 has a buggy behavior
+				if (Build.MODEL.equals("Nexus 4"))
+				{
+					int initValue = appInterface.getEVPref();
+					CameraController.setCameraExposureCompensation(initValue);
+				}
 			}
+		}
+		else {
+			Camera2Controller.startCameraPreview();
 		}
 
 	}
 
 	public static void stopCameraPreview()
 	{
-		if (camera != null)
-			camera.stopPreview();
+		if (!CameraController.isUseCamera2())
+		{
+			if (camera != null)
+			{
+				camera.stopPreview();
+			}
+		} else 
+		{
+			Camera2Controller.stopCameraPreview();
+		}
 	}
 
 	public static void lockCamera()
@@ -2035,6 +2065,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					camera.getParameters().setVideoStabilization(stabilization);
 					setCameraParameters(camera.getParameters());
 				}
+			} else
+			{
+				Camera2Controller.setVideoStabilizationCamera2(stabilization);
 			}
 		}
 	}
@@ -2097,7 +2130,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public static boolean isVideoSnapshotSupported()
 	{
-		return mVideoStabilizationSupported;
+		return mVideoSnapshotSupported;
 	}
 
 	public static boolean isExposureLockSupported()

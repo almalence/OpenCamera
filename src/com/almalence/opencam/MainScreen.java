@@ -143,15 +143,6 @@ public class MainScreen extends ApplicationScreen
 
 	public static MainScreen	thiz;
 
-	// Interface to Camera2 camera and Old style camera
-
-	// Camera2 camera's objects
-	private ImageReader			mImageReaderPreviewYUV;
-	private ImageReader			mImageReaderYUV;
-	private ImageReader			mImageReaderJPEG;
-	private ImageReader			mImageReaderRAW;
-	private MediaRecorder		mMediaRecorder;
-
 	// Common preferences
 	private int					imageSizeIdxPreference;
 	private int					multishotImageSizeIdxPreference;
@@ -477,36 +468,28 @@ public class MainScreen extends ApplicationScreen
         
 		isCameraConfiguring = false;
 
-		if (PluginManager.getInstance().getActiveModeID().contains("video"))
-		{
-			mMediaRecorder = new MediaRecorder();
-		}
-
 		mWifiHandler.register();
 		if (mNfcAdapter != null) {
 			mNfcAdapter.enableForegroundDispatch(this, NFCHandler.getPendingIntent(this),
 					NFCHandler.getIntentFilterArray(), NFCHandler.getTechListArray());
 		}
 
-		if (!isCreating)
-		{
-			//Such separation is needed due to Android 6 bug with half-visible preview on Nexus 5
-			//At this moment we only found that CountDownTimer somehow affect on it.
-			//Corrupted preview still occurs but less often
-			//TODO: investigate deeper that problem
-			if(CameraController.isUseCamera2())
-				onResumeCamera();
-			else
-				onResumeTimer = new CountDownTimer(50, 50)
+		//Such separation is needed due to Android 6 bug with half-visible preview on Nexus 5
+		//At this moment we only found that CountDownTimer somehow affect on it.
+		//Corrupted preview still occurs but less often
+		//TODO: investigate deeper that problem
+		if(CameraController.isUseCamera2())
+			onResumeCamera();
+		else
+			onResumeTimer = new CountDownTimer(50, 50)
+			{
+				public void onTick(long millisUntilFinished){}
+
+				public void onFinish()
 				{
-					public void onTick(long millisUntilFinished){}
-	
-					public void onFinish()
-					{
-						onResumeCamera();
-					}
-				}.start();
-		}
+					onResumeCamera();
+				}
+			}.start();
 
 		shutterPlayer = new SoundPlayer(this.getBaseContext(), getResources().openRawResourceFd(
 				R.raw.plugin_capture_tick));
@@ -592,19 +575,6 @@ public class MainScreen extends ApplicationScreen
 			preview.setOnTouchListener(MainScreen.this);
 			preview.setKeepScreenOn(true);
 
-			//Due to google's advice how to prevent surfaceView bug in Android 6
-			//we have to force reconfigure of surfaceView (surfaceChanged callback will be call)
-			//and only after it we may configure surfaceView with desired size
-			if (CameraController.isUseCamera2())
-			{
-				isSurfaceConfiguring = true;
-				//If call method only once surfaceChanged will not be call, so we have to set fake size twice
-				MainScreen.setSurfaceHolderSize(0, 0);
-				MainScreen.setSurfaceHolderSize(1, 1);
-			}
-			else
-				isSurfaceConfiguring = false; //In camera1 mode logic isn't changed
-
 			if (CameraController.isUseCamera2())
 			{
 				Log.d("MainScreen", "onResume: CameraController.setupCamera(null)");
@@ -650,12 +620,6 @@ public class MainScreen extends ApplicationScreen
 		{
 			onResumeTimer.cancel();
 		}
-
-		if (mMediaRecorder != null) 
-		{
-			mMediaRecorder.release();
-			mMediaRecorder = null;
-		}
 		
 		mApplicationStarted = false;
 
@@ -684,11 +648,7 @@ public class MainScreen extends ApplicationScreen
 		CameraController.onPause(switchingMode);
 		switchingMode = false;
 
-		if (!CameraController.isRemoteCamera())
-		{
-			if (CameraController.isUseCamera2())
-				stopImageReaders();
-		} else
+		if (CameraController.isRemoteCamera())
 		{
 			stopRemotePreview();
 		}
@@ -712,12 +672,6 @@ public class MainScreen extends ApplicationScreen
 		ApplicationScreen.getGUIManager().onStop();
 		ApplicationScreen.getPluginManager().onStop();
 		CameraController.onStop();
-
-		if (!CameraController.isRemoteCamera())
-		{
-			if (CameraController.isUseCamera2())
-				stopImageReaders();
-		}
 
 		mWifiHandler.reconnectToLastWifi();
 		mWifiHandler.unregister();
@@ -816,11 +770,11 @@ public class MainScreen extends ApplicationScreen
 		//Variable isSurfaceConfiguring is used to separate first 'fake' call on surfaceChanged from second 'real' call
 		//when we set desired surfaceView size
 		//More info read from: https://code.google.com/p/android/issues/detail?id=191251
-		if (isCameraConfiguring && !isSurfaceConfiguring)
+		if (isCameraConfiguring)
 		{
 			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_SURFACE_CONFIGURED, 0);
 			isCameraConfiguring = false;
-		} else if (!isCreating && !isSurfaceConfiguring)
+		} else
 		{
 			new CountDownTimer(50, 50)
 			{
@@ -853,14 +807,7 @@ public class MainScreen extends ApplicationScreen
 					}
 				}
 			}.start();
-		} else if(isSurfaceConfiguring)
-		{
-			//Section for first 'fake' call (setSurfaceFixedSize(1, 1))
-			//We change flag to allow next surfaceChanged call to continue configuring of camera
-			isSurfaceConfiguring = false;
 		}
-		else
-			updatePreferences();
 	}
 
 	public void getCameraParametersBundle()
@@ -892,86 +839,6 @@ public class MainScreen extends ApplicationScreen
 		{
 			e.printStackTrace();
 		}
-	}
-
-	@TargetApi(21)
-	@Override
-	public void createImageReaders(ImageReader.OnImageAvailableListener imageAvailableListener)
-	{
-		// ImageReader for preview frames in YUV format
-		mImageReaderPreviewYUV = ImageReader.newInstance(thiz.previewWidth, thiz.previewHeight,
-				ImageFormat.YUV_420_888, 2);
-		
-		CameraController.Size imageSize = CameraController.getCameraImageSize();
-		// ImageReader for YUV still images
-		mImageReaderYUV = ImageReader.newInstance(imageSize.getWidth(), imageSize.getHeight(), ImageFormat.YUV_420_888,
-				2);
-
-		// ImageReader for JPEG still images
-		if (getCaptureFormat() == CameraController.RAW)
-		{
-			CameraController.Size imageSizeJPEG = CameraController.getMaxCameraImageSize(CameraController.JPEG);
-			mImageReaderJPEG = ImageReader.newInstance(imageSizeJPEG.getWidth(), imageSizeJPEG.getHeight(),
-					ImageFormat.JPEG, 2);
-		} else
-			mImageReaderJPEG = ImageReader
-					.newInstance(imageSize.getWidth(), imageSize.getHeight(), ImageFormat.JPEG, 2);
-
-		
-		if(CameraController.isCaptureFormatSupported(CameraController.RAW))
-		{
-			CameraController.Size rawImageSize = CameraController.getMaxCameraImageSize(CameraController.RAW);
-			// ImageReader for RAW still images
-			mImageReaderRAW = ImageReader.newInstance(rawImageSize.getWidth(), rawImageSize.getHeight(), ImageFormat.RAW_SENSOR,
-					3);
-		}
-
-		guiManager.setupViewfinderPreviewSize(new CameraController.Size(thiz.previewWidth, thiz.previewHeight));
-
-		mImageReaderPreviewYUV.setOnImageAvailableListener(imageAvailableListener, null);
-		mImageReaderYUV.setOnImageAvailableListener(imageAvailableListener, null);
-		mImageReaderJPEG.setOnImageAvailableListener(imageAvailableListener, null);
-		if(mImageReaderRAW != null)
-			mImageReaderRAW.setOnImageAvailableListener(imageAvailableListener, null);
-	}
-
-	@TargetApi(19)
-	@Override
-	public Surface getPreviewYUVImageSurface()
-	{
-		if(mImageReaderPreviewYUV != null)
-			return mImageReaderPreviewYUV.getSurface();
-		else
-		{
-			return null;
-		}
-	}
-
-	@TargetApi(19)
-	@Override
-	public Surface getYUVImageSurface()
-	{
-		return mImageReaderYUV.getSurface();
-	}
-
-	@TargetApi(19)
-	@Override
-	public Surface getJPEGImageSurface()
-	{
-		return mImageReaderJPEG.getSurface();
-	}
-
-	@TargetApi(19)
-	@Override
-	public Surface getRAWImageSurface()
-	{
-		return mImageReaderRAW.getSurface();
-	}
-	
-	@Override
-	public MediaRecorder getMediaRecorder()
-	{
-		return mMediaRecorder;
 	}
 
 	@Override
@@ -1383,33 +1250,6 @@ public class MainScreen extends ApplicationScreen
 		setColorEffectOptions(prefActivity);
 	}
 
-
-	@TargetApi(21)
-	protected void stopImageReaders()
-	{
-		// IamgeReader should be closed
-		if (mImageReaderPreviewYUV != null)
-		{
-			mImageReaderPreviewYUV.close();
-			mImageReaderPreviewYUV = null;
-		}
-		if (mImageReaderYUV != null)
-		{
-			mImageReaderYUV.close();
-			mImageReaderYUV = null;
-		}
-		if (mImageReaderJPEG != null)
-		{
-			mImageReaderJPEG.close();
-			mImageReaderJPEG = null;
-		}
-		if (mImageReaderRAW != null)
-		{
-			mImageReaderRAW.close();
-			mImageReaderRAW = null;
-		}
-	}
-
 	@Override
 	protected void stopRemotePreview()
 	{
@@ -1546,11 +1386,14 @@ public class MainScreen extends ApplicationScreen
 		// ----- Select preview dimensions with ratio correspondent to
 		// full-size image
 		PluginManager.getInstance().setCameraPreviewSize();
-		// prepare list of surfaces to be used in capture requests
+
 		if (!CameraController.isRemoteCamera())
 		{
 			if (CameraController.isUseCamera2())
+			{
 				configureCamera2Camera(captureFormat);
+				guiManager.setupViewfinderPreviewSize(new CameraController.Size(previewWidth, previewHeight));
+			}
 			else
 			{
 				Camera.Size sz = CameraController.getCameraParameters().getPreviewSize();
@@ -1578,74 +1421,6 @@ public class MainScreen extends ApplicationScreen
 			MainScreen.getGUIManager().onGUICreate();
 			PluginManager.getInstance().onGUICreate();
 		}
-	}
-
-	@TargetApi(21)
-	@Override
-	public void createCaptureSession()
-	{
-//		CameraController.setupImageReadersCamera2();
-		mCameraSurface = surfaceHolder.getSurface();
-		surfaceList.add(mCameraSurface); // surface for viewfinder preview
-
-		String modeId = PluginManager.getInstance().getActiveModeID();
-		if (modeId.contains("video"))
-		{
-			surfaceList.add(mMediaRecorder.getSurface()); // surface for MediaRecorder
-		}
-		
-		// if (captureFormat != CameraController.RAW) // when capture RAW
-		// preview frames is not available
-		if(mImageReaderPreviewYUV != null)
-			surfaceList.add(mImageReaderPreviewYUV.getSurface()); // surface for
-																	// preview yuv
-		// images
-		if (captureFormat == CameraController.YUV && mImageReaderYUV != null)
-		{
-			Log.d("MainScreen",
-					"add mImageReaderYUV " + mImageReaderYUV.getWidth() + " x " + mImageReaderYUV.getHeight());
-			surfaceList.add(mImageReaderYUV.getSurface());
-			
-			//Temporary disable RAW capturing on Galaxy S6 in all modes, including Super mode
-//			String modeName = PluginManager.getInstance().getActiveModeID();
-//			if (CameraController.isGalaxyS6 && modeName.contains("nightmode"))
-//				surfaceList.add(mImageReaderRAW.getSurface());
-//			else
-//			{
-//				Log.d("MainScreen",
-//						"add mImageReaderYUV " + mImageReaderYUV.getWidth() + " x " + mImageReaderYUV.getHeight());
-//				surfaceList.add(mImageReaderYUV.getSurface());
-//			}
-			// capture
-		} else if (captureFormat == CameraController.JPEG && mImageReaderJPEG != null)
-		{
-			Log.d("MainScreen",
-					"add mImageReaderJPEG " + mImageReaderJPEG.getWidth() + " x " + mImageReaderJPEG.getHeight());
-			surfaceList.add(mImageReaderJPEG.getSurface()); // surface for jpeg
-															// image
-			// capture
-		} else if (captureFormat == CameraController.RAW && mImageReaderJPEG != null && mImageReaderRAW != null)
-		{
-			Log.d("MainScreen", "add mImageReaderRAW + mImageReaderJPEG " + mImageReaderRAW.getWidth() + " x "
-					+ mImageReaderRAW.getHeight());
-			surfaceList.add(mImageReaderJPEG.getSurface()); // surface for jpeg
-															// image
-			// capture
-			if (CameraController.isRAWCaptureSupported())
-				surfaceList.add(mImageReaderRAW.getSurface());
-			else
-				captureFormat = CameraController.JPEG;
-		}
-
-		CameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
-
-		CameraController.setCaptureFormat(captureFormat);
-		// configure camera with all the surfaces to be ever used
-
-		// If camera device isn't initialized (equals null) just force stop
-		// application.
-		if (!CameraController.createCaptureSession(surfaceList))
-			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_APPLICATION_STOP, 0);
 	}
 
 	@Override

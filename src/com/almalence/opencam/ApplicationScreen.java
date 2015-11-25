@@ -159,8 +159,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	// Common preferences
 	protected boolean					keepScreenOn				= false;
 
-	protected List<Surface>				surfaceList;
-
 	protected static boolean			mAFLocked					= false;
 	// // shows if mode is currently switching
 	protected boolean					switchingMode				= false;
@@ -175,7 +173,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	//
 	// Description<<
 
-	protected static boolean			isCreating					= false;
 	protected static boolean			mApplicationStarted			= false;
 	protected static boolean			mCameraStarted				= false;
 	protected static boolean			isForceClose				= false;
@@ -602,28 +599,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		return instance.guiManager;
 	}
 
-	@TargetApi(21)
-	abstract public void createImageReaders(ImageReader.OnImageAvailableListener imageAvailableListener);
-
-	@TargetApi(19)
-	@Override
-	abstract public Surface getPreviewYUVImageSurface();
-
-	@TargetApi(19)
-	@Override
-	abstract public Surface getYUVImageSurface();
-
-	@TargetApi(19)
-	@Override
-	abstract public Surface getJPEGImageSurface();
-
-	@TargetApi(19)
-	@Override
-	abstract public Surface getRAWImageSurface();
-	
-	@Override
-	abstract public MediaRecorder getMediaRecorder();
-
 	public static SurfaceHolder getPreviewSurfaceHolder()
 	{
 		return instance.surfaceHolder;
@@ -681,14 +656,50 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		instance.surfaceLayoutHeight = height;
 	}
 
-	public static void setSurfaceHolderSize(int width, int height)
+	// Return true, if surface is resized or changed.
+	// return false, if changes are not required.
+	public static boolean setSurfaceHolderSize(int width, int height)
 	{
-		if (instance.surfaceHolder != null)
+		if (instance.surfaceWidth != width && instance.surfaceHeight != height)
 		{
-			instance.surfaceWidth = width;
-			instance.surfaceHeight = height;
-			instance.surfaceHolder.setFixedSize(width, height);
+			if (instance.surfaceWidth != 0 && instance.surfaceHeight != 0)
+			{
+				// We can't change size of surfaceHolder. That's why, we replace the preview View with new one.
+				((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.mainLayout2)).removeView(ApplicationScreen.instance.preview);
+				
+				ApplicationScreen.instance.preview = new SurfaceView(ApplicationScreen.instance);
+				ApplicationScreen.instance.surfaceHolder = ApplicationScreen.instance.preview.getHolder();
+				ApplicationScreen.instance.surfaceHolder.addCallback(ApplicationScreen.instance);
+				ApplicationScreen.instance.preview.setVisibility(View.VISIBLE);
+				ApplicationScreen.instance.preview.setOnClickListener(ApplicationScreen.instance);
+				ApplicationScreen.instance.preview.setOnTouchListener(ApplicationScreen.instance);
+				ApplicationScreen.instance.preview.setKeepScreenOn(true);
+				ApplicationScreen.instance.preview.setId(R.id.SurfaceView01);
+				
+				((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.mainLayout2)).addView(ApplicationScreen.instance.preview, 0);
+			}
+			
+			if (ApplicationScreen.instance.surfaceHolder != null)
+			{
+				instance.surfaceWidth = width;
+				instance.surfaceHeight = height;
+				
+				instance.mCameraSurface = null;
+				instance.surfaceHolder.setFixedSize(width, height);
+			}
+			
+			if (instance.glView != null)
+			{
+				if (instance.glView.getSurfaceTexture() != null)
+				{
+					instance.glView.getSurfaceTexture().setDefaultBufferSize(width, height);
+				}
+			}
+			
+			return true;
 		}
+		
+		return false;
 	}
 
 	abstract public int getImageSizeIndex();
@@ -748,12 +759,22 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	public int glGetPreviewTexture()
 	{
-		return glView.getPreviewTexture();
+		if (glView != null)
+		{
+			return glView.getPreviewTexture();
+		}
+		
+		return 0;
 	}
 
 	public SurfaceTexture glGetSurfaceTexture()
 	{
-		return glView.getSurfaceTexture();
+		if (glView != null)
+		{
+			return glView.getSurfaceTexture();
+		}
+		
+		return null;
 	}
 
 	@Override
@@ -795,15 +816,12 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		ApplicationScreen.getPluginManager().onStop();
 		CameraController.onStop();
 
-		if (!CameraController.isRemoteCamera())
-		{
-			if (CameraController.isUseCamera2())
-				stopImageReaders();
-		}
+//		if (!CameraController.isRemoteCamera())
+//		{
+//			if (CameraController.isUseCamera2())
+//				stopImageReaders();
+//		}
 	}
-
-	@TargetApi(21)
-	abstract protected void stopImageReaders();
 
 	abstract protected void stopRemotePreview();
 
@@ -837,74 +855,73 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	{
 		isCameraConfiguring = false;
 
-		if (!isCreating)
-			onResumeTimer = new CountDownTimer(50, 50)
+		onResumeTimer = new CountDownTimer(50, 50)
+		{
+			public void onTick(long millisUntilFinished)
 			{
-				public void onTick(long millisUntilFinished)
+				// Not used
+			}
+
+			public void onFinish()
+			{
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen
+						.getMainContext());
+
+				preview.setKeepScreenOn(true);
+
+				captureFormat = CameraController.JPEG;
+
+				String modeId = ApplicationScreen.getPluginManager().getActiveModeID();
+				if (CameraController.isRemoteCamera() && !(modeId.contains("single") || modeId.contains("video")))
 				{
-					// Not used
+					prefs.edit().putInt(ApplicationScreen.sCameraModePref, 0).commit();
+					CameraController.setCameraIndex(0);
+					guiManager.setCameraModeGUI(0);
 				}
 
-				public void onFinish()
-				{
-					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen
-							.getMainContext());
+				CameraController.onResume();
+				ApplicationScreen.getGUIManager().onResume();
+				ApplicationScreen.getPluginManager().onResume();
+				
+				ApplicationScreen.instance.mPausing = false;
 
+				if (!CameraController.isRemoteCamera())
+				{
+					// set preview, on click listener and surface buffers
+					findViewById(R.id.SurfaceView02).setVisibility(View.GONE);
+					preview = (SurfaceView) findViewById(R.id.SurfaceView01);
+					preview.setOnClickListener(ApplicationScreen.this);
+					preview.setOnTouchListener(ApplicationScreen.this);
 					preview.setKeepScreenOn(true);
 
-					captureFormat = CameraController.JPEG;
+					surfaceHolder = preview.getHolder();
+					surfaceHolder.addCallback(ApplicationScreen.this);
 
-					String modeId = ApplicationScreen.getPluginManager().getActiveModeID();
-					if (CameraController.isRemoteCamera() && !(modeId.contains("single") || modeId.contains("video")))
+					// One of device camera is selected.
+					if (CameraController.isUseCamera2())
 					{
-						prefs.edit().putInt(ApplicationScreen.sCameraModePref, 0).commit();
-						CameraController.setCameraIndex(0);
-						guiManager.setCameraModeGUI(0);
-					}
+						ApplicationScreen.instance.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+						CameraController.setupCamera(null, true);
 
-					CameraController.onResume();
-					ApplicationScreen.getGUIManager().onResume();
-					ApplicationScreen.getPluginManager().onResume();
-					
-					ApplicationScreen.instance.mPausing = false;
-
-					if (!CameraController.isRemoteCamera())
+						if (glView != null)
+							glView.onResume();
+					} else if ((surfaceCreated && (!CameraController.isCameraCreated())))
 					{
-						// set preview, on click listener and surface buffers
-						findViewById(R.id.SurfaceView02).setVisibility(View.GONE);
-						preview = (SurfaceView) findViewById(R.id.SurfaceView01);
-						preview.setOnClickListener(ApplicationScreen.this);
-						preview.setOnTouchListener(ApplicationScreen.this);
-						preview.setKeepScreenOn(true);
+						ApplicationScreen.instance.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+						CameraController.setupCamera(surfaceHolder, true);
 
-						surfaceHolder = preview.getHolder();
-						surfaceHolder.addCallback(ApplicationScreen.this);
-
-						// One of device camera is selected.
-						if (CameraController.isUseCamera2())
+						if (glView != null)
 						{
-							ApplicationScreen.instance.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-							CameraController.setupCamera(null, true);
-
-							if (glView != null)
-								glView.onResume();
-						} else if ((surfaceCreated && (!CameraController.isCameraCreated())))
-						{
-							ApplicationScreen.instance.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-							CameraController.setupCamera(surfaceHolder, true);
-
-							if (glView != null)
-							{
-								glView.onResume();
-							}
+							glView.onResume();
 						}
-					} else
-					{
-						sonyCameraSelected();
 					}
-					orientListener.enable();
+				} else
+				{
+					sonyCameraSelected();
 				}
-			}.start();
+				orientListener.enable();
+			}
+		}.start();
 
 		shutterPlayer = new SoundPlayer(this.getBaseContext(), getResources().openRawResourceFd(
 				R.raw.plugin_capture_tick));
@@ -1020,8 +1037,8 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 		if (!CameraController.isRemoteCamera())
 		{
-			if (CameraController.isUseCamera2())
-				stopImageReaders();
+//			if (CameraController.isUseCamera2())
+//				stopImageReaders();
 		} else
 		{
 			stopRemotePreview();
@@ -1066,7 +1083,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		{
 			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_SURFACE_CONFIGURED, 0);
 			isCameraConfiguring = false;
-		} else if (!isCreating)
+		} else
 		{
 			new CountDownTimer(50, 50)
 			{
@@ -1125,10 +1142,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	boolean	isCameraConfiguring		= false;
 	
-	//Is used to implement google's advice how to prevent surfaceView bug in Android 6
-	//Will be removed when google will fix the bug
-	boolean	isSurfaceConfiguring	= false; 
-
 	@Override
 	public void configureCamera(boolean createGUI)
 	{
@@ -1309,14 +1322,15 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	protected void configureCamera2Camera(int captureFormat)
 	{
 		isCameraConfiguring = true;
-
-		surfaceList = new ArrayList<Surface>();
-
-		setSurfaceHolderSize(surfaceWidth, surfaceHeight);
+		boolean needChange = setSurfaceHolderSize(previewWidth, previewHeight);
+		if (!needChange)
+		{
+			// If surface will not be changed, then configuring is finished. Send message about it.
+			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_SURFACE_CONFIGURED, 0);
+			isCameraConfiguring = false;
+		}
+		
 	}
-
-	@TargetApi(21)
-	abstract public void createCaptureSession();
 
 	protected void prepareMeteringAreas()
 	{
@@ -1383,6 +1397,10 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	@Override
 	public Surface getCameraSurface()
 	{
+		if (glView != null)
+		{
+			return new Surface(glView.getSurfaceTexture());
+		}
 		return mCameraSurface;
 	}
 
@@ -1611,7 +1629,9 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 			break;
 		case ApplicationInterface.MSG_SURFACE_CONFIGURED:
 			{
-				createCaptureSession();
+				guiManager.setupViewfinderPreviewSize(new CameraController.Size(previewWidth, previewHeight));
+				CameraController.setCaptureFormat(captureFormat);
+				CameraController.startCameraPreview();
 				ApplicationScreen.getGUIManager().onGUICreate();
 				ApplicationScreen.getPluginManager().onGUICreate();
 				mCameraStarted = true;
