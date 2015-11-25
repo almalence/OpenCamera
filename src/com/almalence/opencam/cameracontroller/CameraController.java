@@ -836,7 +836,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					.commit();
 		}
 
-		if (CameraController.isCamera2Allowed)
+		if (CameraController.isCamera2Supported)
 		{
 			Camera2Controller.onCreateCamera2(mainContext, appInterface, pluginManager, messageHandler);
 			//We supports only devices with hardware level FULL and LIMITED
@@ -852,11 +852,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		SonyRemoteCamera.onCreateSonyRemoteCamera(mainContext, appInterface, pluginManager, messageHandler);
 	}
 
-	public static void createCamera2Manager()
-	{
-		if (CameraController.isCamera2Allowed)
-			Camera2Controller.onCreateCamera2(mainContext, appInterface, pluginManager, messageHandler);
-	}
 
 	public static void onStart()
 	{
@@ -885,7 +880,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			total_frames = 0;
 
-			if (CameraController.isCamera2Allowed)
+			if (CameraController.isCamera2Supported)
 				Camera2Controller.onResumeCamera2();
 		}
 	}
