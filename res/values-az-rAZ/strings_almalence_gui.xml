@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="Pref_Common_Header_Title">Ümumi parametrlər</string>
+    <string name="Pref_Common_Header_Summary">Kamera və başqaları</string>
+    <string name="Pref_Common_Preference_Title">Kamera parametrləri</string>
+    <string name="Pref_Common_Preference_Summary">Kamera və başqaları</string>
+    <string name="Pref_Common_UseFrontCamera_Title">Ön kamera</string>
+    <string name="Pref_Common_UseFrontCamera_Summary">Ön kameradan istifadə</string>
+    <string name="Pref_Common_ImageSize_Title">Təsvir ölçüsü</string>
+    <string name="Pref_Comon_SmartMultishot_And_Night_ImageSize_Title">Təsvir ölçüsü (Serial, Gecə)</string>
+    <string name="Pref_Comon_SmartMultishot_And_Super_ImageSize_Title">Serial Təsvir ölçüsü</string>
+    <string name="Pref_Common_ImageSize_Summary">\nQeyd: Bəzi rejimlərdə təsvir ölçüsünün fərdi qəbulu parametrləri vardır</string>
+    <string name="Pref_Common_Shutter_Title">Səssiz iş</string>
+    <string name="Pref_Common_Shutter_Summary">Bütün modellər üzrə işləməsinə zəmanət verilmir</string>
+    <string name="Pref_Common_HWShutter_Title">HW çəkiliş</string>
+    <string name="Pref_Common_HWShutter_Summary">Proqramın başlaması üçün HW çəkiliş istifadə edin</string>
+    <string name="Pref_Common_ShotOnTap_Title">Çəkiliş üçün toxunun</string>
+    <string name="Pref_Common_Antibanding_Title">Antibanding</string>
+    <string name="Pref_Common_ShotOnTap_Summary">Toxunmaqla Fokus və çəkiliş</string>
+    <string name="Pref_Common_UseCamera2_Title">Kamera2 interfeysindən istifadə</string>
+    <string name="Pref_Common_UseCamera2_Summary">Eksperimental rejim. Android 5 cihazlarında məhdud sayda işləyəcək</string>    
+    <string name="Pref_Common_MediaRescan_Title">Çıxışda medianı təkrar skanlaşdır</string>
+    <string name="Pref_Common_MediaRescan_Summary">Təsvirlər qalereyada görünmədikdə köməklik edir.</string>
+    <string name="Pref_Common_Gallery_Title">Xarici qalereya seçiminə imkan verir</string>
+    <string name="Pref_Common_Gallery_Summary">Əgər quraşdırılıbsa A Better Editor&amp;Effects susmaya görə baxış proqramı kimi istifadə etməyin</string>
+    <string name="Pref_Common_CaptureRAW_Title">RAW Çəkilişi</string>
+    <string name="Pref_Common_CaptureRAW_Summary">RAW - DNG formatıdır. Məhdud sayda cihazlarda işləyəcək</string>
+    <string name="Pref_Common_CaptureRAW_Description">RAW çəkiliş yalnız Tək çəkiliş, Burst və Expo-bracketing rejimlərində işləyir. Bundan əlavə, histogramı bu rejimdə göstərmək olmur.</string>
+    <string name="Pref_Common_JPEGQuality_Title">Təsvir keyfiyyəti</string>
+    <string name="Pref_Common_VolumeButton_Title">Səs düyməsi</string>
+    <string name="Pref_SaveConfiguration_Title">Parametrləri saxla</string>
+    <string name="Pref_SaveConfiguration_Summary">Buraxılışlar arasında saxlamaq üçün parametrləri seçin</string>
+    <string name="Pref_SaveConfiguration_ShootingMode_Title">Çəkiliş rejimi</string>
+    <string name="Pref_SaveConfiguration_ImageSize_Title">Təsvir ölçüsü</string>
+    <string name="Pref_SaveConfiguration_SceneMode_Title">Səhnə rejimi</string>
+    <string name="Pref_SaveConfiguration_FocusMode_Title">Fokuslama rejimi</string>
+    <string name="Pref_SaveConfiguration_WBMode_Title">Ağ rəng balans rejimi</string>
+    <string name="Pref_SaveConfiguration_ISOMode_Title">ISO rejimi</string>
+    <string name="Pref_SaveConfiguration_FlashMode_Title">Fləş rejimi</string>
+    <string name="Pref_SaveConfiguration_FrontRear_Title">Seçilmiş kamera</string>
+    <string name="Pref_SaveConfiguration_DelayedCapture_Title">Avtotaymer</string>
+    <string name="Pref_SaveConfiguration_TimelapseCapture_Title">Çəkiliş arası fasilə</string>
+    <string name="Pref_SaveConfiguration_ExpoCompensation_Title">Ekspozisiya kompensasiyası</string>
+    <string name="Pref_Common_DelayedCapture_Title">Çəkiliş avtotaymeri</string>
+    <string name="Pref_Common_DelayedCapture_Summary">Avtotaymer/şəkil çəkiliş arası fasilə nəzarətini göstər</string>
+    <string name="Pref_ShowHelp_Title">Kömək göstər</string>
+    <string name="Pref_WhowHelp_Summary">Rejim başlayanda kömək göstər (Panorama, Ağıllı multi çəkiliş)</string>
+    <string name="Pref_Common_HeadsetTap_Title">Qulaqlıqla çəkiliş</string>
+    <string name="Pref_Common_HeadsetTap_Summary">Çəkiliş üçün qulaqlıq düymələrindən istifadə edin</string>
+    
+    
+    <string name="helpTextDontShow">Göstərmə</string>
+    
+    <string name="ev_zero">0</string>    
+    <string name="blockingText">Lütfən gözləyin, işlənilir...</string>
+    <string name="almalence_gui_selected">seçildi</string>
+        
+    <string name="settings_mode_scene">Səhnə rejimi</string>
+    <string name="settings_mode_wb">Ağ rəng balansı</string>
+    <string name="settings_mode_focus">Fokus rejimi</string>
+    <string name="settings_mode_flash">Fləş rejimi</string>
+    <string name="settings_mode_iso">ISO</string>
+    <string name="settings_mode_metering">Ekspozisiya ölçü rejimi</string>
+    <string name="settings_mode_rear">Arxa kamera</string>
+    <string name="settings_mode_front">Ön kamera</string>
+    <string name="settings_mode_exposure">Ekspozisiya</string>
+    <string name="settings_mode_exposuretime">Ekspozisiya vaxtı</string>
+    <string name="settings_mode_focusdistance">Fokus məsafəsi</string>
+    <string name="settings_mode_moresettings">Digər parametrlər</string>
+    <string name="settings_mode_self_timer">Avtotaymer</string>
+    <string name="settings_mode_aeaflock">AE\\AF Bağlandı</string>
+    <string name="settings_mode_aeafunlock">AE\\AF Açıldı</string>
+    
+    <string name="settings_not_available">Cari rejimdə mövcud deyil</string>
+    <string name="processing_not_finished">İşləm hələ başa çatmayıb. Lütfən gözləyin.</string>
+        
+    <string name="Pref_General_Preference_Title">Ümumi parametrlər</string>
+	<string name="Pref_General_Preference_Summary">Kamera və çəkiliş</string>
+	<string name="Pref_VF_Preference_Title">Videoaxtarıcı parametrləri</string>
+	<string name="Pref_VF_Preference_Summary">Nələr görünsün</string>
+	<string name="Pref_Modes_Preference_Title">Çəkiliş rejimi parametrləri</string>
+	<string name="Pref_Modes_Preference_Summary">HDR, Night, Panorama ...</string>
+	<string name="Pref_Saving_Preference_Title">Saxlama və paylaşma</string>
+	<string name="Pref_Saving_Timestamp_Preference_Title">Zaman nişanı</string>
+	<string name="Pref_Saving_Preference_Summary">Fayl adları, formatlar, yer qeydi, exif və digər parametrlər</string>
+	<string name="Pref_Advanced_Preference_Title">Qabaqcıl</string>
+	<string name="Pref_Advanced_Preference_Summary">Mütəxəssis istifadəçilər üçün parametrlər</string>
+	<string name="Pref_Unlock_Preference_Title">Kilidi aç</string>
+	<string name="Pref_Unlock_Preference_Summary">Daha çox funksiyalar üçün kilidi aç</string>
+	
+	<string name="layout_hint_bottom">Kamera rejimi seçin</string>
+	<string name="layout_hint_center">Daha çox/az məlumat üçün sürüşdürün</string>
+	<string name="layout_hint_top_left">Basıb saxlayın\nNizamlayın</string>
+	<string name="layout_hint_top_center">Daha çox seçim üçün çıxarın</string>
+
+	<string name="Dro_Help_Header">Dro</string>
+	<string name="Dro_Help">Almalence yeni texnologiya kameralar insan gözü kimi görmək imkanı verir! DRO (Dynamic Range Optimization) avtomatik olaraq xəritəçəkmə tonuna oxşar metoddan istifadə edir, 100% hallarda şəkillərin keyfiyyətini artırır və bir çox hallarda HDR əvəz edə bilir..\n\n1. Şəkil çəkmək üçün toxunun\n2. Saniyələr üzrə emalı gözləyin!</string>
+	
+	<string name="setTimerText">Qur</string>
+	<string name="soundTimerText">Gerisayım səsi</string>
+	<string name="flashTimerText">Flash at countdown</string>	
+
+	<string name="secondsText">saniyə</string>	
+	<string name="okText">OK</string>
+	
+	<string name="moreText">Daha çox...</string>
+	
+	<string name="promoRedeemedJulius">Panorama və Multishot rejimi uğurla blokdan çıxarıldı.</string>
+		
+</resources>

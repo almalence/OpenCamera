@@ -8,7 +8,6 @@ import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PorterDuff.Mode;
-import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Handler;
@@ -26,16 +25,17 @@ import com.almalence.plugins.capture.panoramaaugmented.VfGyroSensor;
 import com.almalence.ui.RotateImageView;
 
 /* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
- import com.almalence.opencam_plus.PluginViewfinder;
- import com.almalence.opencam_plus.R;
- import com.almalence.opencam_plus.cameracontroller.CameraController;
- +++ --> */
-// <!-- -+-
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam_plus.ApplicationScreen;
+import com.almalence.opencam_plus.PluginViewfinder;
+import com.almalence.opencam_plus.R;
+import com.almalence.opencam_plus.cameracontroller.CameraController;
++++ --> */
+//<!-- -+-
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
+
 //-+- -->
 
 public class GyroVFPlugin extends PluginViewfinder
@@ -81,7 +81,7 @@ public class GyroVFPlugin extends PluginViewfinder
 	public GyroVFPlugin()
 	{
 		super("com.almalence.plugins.gyrovf", R.xml.preferences_vf_gyro, 0, R.drawable.gui_almalence_settings_gyro,
-				MainScreen.getAppResources().getString(R.string.Pref_TitleGyroVF));
+				ApplicationScreen.getAppResources().getString(R.string.Pref_TitleGyroVF));
 	}
 
 	@Override
@@ -89,21 +89,16 @@ public class GyroVFPlugin extends PluginViewfinder
 	{
 		this.checkCoordinatesRemapRequired();
 
-		final Camera.Parameters cp = CameraController.getCameraParameters();
-		if (cp == null)
-		{
-			return;
-		}
-		this.pictureWidth = cp.getPictureSize().width;
-		this.pictureHeight = cp.getPictureSize().height;
+		this.pictureWidth = CameraController.getCameraImageSize().getWidth();
+		this.pictureHeight = CameraController.getCameraImageSize().getHeight();
 
-		this.previewWidth = cp.getPreviewSize().width;
-		this.previewHeight = cp.getPreviewSize().height;
+		this.previewWidth = ApplicationScreen.getPreviewWidth();
+		this.previewHeight = ApplicationScreen.getPreviewHeight();
 
 		try
 		{
-			this.viewAngleX = cp.getHorizontalViewAngle();
-			this.viewAngleY = cp.getVerticalViewAngle();
+			this.viewAngleX = CameraController.getHorizontalViewAngle();
+			this.viewAngleY = CameraController.getVerticalViewAngle();
 		} catch (final Exception e)
 		{
 			// Some bugged camera drivers pop ridiculous exception here, use
@@ -141,7 +136,8 @@ public class GyroVFPlugin extends PluginViewfinder
 				|| (HorizontalViewFromAspect > 1.1f * this.viewAngleX))
 			this.viewAngleX = HorizontalViewFromAspect;
 
-		mSurfacePreviewAugmented.reset(this.pictureHeight, this.pictureWidth, this.viewAngleY);
+		if(mSurfacePreviewAugmented != null)
+			mSurfacePreviewAugmented.reset(this.pictureHeight, this.pictureWidth, this.viewAngleY);
 
 		if (!mPrefHardwareGyroscope)
 		{
@@ -151,7 +147,7 @@ public class GyroVFPlugin extends PluginViewfinder
 
 	private void checkCoordinatesRemapRequired()
 	{
-		final Display display = ((WindowManager) MainScreen.getInstance().getSystemService(Context.WINDOW_SERVICE))
+		final Display display = ((WindowManager) ApplicationScreen.instance.getSystemService(Context.WINDOW_SERVICE))
 				.getDefaultDisplay();
 		// This is proved way of checking it so we better use deprecated
 		// methods.
@@ -168,17 +164,16 @@ public class GyroVFPlugin extends PluginViewfinder
 	@Override
 	public void onResume()
 	{
-		mSensorManager = (SensorManager) MainScreen.getInstance().getSystemService(Context.SENSOR_SERVICE);
+		mSensorManager = (SensorManager) ApplicationScreen.instance.getSystemService(Context.SENSOR_SERVICE);
 		mGyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 		mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 		mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		
-		//to see if it helps to fix "can't load library error"
+
+		// to see if it helps to fix "can't load library error"
 		try
 		{
 			mVfGyroscope = new VfGyroSensor(null);
-		}
-		catch(Exception e)
+		} catch (Exception e)
 		{
 			e.printStackTrace();
 		}
@@ -188,7 +183,7 @@ public class GyroVFPlugin extends PluginViewfinder
 
 	void updatePreferences()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		mGyroState = prefs.getBoolean("PrefGyroVF", false);
 
 		if (!prefs.contains("PrefGyroTypeVF"))
@@ -207,6 +202,7 @@ public class GyroVFPlugin extends PluginViewfinder
 
 		if (mGyroState == ON)
 		{
+			CameraController.setNeedPreviewFrame(true);
 			quickControlIconID = R.drawable.gui_almalence_settings_gyro;
 			if (mHorizonIndicatorContainer != null)
 			{
@@ -233,8 +229,11 @@ public class GyroVFPlugin extends PluginViewfinder
 		if (!this.mPrefHardwareGyroscope)
 		{
 			this.mVfGyroscope.NewData(data);
+			if (mSurfacePreviewAugmented != null)
+			{
+				mSurfacePreviewAugmented.onDrawFrame();
+			}
 		}
-
 	}
 
 	@Override
@@ -250,7 +249,7 @@ public class GyroVFPlugin extends PluginViewfinder
 	@Override
 	public void onQuickControlClick()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		Editor editor = prefs.edit();
 
 		if (mGyroState == ON)
@@ -298,7 +297,7 @@ public class GyroVFPlugin extends PluginViewfinder
 		{
 			if (mSensorManager == null)
 			{
-				mSensorManager = (SensorManager) MainScreen.getInstance().getSystemService(Context.SENSOR_SERVICE);
+				mSensorManager = (SensorManager) ApplicationScreen.instance.getSystemService(Context.SENSOR_SERVICE);
 			}
 			if (mSensorManager == null)
 			{
@@ -397,7 +396,7 @@ public class GyroVFPlugin extends PluginViewfinder
 			return;
 		}
 
-		if (MainScreen.getGUIManager().lockControls)
+		if (ApplicationScreen.getGUIManager().lockControls)
 		{
 			mHorizonIndicatorContainer.setVisibility(View.GONE);
 			return;
@@ -426,7 +425,7 @@ public class GyroVFPlugin extends PluginViewfinder
 			return;
 		}
 
-		float density = MainScreen.getAppResources().getDisplayMetrics().density;
+		float density = ApplicationScreen.getAppResources().getDisplayMetrics().density;
 		if ((Math.abs(horizontalError) > 1.0f && (mOrientation == 0 || mOrientation == 180 || flat))
 				|| (Math.abs(verticalError) > 1.0f && (mOrientation == 90 || mOrientation == 270 || flat)))
 		{
@@ -578,19 +577,16 @@ public class GyroVFPlugin extends PluginViewfinder
 
 	private void createGyroUI()
 	{
-		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
+		LayoutInflater inflator = ApplicationScreen.instance.getLayoutInflater();
 		mHorizonLayout = inflator.inflate(R.layout.plugin_vf_gyro_layout, null, false);
 		mHorizonLayout.setVisibility(View.VISIBLE);
 
-		MainScreen.getGUIManager().removeViews(mHorizonLayout, R.id.specialPluginsLayout);
+		ApplicationScreen.getGUIManager().removeViews(mHorizonLayout, R.id.specialPluginsLayout);
 
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
 				LayoutParams.WRAP_CONTENT);
-		((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout)).addView(mHorizonLayout,
+		((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout)).addView(mHorizonLayout,
 				params);
-		// mHorizonLayout.requestLayout();
-		// ((RelativeLayout)
-		// MainScreen.getInstance().findViewById(R.id.specialPluginsLayout)).requestLayout();
 
 		mHorizonIndicatorAim = (RotateImageView) mHorizonLayout.findViewById(R.id.horizon_indicator_aim);
 		mHorizonIndicatorAimTopDown = (RotateImageView) mHorizonLayout

@@ -33,6 +33,13 @@
         android:title="@string/pref_timestamp_saving_custom_text_title" />
 
     <ListPreference
+        android:defaultValue="0"
+        android:entries="@array/timestampGeoArray"
+        android:entryValues="@array/timestampGeoValues"
+        android:key="@string/Preference_TimestampGeoValue"
+        android:title="GPS tags" />
+    
+    <ListPreference
         android:defaultValue="1"
         android:entries="@array/timestampColorArrayCommon"
         android:entryValues="@array/timestampColorValuesCommon"

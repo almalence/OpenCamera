@@ -28,7 +28,6 @@ import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.media.ExifInterface;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
@@ -39,13 +38,15 @@ import com.almalence.YuvImage;
 import com.almalence.util.ImageConversion;
 
 /* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.opencam_plus.ConfigParser;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginProcessing;
  import com.almalence.opencam_plus.R;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.ConfigParser;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
@@ -66,15 +67,15 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 	
 	public PanoramaProcessingPlugin()
 	{
-		super("com.almalence.plugins.panoramaprocessing", R.xml.preferences_processing_panorama, 0, 0, null);
+		super("com.almalence.plugins.panoramaprocessing", "panorama_augmented", R.xml.preferences_processing_panorama, 0, 0, null);
 	}
 
 	@SuppressLint("DefaultLocale")
 	@Override
 	public void onStartProcessing(final long sessionID)
 	{
-		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		sFrameOverlapPref = MainScreen.getAppResources().getString(R.string.Preference_PanoramaFrameOverlap);
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		sFrameOverlapPref = ApplicationScreen.getAppResources().getString(R.string.Preference_PanoramaFrameOverlap);
 		final int overlap = Integer.parseInt(prefs.getString(sFrameOverlapPref, "1"));
 		final float intersection;
 		switch (overlap)
@@ -94,11 +95,11 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 		}
 		// Log.d(TAG, "onStartProcessing");
 
-		this.prefSaveInput = PreferenceManager.getDefaultSharedPreferences(MainScreen.getInstance()).getBoolean(
+		this.prefSaveInput = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.instance).getBoolean(
 				PREFERENCES_KEY_SAVEINPUT, false);
 
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
-				PluginManager.getInstance().getActiveMode().modeSaveName);
+				ConfigParser.getInstance().getMode(mode).modeSaveName);
 
 		int orient = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("frameorientation" + sessionID));
 		this.prefLandscape = orient == 0 || orient == 180 ? true : false;
@@ -198,9 +199,9 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 			final int input_height)
 	{
 		File saveDir = PluginManager.getSaveDir(false);
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 
-		final String modeName = PluginManager.getInstance().getActiveMode().modeSaveName;
+		final String modeName = ConfigParser.getInstance().getMode(mode).modeSaveName;
 		String fileFormat = PluginManager.getInstance().getExportFileName(modeName);
 
 		final Rect crop = new Rect(0, 0, input_width, input_height);
@@ -231,7 +232,7 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 
 			final YuvImage out = new com.almalence.YuvImage(optr, ImageFormat.NV21, input_width, input_height, null);
 
-			int jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
+			int jpegQuality = Integer.parseInt(prefs.getString(ApplicationScreen.sJPEGQualityPref, "95"));
 			out.compressToJpeg(crop, jpegQuality, os);
 
 			try
@@ -268,7 +269,7 @@ public class PanoramaProcessingPlugin extends PluginProcessing
 			values.put(ImageColumns.MIME_TYPE, "image/jpeg");
 			values.put(ImageColumns.DATA, file.getAbsolutePath());
 
-			MainScreen.getInstance().getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+			ApplicationScreen.instance.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
 
 		}
 	}

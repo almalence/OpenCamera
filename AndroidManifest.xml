@@ -4,15 +4,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	  package="com.almalence.opencam_plus"
       android:installLocation="auto"
-      android:versionCode="77"
-      android:versionName="3.32">
+      android:versionCode="95"
+      android:versionName="3.36">
 +++ -->
 <!-- -+-  -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	  package="com.almalence.opencam"
       android:installLocation="auto"
-      android:versionCode="95"
-      android:versionName="3.32">
+      android:versionCode="111"
+      android:versionName="3.36">
 <!--  -+- -->
 
     <supports-screens       
@@ -34,6 +34,10 @@
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 	<uses-permission android:name="android.permission.WRITE_SETTINGS" />
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 <!-- -+-  -->
 	<uses-permission android:name="com.android.vending.BILLING"/>
 	<uses-permission android:name="org.onepf.openiab.permission.BILLING"/>
@@ -49,13 +53,14 @@
 		<!-- +++
    		<activity android:name="com.almalence.opencam_plus.MainScreen"
                   android:label="@string/app_name"
-                  android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"
+                  android:theme="@style/AlmalenceOpenCameraTheme"
                   android:screenOrientation="portrait">
 		+++ -->
 		<!-- -+-  -->
 		<activity android:name="com.almalence.opencam.MainScreen"
                   android:label="@string/app_name"
-                  android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"
+                  android:launchMode="singleInstance"
+                  android:theme="@style/AlmalenceOpenCameraTheme"
                   android:screenOrientation="portrait">
 		<!--  -+- -->
                     
@@ -125,6 +130,23 @@
 		+++ -->
 		<!-- -+-  -->
 		<receiver android:name="com.almalence.opencam.AlarmReceiver"></receiver>
+		<!--  -+- -->
+
+		<!-- +++
+		<service
+            android:name="com.almalence.opencam_plus.ProcessingService"
+            android:exported="false"/>
+		<service
+            android:name="com.almalence.opencam_plus.SavingService"
+            android:exported="false"/>
+		+++ -->
+		<!-- -+-  -->
+		<service
+            android:name="com.almalence.opencam.ProcessingService"
+            android:exported="false"/>
+		<service
+            android:name="com.almalence.opencam.SavingService"
+            android:exported="false"/>
 		<!--  -+- -->
 
 		<!-- Uncomment for Amazon market 1st part 

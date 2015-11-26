@@ -53,10 +53,12 @@ extern "C"
 
 int Super_Process
 (
-	Uint8 ** in,
+	Uint8 ** inY,
+	Uint8 ** inUV,
 	Uint8 ** pout,
 	int		sx,
 	int		sy,
+	int		stride,
 	int		sxo,
 	int		syo,
 	int		nFrames,

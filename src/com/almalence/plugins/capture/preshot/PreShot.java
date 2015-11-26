@@ -26,7 +26,7 @@ public final class PreShot
 
 	public static native int[] GetFromBufferRGBA(int idx, boolean manualOrientation, boolean orientation);
 
-	public static native byte[] GetFromBufferToShowInSlow(int idx, int previewW, int previewH, boolean cameraMirrored);
+	public static native byte[] GetFromBufferToShowInSlow(int idx, int previewW, int previewH);
 
 	public static native int getOrientation(int idx);
 
@@ -36,7 +36,7 @@ public final class PreShot
 
 	public static native byte[] GetFromBufferNV21(int idx, int W, int H, int mirrored);
 
-	public static native byte[] GetFromBufferSimpleNV21(int idx, int W, int H);
+	public static native byte[] GetFromBufferSimpleNV21(int idx);
 	
 	// /reserved
 //	public static native int MakeCopy();

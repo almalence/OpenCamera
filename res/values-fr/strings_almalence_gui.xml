@@ -14,8 +14,8 @@
     <string name="Pref_Common_HWShutter_Summary">Utiliser l\'obturateur de l\'appareil pour démarrer l\'application</string>
     <string name="Pref_Common_ShotOnTap_Title">Appuyer pour prendre la photo</string>
     <string name="Pref_Common_ShotOnTap_Summary">Effectuez la mise au point et appuyez pour prendre une photo</string>
-    <string name="Pref_Common_UseHALv3_Title">Utiliser l\'interface Сamera2</string>
-    <string name="Pref_Common_UseHALv3_Summary">Mode expérimental. Fonctionnera sur un nombre limité d\'appareils (Google Nexus 5, 7 avec Android L)</string>    
+    <string name="Pref_Common_UseCamera2_Title">Utiliser l\'interface Сamera2</string>
+    <string name="Pref_Common_UseCamera2_Summary">Mode expérimental. Fonctionnera sur un nombre limité d\'appareils (Google Nexus 5, 7 avec Android L)</string>    
     <string name="Pref_Common_MediaRescan_Title">Relance de l\'analyse des fichiers média en quittant</string>
     <string name="Pref_Common_MediaRescan_Summary">Aide si les images n\'apparaissent pas dans la galerie.</string>
     <string name="Pref_Common_Gallery_Title">Autoriser la sélection de la galerie externe.</string>

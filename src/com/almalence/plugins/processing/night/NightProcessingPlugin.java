@@ -18,25 +18,22 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.processing.night;
 
-import java.util.Locale;
-
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.util.Log;
-
-import com.almalence.SwapHeap;
 import com.almalence.asynctaskmanager.OnTaskCompleteListener;
 
 /* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.opencam_plus.ConfigParser;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.PluginProcessing;
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.ConfigParser;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
@@ -77,7 +74,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 
 	public NightProcessingPlugin()
 	{
-		super("com.almalence.plugins.nightprocessing", R.xml.preferences_processing_night,
+		super("com.almalence.plugins.nightprocessing", "nightmode", R.xml.preferences_processing_night,
 				R.xml.preferences_processing_night, 0, null);
 	}
 
@@ -92,28 +89,28 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 	{
 		sessionID = SessionID;
 
-		if (CameraController.isUseHALv3())
+		if (CameraController.isUseCamera2())
 		{
 			PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
-					PluginManager.getInstance().getActiveMode().modeSaveNameHAL);
+					ConfigParser.getInstance().getMode(mode).modeSaveNameHAL);
 		} else
 		{
 			PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
-					PluginManager.getInstance().getActiveMode().modeSaveName);
+					ConfigParser.getInstance().getMode(mode).modeSaveName);
 		}
 
 		mDisplayOrientation = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
 				"frameorientation1" + sessionID));
-		mCameraMirrored = CameraController.isFrontCamera();
+		mCameraMirrored = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem(
+				"cameraMirrored" + sessionID));
 
-		CameraController.Size imageSize = CameraController.getCameraImageSize();
-		mImageWidth = imageSize.getWidth();
-		mImageHeight = imageSize.getHeight();
+		mImageWidth = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("imageWidth" + sessionID));
+		mImageHeight = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("imageHeight" + sessionID));
 
 		mOutImageWidth = mImageWidth;
 		mOutImageHeight = mImageHeight;
 
-		if (CameraController.isUseHALv3())
+		if (CameraController.isUseCamera2())
 		{
 			if (upscaleResult)
 			{
@@ -125,22 +122,16 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 			}
 		}
 
-		boolean isLGgflex2 = Build.MODEL.toLowerCase(Locale.US)
-				.replace(" ", "").contains("lg-h959")
-				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
-						.contains("lg-h510")
-				|| Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
-						.contains("lg-f510k");
-		boolean isNexus5 = Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
-				.contains("nexus5");
-		boolean isNexus6 = Build.MODEL.toLowerCase(Locale.US).replace(" ", "")
-				.contains("nexus6");
-		// boolean isNexus9 = Build.MODEL.toLowerCase(Locale.US).replace(" ",
-		// "").contains("nexus9");
+		cameraIndex = 100;
 		// camera indexes in libalmalib corresponding to models
-		if (isNexus5)   cameraIndex = 100;
-		if (isNexus6)   cameraIndex = 103;
-		if (isLGgflex2) cameraIndex = 507;
+		if (CameraController.isNexus5)
+			cameraIndex = 100;
+		if (CameraController.isNexus6)
+			cameraIndex = 103;
+		if (CameraController.isFlex2)
+			cameraIndex = 507;
+//		if (CameraController.isG4)
+//			cameraIndex = 506;
 
 		AlmaShotNight.Initialize();
 
@@ -182,15 +173,12 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 
 		AlmaShotNight.NightAddYUVFrames(frames, imagesAmount, mImageWidth, mImageHeight);
 
-		// Log.d("Night",
-		// "PreviewTask.doInBackground AlmaShotNight.Process start");
-
 		float zoom = Float.parseFloat(PluginManager.getInstance().getFromSharedMem("zoom" + sessionID));
 		boolean isSuperMode = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem(
 				"isSuperMode" + sessionID));
 		int sensorGain = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("burstGain" + sessionID));
 
-		if (Build.MODEL.contains("Nexus 6") && CameraController.isFrontCamera())
+		if (CameraController.isNexus6 && CameraController.isFrontCamera())
 		{
 			if (mDisplayOrientation == 0 || mDisplayOrientation == 90)
 				mDisplayOrientation += 180;
@@ -209,7 +197,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 	private void getPrefs()
 	{
 		// Get the xml/preferences.xml preferences
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getInstance()
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.instance
 				.getBaseContext());
 		NoisePreference = prefs.getString("noisePrefNight", "0");
 		GhostPreference = prefs.getString("ghostPrefNight", "1");

@@ -14,8 +14,8 @@
     <string name="Pref_Common_HWShutter_Summary">Usa l\'otturatore fisico per avviare l\'applicazione</string>
     <string name="Pref_Common_ShotOnTap_Title">Tocca per scattare</string>
     <string name="Pref_Common_ShotOnTap_Summary">Metti a fuoco e scatta toccando</string>
-    <string name="Pref_Common_UseHALv3_Title">Usa l\'interfaccia di Сamera2</string>
-    <string name="Pref_Common_UseHALv3_Summary">Modalità sperimentale. Funziona su un numero limitato di dispositivi (Google Nexus 5, 7 con Android L)</string>    
+    <string name="Pref_Common_UseCamera2_Title">Usa l\'interfaccia di Сamera2</string>
+    <string name="Pref_Common_UseCamera2_Summary">Modalità sperimentale. Funziona su un numero limitato di dispositivi (Google Nexus 5, 7 con Android L)</string>    
     <string name="Pref_Common_MediaRescan_Title">Ripetizione scansione dei file multimediali all\'uscita</string>
     <string name="Pref_Common_MediaRescan_Summary">È utile quando le immagini non compaiono in galleria.</string>
     <string name="Pref_Common_Gallery_Title">Consenti la selezione della galleria esterna</string>

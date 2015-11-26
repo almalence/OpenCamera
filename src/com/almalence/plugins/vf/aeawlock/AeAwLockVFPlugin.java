@@ -20,9 +20,7 @@ package com.almalence.plugins.vf.aeawlock;
 
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
-import android.hardware.Camera;
 import android.preference.CheckBoxPreference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -33,15 +31,15 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
 
 /* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
- import com.almalence.opencam_plus.PluginManager;
+ import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.PluginViewfinder;
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.opencam_plus.ApplicationInterface;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginManager;
+import com.almalence.opencam.ApplicationInterface;
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginViewfinder;
 import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
@@ -85,13 +83,13 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 
 	private void refreshPreferences()
 	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		showAEAWLock = prefs.getBoolean("showAEAWLockPref", false);
 		
 		aeLocked = false;
 		awLocked = false;
-		prefs.edit().putBoolean(MainScreen.sAWBLockPref, aeLocked).commit();
-		prefs.edit().putBoolean(MainScreen.sAWBLockPref, awLocked).commit();
+		prefs.edit().putBoolean(ApplicationScreen.sAWBLockPref, aeLocked).commit();
+		prefs.edit().putBoolean(ApplicationScreen.sAWBLockPref, awLocked).commit();
 		
 		AeUnlock();
 		AwUnlock();
@@ -104,7 +102,7 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 
 		if (showAEAWLock)
 		{
-			LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
+			LayoutInflater inflator = ApplicationScreen.instance.getLayoutInflater();
 			buttonsLayout = inflator.inflate(R.layout.plugin_vf_aeawlock_layout, null, false);
 			buttonsLayout.setVisibility(View.VISIBLE);
 
@@ -142,28 +140,21 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 
 			});
 
-			MainScreen.getGUIManager().removeViews(buttonsLayout, R.id.specialPluginsLayout2);
+			ApplicationScreen.getGUIManager().removeViews(buttonsLayout, R.id.specialPluginsLayout2);
 
 			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
 					LayoutParams.WRAP_CONTENT);
-			params.height = (int) MainScreen.getAppResources().getDimension(R.dimen.aeawlock_size);
+			params.height = (int) ApplicationScreen.getAppResources().getDimension(R.dimen.aeawlock_size);
 
 			params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 
-			((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2)).addView(
+			((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout2)).addView(
 					this.buttonsLayout, params);
 
 			this.buttonsLayout.setLayoutParams(params);
 			this.buttonsLayout.requestLayout();
 
-			((RelativeLayout) MainScreen.getInstance().findViewById(R.id.specialPluginsLayout2)).requestLayout();
-
-//			aeLockButton.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
-//			aeLockButton.invalidate();
-//			aeLockButton.requestLayout();
-//			awLockButton.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
-//			awLockButton.invalidate();
-//			awLockButton.requestLayout();
+			((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout2)).requestLayout();
 		}
 	}
 
@@ -171,7 +162,7 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 	public void onPause()
 	{
 		if (this.buttonsLayout != null)
-			MainScreen.getGUIManager().removeViews(buttonsLayout, R.id.specialPluginsLayout2);
+			ApplicationScreen.getGUIManager().removeViews(buttonsLayout, R.id.specialPluginsLayout2);
 	}
 
 	private void AeLock()
@@ -180,13 +171,13 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 		{
 			CameraController.setAutoExposureLock(true);
 	
-			Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_ae_lock);
+			Drawable icon = ApplicationScreen.getMainContext().getResources().getDrawable(icon_ae_lock);
 			aeLockButton.setImageDrawable(icon);
 	
 			aeLocked = true;
 			
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-			prefs.edit().putBoolean(MainScreen.sAELockPref, aeLocked).commit();
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+			prefs.edit().putBoolean(ApplicationScreen.sAELockPref, aeLocked).commit();
 		}
 	}
 
@@ -196,13 +187,13 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 		{
 			CameraController.setAutoWhiteBalanceLock(true);
 	
-			Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_aw_lock);
+			Drawable icon = ApplicationScreen.getMainContext().getResources().getDrawable(icon_aw_lock);
 			awLockButton.setImageDrawable(icon);
 	
 			awLocked = true;
 			
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-			prefs.edit().putBoolean(MainScreen.sAWBLockPref, awLocked).commit();
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+			prefs.edit().putBoolean(ApplicationScreen.sAWBLockPref, awLocked).commit();
 		}
 	}
 
@@ -213,14 +204,14 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 		
 		if (aeLockButton!=null)
 		{
-			Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_ae_unlock);
+			Drawable icon = ApplicationScreen.getMainContext().getResources().getDrawable(icon_ae_unlock);
 			aeLockButton.setImageDrawable(icon);
 		}
 	
 		aeLocked = false;
 		
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		prefs.edit().putBoolean(MainScreen.sAELockPref, aeLocked).commit();
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		prefs.edit().putBoolean(ApplicationScreen.sAELockPref, aeLocked).commit();
 	}
 
 	private void AwUnlock()
@@ -229,14 +220,14 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 			CameraController.setAutoWhiteBalanceLock(false);
 		if (aeLockButton!=null)
 		{
-			Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_aw_unlock);
+			Drawable icon = ApplicationScreen.getMainContext().getResources().getDrawable(icon_aw_unlock);
 			awLockButton.setImageDrawable(icon);
 		}
 	
 		awLocked = false;
 		
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		prefs.edit().putBoolean(MainScreen.sAWBLockPref, awLocked).commit();
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		prefs.edit().putBoolean(ApplicationScreen.sAWBLockPref, awLocked).commit();
 	}
 
 	@Override
@@ -244,13 +235,13 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 	{
 		if (aeLockButton != null)
 		{
-			aeLockButton.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
+			aeLockButton.setOrientation(ApplicationScreen.getGUIManager().getLayoutOrientation());
 			aeLockButton.invalidate();
 			aeLockButton.requestLayout();
 		}
 		if (awLockButton != null)
 		{
-			awLockButton.setOrientation(MainScreen.getGUIManager().getLayoutOrientation());
+			awLockButton.setOrientation(ApplicationScreen.getGUIManager().getLayoutOrientation());
 			awLockButton.invalidate();
 			awLockButton.requestLayout();
 		}
@@ -259,9 +250,9 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 	@Override
 	public void onCaptureFinished()
 	{
-		if (aeLocked && CameraController.isExposureLockSupported() && !CameraController.isExposureLock())
+		if (aeLocked && CameraController.isExposureLockSupported() && !CameraController.isExposureLocked())
 			AeUnlock();
-		if (awLocked && CameraController.isWhiteBalanceLockSupported() && !CameraController.isWhiteBalanceLock())
+		if (awLocked && CameraController.isWhiteBalanceLockSupported() && !CameraController.isWhiteBalanceLocked())
 			AwUnlock();
 	}
 
@@ -269,7 +260,7 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 	public void onPreferenceCreate(PreferenceFragment prefActivity)
 	{
 		PreferenceCategory cat = (PreferenceCategory) prefActivity.findPreference("Pref_VF_ShowAEAWLock_Category");
-		if (cat != null && !MainScreen.getGUIManager().mEVLockSupported && !MainScreen.getGUIManager().mWBLockSupported)
+		if (cat != null && !ApplicationScreen.getGUIManager().mEVLockSupported && !ApplicationScreen.getGUIManager().mWBLockSupported)
 		{
 			CheckBoxPreference cp = (CheckBoxPreference) cat.findPreference("showAEAWLockPref");
 			if (cp != null)
@@ -280,30 +271,29 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 	@Override
 	public boolean onBroadcast(int arg1, int arg2)
 	{
-		if (arg1 == PluginManager.MSG_AEWB_CHANGED)
+		if (arg1 == ApplicationInterface.MSG_AEWB_CHANGED)
 		{
-//			Camera.Parameters params = CameraController.getCameraParameters();
-			if (CameraController.isExposureLockSupported() && CameraController.isExposureLock())
+			if (CameraController.isExposureLockSupported() && CameraController.isExposureLocked())
 			{
-				Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_ae_lock);
+				Drawable icon = ApplicationScreen.getMainContext().getResources().getDrawable(icon_ae_lock);
 				if (aeLockButton!=null)
 					aeLockButton.setImageDrawable(icon);
 			}
 			else
 			{
-				Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_ae_unlock);
+				Drawable icon = ApplicationScreen.getMainContext().getResources().getDrawable(icon_ae_unlock);
 				if (aeLockButton!=null)
 					aeLockButton.setImageDrawable(icon);
 			}
-			if (CameraController.isWhiteBalanceLockSupported() && CameraController.isWhiteBalanceLock())
+			if (CameraController.isWhiteBalanceLockSupported() && CameraController.isWhiteBalanceLocked())
 			{
-				Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_aw_lock);
+				Drawable icon = ApplicationScreen.getMainContext().getResources().getDrawable(icon_aw_lock);
 				if (awLockButton!=null)
 					awLockButton.setImageDrawable(icon);
 			}
 			else
 			{
-				Drawable icon = MainScreen.getMainContext().getResources().getDrawable(icon_aw_unlock);
+				Drawable icon = ApplicationScreen.getMainContext().getResources().getDrawable(icon_aw_unlock);
 				if (awLockButton!=null)
 					awLockButton.setImageDrawable(icon);
 			}

@@ -321,8 +321,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_
 	jobject pObj,
 	jint idx,
 	jint previewW,
-	jint previewH,
-	jboolean cameraMirrored
+	jint previewH
 )
 {
 	unsigned char *data;
@@ -651,9 +650,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_almalence_plugins_capture_preshot_PreShot_
 (
 	JNIEnv* env,
 	jobject pObj,
-	jint idx,
-	jint W,
-	jint H
+	jint idx
 )
 {
 	unsigned char *data;

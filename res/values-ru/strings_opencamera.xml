@@ -16,6 +16,7 @@
     <string name="pref_advanced_saving_saveToPref_summary">Выбрать место для сохранения снимков</string>
     <string name="choose_folder">Выбрать папку</string>
     <string name="pref_advanced_saving_saveToPref_CantSaveToSD">Android KitKat не предоставляет возможности сохранения на внешнюю карту памяти.</string>
+    <string name="pref_general_more_sonyCamera_available">Использование камер Sony доступно только с Стандартном и Видео режимах.</string>
     
     <string name="pref_timestamp_saving_date_title">Дата</string>
     <string name="pref_timestamp_saving_abbreviation_title">Месяц буквами</string>
@@ -64,4 +65,7 @@
     
     <string name="raterSendReview"> Нам важно ваше мнение и мы хотим улучшить приложение. Отправьте ваше мнение напрямую в поддержку.</string>
     <string name="raterSend">Отправить</string>
+    <string name="string_appoftheday">Благодаря Приложению дня теперь у вас есть полная версия</string>
+    
+    <string name="string_processing_and_saving_image">Обработка и сохранение изображения...</string>
 </resources>

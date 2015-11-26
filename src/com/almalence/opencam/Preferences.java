@@ -21,30 +21,19 @@ by Almalence Inc. All Rights Reserved.
  +++ --> */
 // <!-- -+-
 package com.almalence.opencam;
-
 //-+- -->
 
 import java.util.List;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.AlertDialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -57,20 +46,17 @@ import android.widget.ImageView;
 public class Preferences extends PreferenceActivity
 {
 	public static PreferenceActivity	thiz;
-
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-
-		// On some devices app crashes on start, because of MainScreen.thiz is
-		// null.
-		// If MainScreen.thiz is null, we need to start MainScreen to initialize
-		// it, before starting Preferences.
-		if (MainScreen.thiz == null)
-		{
-			Intent intent = new Intent(this, MainScreen.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		
+		// On some devices app crashes on start, because of ApplicationScreen.instance is null.
+		// If ApplicationScreen.instance is null, we need to start ApplicationScreen to initialize it, before starting Preferences.
+		if (ApplicationScreen.instance == null) {
+			Intent intent = new Intent(this, ApplicationScreen.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); 
 			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			startActivity(intent);
 			finish();

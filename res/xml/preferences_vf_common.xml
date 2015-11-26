@@ -20,6 +20,12 @@
 	        android:defaultValue="false"
             android:key="maxScreenBrightnessPref" />
 	    
+	    <CheckBoxPreference
+	        android:title="@string/Pref_FastSwitchShutter"
+	        android:summary="@string/Pref_FastSwitchShutter_Summary"
+	        android:defaultValue="true"
+            android:key="@string/Preference_ShowFastSwitchShutterValue" />
+	    
 	    <PreferenceScreen 
             android:fragment="com.almalence.opencam.Fragment" 
             android:title="@string/moreText" 
@@ -52,7 +58,13 @@
 	        android:summary="@string/Pref_MaxScreenBrightness_Summary"
 	        android:defaultValue="false"
             android:key="maxScreenBrightnessPref" />
-	    
+	   
+	    <CheckBoxPreference
+	        android:title="@string/Pref_FastSwitchShutter"
+	        android:summary="@string/Pref_FastSwitchShutter_Summary"
+	        android:defaultValue="true"
+            android:key="@string/Preference_ShowFastSwitchShutterValue" />
+
 	    <PreferenceScreen 
             android:fragment="com.almalence.opencam_plus.Fragment" 
             android:title="@string/moreText" 

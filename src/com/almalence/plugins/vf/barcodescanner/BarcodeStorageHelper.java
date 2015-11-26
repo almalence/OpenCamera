@@ -17,10 +17,10 @@ import org.json.JSONObject;
 import android.content.Context;
 
 /* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.ApplicationScreen;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationScreen;
 
 //-+- -->
 
@@ -162,7 +162,7 @@ public class BarcodeStorageHelper
 	{
 		try
 		{
-			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(MainScreen.getMainContext().openFileOutput(
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(ApplicationScreen.getMainContext().openFileOutput(
 					FILENAME, Context.MODE_PRIVATE)));
 			bw.write(data);
 			bw.close();
@@ -182,7 +182,7 @@ public class BarcodeStorageHelper
 		FileInputStream fis = null;
 		try
 		{
-			fis = MainScreen.getMainContext().openFileInput(FILENAME);
+			fis = ApplicationScreen.getMainContext().openFileInput(FILENAME);
 			InputStreamReader isr = new InputStreamReader(fis);
 			StringBuilder sb = new StringBuilder();
 			char[] inputBuffer = new char[2048];

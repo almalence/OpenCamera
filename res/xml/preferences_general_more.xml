@@ -3,9 +3,9 @@
     <CheckBoxPreference
         android:defaultValue="false"
         android:enabled="false"
-        android:key="@string/Preference_UseHALv3Key"
-        android:summary="@string/Pref_Common_UseHALv3_Summary"
-        android:title="@string/Pref_Common_UseHALv3_Title" />
+        android:key="@string/Preference_UseCamera2Key"
+        android:summary="@string/Pref_Common_UseCamera2_Summary"
+        android:title="@string/Pref_Common_UseCamera2_Title" />
 
     <CheckBoxPreference
         android:defaultValue="false"
@@ -45,6 +45,25 @@
         android:entryValues="@array/shotOnTapValuesCommon"
         android:key="@string/Preference_ShotOnTapValue"
         android:title="@string/Pref_Common_ShotOnTap_Title" />
+    <ListPreference
+        android:defaultValue="0"
+        android:entries="@array/dimsArrayCommon"
+        android:entryValues="@array/dimsValuesCommon"
+        android:key="@string/Preference_FrontColorEffectValue"
+        android:summary=""
+        android:title="@string/Pref_Common_ColorEffect_Title" />
+    <ListPreference
+        android:defaultValue="0"
+        android:entries="@array/dimsArrayCommon"
+        android:entryValues="@array/dimsValuesCommon"
+        android:key="@string/Preference_RearColorEffectValue"
+        android:summary=""
+        android:title="@string/Pref_Common_ColorEffect_Title" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="@string/Preference_ConnectToSonyCameras"
+        android:summary="@string/Pref_Common_ConnectToSonyCameras_Summary"
+        android:title="@string/Pref_Common_ConnectToSonyCameras_Title" />
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="headsetPrefCommon"

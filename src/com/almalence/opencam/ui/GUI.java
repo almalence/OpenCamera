@@ -15,13 +15,13 @@ The Initial Developer of the Original Code is Almalence Inc.
 Portions created by Initial Developer are Copyright (C) 2013 
 by Almalence Inc. All Rights Reserved.
  */
-
 /* <!-- +++
- package com.almalence.opencam_plus.ui;
- +++ --> */
-// <!-- -+-
+package com.almalence.opencam_plus.ui;
++++ --> */
+//<!-- -+-
 package com.almalence.opencam.ui;
 //-+- -->
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,18 +35,14 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 /* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
- import com.almalence.opencam_plus.Plugin;
- import com.almalence.opencam_plus.R;
- import com.almalence.opencam_plus.cameracontroller.CameraController;
- import com.almalence.opencam_plus.ui.AlmalenceGUI.ShutterButton;
- +++ --> */
-// <!-- -+-
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam_plus.ApplicationScreen;
+import com.almalence.opencam_plus.Plugin;
+import com.almalence.opencam_plus.cameracontroller.CameraController;
++++ --> */
+//<!-- -+-
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.Plugin;
-import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.ui.AlmalenceGUI.ShutterButton;
 //-+- -->
 
 /***
@@ -65,6 +61,7 @@ public abstract class GUI
 	public boolean			mFlashModeSupported				= false;
 	public boolean			mISOSupported					= false;
 	public boolean			mCameraChangeSupported			= false;
+	public boolean			mCollorEffectsSupported			= false;
 
 	public boolean			mEVLockSupported				= false;
 	public boolean			mWBLockSupported				= false;
@@ -73,6 +70,7 @@ public abstract class GUI
 	
 	public boolean			mManualExposureTimeSupported  	= false;
 	public boolean			mManualFocusDistanceSupported	= false;
+	public boolean			mManualWhiteBalanceSupported	= false;
 	
 	public boolean			isAutoFocusDistance				= true;
 
@@ -92,6 +90,11 @@ public abstract class GUI
 
 	static protected int	mDeviceOrientation			= 0;
 	static protected int	mPreviousDeviceOrientation	= 0;
+	
+	public enum ShutterButton
+	{
+		DEFAULT, RECORDER_START_WITH_PAUSE, RECORDER_START, RECORDER_STOP_WITH_PAUSE, RECORDER_STOP, RECORDER_RECORDING_WITH_PAUSE, RECORDER_RECORDING, RECORDER_PAUSED, TIMELAPSE_ACTIVE
+	}
 
 	public enum CameraParameter
 	{
@@ -142,7 +145,7 @@ public abstract class GUI
 	public void removeViews(View viewElement, int layoutId)
 	{
 		List<View> specialView = new ArrayList<View>();
-		RelativeLayout specialLayout = (RelativeLayout) MainScreen.getInstance().findViewById(layoutId);
+		RelativeLayout specialLayout = (RelativeLayout) ApplicationScreen.instance.findViewById(layoutId);
 		for (int i = 0; i < specialLayout.getChildCount(); i++)
 			specialView.add(specialLayout.getChildAt(i));
 
@@ -170,7 +173,7 @@ public abstract class GUI
 	// called to set any indication when export plugin work finished.
 	abstract public void onExportFinished();
 
-	// Called when camera object created in MainScreen.
+	// Called when camera object created in ApplicationScreen.
 	// After camera creation it is possibly to obtain
 	// all camera possibilities such as supported scene mode, flash mode and
 	// etc.
@@ -201,8 +204,9 @@ public abstract class GUI
 
 	// INFO view
 	abstract protected void addInfoView(View view, android.widget.LinearLayout.LayoutParams viewLayoutParams);
+	abstract public void addInfoView(View info_control);
 
-	abstract protected void removeInfoView(View view);
+	abstract public void removeInfoView(View view);
 
 	// MODE SECTION
 	// AddMode
@@ -247,6 +251,17 @@ public abstract class GUI
 	abstract public int getFlashIcon(int flashMode);
 
 	abstract public int getISOIcon(int isoMode);
+	
+	// Methods returns readable camera parameters name
+	abstract public String getSceneName(int sceneMode);
+
+	abstract public String getWBName(int wb);
+
+	abstract public String getFocusName(int focusMode);
+
+	abstract public String getFlashName(int flashMode);
+
+	abstract public String getISOName(int isoMode);
 
 	/* FOCUS MANAGER SECTION */
 	/*
@@ -262,10 +277,6 @@ public abstract class GUI
 	abstract public void onHardwareFocusButtonPressed();
 
 	abstract public void onVolumeBtnExpo(int keyCode);
-
-	// abstract public void autoFocus();
-	//
-	// abstract public void onAutoFocus(boolean focused, Camera paramCamera);
 
 	@TargetApi(14)
 	abstract public void setFocusParameters();
@@ -294,6 +305,12 @@ public abstract class GUI
 	{
 		return (mDeviceOrientation + 90) % 360;
 	} // used to operate with image's data
+	
+	public int getImageDataOrientation()
+	{
+		//Workaround for Nexus5x, image is flipped because of sensor orientation
+		return (mDeviceOrientation + (CameraController.isNexus5x? (CameraController.isFrontCamera()? 90 : 270) : 90)) % 360;
+	} // used to operate with image's data
 
 	public int getLayoutOrientation()
 	{
@@ -310,11 +327,21 @@ public abstract class GUI
 	// mode help procedure
 	abstract public void showHelp(String modeName, String text, int imageID, String Prefs);
 
+	abstract public void setCameraModeGUI(int mode);
+
 	public void showStore()
 	{
 	}
 
 	public void hideStore()
+	{
+	}
+	
+	public void showSonyCameraDeviceExplorer()
+	{
+	}
+
+	public void hideSonyCameraDeviceExplorer()
 	{
 	}
 	

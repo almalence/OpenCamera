@@ -34,11 +34,11 @@ import com.almalence.SwapHeap;
 import com.almalence.YuvImage;
 
 /* <!-- +++
- import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
+import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
@@ -527,7 +527,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				frames = (LinkedList<AugmentedFrameTaken>) this.frames.clone();
 			}
 
-			MainScreen.getInstance().queueGLEvent(new Runnable()
+			ApplicationScreen.instance.queueGLEvent(new Runnable()
 			{
 				@Override
 				public void run()
@@ -616,7 +616,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 				@Override
 				public void run()
 				{
-					MainScreen.getInstance().queueGLEvent(new Runnable()
+					ApplicationScreen.instance.queueGLEvent(new Runnable()
 					{
 						@Override
 						public void run()
@@ -1317,7 +1317,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 								
 								if (CameraController.isFrontCamera())
 								{
-									if (Build.MODEL.contains("Nexus 6"))
+									if (CameraController.isNexus6)
 										ImageConversion.TransformNV21N(yuv_address,
 												yuv_address,
 												AugmentedPanoramaEngine.this.height,
@@ -1329,6 +1329,18 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 												AugmentedPanoramaEngine.this.height,
 												AugmentedPanoramaEngine.this.width,
 												1, 0, 0);
+								}
+								else
+								{
+									//Workaround for Nexus5x, image is flipped because of sensor orientation
+									if(CameraController.isNexus5x)
+									{
+										ImageConversion.TransformNV21N(yuv_address,
+												yuv_address,
+												AugmentedPanoramaEngine.this.height,
+												AugmentedPanoramaEngine.this.width,
+												1, 1, 0);
+									}
 								}
 
 								ImageConversion.convertNV21toGLN(yuv_address,
@@ -1343,7 +1355,7 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 										AugmentedPanoramaEngine.this.textureWidth,
 										AugmentedPanoramaEngine.this.textureHeight);
 
-								MainScreen.getInstance().queueGLEvent(new Runnable()
+								ApplicationScreen.instance.queueGLEvent(new Runnable()
 								{
 									@Override
 									public void run()
