@@ -100,6 +100,7 @@ import com.almalence.sony.cameraremote.SimpleStreamSurfaceView;
 import com.almalence.sony.cameraremote.utils.NFCHandler;
 import com.almalence.sony.cameraremote.utils.WifiHandler;
 import com.almalence.util.AppWidgetNotifier;
+import com.almalence.util.Util;
 
 //<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
@@ -1000,50 +1001,52 @@ public class MainScreen extends ApplicationScreen
 			opt2 = sImageSizeVideoFrontPref;
 
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-			currentIdx = Integer.parseInt(prefs.getString(CameraController.getCameraIndex() == 0 ? opt1 : opt2, "2"));
+			currentIdx = Integer.parseInt(prefs.getString(CameraController.getCameraIndex() == 0 ? opt1 : opt2, "6"));
+			
+			List<CameraController.Size> vsz = CameraController.SupportedVideoSizesList;
 
 			CharSequence[] entriesTmp = new CharSequence[6];
 			CharSequence[] entryValuesTmp = new CharSequence[6];
-			if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), VideoCapturePlugin.QUALITY_4K))
+			if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), VideoCapturePlugin.QUALITY_4K) || Util.listContainsSize(vsz, new CameraController.Size(4096, 2160)))
 			{
 				entriesTmp[idx] = "4K";
-				entryValuesTmp[idx] = "6";
+				entryValuesTmp[idx] = "9";
 				idx++;
 			}
-			if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_2160P))
+			if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_2160P) || Util.listContainsSize(vsz, new CameraController.Size(3840, 2160)))
 			{
 				entriesTmp[idx] = "2160p";
-				entryValuesTmp[idx] = "2";
+				entryValuesTmp[idx] = String.valueOf(CamcorderProfile.QUALITY_2160P);
 				idx++;
 			}
 			if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_1080P))
 			{
 				entriesTmp[idx] = "1080p";
-				entryValuesTmp[idx] = "3";
+				entryValuesTmp[idx] = String.valueOf(CamcorderProfile.QUALITY_1080P);
 				idx++;
 			}
 			if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_720P))
 			{
 				entriesTmp[idx] = "720p";
-				entryValuesTmp[idx] = "4";
+				entryValuesTmp[idx] = String.valueOf(CamcorderProfile.QUALITY_720P);
 				idx++;
 			}
 			if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_480P))
 			{
 				entriesTmp[idx] = "480p";
-				entryValuesTmp[idx] = "5";
+				entryValuesTmp[idx] = String.valueOf(CamcorderProfile.QUALITY_480P);
 				idx++;
 			}
 			if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_CIF))
 			{
 				entriesTmp[idx] = "352 x 288";
-				entryValuesTmp[idx] = "1";
+				entryValuesTmp[idx] = String.valueOf(CamcorderProfile.QUALITY_CIF);
 				idx++;
 			}
 			if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_QCIF))
 			{
 				entriesTmp[idx] = "176 x 144";
-				entryValuesTmp[idx] = "0";
+				entryValuesTmp[idx] = String.valueOf(CamcorderProfile.QUALITY_QCIF);
 				idx++;
 			}
 

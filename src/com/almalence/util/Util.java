@@ -912,4 +912,20 @@ public final class Util
 
 		return maxSizeIndex;
 	}
+	
+	public static boolean listContainsSize(List<CameraController.Size> list, CameraController.Size size)
+	{
+		boolean res = false;
+		
+		for (CameraController.Size s : list)
+		{
+			if (s.getWidth() == size.getWidth() && s.getHeight() == size.getHeight())
+			{
+				res = true;
+				break;
+			}
+		}
+		
+		return res;
+	}
 }

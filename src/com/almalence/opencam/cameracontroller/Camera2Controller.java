@@ -456,7 +456,6 @@ public class Camera2Controller
 
 	public static void setCaptureFormat(int captureFormat)
 	{
-//		Log.e(TAG, "set captureFormat.");
 		Camera2Controller.captureFormat = captureFormat;
 	}
 
@@ -1828,7 +1827,6 @@ public class Camera2Controller
 		
 		CameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
 		ApplicationScreen.setCaptureFormat(captureFormat);
-		//appInterface.setCaptureFormat(captureFormat);
 		return surfaceList;
 	}
 
@@ -2650,7 +2648,6 @@ public class Camera2Controller
 		
 		int colorEffect = appInterface.getColorEffectPref();
 
-//		Log.e(TAG, "configurePreviewRequest()");
 		if (CameraController.mMediaRecorder == null)
 		{
 			previewRequestBuilder = camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
@@ -2872,7 +2869,7 @@ public class Camera2Controller
 		
 		
 		//Disable Image Reader for Nexus 6 according to slow focusing issue
-		if (!CameraController.isNexus6  && captureFormat != CameraController.RAW)
+		if (!CameraController.isNexus6  && captureFormat != CameraController.RAW && mImageReaderPreviewYUV != null)
 		{
 			Surface previewSurface = mImageReaderPreviewYUV.getSurface();
 			if(previewSurface != null)

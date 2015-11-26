@@ -358,14 +358,17 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static List<CameraController.Size>		MultishotResolutionsSizeList;
 	public static List<String>						MultishotResolutionsIdxesList;
 	public static List<String>						MultishotResolutionsNamesList;
+	
+	public static List<CameraController.Size>		SupportedVideoSizesList;
 
+	public static List<CameraController.Size>		ResolutionsVideoList;
+	
 	public static List<String>						ColorEffectsNamesList;
 
 	public static List<Integer>						FastIdxelist;
 
 	protected static List<CameraController.Size>	SupportedPreviewSizesList;
 	protected static List<CameraController.Size>	SupportedPictureSizesList;
-	protected static List<CameraController.Size>	SupportedVideoSizesList;
 
 	protected static final CharSequence[]			RATIO_STRINGS					= { " ", "4:3", "3:2", "16:9", "1:1"};
 
@@ -1244,6 +1247,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				 {
 					 Camera2Controller.openCameraCamera2();
 					 cameraController.mVideoStabilizationSupported = getVideoStabilizationSupported();
+					 cameraController.mVideoSnapshotSupported = false;
 				 }
 				 else
 					openCameraWaiting = true; 
@@ -1253,6 +1257,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			CameraController.fillPreviewSizeList();
 			CameraController.fillPictureSizeList();
+			CameraController.getSupportedVideoSizes();
 
 			if (CameraController.isCamera2)
 			{
@@ -1792,10 +1797,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		List<CameraController.Size> videoSizes = new ArrayList<CameraController.Size>();
 		if (!CameraController.isCamera2)
 		{
-			if (CameraController.SupportedVideoSizesList != null)
-			{
-				videoSizes = new ArrayList<CameraController.Size>(CameraController.SupportedVideoSizesList);
-			} else if (camera != null && camera.getParameters() != null)
+			if (camera != null && camera.getParameters() != null)
 			{
 				List<Camera.Size> sizes = camera.getParameters().getSupportedVideoSizes();
 				for (Camera.Size sz : sizes)
@@ -1807,6 +1809,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		} else
 			Camera2Controller.fillVideoSizeList(videoSizes);
 
+		SupportedVideoSizesList = new ArrayList<CameraController.Size>(videoSizes);
 		return videoSizes;
 	}
 
