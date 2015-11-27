@@ -30,8 +30,7 @@ import android.view.WindowManager;
 import com.almalence.opencam_plus.ApplicationScreen;
 +++ --> */
 //<!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-//-+- -->
+import com.almalence.opencam_plus_gift.ApplicationScreen;
 
 public class ImageConversion
 {

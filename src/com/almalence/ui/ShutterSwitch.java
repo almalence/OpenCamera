@@ -22,7 +22,7 @@ package com.almalence.ui;
  import com.almalence.opencam_plus.R;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.R;
+import com.almalence.opencam_plus_gift.R;
 //-+- -->
 
 import com.almalence.util.Util;

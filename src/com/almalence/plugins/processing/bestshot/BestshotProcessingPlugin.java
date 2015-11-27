@@ -25,10 +25,10 @@ package com.almalence.plugins.processing.bestshot;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ConfigParser;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginProcessing;
-import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam_plus_gift.ConfigParser;
+import com.almalence.opencam_plus_gift.PluginManager;
+import com.almalence.opencam_plus_gift.PluginProcessing;
+import com.almalence.opencam_plus_gift.cameracontroller.CameraController;
 //-+- -->
 import com.almalence.plugins.processing.bestshot.AlmaShotBestShot;
 

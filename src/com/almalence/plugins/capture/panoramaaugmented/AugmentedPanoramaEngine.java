@@ -38,8 +38,8 @@ import com.almalence.YuvImage;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam_plus_gift.ApplicationScreen;
+import com.almalence.opencam_plus_gift.cameracontroller.CameraController;
 //-+- -->
 
 import com.almalence.util.ImageConversion;

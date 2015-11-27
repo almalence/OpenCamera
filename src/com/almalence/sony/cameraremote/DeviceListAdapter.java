@@ -17,8 +17,7 @@ import com.almalence.sony.cameraremote.ServerDevice.ApiService;
 import com.almalence.opencam_plus.R;
 +++ --> */
 //<!-- -+-
-import com.almalence.opencam.R;
-//-+- -->
+import com.almalence.opencam_plus_gift.R;
 
 public class DeviceListAdapter extends BaseAdapter {
 

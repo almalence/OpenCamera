@@ -43,14 +43,14 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 //<!-- -+-
-import com.almalence.opencam.ApplicationInterface;
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.CameraParameters;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginViewfinder;
-import com.almalence.opencam.R;
-import com.almalence.opencam.SoundPlayer;
-import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam_plus_gift.ApplicationInterface;
+import com.almalence.opencam_plus_gift.ApplicationScreen;
+import com.almalence.opencam_plus_gift.CameraParameters;
+import com.almalence.opencam_plus_gift.PluginManager;
+import com.almalence.opencam_plus_gift.PluginViewfinder;
+import com.almalence.opencam_plus_gift.R;
+import com.almalence.opencam_plus_gift.SoundPlayer;
+import com.almalence.opencam_plus_gift.cameracontroller.CameraController;
 
 //-+- -->
 /* <!-- +++

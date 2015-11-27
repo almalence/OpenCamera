@@ -31,9 +31,9 @@ import android.view.View;
  import com.almalence.opencam_plus.R;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.PluginExport;
-import com.almalence.opencam.R;
+import com.almalence.opencam_plus_gift.ApplicationScreen;
+import com.almalence.opencam_plus_gift.PluginExport;
+import com.almalence.opencam_plus_gift.R;
 //-+- -->
 
 import com.almalence.ui.RotateImageView;

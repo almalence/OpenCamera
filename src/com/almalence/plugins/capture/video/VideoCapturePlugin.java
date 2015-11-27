@@ -100,16 +100,16 @@ import com.almalence.util.Util;
  import com.almalence.opencam_plus.ApplicationInterface;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationInterface;
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.CameraParameters;
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginCapture;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.R;
-import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.ui.GUI.ShutterButton;
 //-+- -->
+import com.almalence.opencam_plus_gift.ApplicationInterface;
+import com.almalence.opencam_plus_gift.ApplicationScreen;
+import com.almalence.opencam_plus_gift.CameraParameters;
+import com.almalence.opencam_plus_gift.MainScreen;
+import com.almalence.opencam_plus_gift.PluginCapture;
+import com.almalence.opencam_plus_gift.PluginManager;
+import com.almalence.opencam_plus_gift.R;
+import com.almalence.opencam_plus_gift.cameracontroller.CameraController;
+import com.almalence.opencam_plus_gift.ui.GUI.ShutterButton;
 
 /***
  * Implements basic functionality of Video capture.
@@ -1509,10 +1509,6 @@ public class VideoCapturePlugin extends PluginCapture
 
 		if (this.modeDRO())
 		{
-			// <!-- -+-
-			PluginManager.getInstance().controlPremiumContent();
-			// -+- -->
-
 			this.droEngine.stopRecording();
 
 			ApplicationScreen.getGUIManager().lockControls = false;

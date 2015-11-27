@@ -21,8 +21,8 @@ import com.almalence.opencam_plus.ApplicationScreen;
 import com.almalence.opencam_plus.R;
 +++ --> */
 //<!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.R;
+import com.almalence.opencam_plus_gift.ApplicationScreen;
+import com.almalence.opencam_plus_gift.R;
 //-+- -->
 
 import android.content.Context;

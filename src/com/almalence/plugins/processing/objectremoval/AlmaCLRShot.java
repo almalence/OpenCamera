@@ -43,8 +43,7 @@ import com.almalence.util.Size;
 import com.almalence.opencam_plus.ApplicationScreen;
 +++ --> */
 //<!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-//-+- -->
+import com.almalence.opencam_plus_gift.ApplicationScreen;
 
 public class AlmaCLRShot
 {

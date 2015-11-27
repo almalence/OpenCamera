@@ -42,8 +42,8 @@ import android.widget.ImageView;
 
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.R;
-import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam_plus_gift.R;
+import com.almalence.opencam_plus_gift.cameracontroller.CameraController;
 //-+- -->
 import com.almalence.util.MemoryImageCache;
 import com.almalence.util.Size;

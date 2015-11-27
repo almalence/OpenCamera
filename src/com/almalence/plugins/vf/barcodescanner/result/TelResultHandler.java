@@ -23,7 +23,7 @@ import android.telephony.PhoneNumberUtils;
  import com.almalence.opencam_plus.R;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.R;
+import com.almalence.opencam_plus_gift.R;
 //-+- -->
 import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.TelParsedResult;

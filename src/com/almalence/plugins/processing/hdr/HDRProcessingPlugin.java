@@ -77,13 +77,13 @@ import com.almalence.SwapHeap;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.ConfigParser;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginProcessing;
-import com.almalence.opencam.R;
-import com.almalence.opencam.ApplicationInterface;
-import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam_plus_gift.ApplicationInterface;
+import com.almalence.opencam_plus_gift.ApplicationScreen;
+import com.almalence.opencam_plus_gift.ConfigParser;
+import com.almalence.opencam_plus_gift.PluginManager;
+import com.almalence.opencam_plus_gift.PluginProcessing;
+import com.almalence.opencam_plus_gift.R;
+import com.almalence.opencam_plus_gift.cameracontroller.CameraController;
 //-+- -->
 
 import com.almalence.util.ImageConversion;

@@ -20,7 +20,7 @@ import android.content.Context;
  import com.almalence.opencam_plus.ApplicationScreen;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam_plus_gift.ApplicationScreen;
 
 //-+- -->
 

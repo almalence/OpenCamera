@@ -23,8 +23,8 @@ package com.almalence.ui;
  import com.almalence.opencam_plus.R;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.R;
+import com.almalence.opencam_plus_gift.MainScreen;
+import com.almalence.opencam_plus_gift.R;
 //-+- -->
 
 import android.content.Context;

@@ -25,8 +25,8 @@ import android.widget.Toast;
  import com.almalence.opencam_plus.ui.EglEncoder;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.ui.EglEncoder;
+import com.almalence.opencam_plus_gift.ApplicationScreen;
+import com.almalence.opencam_plus_gift.ui.EglEncoder;
 
 //-+- -->
 

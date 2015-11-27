@@ -13,7 +13,7 @@ import android.widget.TextView;
  import com.almalence.opencam_plus.R;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.R;
+import com.almalence.opencam_plus_gift.R;
 
 //-+- -->
 public class BarcodeArrayAdapter extends ArrayAdapter<Barcode>

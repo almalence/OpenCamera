@@ -33,7 +33,7 @@ import android.util.Log;
 import com.almalence.opencam_plus.ApplicationScreen;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam_plus_gift.ApplicationScreen;
 //-+- -->
 
 import com.almalence.util.ImageConversion;

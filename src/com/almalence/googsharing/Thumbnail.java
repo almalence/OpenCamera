@@ -58,7 +58,7 @@ import android.util.Log;
  import com.almalence.opencam_plus.PluginManagerBase;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.PluginManagerBase;
+import com.almalence.opencam_plus_gift.PluginManagerBase;
 //-+- -->
 
 import com.almalence.util.Util;
