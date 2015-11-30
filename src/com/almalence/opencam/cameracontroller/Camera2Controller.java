@@ -959,19 +959,19 @@ public class Camera2Controller
 
 	public static void setZoom(float newZoom)
 	{
-//		if (newZoom < 1f)
-//		{
-//			zoomLevel = 1f;
-//			return;
-//		}
-//		zoomLevel = newZoom;
-//		//Zoom area is calculated relative to sensor area (activeRect)
-//		zoomCropPreview = getZoomRect(zoomLevel, activeRect.width(), activeRect.height());
-//		if(previewRequestBuilder != null)
-//		{
-//			previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
-//			setRepeatingRequest();
-//		}
+		if (newZoom < 1f)
+		{
+			zoomLevel = 1f;
+			return;
+		}
+		zoomLevel = newZoom;
+		//Zoom area is calculated relative to sensor area (activeRect)
+		zoomCropPreview = getZoomRect(zoomLevel, activeRect.width(), activeRect.height());
+		if(previewRequestBuilder != null)
+		{
+			previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomCropPreview);
+			setRepeatingRequest();
+		}
 	}
 
 	public static float getZoom()
