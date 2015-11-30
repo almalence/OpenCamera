@@ -27,7 +27,7 @@
             android:key="@string/Preference_ShowFastSwitchShutterValue" />
 	    
 	    <PreferenceScreen 
-            android:fragment="com.almalence.opencam.Fragment" 
+            android:fragment="com.almalence.opencam_plus_gift.Fragment" 
             android:title="@string/moreText" 
             >
 			 <extra 

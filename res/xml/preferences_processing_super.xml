@@ -6,7 +6,7 @@
         android:title="@string/Pref_Super_TitleUpscale" />
 
 <!-- -+-  -->
-<com.almalence.opencam.ui.SeekBarPreference
+<com.almalence.opencam_plus_gift.ui.SeekBarPreference
     android:defaultValue="0"
     android:dialogMessage=""
     android:key="brightnessPref"
