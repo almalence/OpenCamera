@@ -145,6 +145,7 @@ public class FocusVFPlugin extends PluginViewfinder
 
 	private int					preferenceFocusMode				= -1;
 	private boolean				splitMode						= false;
+	private boolean				exposureControlEnaled 			= false;
 
 	private class MainHandler extends Handler
 	{
@@ -166,7 +167,7 @@ public class FocusVFPlugin extends PluginViewfinder
 
 	public FocusVFPlugin()
 	{
-		super("com.almalence.plugins.focusvf", 0, 0, 0, null);
+		super("com.almalence.plugins.focusvf", R.xml.preferences_vf_focus, 0, 0, null);
 
 		mHandler = new MainHandler();
 		mMatrix = new Matrix();
@@ -338,6 +339,7 @@ public class FocusVFPlugin extends PluginViewfinder
 	@Override
 	public void onResume()
 	{
+		exposureControlEnaled = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getBoolean("Pref_EnableExposureMetering", true);
 	}
 
 	@Override
@@ -817,6 +819,11 @@ public class FocusVFPlugin extends PluginViewfinder
 			return;
 		}
 
+		if (!exposureControlEnaled)
+		{
+			return;
+		}
+		
 		int xRaw = (int) e.getRawX();
 		int yRaw = (int) e.getRawY();
 
@@ -933,7 +940,7 @@ public class FocusVFPlugin extends PluginViewfinder
 				ApplicationScreen.getPreviewSurfaceView().getWidth(), ApplicationScreen.getPreviewSurfaceView().getHeight(),
 				mFocusArea.get(0).rect);
 
-		if (ApplicationScreen.getMeteringMode() != -1 && (ApplicationScreen.getMeteringMode() == CameraParameters.meteringModeSpot || CameraController.getFocusMode() == CameraParameters.MF_MODE))
+		if (exposureControlEnaled && ApplicationScreen.getMeteringMode() != -1 && (ApplicationScreen.getMeteringMode() == CameraParameters.meteringModeSpot || CameraController.getFocusMode() == CameraParameters.MF_MODE))
 			calculateTapAreaByTopLeft(focusWidth, focusHeight, 1f, top, left, ApplicationScreen.getPreviewSurfaceView()
 					.getWidth(), ApplicationScreen.getPreviewSurfaceView().getHeight(), mMeteringArea.get(0).rect);
 		else
@@ -1252,7 +1259,7 @@ public class FocusVFPlugin extends PluginViewfinder
 			}
 		}
 		
-		if (ApplicationScreen.getMeteringMode() == CameraParameters.meteringModeManual || !mMeteringAreaSupported || CameraController.isGalaxyNote3) {
+		if (!exposureControlEnaled || ApplicationScreen.getMeteringMode() == CameraParameters.meteringModeManual || !mMeteringAreaSupported || CameraController.isGalaxyNote3) {
 			mMeteringIndicatorRotateLayout.setVisibility(View.GONE);	
 		}
 		
