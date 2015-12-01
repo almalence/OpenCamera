@@ -2759,8 +2759,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						guiView.findViewById(R.id.expandManualControls).setVisibility(View.VISIBLE);
 						guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.VISIBLE);
 						guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.VISIBLE);
-						if (mManualWhiteBalanceSupported)
-							guiView.findViewById(R.id.manualWBLayout).setVisibility(View.VISIBLE);
 
 						mMeteringMode = CameraParameters.meteringModeManual;
 						ApplicationScreen.instance.setCameraMeteringMode(mMeteringMode);
@@ -2776,7 +2774,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, true, true, false);
 						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, false, true, false);
-						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, true, true, false);
 						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, true, false);
 						CameraController.setCameraExposureTime(mExposureTime);
 
@@ -2873,8 +2870,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
 					}
 					guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.VISIBLE);
-					if (mManualWhiteBalanceSupported)
-						guiView.findViewById(R.id.manualWBLayout).setVisibility(View.VISIBLE);
 
 					// Trigger focus to lock AF, before CONTROL_AE_MODE will be
 					// set to OFF
@@ -2882,7 +2877,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, false).commit();
 					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_EV, true, true, false);
 					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, false, true, false);
-					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_WB, true, true, false);
 					disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, true, false);
 
 					CameraController.resetCameraAEMode();
@@ -5940,11 +5934,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private void setMeteringMode(int newMode)
 	{
 		guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.GONE);
-		if (mWB != CameraParameters.WB_MODE_OFF)
-		{
-			guiView.findViewById(R.id.manualWBLayout).setVisibility(View.GONE);
-			setWhiteBalance(mWB);
-		}
 
 		if (guiView.findViewById(R.id.focusDistanceLayout).getVisibility() == View.GONE
 				&& guiView.findViewById(R.id.manualWBLayout).getVisibility() == View.GONE)
