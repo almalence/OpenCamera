@@ -740,7 +740,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		if (e.getPointerCount() > 1)
 		{
 			final int location[] = { 0, 0 };
-			focusLayout.getLocationOnScreen(location);
+			mFocusIndicatorRotateLayout.getLocationOnScreen(location);
 			xRaw = (int) e.getX(0) + location[0];
 			yRaw = (int) e.getY(0) + location[1];
 		}
@@ -830,9 +830,9 @@ public class FocusVFPlugin extends PluginViewfinder
 		if (e.getPointerCount() > 1)
 		{
 			final int location[] = { 0, 0 };
-			focusLayout.getLocationOnScreen(location);
-			xRaw = (int) e.getX(1) + location[0];
-			yRaw = (int) e.getY(1) + location[1];
+			mMeteringIndicatorRotateLayout.getLocationOnScreen(location);
+			xRaw = (int) e.getX(0) + location[0];
+			yRaw = (int) e.getY(0) + location[1];
 		}
 
 		int meteringWidth = mMeteringIndicatorRotateLayout.getWidth();
