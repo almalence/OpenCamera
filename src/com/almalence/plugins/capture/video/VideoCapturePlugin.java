@@ -1873,8 +1873,6 @@ public class VideoCapturePlugin extends PluginCapture
 		if (shutterOff)
 			return;
 
-
-		CameraController.stopCameraPreview();
 		// stop recording and release camera
 		try
 		{
@@ -1890,6 +1888,7 @@ public class VideoCapturePlugin extends PluginCapture
 			Log.e("video onShutterClick", "mMediaRecorder.stop() exception: " + e.getMessage());
 		}
 
+		CameraController.stopCameraPreview();
 		releaseMediaRecorder(); // release the MediaRecorder object
 
 		// This condition normally should be TRUE only for Android >= 5.
@@ -1907,6 +1906,8 @@ public class VideoCapturePlugin extends PluginCapture
 			}
 		}
 
+
+		
 		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH && videoStabilization)
 			CameraController.setVideoStabilization(false);	
 		
@@ -2372,9 +2373,7 @@ public class VideoCapturePlugin extends PluginCapture
 		// TODO PAUSE
 		// ApplicationScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_PAUSED);
 		try
-		{
-			CameraController.stopCameraPreview();
-			
+		{	
 			// stop recording and release camera
 			try
 			{
@@ -2385,6 +2384,8 @@ public class VideoCapturePlugin extends PluginCapture
 				Log.e("video pauseVideoRecording", "mMediaRecorder.stop() exception: " + e.getMessage());
 			}
 
+			CameraController.stopCameraPreview();
+			
 			releaseMediaRecorder(); // release the MediaRecorder object
 			
 			CameraController.startCameraPreview();
