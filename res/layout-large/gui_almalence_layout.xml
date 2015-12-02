@@ -354,17 +354,9 @@
 
         <com.almalence.ui.RotateImageView
             android:id="@+id/expandManualControls"
-            android:layout_width="40dip"
-            android:layout_height="40dip"
-            android:layout_gravity="top|left"
-            android:background="@android:color/transparent"
-            android:src="@drawable/gui_almalence_manual_expand"
-            android:visibility="gone" />
-
-        <com.almalence.ui.RotateImageView
-            android:id="@+id/expandManualControls"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_marginLeft="40dp"
             android:layout_gravity="left"
             android:layout_centerVertical="true"
             android:background="@android:color/transparent"
@@ -376,7 +368,7 @@
             android:layout_width="@dimen/manualControlsWidth"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="40dp"
+            android:layout_marginLeft="80dp"
             android:background="@drawable/ev_background"
             android:orientation="vertical"
             android:visibility="visible" >

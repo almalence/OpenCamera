@@ -654,6 +654,8 @@ public class ZoomVFPlugin extends PluginViewfinder
 			{
 			}
 		});
+		
+		moveManualControls(-zoomPanelWidth / 2);
 	}
 
 	public void openZoomPanel()
@@ -702,8 +704,107 @@ public class ZoomVFPlugin extends PluginViewfinder
 			{
 			}
 		});
+		
+		moveManualControls(zoomPanelWidth / 2);
 	}
 
+	// Move manual controls, to prevent intersections between them and zoom control.
+	// Actually this broke encapsulation a bit. Because zoomVF plugin shouldn't know about manual controls.
+	// But it's the simplest solution. Other solutions may be to complicated for this purpose.
+	private void moveManualControls(final int deltaX)
+	{
+		Animation expandManualControlsAnimation = new TranslateAnimation(0, deltaX, 0, 0);
+		expandManualControlsAnimation.setDuration(500);
+		expandManualControlsAnimation.setRepeatCount(0);
+		expandManualControlsAnimation.setInterpolator(new LinearInterpolator());
+		expandManualControlsAnimation.setAnimationListener(new AnimationListener()
+		{
+			@Override
+			public void onAnimationEnd(Animation animation)
+			{
+				View expandManualControls = ApplicationScreen.instance.findViewById(R.id.expandManualControls);
+				if (expandManualControls == null)
+				{
+					return;
+				}
+				
+				RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) expandManualControls.getLayoutParams();
+				if (params == null)
+				{
+					expandManualControls.clearAnimation();
+					return;
+				}
+
+				params.leftMargin += deltaX;
+
+				expandManualControls.clearAnimation();
+				expandManualControls.requestLayout();
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation)
+			{
+			}
+
+			@Override
+			public void onAnimationStart(Animation animation)
+			{
+			}
+		});
+		View expandManualControls = ApplicationScreen.instance.findViewById(R.id.expandManualControls);
+		if (expandManualControls != null)
+		{
+			expandManualControls.clearAnimation();
+			expandManualControls.setAnimation(expandManualControlsAnimation);
+		}
+		
+		
+		Animation manualControlsLayoutAnimation = new TranslateAnimation(0, deltaX, 0, 0);
+		manualControlsLayoutAnimation.setDuration(500);
+		manualControlsLayoutAnimation.setRepeatCount(0);
+		manualControlsLayoutAnimation.setInterpolator(new LinearInterpolator());
+		manualControlsLayoutAnimation.setAnimationListener(new AnimationListener()
+		{
+			@Override
+			public void onAnimationEnd(Animation animation)
+			{
+				View manualControlsLayout = ApplicationScreen.instance.findViewById(R.id.manualControlsLayout);
+				if (manualControlsLayout == null)
+				{
+					return;
+				}
+				
+				RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) manualControlsLayout.getLayoutParams();
+				if (params == null)
+				{
+					manualControlsLayout.clearAnimation();
+					return;
+				}
+
+				params.leftMargin += deltaX;
+
+				manualControlsLayout.clearAnimation();
+				manualControlsLayout.requestLayout();
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation)
+			{
+			}
+
+			@Override
+			public void onAnimationStart(Animation animation)
+			{
+			}
+		});
+		View manualControlsLayout = ApplicationScreen.instance.findViewById(R.id.manualControlsLayout);
+		if (manualControlsLayout != null)
+		{
+			manualControlsLayout.clearAnimation();
+			manualControlsLayout.setAnimation(manualControlsLayoutAnimation);
+		}
+	}
+	
 	@Override
 	public boolean onBroadcast(int arg1, int arg2)
 	{

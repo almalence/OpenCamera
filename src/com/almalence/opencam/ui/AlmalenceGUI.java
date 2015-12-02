@@ -1325,15 +1325,21 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					guiView.findViewById(R.id.seekBarRightText).setRotation(AlmalenceGUI.mDeviceOrientation + 180);
 					guiView.findViewById(R.id.seekBarCenterText).setRotation(AlmalenceGUI.mDeviceOrientation + 180);
 					guiView.findViewById(R.id.evMinusButton).setRotation(AlmalenceGUI.mDeviceOrientation + 180);
+					
+					// Set manualControlsLayout position right after expandManualControls.
+					mlp.leftMargin = guiView.findViewById(R.id.expandManualControls).getRight() - (manualControlsLayout.getWidth() - manualControlsLayout.getHeight()) / 2;
+					manualControlsLayout.requestLayout();
 					manualControlsLayout.setRotation(AlmalenceGUI.mDeviceOrientation + 180);
-					mlp.leftMargin = guiView.findViewById(R.id.expandManualControls).getWidth() - (manualControlsLayout.getWidth() - manualControlsLayout.getHeight()) / 2;
 				} else {
 					guiView.findViewById(R.id.seekBarLeftText).setRotation(AlmalenceGUI.mDeviceOrientation);
 					guiView.findViewById(R.id.seekBarRightText).setRotation(AlmalenceGUI.mDeviceOrientation);
 					guiView.findViewById(R.id.seekBarCenterText).setRotation(AlmalenceGUI.mDeviceOrientation);
 					guiView.findViewById(R.id.evMinusButton).setRotation(AlmalenceGUI.mDeviceOrientation);
+					
+					// Set manualControlsLayout position right after expandManualControls.
+					mlp.leftMargin = guiView.findViewById(R.id.expandManualControls).getRight();
+					manualControlsLayout.requestLayout();
 					manualControlsLayout.setRotation(AlmalenceGUI.mDeviceOrientation);
-					mlp.leftMargin = guiView.findViewById(R.id.expandManualControls).getWidth();
 				}
 
 				store.setOrientation();
@@ -2254,8 +2260,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 							guiView.findViewById(R.id.topPanel).setVisibility(View.VISIBLE);
 							quickControlsVisible = false;
-
-							guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
 
 							// preferences
 							// .edit()
