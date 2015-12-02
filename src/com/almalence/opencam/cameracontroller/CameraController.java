@@ -1800,6 +1800,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			if (camera != null && camera.getParameters() != null)
 			{
 				List<Camera.Size> sizes = camera.getParameters().getSupportedVideoSizes();
+				if (sizes == null)
+					sizes = camera.getParameters().getSupportedPreviewSizes();
 				for (Camera.Size sz : sizes)
 					videoSizes.add(new CameraController.Size(sz.width, sz.height));
 			} else
