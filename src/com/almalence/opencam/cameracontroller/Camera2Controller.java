@@ -1432,24 +1432,27 @@ public class Camera2Controller
 			//Set custom exposure time/frame duration/ISO allows preview looks like real but on high fps.
 			if(!isRealExposureTimeOnPreview)
 			{
-				if(iTime == 100000000L)
+				//if > 1/10 preview will be the same
+				if(iTime >= 100000000L)
 				{
 					exposureTime = 70000000L;
 					frameDuration = 70000000L;
-					sensorSensitivity = 500;
+					//sensorSensitivity = 500;
 				}
-				else if(iTime == 142857142L)
-				{
-					exposureTime = 35000000L;
-					frameDuration = 39000000L;
-					sensorSensitivity = 1100;
-				}
-				else if(iTime >= 200000000L)
-				{
-					exposureTime = 40000000L;
-					frameDuration = 40000000L;
-					sensorSensitivity = 1300;
-				}
+//				//if > 1/7
+//				else if(iTime == 142857142L)
+//				{
+//					exposureTime = 35000000L;
+//					frameDuration = 39000000L;
+//					//sensorSensitivity = 1100;
+//				}
+//				//if > 1/5
+//				else if(iTime >= 200000000L)
+//				{
+//					exposureTime = 40000000L;
+//					frameDuration = 40000000L;
+//					//sensorSensitivity = 1300;
+//				}
 			}
 			previewRequestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF);
 			Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
@@ -2833,24 +2836,27 @@ public class Camera2Controller
 			//Set custom exposure time/frame duration/ISO allows preview looks like real but on high fps.
 			if(!isRealExposureTimeOnPreview)
 			{
-				if(exTime == 100000000L)
+				//if > 1/10 preview will be the same
+				if(exTime >= 100000000L)
 				{
 					exposureTime = 70000000L;
 					frameDuration = 70000000L;
-					sensorSensitivity = 500;
+					//sensorSensitivity = 500;
 				}
-				else if(exTime == 142857142L)
-				{
-					exposureTime = 35000000L;
-					frameDuration = 39000000L;
-					sensorSensitivity = 1100;
-				}
-				else if(exTime >= 200000000L)
-				{
-					exposureTime = 40000000L;
-					frameDuration = 40000000L;
-					sensorSensitivity = 1300;
-				}
+//				//if > 1/7
+//				else if(exTime == 142857142L)
+//				{
+//					exposureTime = 35000000L;
+//					frameDuration = 39000000L;
+//					//sensorSensitivity = 1100;
+//				}
+//				//if > 1/5
+//				else if(exTime >= 200000000L)
+//				{
+//					exposureTime = 40000000L;
+//					frameDuration = 40000000L;
+//					//sensorSensitivity = 1300;
+//				}
 			}
 			
 			previewRequestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF);
