@@ -1654,6 +1654,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		float mpix = (float) lmpix / 1000000.f;
 		float ratio = (float) currSizeWidth / currSizeHeight;
 
+		if (lmpix < CameraController.MIN_MPIX_SUPPORTED)
+			return;
+		
 		// find good location in a list
 		int loc;
 		for (loc = 0; loc < CameraController.MultishotResolutionsMPixList.size(); ++loc)
