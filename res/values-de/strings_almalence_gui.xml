@@ -15,7 +15,7 @@
     <string name="Pref_Common_ShotOnTap_Title">Zum Aufnehmen berühren</string>
     <string name="Pref_Common_ShotOnTap_Summary">Zum Fokussieren und Aufnehmen eines Bildes brauchen Sie nur den Bildschirm berühren</string>
     <string name="Pref_Common_UseCamera2_Title">Сamera2-Schnittstelle nutzen</string>
-    <string name="Pref_Common_UseCamera2_Summary">Dieser experimentelle Modus funktioniert nur bei vereinzelten Geräten (Google Nexus 5, 7 mit Android L)</string>    
+    <string name="Pref_Common_UseCamera2_Summary">Dieser experimentelle Modus funktioniert nur bei vereinzelten Geräten</string>    
     <string name="Pref_Common_MediaRescan_Title">Medien beim Schließen erneut scannen</string>
     <string name="Pref_Common_MediaRescan_Summary">Nützlich, wenn Bilder nicht in der Galerie erscheinen.</string>
     <string name="Pref_Common_Gallery_Title">Externe Galerie bei Bedarf nutzen</string>
