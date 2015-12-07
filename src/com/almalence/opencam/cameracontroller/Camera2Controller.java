@@ -148,7 +148,7 @@ public class Camera2Controller
 	protected static float				multiplierB					= 2.4f;
 
 	private static boolean 				needPreviewFrame			= false; //Indicate that camera2controller has to return to PluginManager byte array of received frame or not
-	
+	private static boolean 				previewRunning				= false;
 
 	public static Camera2Controller getInstance()
 	{
@@ -1618,7 +1618,7 @@ public class Camera2Controller
 	public static void setRepeatingRequest()
 	{
 		//Second part of operator if is experimental. Used only for RAW capturing in Super mode on Galaxy S6
-		if(Camera2Controller.getInstance().mCaptureSession == null || Camera2Controller.getInstance().mImageReaderPreviewYUV == null/* || (inCapture == true && lastCaptureFormat == CameraController.YUV_RAW && CameraController.isGalaxyS6)*/)
+		if(Camera2Controller.getInstance().mCaptureSession == null) //|| Camera2Controller.getInstance().mImageReaderPreviewYUV == null/* || (inCapture == true && lastCaptureFormat == CameraController.YUV_RAW && CameraController.isGalaxyS6)*/)
 			return;
 
 		try
@@ -1715,10 +1715,14 @@ public class Camera2Controller
 	public static void startCameraPreview()
 	{
 		// If mImageReaderPreviewYUV != null, then preview already started. Or starting process in progress.
-		if (mImageReaderPreviewYUV != null)
-		{
+//		if (mImageReaderPreviewYUV != null)
+//		{
+//			return;
+//		}
+		if (previewRunning)
 			return;
-		}
+		
+		previewRunning = true;
 		
 		createImageReaders(imageAvailableListener);
 		final List<Surface> surfaceList = getSurfacesList();
@@ -1755,6 +1759,8 @@ public class Camera2Controller
 	
 	public static void stopCameraPreview()
 	{
+		previewRunning = false;
+		
 		if (Camera2Controller.getInstance().mCaptureSession != null)
 		{
 			try
@@ -1828,7 +1834,10 @@ public class Camera2Controller
 			surfaceList.add(CameraController.mMediaRecorder.getSurface()); // surface for MediaRecorder
 		}
 		
-		CameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
+		if (mImageReaderPreviewYUV != null)
+		{
+			CameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
+		}
 		ApplicationScreen.setCaptureFormat(captureFormat);
 		return surfaceList;
 	}
@@ -1836,9 +1845,16 @@ public class Camera2Controller
 	@TargetApi(21)
 	public static void createImageReaders(ImageReader.OnImageAvailableListener imageAvailableListener)
 	{
-		// ImageReader for preview frames in YUV format
-		mImageReaderPreviewYUV = ImageReader.newInstance(CameraController.iPreviewWidth, CameraController.iPreviewHeight,
-				ImageFormat.YUV_420_888, 2);
+		needPreviewFrame = pluginManager.needPreviewFrame();
+		if (needPreviewFrame)
+		{
+			// ImageReader for preview frames in YUV format
+			mImageReaderPreviewYUV = ImageReader.newInstance(CameraController.iPreviewWidth, CameraController.iPreviewHeight,
+					ImageFormat.YUV_420_888, 2);
+		} else
+		{
+			mImageReaderPreviewYUV = null;
+		}
 		
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		// ImageReader for YUV still images
@@ -1864,9 +1880,15 @@ public class Camera2Controller
 					3);
 		}
 
-		mImageReaderPreviewYUV.setOnImageAvailableListener(imageAvailableListener, null);
-		mImageReaderYUV.setOnImageAvailableListener(imageAvailableListener, null);
-		mImageReaderJPEG.setOnImageAvailableListener(imageAvailableListener, null);
+		if (mImageReaderPreviewYUV != null)
+			mImageReaderPreviewYUV.setOnImageAvailableListener(imageAvailableListener, null);
+		
+		if (mImageReaderYUV != null)
+			mImageReaderYUV.setOnImageAvailableListener(imageAvailableListener, null);
+		
+		if (mImageReaderJPEG != null)
+			mImageReaderJPEG.setOnImageAvailableListener(imageAvailableListener, null);
+		
 		if(mImageReaderRAW != null)
 			mImageReaderRAW.setOnImageAvailableListener(imageAvailableListener, null);
 	}
@@ -2010,8 +2032,11 @@ public class Camera2Controller
 			rawRequestBuilder.addTarget(mImageReaderRAW.getSurface());
 			stillRequestBuilder.addTarget(mImageReaderJPEG.getSurface());
 		}
-		precaptureRequestBuilder.addTarget(mImageReaderPreviewYUV.getSurface());
 		
+		if (mImageReaderPreviewYUV != null)
+		{
+			precaptureRequestBuilder.addTarget(mImageReaderPreviewYUV.getSurface());
+		}
 		
 		boolean isAutoExTime = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getBoolean(ApplicationScreen.sExposureTimeModePref, true);
 		long exTime = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getLong(ApplicationScreen.sExposureTimePref, 0);
@@ -3131,14 +3156,14 @@ public class Camera2Controller
 		}
 	};
 
-	public static void setNeedPreviewFrame(boolean needPreviewFrames)
+	public static void checkNeedPreviewFrame()
 	{
-		needPreviewFrame |= needPreviewFrames;
-	}
-	
-	public static void resetNeedPreviewFrame()
-	{
-		needPreviewFrame = false;
+		// If current surface configuration doesn't meet plugins requirement and preview is running, then restart preview.
+		if (needPreviewFrame != pluginManager.needPreviewFrame() && previewRunning)
+		{
+			stopCameraPreview();
+			startCameraPreview();
+		}
 	}
 	
 	public final static ImageReader.OnImageAvailableListener imageAvailableListener = new ImageReader.OnImageAvailableListener()
@@ -3154,6 +3179,7 @@ public class Camera2Controller
 			Image im = ir.acquireNextImage();
 			if (ir.getSurface() == CameraController.mPreviewSurface)
 			{
+				Log.e("TAG", "TAAAAAAAG");
 				if (!needPreviewFrame)
 				{
 					im.close();

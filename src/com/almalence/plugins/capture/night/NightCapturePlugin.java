@@ -214,8 +214,6 @@ public class NightCapturePlugin extends PluginCapture
 			editor.putInt(ApplicationScreen.sFlashModePref, CameraParameters.FLASH_MODE_OFF);
 			editor.commit();
 		}
-		else
-			CameraController.setNeedPreviewFrame(true);
 
 		ApplicationScreen.setCaptureFormat(CameraController.YUV);
 		
@@ -258,6 +256,15 @@ public class NightCapturePlugin extends PluginCapture
 		}
 		ApplicationScreen.instance.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_SCENE, true, true, true);
 		ApplicationScreen.instance.disableCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, true, false, true);
+	}
+	
+	@Override
+	public boolean needPreviewFrame()
+	{
+		if (usingSuperMode)
+			return false;
+		else
+			return true;
 	}
 	
 	@Override

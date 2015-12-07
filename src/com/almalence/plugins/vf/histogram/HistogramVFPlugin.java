@@ -225,6 +225,14 @@ public class HistogramVFPlugin extends PluginViewfinder
 		}
 	}
 
+	public boolean needPreviewFrame()
+	{
+		if (histogramType == RGB || histogramType == LUMA)
+			return true;
+		else
+			return false;
+	}
+	
 	void UpdatePreferences()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
@@ -234,11 +242,9 @@ public class HistogramVFPlugin extends PluginViewfinder
 		{
 		case RGB:
 			quickControlIconID = R.drawable.gui_almalence_histogram_rgb;
-			CameraController.setNeedPreviewFrame(true);
 			break;
 		case LUMA:
 			quickControlIconID = R.drawable.gui_almalence_histogram_luma;
-			CameraController.setNeedPreviewFrame(true);
 			break;
 		case NONE:
 			quickControlIconID = R.drawable.gui_almalence_histogram_off;
@@ -246,6 +252,8 @@ public class HistogramVFPlugin extends PluginViewfinder
 		default:
 			break;
 		}
+		
+		CameraController.checkNeedPreviewFrame();
 	}
 
 	public static int					mDeviceOrientation;

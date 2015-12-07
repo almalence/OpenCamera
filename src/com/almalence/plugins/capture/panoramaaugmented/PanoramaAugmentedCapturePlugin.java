@@ -459,7 +459,6 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 	@Override
 	public void onResume()
 	{
-		CameraController.setNeedPreviewFrame(true);
 		ApplicationScreen.instance.muteShutter(false);
 
 		takingAlready = false;
@@ -563,6 +562,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 		});
 	}
 
+	@Override
+	public boolean needPreviewFrame()
+	{
+		return true;
+	}
+	
 	@Override
 	public void selectImageDimension()
 	{

@@ -4399,20 +4399,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 
-	// plugin has to set it to TRUE if need preview frames
-	//Actually method relate to capture mode instead of some plugin
-	//All plugins which included to capture mode will receive or not receive preview frames
-	public static void setNeedPreviewFrame(boolean needPreviewFrame)
+	// Check if plugins require preview frames and configure preview surface in proper way.
+	public static void checkNeedPreviewFrame()
 	{
 		if (CameraController.isUseCamera2())
-			Camera2Controller.setNeedPreviewFrame(needPreviewFrame);
-	}
-
-	// should be reset on each changemode and on resume (call)
-	public static void resetNeedPreviewFrame()
-	{
-		if (CameraController.isUseCamera2())
-			Camera2Controller.resetNeedPreviewFrame();
+			Camera2Controller.checkNeedPreviewFrame();
 	}
 
 	// ^^^^^^^^^^^^^ CAPTURE AND FOCUS FUNCTION ----------------------------
