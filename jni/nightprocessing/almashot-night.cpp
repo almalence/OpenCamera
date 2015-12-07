@@ -230,7 +230,18 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 
 			sharpen = 1;
 			if (!zoomAbove15x) sharpen = 0x80;	// slightly more filtering at low zooms (noise interpolation artefacts are evident otherwise)
-			filter = 256;
+				filter = 256;
+			break;
+		case 105:	// Nexus 5X
+		case 106:	// Nexus 6P
+			deGhostGain = (256 * (60 - 0.015f * iso) / 100);
+			if (deGhostGain < 56) deGhostGain = 56;
+			sensorGain = (int)(1.7f * 256 * powf(((float)iso) / 100, 0.45f));
+
+			sharpen = 2;
+			if (zoomAbove30x) sharpen = 0x80;// fine edge enhancement instead of primitive sharpen at high zoom levels
+			if (zoomAbove15x) filter = 256;
+				else filter = 192;
 			break;
 		case 507:		// LG G Flex2
 			deGhostGain = 256*60/100;
