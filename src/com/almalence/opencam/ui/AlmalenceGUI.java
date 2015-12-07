@@ -1317,6 +1317,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				((RotateImageView) guiView.findViewById(R.id.expandManualControls))
 						.setOrientation(AlmalenceGUI.mDeviceOrientation);
 				
+				RelativeLayout.LayoutParams explp = (RelativeLayout.LayoutParams) guiView.findViewById(R.id.expandManualControls).getLayoutParams();
 				RelativeLayout manualControlsLayout = (RelativeLayout) guiView.findViewById(R.id.manualControlsLayout);
 				RelativeLayout.LayoutParams mlp = (RelativeLayout.LayoutParams) manualControlsLayout.getLayoutParams();
 				if (AlmalenceGUI.mDeviceOrientation == 90 || AlmalenceGUI.mDeviceOrientation == 270)
@@ -1327,7 +1328,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					guiView.findViewById(R.id.evMinusButton).setRotation(AlmalenceGUI.mDeviceOrientation + 180);
 					
 					// Set manualControlsLayout position right after expandManualControls.
-					mlp.leftMargin = guiView.findViewById(R.id.expandManualControls).getRight() - (manualControlsLayout.getWidth() - manualControlsLayout.getHeight()) / 2;
+					mlp.bottomMargin = explp.bottomMargin + guiView.findViewById(R.id.expandManualControls).getHeight() - (manualControlsLayout.getHeight() - manualControlsLayout.getWidth()) / 2;
 					manualControlsLayout.requestLayout();
 					manualControlsLayout.setRotation(AlmalenceGUI.mDeviceOrientation + 180);
 				} else {
@@ -1337,7 +1338,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					guiView.findViewById(R.id.evMinusButton).setRotation(AlmalenceGUI.mDeviceOrientation);
 					
 					// Set manualControlsLayout position right after expandManualControls.
-					mlp.leftMargin = guiView.findViewById(R.id.expandManualControls).getRight();
+					mlp.bottomMargin = explp.bottomMargin + guiView.findViewById(R.id.expandManualControls).getHeight();					
 					manualControlsLayout.requestLayout();
 					manualControlsLayout.setRotation(AlmalenceGUI.mDeviceOrientation);
 				}
@@ -1782,7 +1783,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				AlmalenceGUI.this.updateThumbnailButton();
 			}
 		});
-
+		
 		final View blockingLayout = guiView.findViewById(R.id.blockingLayout);
 		final View postProcessingLayout = guiView.findViewById(R.id.postprocessingLayout);
 		final View topPanel = guiView.findViewById(R.id.topPanel);
