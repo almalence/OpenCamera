@@ -1846,15 +1846,10 @@ public class Camera2Controller
 	public static void createImageReaders(ImageReader.OnImageAvailableListener imageAvailableListener)
 	{
 		needPreviewFrame = pluginManager.needPreviewFrame();
-		if (needPreviewFrame)
-		{
-			// ImageReader for preview frames in YUV format
-			mImageReaderPreviewYUV = ImageReader.newInstance(CameraController.iPreviewWidth, CameraController.iPreviewHeight,
+		
+		// ImageReader for preview frames in YUV format
+		mImageReaderPreviewYUV = ImageReader.newInstance(CameraController.iPreviewWidth, CameraController.iPreviewHeight,
 					ImageFormat.YUV_420_888, 2);
-		} else
-		{
-			mImageReaderPreviewYUV = null;
-		}
 		
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		// ImageReader for YUV still images
@@ -2903,7 +2898,7 @@ public class Camera2Controller
 		if (!CameraController.isNexus6  && captureFormat != CameraController.RAW && mImageReaderPreviewYUV != null)
 		{
 			Surface previewSurface = mImageReaderPreviewYUV.getSurface();
-			if(previewSurface != null)
+			if(previewSurface != null && needPreviewFrame)
 				previewRequestBuilder.addTarget(previewSurface);
 		}
 		
