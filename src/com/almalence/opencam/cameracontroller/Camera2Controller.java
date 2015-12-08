@@ -3179,7 +3179,6 @@ public class Camera2Controller
 			Image im = ir.acquireNextImage();
 			if (ir.getSurface() == CameraController.mPreviewSurface)
 			{
-				Log.e("TAG", "TAAAAAAAG");
 				if (!needPreviewFrame)
 				{
 					im.close();
