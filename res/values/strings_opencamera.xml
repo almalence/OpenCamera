@@ -23,6 +23,14 @@
     <string name="pref_advanced_saving_saveToPref_title">Save to...</string>
     <string name="pref_advanced_saving_saveToPref_summary">Select location to store images</string>
     <string name="choose_folder">Choose folder</string>
+    <string name="camera_permission_rationaly_title">Access to camera</string>
+    <string name="camera_permission_rationaly_message">Application can\'t be used until got access to device\'s camera. Camera can\'t be opened.</string>
+    <string name="location_permission_rationaly_title">Access to location</string>
+    <string name="location_permission_rationaly_message">Application can\'t save geotags until got access to location.</string>
+    <string name="microphone_permission_rationaly_title">Access to microphone</string>
+    <string name="microphone_permission_rationaly_message">Recorded videos will not contain audio track, if application don\'t have access to microphone.</string>
+    <string name="storage_permission_rationaly_title">Access to storage</string>
+    <string name="storage_permission_rationaly_message">Application can\'t be used until got access to device\'s storage. Captured images and videos can\'t be saved.</string>
     <string name="pref_advanced_saving_saveToPref_CantSaveToSD">Android KitKat does not allow saving to sdcard. Android limitations.</string>
     
     <string name="pref_general_more_sonyCamera_available">Sony cameras available only in Single and Video modes.</string>

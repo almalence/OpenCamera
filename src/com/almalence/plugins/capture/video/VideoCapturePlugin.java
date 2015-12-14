@@ -382,6 +382,7 @@ public class VideoCapturePlugin extends PluginCapture
 	@Override
 	public void onStart()
 	{
+		ApplicationScreen.instance.checkMicrophonePermission();
 		getPrefs();
 	}
 
@@ -864,7 +865,9 @@ public class VideoCapturePlugin extends PluginCapture
 		else {
 			mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
 		}
-		mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+		
+		if (ApplicationScreen.isMicrophonePermissionGranted())
+			mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
 
 		int quality = Integer.parseInt(prefs.getString(
 				CameraController.getCameraIndex() == 0 ? ApplicationScreen.sImageSizeVideoBackPref
@@ -935,7 +938,18 @@ public class VideoCapturePlugin extends PluginCapture
 			if (useProfile)
 			{
 				CamcorderProfile pr = CamcorderProfile.get(CameraController.getCameraIndex(), quality);
-				mMediaRecorder.setProfile(pr);
+				if (ApplicationScreen.isMicrophonePermissionGranted())
+				{
+					mMediaRecorder.setProfile(pr);
+				} else
+				{
+					// If we don't have access to microphone, then configure only video settings of MediaREcorder.
+					mMediaRecorder.setOutputFormat(pr.fileFormat);
+					mMediaRecorder.setVideoEncoder(pr.videoCodec);
+					mMediaRecorder.setVideoSize(pr.videoFrameWidth, pr.videoFrameHeight);
+					mMediaRecorder.setVideoFrameRate(pr.videoFrameRate);
+					mMediaRecorder.setVideoEncodingBitRate(pr.videoBitRate);
+				}
 				lastCamcorderProfile = pr;
 			} else
 			{
@@ -970,7 +984,17 @@ public class VideoCapturePlugin extends PluginCapture
 							CamcorderProfile prof = CamcorderProfile.get(CamcorderProfile.QUALITY_1080P);
 							prof.videoFrameHeight = 2160;
 							prof.videoFrameWidth = 4096;
-							mMediaRecorder.setProfile(prof);
+							if (ApplicationScreen.isMicrophonePermissionGranted())
+							{
+								mMediaRecorder.setProfile(prof);
+							} else
+							{
+								mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+								mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
+								mMediaRecorder.setVideoSize(prof.videoFrameWidth, prof.videoFrameHeight);
+								mMediaRecorder.setVideoFrameRate(30);
+								mMediaRecorder.setVideoEncodingBitRate(prof.videoBitRate * 4); // 2160p has 4x more pixels then 1080p.
+							}
 							lastCamcorderProfile = prof;
 							useProf = true;
 							lastUseProf = useProf;
@@ -985,7 +1009,6 @@ public class VideoCapturePlugin extends PluginCapture
 				if (!useProf)
 				{
 					mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-					mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
 					mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
 					mMediaRecorder.setVideoSize(sz.getWidth(), sz.getHeight());
 					mMediaRecorder.setVideoFrameRate(30);
@@ -993,9 +1016,14 @@ public class VideoCapturePlugin extends PluginCapture
 					// Other parameters just copy from CamcorderProfile.QUALITY_1080P
 					CamcorderProfile prof = CamcorderProfile.get(CamcorderProfile.QUALITY_1080P);
 					mMediaRecorder.setVideoEncodingBitRate(prof.videoBitRate * 4); // 2160p has 4x more pixels then 1080p.
-					mMediaRecorder.setAudioChannels(prof.audioChannels);
-				    mMediaRecorder.setAudioEncodingBitRate(prof.audioBitRate);
-				    mMediaRecorder.setAudioSamplingRate(prof.audioSampleRate);
+
+					if (ApplicationScreen.isMicrophonePermissionGranted())
+					{
+						mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+						mMediaRecorder.setAudioChannels(prof.audioChannels);
+						mMediaRecorder.setAudioEncodingBitRate(prof.audioBitRate);
+						mMediaRecorder.setAudioSamplingRate(prof.audioSampleRate);
+					}
 
 					lastSz = sz;
 				}

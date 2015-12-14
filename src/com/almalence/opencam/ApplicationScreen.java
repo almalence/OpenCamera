@@ -30,7 +30,10 @@ import java.util.List;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
@@ -267,7 +270,16 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	private static Uri					forceFilenameUri;
 	
 	private final static int			CAMERA_PERMISSION_CODE			= 0;
-	private static boolean				cameraPermissionGranted			= true; //TODO: grand permissions on runtime
+	protected static boolean			cameraPermissionGranted			= false;
+	
+	private final static int			LOCATION_PERMISSION_CODE		= 1;
+	protected static boolean			locationPermissionGranted		= false;
+	
+	private final static int			MICROPHONE_PERMISSION_CODE		= 2;
+	protected static boolean			microphonePermissionGranted		= false;
+	
+	private final static int			STORAGE_PERMISSION_CODE			= 3;
+	protected static boolean			storagePermissionGranted		= false;
 
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -357,10 +369,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 				WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
 						| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 		
-		
-//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-//			grandPermissions();
-
 		// set some common view here
 //		setContentView(R.layout.opencamera_main_layout);
 
@@ -496,8 +504,68 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		afterOnCreate();
 	}
 	
+	private void showRationaly(final String permission)
+	{
+		int titleId = 0;
+		int messageId = 0;
+		int permissionCodeTemp = -1;
+		String[] permissionsTemp = null;
+		
+		if (permission.contains(Manifest.permission.CAMERA))
+		{
+			titleId = R.string.camera_permission_rationaly_title;
+			messageId = R.string.camera_permission_rationaly_message;
+			permissionCodeTemp = ApplicationScreen.CAMERA_PERMISSION_CODE;
+			permissionsTemp = new String[]{Manifest.permission.CAMERA};
+		}
+		
+		if (permission.contains(Manifest.permission.ACCESS_COARSE_LOCATION) || permission.contains(Manifest.permission.ACCESS_FINE_LOCATION))
+		{
+			titleId = R.string.location_permission_rationaly_title;
+			messageId = R.string.location_permission_rationaly_message;
+			permissionCodeTemp = ApplicationScreen.LOCATION_PERMISSION_CODE;
+			permissionsTemp = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
+		}
+		
+		if (permission.contains(Manifest.permission.RECORD_AUDIO))
+		{
+			titleId = R.string.microphone_permission_rationaly_title;
+			messageId = R.string.microphone_permission_rationaly_message;
+			permissionCodeTemp = ApplicationScreen.MICROPHONE_PERMISSION_CODE;
+			permissionsTemp = new String[]{Manifest.permission.RECORD_AUDIO};
+		}
+		
+		if (permission.contains(Manifest.permission.WRITE_EXTERNAL_STORAGE) || permission.contains(Manifest.permission.READ_EXTERNAL_STORAGE))
+		{
+			titleId = R.string.storage_permission_rationaly_title;
+			messageId = R.string.storage_permission_rationaly_message;
+			permissionCodeTemp = ApplicationScreen.STORAGE_PERMISSION_CODE;
+			permissionsTemp = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+		}
+		
+		final int permissionCode = permissionCodeTemp;
+		final String[] permissions = permissionsTemp;
+		
+		if (titleId != 0 && messageId != 0 && permissionCode != -1 && permissions != null)
+		{
+			new AlertDialog.Builder(this)
+			.setTitle(titleId)
+			.setMessage(messageId)
+			.setCancelable(true)
+			.setIcon(android.R.drawable.ic_dialog_alert)
+			.setOnDismissListener(new OnDismissListener()
+			{
+				@Override
+				public void onDismiss(DialogInterface dialog)
+				{
+					ActivityCompat.requestPermissions(ApplicationScreen.instance, permissions, permissionCode);
+				}
+			}).show();
+		}
+	}
+	
 	@TargetApi(23)
-	protected void grandPermissions()
+	protected void checkCameraPermission()
 	{
 		if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
 		{
@@ -505,57 +573,150 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		    // Should we show an explanation?
 		    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA))
 		    {
-		
 		        // Show an explanation to the user *asynchronously* -- don't block
 		        // this thread waiting for the user's response! After the user
 		        // sees the explanation, try again to request the permission.
-		
+		    	showRationaly(Manifest.permission.CAMERA);
 		    }
 		    else 
 		    {
 		
 		        // No explanation needed, we can request the permission.
-		
 		        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, ApplicationScreen.CAMERA_PERMISSION_CODE);
-		
-		        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-		        // app-defined int constant. The callback method gets the
-		        // result of the request.
 		    }
 		}
 		else
 			cameraPermissionGranted = true;
 	}
 	
+	@TargetApi(23)
+	public void checkLocationPermission()
+	{
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+		{
+			locationPermissionGranted = false;
+		    // Should we show an explanation?
+		    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION) || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION))
+		    {
+		        // Show an explanation to the user *asynchronously* -- don't block
+		        // this thread waiting for the user's response! After the user
+		        // sees the explanation, try again to request the permission.
+		    	showRationaly(Manifest.permission.ACCESS_FINE_LOCATION);
+		    }
+		    else 
+		    {
+		
+		        // No explanation needed, we can request the permission.
+		        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, ApplicationScreen.LOCATION_PERMISSION_CODE);
+		    }
+		}
+		else
+			locationPermissionGranted = true;
+	}
+	
+	@TargetApi(23)
+	public void checkMicrophonePermission()
+	{
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)
+		{
+			microphonePermissionGranted = false;
+		    // Should we show an explanation?
+		    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO))
+		    {
+		        // Show an explanation to the user *asynchronously* -- don't block
+		        // this thread waiting for the user's response! After the user
+		        // sees the explanation, try again to request the permission.
+		    	showRationaly(Manifest.permission.RECORD_AUDIO);
+		    }
+		    else 
+		    {
+		        // No explanation needed, we can request the permission.
+		        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, ApplicationScreen.MICROPHONE_PERMISSION_CODE);
+		    }
+		}
+		else
+			microphonePermissionGranted = true;
+	}
+	
+	@TargetApi(23)
+	public void checkStoragePermission()
+	{
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+		{
+			storagePermissionGranted = false;
+		    // Should we show an explanation?
+		    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE))
+		    {
+		        // Show an explanation to the user *asynchronously* -- don't block
+		        // this thread waiting for the user's response! After the user
+		        // sees the explanation, try again to request the permission.
+		    	showRationaly(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+		    }
+		    else 
+		    {
+		        // No explanation needed, we can request the permission.
+		        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, ApplicationScreen.STORAGE_PERMISSION_CODE);
+		    }
+		}
+		else
+			storagePermissionGranted = true;
+	}
+	
 	@Override
 	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
 	{
+		boolean permissionResult = false;
+	
+		// If request is cancelled, the result arrays are empty.
+		if (grantResults.length > 0)
+    	{
+    		for (int result : grantResults)
+    		{
+    			// If any of requested permission is granted, we consider that as success.
+    			if (result == PackageManager.PERMISSION_GRANTED)
+    			{
+    				permissionResult = true;
+    			}
+    		}
+    	}
+		
 	    switch (requestCode)
 	    {
 	        case ApplicationScreen.CAMERA_PERMISSION_CODE:
 	        {
-	            // If request is cancelled, the result arrays are empty.
-	            if (grantResults.length > 0
-	                && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-	            {
-
-	            	cameraPermissionGranted = true;
-	                // permission was granted, yay! Do the
-	                // contacts-related task you need to do.
-	            	if(CameraController.openCameraWaiting)
-	            		Camera2Controller.openCameraCamera2();
-
-	            }
-	            else {
-
-	                // permission denied, boo! Disable the
-	                // functionality that depends on this permission.
-	            }
-	            return;
+            	cameraPermissionGranted = permissionResult;
+            	return;
 	        }
-
-	        // other 'case' lines to check for other
-	        // permissions this app might request
+	        case ApplicationScreen.LOCATION_PERMISSION_CODE:
+	        {
+				locationPermissionGranted = permissionResult;
+	        	return;
+	        }
+	        case ApplicationScreen.MICROPHONE_PERMISSION_CODE:
+	        {
+    			microphonePermissionGranted = permissionResult;
+	        	return;
+	        }
+	        case ApplicationScreen.STORAGE_PERMISSION_CODE:
+	        {
+	        	if (grantResults.length > 0)
+	        	{
+	        		permissionResult = true;
+	        		for (int result : grantResults)
+	        		{
+	        			// For storage permissions we should check, that all permissions are granted.
+	        			// If one of storage permissions isn't granted, then we don't have enough access to device's memory.
+	        			// It means, that we can't read or write files. So we treat it as we don't have access to storage at all.
+	        			if (result != PackageManager.PERMISSION_GRANTED)
+	        			{
+	        				permissionResult = false;
+	        			}
+	        		}
+	        	}
+	        	
+	        	storagePermissionGranted = permissionResult;
+	        	return;
+	        }
 	    }
 	}
 	
@@ -563,7 +724,22 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	{
 		return cameraPermissionGranted;
 	}
+	
+	public static boolean isLocationPermissionGranted()
+	{
+		return locationPermissionGranted;
+	}
+	
+	public static boolean isMicrophonePermissionGranted()
+	{
+		return microphonePermissionGranted;
+	}
 
+	public static boolean isStoragePermissionGranted()
+	{
+		return storagePermissionGranted;
+	}
+	
 	abstract protected void createPluginManager();
 
 	public static PluginManagerBase getPluginManager()
@@ -848,6 +1024,15 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	protected void onResume()
 	{
 		super.onResume();
+		
+		checkCameraPermission();
+		if (!cameraPermissionGranted)
+			return;
+		
+		checkStoragePermission();
+		if (!storagePermissionGranted)
+			return;
+		
 		onApplicationResume();
 	}
 
@@ -1076,6 +1261,9 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	@Override
 	public void surfaceChanged(final SurfaceHolder holder, final int format, final int width, final int height)
 	{
+		if (!cameraPermissionGranted || !storagePermissionGranted)
+			return;
+		
 		Log.e("ApplicationScreen", "SURFACE CHANGED");
 		mCameraSurface = holder.getSurface();
 

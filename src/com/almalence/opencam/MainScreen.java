@@ -761,6 +761,9 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	public void surfaceChanged(final SurfaceHolder holder, final int format, final int width, final int height)
 	{
+		if (!cameraPermissionGranted || !storagePermissionGranted)
+			return;
+		
 		mCameraSurface = holder.getSurface();
 
 		//In camera2 mode we have to wait a second call of surfaceChanged to continue configuring of camera
