@@ -1714,11 +1714,6 @@ public class Camera2Controller
 	
 	public static void startCameraPreview()
 	{
-		// If mImageReaderPreviewYUV != null, then preview already started. Or starting process in progress.
-//		if (mImageReaderPreviewYUV != null)
-//		{
-//			return;
-//		}
 		if (previewRunning)
 			return;
 		
@@ -1781,8 +1776,6 @@ public class Camera2Controller
 	public static List<Surface> getSurfacesList()
 	{
 		List<Surface> surfaceList = new ArrayList<Surface>();
-//		Surface cameraSurface = appInterface.getCameraSurface();
-//		surfaceList.add(cameraSurface); // surface for viewfinder preview
 		
 		if(mImageReaderPreviewYUV != null)
 			surfaceList.add(mImageReaderPreviewYUV.getSurface()); // surface for
