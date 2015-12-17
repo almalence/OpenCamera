@@ -352,8 +352,8 @@ public class VideoCapturePlugin extends PluginCapture
 			return;
 		}
 		
-		// If selected profile not supported, then select max from available.
-		while(!CamcorderProfile.hasProfile(CameraController.getCameraIndex(), quality) && !supportedVideoSizesOrderedList.contains(quality))
+		// If selected profile not supported or if we don't have icon for selected profile, then select max from available.
+		while((!CamcorderProfile.hasProfile(CameraController.getCameraIndex(), quality) && !supportedVideoSizesOrderedList.contains(quality)) || !videoSizeIcons.containsKey(quality))
 		{
 			quality--;
 		}
