@@ -1451,13 +1451,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 			
 			shutterButton.setVisibility(View.GONE);
-			
-			// Without this check shutterSwitch can disappear from screen.
-			// Can't figure out why this happens.
-			if(shutterSwitch.getVisibility() != View.VISIBLE)
-			{
-				shutterSwitch.setVisibility(View.VISIBLE);
-			}
+			shutterSwitch.setVisibility(View.VISIBLE);
 
 			if (modeID.equals("video"))
 			{
@@ -1469,10 +1463,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		} else
 		{
 			shutterSwitch.setVisibility(View.GONE);
-			if (shutterButton.getVisibility() != View.VISIBLE)
-			{
-				shutterButton.setVisibility(View.VISIBLE);
-			}
+			shutterButton.setVisibility(View.VISIBLE);
 		}
 	}
 

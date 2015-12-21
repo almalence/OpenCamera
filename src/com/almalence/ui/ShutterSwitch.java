@@ -63,8 +63,11 @@ public class ShutterSwitch extends View
 
 	private float						mThumbPosition;
 	private float						mThumbPositionTemp;
-	private int							mSwitchWidth;
-	private int							mSwitchHeight;
+	
+	// This variables are made static to get round issue with 0 width and height values in onMeasure method.
+	private static int					mSwitchWidth		= 0;
+	private static int					mSwitchHeight		= 0;
+	
 	private int							mThumbWidth;											// Does
 																								// not
 																								// include
@@ -341,8 +344,16 @@ public class ShutterSwitch extends View
 	public void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
 	{
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-		mSwitchWidth = getWidth();
-		mSwitchHeight = getHeight();
+		
+		// This check is done to prevent override width and height with 0 values.
+		// Sometimes getWidth() and getHeight() returns 0 here and it leads to disappearing View from screen after onResume().
+		// Because ShutterSwitch represented by the single instance in application, mSwitchWidth and mSwitchHeight are made static
+		// and initialized once during application starting.
+		if (mSwitchWidth == 0 || mSwitchHeight == 0)
+		{
+			mSwitchWidth = getWidth();
+			mSwitchHeight = getHeight();
+		}
 		mThumbWidth = mSwitchHeight;
 		
 		setThumbPositionDefault();
