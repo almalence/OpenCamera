@@ -7315,52 +7315,60 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				|| (lockControls && !ApplicationScreen.getPluginManager().getActiveModeID().equals("video")))
 			return true;
 
-		// to possibly slide-out top panel
-		if (view == ApplicationScreen.getPreviewSurfaceView()
-				|| view == (View) ApplicationScreen.instance.findViewById(R.id.mainLayout1))
+		try
 		{
-			((Panel) guiView.findViewById(R.id.topPanel)).touchListener.onTouch(view, event);
-		} else if (view.getParent() == (View) ApplicationScreen.instance.findViewById(R.id.paramsLayout)
-				&& !quickControlsChangeVisible)
-		{
-
-			if (event.getAction() == MotionEvent.ACTION_DOWN)
+			// to possibly slide-out top panel
+			if (view == ApplicationScreen.getPreviewSurfaceView()
+					|| view == (View) ApplicationScreen.instance.findViewById(R.id.mainLayout1))
 			{
-				downEvent = MotionEvent.obtain(event);
-				prevEvent = MotionEvent.obtain(event);
-				scrolling = false;
-
-				topMenuButtonPressed(findTopMenuButtonIndex(view));
-
-				return false;
-			} else if (event.getAction() == MotionEvent.ACTION_UP)
+				((Panel) guiView.findViewById(R.id.topPanel)).touchListener.onTouch(view, event);
+			} else if (view.getParent() == (View) ApplicationScreen.instance.findViewById(R.id.paramsLayout)
+					&& !quickControlsChangeVisible)
 			{
-				topMenuButtonPressed(-1);
-				if (scrolling)
-					((Panel) guiView.findViewById(R.id.topPanel)).touchListener.onTouch(view, event);
-				scrolling = false;
-				if (prevEvent == null || downEvent == null)
-					return false;
-				if (prevEvent.getAction() == MotionEvent.ACTION_DOWN)
-					return false;
-				if (prevEvent.getAction() == MotionEvent.ACTION_MOVE)
+	
+				if (event.getAction() == MotionEvent.ACTION_DOWN)
 				{
+					downEvent = MotionEvent.obtain(event);
+					prevEvent = MotionEvent.obtain(event);
+					scrolling = false;
+	
+					topMenuButtonPressed(findTopMenuButtonIndex(view));
+	
+					return false;
+				} else if (event.getAction() == MotionEvent.ACTION_UP)
+				{
+					topMenuButtonPressed(-1);
+					if (scrolling)
+						((Panel) guiView.findViewById(R.id.topPanel)).touchListener.onTouch(view, event);
+					scrolling = false;
+					if (prevEvent == null || downEvent == null)
+						return false;
+					if (prevEvent.getAction() == MotionEvent.ACTION_DOWN)
+						return false;
+					if (prevEvent.getAction() == MotionEvent.ACTION_MOVE)
+					{
+						if ((event.getY() - downEvent.getY()) < 50)
+							return false;
+					}
+				} else if (event.getAction() == MotionEvent.ACTION_MOVE && !scrolling)
+				{
+					if (downEvent == null)
+						return false;
 					if ((event.getY() - downEvent.getY()) < 50)
 						return false;
+					else
+					{
+						scrolling = true;
+						((Panel) guiView.findViewById(R.id.topPanel)).touchListener.onTouch(view, downEvent);
+					}
 				}
-			} else if (event.getAction() == MotionEvent.ACTION_MOVE && !scrolling)
-			{
-				if (downEvent == null)
-					return false;
-				if ((event.getY() - downEvent.getY()) < 50)
-					return false;
-				else
-				{
-					scrolling = true;
-					((Panel) guiView.findViewById(R.id.topPanel)).touchListener.onTouch(view, downEvent);
-				}
+				((Panel) guiView.findViewById(R.id.topPanel)).touchListener.onTouch(view, event);
 			}
-			((Panel) guiView.findViewById(R.id.topPanel)).touchListener.onTouch(view, event);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			return false;
 		}
 
 		// to allow quickControl's to process onClick, onLongClick
