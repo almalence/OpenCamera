@@ -326,8 +326,9 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	public void switchMode(final Mode mode)
 	{
 		String modeName = mode.modeID;
-		if ((CameraController.isNexus6 && (modeName.equals("panorama_augmented") || modeName.equals("preshot")))
-			|| (CameraController.isFlex2 && (modeName.equals("hdrmode") || modeName.equals("expobracketing"))))
+		if (CameraController.isNexus6 && (modeName.equals("panorama_augmented") || modeName.equals("preshot")))
+			//commented. should work on flex2 too
+			//|| (CameraController.isFlex2 && (modeName.equals("hdrmode") || modeName.equals("expobracketing"))))
 			switchToOldCameraInterface = true;
 		else
 			switchToOldCameraInterface = false;
