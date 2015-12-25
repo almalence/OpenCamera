@@ -132,7 +132,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 		ApplicationScreen.instance.muteShutter(false);
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		preferenceEVCompensationValue = ApplicationScreen.instance.getEVPref();
 		preferenceSceneMode = ApplicationScreen.instance.getSceneModePref();
 		preferenceFlashMode = ApplicationScreen.instance.getFlashModePref(ApplicationScreen.sDefaultFlashValue);

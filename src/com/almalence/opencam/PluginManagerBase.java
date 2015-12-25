@@ -149,10 +149,6 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	protected static Map<Integer, Integer>		exifOrientationMap;
 
 	protected int								saveOption;
-	private boolean								useGeoTaggingPrefExport;
-	private boolean								enableExifTagOrientation;
-	private int									additionalRotation;
-	private int									additionalRotationValue	= 0;
 
 	// plugin manager ctor. plugins initialization and filling plugin list
 	protected PluginManagerBase()
@@ -305,6 +301,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		}
 	}
 
+	//shows if camera has to be restarted on mode change
 	protected boolean	isRestart					= false;
 	protected boolean	switchToOldCameraInterface	= false;
 
