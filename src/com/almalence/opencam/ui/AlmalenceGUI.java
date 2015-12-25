@@ -1256,53 +1256,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	}
 
 
-	//value to know current interval for orientation
-	//0 - unknown (need initial calculations), 1- [0 +-40], 2 [270 +-40], 3 - [180 +-40], 4 - [90 +-40]
-	private int orientationDisplayInterval=0;
 	
-	private void setOrientationInterval(int orientation)
-	{
-		if (orientation>=320 || orientation<40)
-			orientationDisplayInterval = 1;
-		else if (orientation>=230 && orientation<310)
-			orientationDisplayInterval = 2;
-		else if (orientation>=140 && orientation<220)
-			orientationDisplayInterval = 3;
-		else if (orientation>=50 && orientation<130)
-			orientationDisplayInterval = 4;
-	}
-	
-	private boolean checkOrientationInterval(int orientation)
-	{
-		//if 0 - set initial interval, if not - check if new value is in the same interval
-		switch (orientationDisplayInterval)
-		{
-			case 1:
-				if (orientation>=320 || orientation<40)
-					return true;
-				break;
-			case 2:
-				if (orientation>=230 && orientation<310)
-					return true;
-				break;
-			case 3:
-				if (orientation>=140 && orientation<220)
-					return true;
-				break;
-			case 4:
-				if (orientation>=50 && orientation<130)
-					return true;
-				break;
-			default:
-				break;
-		}
-		setOrientationInterval(orientation);
-		return false;
-	}
 	
 	private void initOrientationListener()
 	{
-		orientationDisplayInterval=0;
+		Util.orientationDisplayInterval=0;
 		// set orientation listener to rotate controls
 		this.orientListener = new OrientationEventListener(ApplicationScreen.getMainContext())
 		{
@@ -1313,7 +1271,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					return;
 				
 				//select initial value or check if current orientation belongs
-				if (checkOrientationInterval(orientation))
+				if (Util.checkOrientationInterval(orientation))
 					return;
 				
 				final Display display = ((WindowManager) ApplicationScreen.instance
@@ -1580,7 +1538,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		createMergedSelectModeButton();
 		
 		//reset orientation when GUI started
-		orientationDisplayInterval=0;
+		Util.orientationDisplayInterval=0;
 	}
 
 	@Override
