@@ -313,7 +313,7 @@
 	<string name="Pref_Saving_Preference_Summary">Filenames, formats, geotagging, exif and other parameters</string>
 	<string name="Pref_Advanced_Preference_Title">Advanced</string>
 	<string name="Pref_Advanced_Preference_Summary">Settings for expert users</string>
-	<string name="Pref_Unlock_Preference_Title">Unlock</string>
+	<string name="Pref_Unlock_Preference_Title">Unlock/Help</string>
 	<string name="Pref_Unlock_Preference_Summary">Unlock premium features</string>
 	<string name="Pref_Help_Preference_Title">Help</string>
 	<string name="Pref_Help_Preference_Summary">Short help and description</string>
