@@ -3004,7 +3004,7 @@ public class Camera2Controller
 	};
 
 	
-	public final static CameraCaptureSession.CaptureCallback captureCallback	= new CameraCaptureSession.CaptureCallback()
+	private final static CameraCaptureSession.CaptureCallback captureCallback	= new CameraCaptureSession.CaptureCallback()
 	{
 		boolean resetInProgress = false;
 		int resetRequestId = 0;
