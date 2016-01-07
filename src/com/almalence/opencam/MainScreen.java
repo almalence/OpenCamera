@@ -2754,7 +2754,7 @@ public class MainScreen extends ApplicationScreen
 		{
 			if (hdrPurchased)
 				return true;
-		} else if (mode.SKU.equals("plugin_almalence_panorama_augmented"))
+		} else if (mode.SKU.equals("plugin_almalence_panorama"))
 		{
 			if (panoramaPurchased)
 				return true;
