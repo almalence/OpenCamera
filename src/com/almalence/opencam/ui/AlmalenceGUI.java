@@ -7800,7 +7800,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 												 * KeyEvent.KEYCODE_DPAD_CENTER
 												 */
 				// for selfie sticks
-				|| keyCode == KeyEvent.KEYCODE_MEDIA_PREVIOUS || keyCode == KeyEvent.KEYCODE_F12)
+				|| keyCode == KeyEvent.KEYCODE_MEDIA_PREVIOUS || keyCode == KeyEvent.KEYCODE_F12 || keyCode == KeyEvent.KEYCODE_BUTTON_6)
 		{
 			if (settingsControlsVisible || quickControlsChangeVisible || modeSelectorVisible)
 			{
