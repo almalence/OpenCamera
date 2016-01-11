@@ -396,7 +396,12 @@ public final class Util
 	
 	//value to know current interval for orientation. Not using system functions consuming more resources
 	//0 - unknown (need initial calculations), 1- [0 +-40], 2 [270 +-40], 3 - [180 +-40], 4 - [90 +-40]
-	public static int orientationDisplayInterval=0;
+	private static int orientationDisplayInterval=0;
+	
+	public static void setOrientationIntervalInitial()
+	{
+		orientationDisplayInterval = 0;
+	}
 	
 	private static void setOrientationInterval(int orientation)
 	{

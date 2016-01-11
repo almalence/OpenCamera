@@ -1255,12 +1255,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		// -+- -->
 	}
 
-
-	
 	
 	private void initOrientationListener()
 	{
-		Util.orientationDisplayInterval=0;
+		Util.setOrientationIntervalInitial();
 		// set orientation listener to rotate controls
 		this.orientListener = new OrientationEventListener(ApplicationScreen.getMainContext())
 		{
@@ -1538,7 +1536,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		createMergedSelectModeButton();
 		
 		//reset orientation when GUI started
-		Util.orientationDisplayInterval=0;
+		Util.setOrientationIntervalInitial();
 	}
 
 	@Override

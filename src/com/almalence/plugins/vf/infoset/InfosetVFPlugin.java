@@ -286,10 +286,6 @@ public class InfosetVFPlugin extends PluginViewfinder
 			{
 				if (orientation == ORIENTATION_UNKNOWN)
 					return;
-
-				//select initial value or check if current orientation belongs
-				if (Util.checkOrientationInterval(orientation))
-					return;
 				
 				final Display display = ((WindowManager) ApplicationScreen.instance.getSystemService(
 						Context.WINDOW_SERVICE)).getDefaultDisplay();
