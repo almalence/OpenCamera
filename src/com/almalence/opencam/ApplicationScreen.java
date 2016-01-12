@@ -695,6 +695,10 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	        case ApplicationScreen.MICROPHONE_PERMISSION_CODE:
 	        {
     			microphonePermissionGranted = permissionResult;
+    			//restart camera if granted. on Nexus 5 camera hangs without restart.
+    			if (microphonePermissionGranted)
+    				relaunchCamera();
+    			
 	        	return;
 	        }
 	        case ApplicationScreen.STORAGE_PERMISSION_CODE:
