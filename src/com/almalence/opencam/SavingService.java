@@ -112,7 +112,7 @@ public class SavingService extends NotificationService
 		@Override
 		protected void onPreExecute()
 		{
-			showNotification();
+			//showNotification();
 		}
 
 		@Override
@@ -133,7 +133,7 @@ public class SavingService extends NotificationService
 		@Override
 		protected void onPostExecute(Void result)
 		{
-			hideNotification();
+//			hideNotification();
 		}
 	}
 
