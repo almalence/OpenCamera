@@ -252,6 +252,17 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 				filter = 300;
 			if (!zoomAbove15x) filter = 192;// slightly less filtering at low zooms (somehow sr processing is creating less sharp images here)
 			break;
+		case 2000:// OnePlus 2
+			deGhostGain = (256 * (50 - 0.01f * iso) / 100);
+			if (deGhostGain < 54) deGhostGain = 54;
+			sensorGain = (int)(1.4f * 256 * powf(((float)iso) / 100, 0.45f));
+
+			sharpen = 1;
+			if (zoomAbove30x) sharpen = 0x80;// fine edge enhancement instead of primitive sharpen at high zoom levels
+
+			filter = 256;
+
+			break;
 		default:
 			__android_log_print(ANDROID_LOG_INFO, "CameraTest", "Error: Unknown camera");
 			break;

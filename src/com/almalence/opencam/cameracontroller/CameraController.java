@@ -164,6 +164,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public static boolean							isGionee		= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("gionee");
 	
+	public static boolean							isOnePlusTwo 	= Build.MANUFACTURER.toLowerCase().replace(" ", "").contains("oneplus")
+																		&& (Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("two") || 
+																			Build.MODEL.contains("2"));
 	
 
 	// Android camera parameters constants

@@ -134,6 +134,8 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 			cameraIndex = 103;
 		else if (CameraController.isFlex2)
 			cameraIndex = 507;
+		else if (CameraController.isOnePlusTwo)
+			cameraIndex = 2000;
 //		if (CameraController.isG4)
 //			cameraIndex = 506;
 
