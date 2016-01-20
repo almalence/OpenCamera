@@ -781,9 +781,20 @@ public class FocusVFPlugin extends PluginViewfinder
 		rules[RelativeLayout.CENTER_IN_PARENT] = 0;
 
 		mFocusIndicatorRotateLayout.setLayoutParams(p);
-
-		calculateTapAreaByTopLeft(focusWidth, focusHeight, 1f, top, left,
+		
+		xRaw = Util.clamp(xRaw - diffWidth, 0, previewWidth);
+		yRaw = Util.clamp(yRaw - diffHeight, 0, previewHeight);
+		
+		if (!CameraController.isNexus5x)
+		{
+			int tmpX = xRaw;
+			xRaw = yRaw;
+			yRaw = previewWidth - tmpX - 1;
+		}
+		
+		CameraController.calculateTapArea(focusWidth, focusHeight, 1f, top, left,
 				ApplicationScreen.getPreviewSurfaceView().getWidth(), ApplicationScreen.getPreviewSurfaceView().getHeight(),
+				xRaw, yRaw, mMatrix,
 				mFocusArea.get(0).rect);
 
 		// Set the focus area and metering area.
@@ -868,10 +879,22 @@ public class FocusVFPlugin extends PluginViewfinder
 
 		mMeteringIndicatorRotateLayout.setLayoutParams(p);
 
-		// Convert the coordinates to driver format.
-		calculateTapAreaByTopLeft(meteringWidth, meteringHeight, 1f, top, left, ApplicationScreen.getPreviewSurfaceView()
-				.getWidth(), ApplicationScreen.getPreviewSurfaceView().getHeight(), mMeteringArea.get(0).rect);
-
+		
+		xRaw = Util.clamp(xRaw - diffWidth, 0, previewWidth);
+		yRaw = Util.clamp(yRaw - diffHeight, 0, previewHeight);
+		
+		if (!CameraController.isNexus5x)
+		{
+			int tmpX = xRaw;
+			xRaw = yRaw;
+			yRaw = previewWidth - tmpX - 1;
+		}
+		
+		CameraController.calculateTapArea(meteringWidth, meteringHeight, 1f, top, left,
+				ApplicationScreen.getPreviewSurfaceView().getWidth(), ApplicationScreen.getPreviewSurfaceView().getHeight(),
+				xRaw, yRaw, mMatrix,
+				mMeteringArea.get(0).rect);
+		
 		if (e.getActionMasked() == MotionEvent.ACTION_POINTER_UP || e.getActionMasked() == MotionEvent.ACTION_UP)
 		{
 			setMeteringParameters();
@@ -936,13 +959,25 @@ public class FocusVFPlugin extends PluginViewfinder
 		mrules[RelativeLayout.CENTER_IN_PARENT] = 0;
 		mMeteringIndicatorRotateLayout.setLayoutParams(mp);
 		
-		calculateTapAreaByTopLeft(focusWidth, focusHeight, 1f, top, left,
+		xRaw = Util.clamp(xRaw - diffWidth, 0, previewWidth);
+		yRaw = Util.clamp(yRaw - diffHeight, 0, previewHeight);
+		
+		if (!CameraController.isNexus5x)
+		{
+			int tmpX = xRaw;
+			xRaw = yRaw;
+			yRaw = previewWidth - tmpX - 1;
+		}
+		
+		CameraController.calculateTapArea(focusWidth, focusHeight, 1f, top, left,
 				ApplicationScreen.getPreviewSurfaceView().getWidth(), ApplicationScreen.getPreviewSurfaceView().getHeight(),
+				xRaw, yRaw, mMatrix,
 				mFocusArea.get(0).rect);
-
+		
+			
 		if (exposureControlEnaled && ApplicationScreen.getMeteringMode() != -1 && (ApplicationScreen.getMeteringMode() == CameraParameters.meteringModeSpot || CameraController.getFocusMode() == CameraParameters.MF_MODE))
-			calculateTapAreaByTopLeft(focusWidth, focusHeight, 1f, top, left, ApplicationScreen.getPreviewSurfaceView()
-					.getWidth(), ApplicationScreen.getPreviewSurfaceView().getHeight(), mMeteringArea.get(0).rect);
+			CameraController.calculateTapArea(focusWidth, focusHeight, 1f, top, left, ApplicationScreen.getPreviewSurfaceView()
+					.getWidth(), ApplicationScreen.getPreviewSurfaceView().getHeight(), xRaw, yRaw, mMatrix, mMeteringArea.get(0).rect);
 		else
 			mMeteringArea = null;
 
@@ -997,6 +1032,8 @@ public class FocusVFPlugin extends PluginViewfinder
 		mFocusIndicatorRotateLayout.requestLayout();
 	}
 
+	
+	//Probably is used only for remote Sony camera
 	public void onTouchAreas(MotionEvent e)
 	{
 		// Initialize variables.

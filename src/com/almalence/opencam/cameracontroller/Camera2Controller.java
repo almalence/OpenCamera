@@ -428,6 +428,12 @@ public class Camera2Controller
 		// ^^ Camera2 open camera
 		// -----------------------------------------------------------------
 	}
+	
+	//Return sensor area rectangle
+	public static Rect getActiveRect()
+	{
+		return activeRect;
+	}
 
 	
 	public static void setupImageReadersCamera2()
@@ -1529,18 +1535,19 @@ public class Camera2Controller
 			{
 				Rect r = focusAreas.get(i).rect;
 
-				Matrix matrix = new Matrix();
-				matrix.setScale(1, 1);
-				matrix.preTranslate(1000.0f, 1000.0f);
-				matrix.postScale((zoomRect.width() - 1) / 2000.0f, (zoomRect.height() - 1) / 2000.0f);
-				matrix.postTranslate((activeRect.width() - zoomRect.width()) / 2, (activeRect.height() - zoomRect.height()) / 2);
-
-				RectF rectF = new RectF(r.left, r.top, r.right, r.bottom);
-				matrix.mapRect(rectF);
-				Util.rectFToRect(rectF, r);
-
+//				Matrix matrix = new Matrix();
+//				matrix.setScale(1, 1);
+//				matrix.preTranslate(1000.0f, 1000.0f);
+//				matrix.postScale((zoomRect.width() - 1) / 2000.0f, (zoomRect.height() - 1) / 2000.0f);
+//				matrix.postTranslate((activeRect.width() - zoomRect.width()) / 2, (activeRect.height() - zoomRect.height()) / 2);
+//
+//				RectF rectF = new RectF(r.left, r.top, r.right, r.bottom);
+//				matrix.mapRect(rectF);
+//				Util.rectFToRect(rectF, r);
+//
 				int currRegion = i;
-				af_regions[currRegion] = new MeteringRectangle(r.left, r.top, r.right, r.bottom, 1000);
+//				af_regions[currRegion] = new MeteringRectangle(r.left, r.top, r.right, r.bottom, 1000);
+				af_regions[currRegion] = new MeteringRectangle(r, 1000);
 			}
 		} else
 		{
@@ -1594,6 +1601,34 @@ public class Camera2Controller
 			Camera2Controller.setRepeatingRequest();
 			isManualExposureTime = false;
 		}
+	}
+	
+	//Based on user's tap on screen information calculate appropriate sensor's coordinate for focusing or exposure metering
+	public static void calculateTapArea(int focusWidth, int focusHeight, float areaMultiple, int top, int left,
+			int previewWidth, int previewHeight, int xRaw, int yRaw, Rect rect)
+	{
+		final Rect activeRect = Camera2Controller.getActiveRect();
+		final float zoom = CameraController.getZoom();
+		
+		final int focusSize = (((int)(0.02f * (Camera2Controller.getActiveRect().width() + Camera2Controller.getActiveRect().height()) / zoom)) / 2) * 2;
+		focusWidth  = focusSize;
+		focusHeight = focusSize;
+		
+		final float scale;
+		if ((float)activeRect.width() / activeRect.height() >= previewHeight / previewWidth)
+			scale = activeRect.height() / (zoom * previewWidth);
+		else
+			scale = activeRect.width() / (zoom * previewHeight);
+		
+		final int fx = (int)Math.max(focusWidth / 2, Math.min(activeRect.width() - focusWidth / 2,
+				xRaw * scale + 0.5f * (activeRect.width() - previewHeight * scale)));
+		final int fy = (int)Math.max(focusHeight / 2, Math.min(activeRect.height() - focusHeight / 2,
+				yRaw * scale + 0.5f * (activeRect.height() - previewWidth * scale)));
+		
+		rect.left = fx - focusWidth / 2;
+		rect.top = fy - focusHeight / 2;
+		rect.right = fx + focusWidth / 2;
+		rect.bottom = fy + focusHeight / 2;	
 	}
 	
 	public static void setVideoStabilizationCamera2(boolean stabilization)

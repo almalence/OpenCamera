@@ -39,6 +39,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
+import android.graphics.Matrix;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.hardware.Camera.AutoFocusCallback;
@@ -64,6 +67,7 @@ import com.almalence.sony.cameraremote.PictureCallbackSonyRemote;
 import com.almalence.sony.cameraremote.ServerDevice;
 import com.almalence.sony.cameraremote.ZoomCallbackSonyRemote;
 import com.almalence.util.ImageConversion;
+import com.almalence.util.Util;
 //<!-- -+-
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.ApplicationScreen;
@@ -164,6 +168,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public static boolean							isGionee		= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("gionee");
 	
+	public static boolean							isOnePlusTwo 	= Build.MANUFACTURER.toLowerCase().replace(" ", "").contains("oneplus")
+																		&& (Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("two") || 
+																			Build.MODEL.contains("2"));
 	
 
 	// Android camera parameters constants
@@ -821,7 +828,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			//Now only LG Flex2, G4, Nexus 5\6 and Andoid One devices support camera2 without critical problems
 			//We have to test Samsung Galaxy S6 to include in this list of allowed devices
 			if (!(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService(Context.CAMERA_SERVICE) != null)
-					|| (!isFlex2 && !isNexus5or6 && !isAndroidOne  /*&& !isGalaxyS6 &&*/ /* && !isG4*/))
+					|| (!isFlex2 && !isNexus5or6 && !isAndroidOne  && !isOnePlusTwo/*&& !isGalaxyS6 &&*/ /* && !isG4*/))
 			{
 				isCamera2 = false;
 				isCamera2Allowed = false;
@@ -3788,6 +3795,49 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			} else
 				Camera2Controller.setCameraMeteringAreasCamera2(meteringAreas);
 		}
+	}
+	
+	//Based on user's tap on screen information calculate appropriate drivers's coordinate for focusing or exposure metering
+	public static void calculateTapArea(int focusWidth, int focusHeight, float areaMultiple, int top, int left,
+			int previewWidth, int previewHeight, int xRaw, int yRaw, Matrix mMatrix, Rect rect)
+	{
+		if (!CameraController.isRemoteCamera())
+		{
+			if (!CameraController.isCamera2)
+			{
+				int areaWidth = (int) (focusWidth * areaMultiple);
+				int areaHeight = (int) (focusHeight * areaMultiple);
+
+				int right = Util.clamp(left + areaWidth, areaWidth, previewWidth);
+				int bottom = Util.clamp(top + areaHeight, areaHeight, previewHeight);
+
+				RectF rectF = new RectF(left, top, right, bottom);
+				mMatrix.mapRect(rectF);
+				Util.rectFToRect(rectF, rect);
+
+				if (rect.left < -1000)
+					rect.left = -1000;
+				if (rect.left > 1000)
+					rect.left = 1000;
+
+				if (rect.right < -1000)
+					rect.right = -1000;
+				if (rect.right > 1000)
+					rect.right = 1000;
+
+				if (rect.top < -1000)
+					rect.top = -1000;
+				if (rect.top > 1000)
+					rect.top = 1000;
+
+				if (rect.bottom < -1000)
+					rect.bottom = -1000;
+				if (rect.bottom > 1000)
+					rect.bottom = 1000;
+			} else
+				Camera2Controller.calculateTapArea(focusWidth, focusHeight, areaMultiple, top, left,
+						previewWidth, previewHeight, xRaw, yRaw, rect);
+		}		
 	}
 
 	public static void setFocusState(int state)
