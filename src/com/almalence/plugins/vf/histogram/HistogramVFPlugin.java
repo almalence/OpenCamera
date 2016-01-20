@@ -26,6 +26,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.view.Display;
 import android.view.OrientationEventListener;
@@ -300,10 +301,20 @@ public class HistogramVFPlugin extends PluginViewfinder
 			histogram.setVisibility(View.GONE);
 		} else
 		{
-			histogramRGB.setVisibility(View.VISIBLE);
-			histogram.setVisibility(View.VISIBLE);
+			new CountDownTimer(500, 500)
+			{
+				public void onTick(long millisUntilFinished)
+				{
+				}
 
-			showHisto();
+				public void onFinish()
+				{
+					histogramRGB.setVisibility(View.VISIBLE);
+					histogram.setVisibility(View.VISIBLE);
+
+					showHisto();
+				}
+			}.start();
 		}
 		orientListener.enable();
 	}

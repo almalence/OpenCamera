@@ -1148,11 +1148,6 @@ public class FocusVFPlugin extends PluginViewfinder
 		onPreviewStopped();
 	}
 
-	private void manualFocusStart()
-	{
-		updateFocusUI();
-	}
-
 	private void autoFocus()
 	{
 		if (CameraController.autoFocus())
