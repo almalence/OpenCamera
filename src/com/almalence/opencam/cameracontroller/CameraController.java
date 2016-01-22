@@ -1114,7 +1114,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			// hard-code to enable these only, as we have no profiles for
 			// other models at the moment
-			if ((CameraController.isNexus5or6 || CameraController.isFlex2)
+			if ((CameraController.isNexus5or6 || CameraController.isFlex2
+					|| CameraController.isOnePlusTwo)
 				/*|| CameraController.isGalaxyS6*/
 				/*|| CameraController.isG4*/)
 				SuperModeOk = true;

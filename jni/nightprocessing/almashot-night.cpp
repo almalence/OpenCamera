@@ -261,6 +261,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 			if (zoomAbove30x) sharpen = 0x80;// fine edge enhancement instead of primitive sharpen at high zoom levels
 
 			filter = 256;
+			if (zoomAbove15x) filter = 160;
 
 			break;
 		default:
@@ -272,7 +273,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 		//__android_log_print(ANDROID_LOG_ERROR, "Almalence", "Before Super_Process, sensorGain: %d, deghostGain: %d, filter: %d, sharpen: %d, nImages: %d cameraIndex: %d",
 		//		sensorGain, deGhostGain, filter, sharpen, nImages, cameraIndex);
 
-		Super_Process(
+		int err = Super_Process(
 				yuv, NULL, &OutPic,
 				sx_zoom, sy_zoom, sx_zoom, sxo, syo, nImages,
 				sensorGain,
@@ -285,6 +286,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 				0);							// externalBuffers
 
 		//__android_log_print(ANDROID_LOG_ERROR, "Almalence", "Super_Process finished, iso: %d, noise: %d %d", iso, noisePref, nTable[noisePref]);
+		__android_log_print(ANDROID_LOG_INFO, "Almalence", "super processing finished, result code: %d", err);
 
 		crop[0]=crop[1]=0;
 		crop[2]=sxo;
@@ -301,8 +303,6 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 		BlurLess_Process(instance, &OutPic, &crop[0], &crop[1], &crop[2], &crop[3]);
 	}
 
-	//__android_log_print(ANDROID_LOG_ERROR, "Almalence", "Before rotation");
-
 	int flipLeftRight, flipUpDown;
 	int rotate90 = orientation == 90 || orientation == 270;
 	if (mirror)
@@ -316,8 +316,6 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 		OutNV21 = (Uint8 *)malloc(sxo*syo+2*((sxo+1)/2)*((syo+1)/2));
 
 	TransformNV21(OutPic, OutNV21, sxo, syo, crop, flipLeftRight, flipUpDown, rotate90);
-
-	//__android_log_print(ANDROID_LOG_ERROR, "Almalence", "After rotation");
 
 	if (rotate90)
 	{
