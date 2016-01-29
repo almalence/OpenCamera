@@ -19,4 +19,7 @@
     <string name="Res_Burst_15">15 images</string>
     <string name="Res_Burst_20">20 images</string>
     
+    <string name="not_enough_memory_for_capture">Not enough memory for capture RAW frames, will be captured only JPEG frames</string>
+    <string name="capture_jpeg_frames">Not enough memory for capture RAW frames. Do you want to capture only JPEG frames?</string>
+    
 </resources>

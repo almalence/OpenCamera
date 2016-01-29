@@ -16,4 +16,7 @@
     <string name="Res_Burst_15">15 снимков</string>
     <string name="Res_Burst_20">20 снимков</string>
     
+    <string name="not_enough_memory_for_capture">Недостаточно памяти для съёмки RAW кадров, будет произведена съёмка только JPEG кадров</string>
+    <string name="capture_jpeg_frames">Недостаточно памяти для съёмки RAW кадров. Желаете снять только JPEG кадры?</string>
+    
 </resources>

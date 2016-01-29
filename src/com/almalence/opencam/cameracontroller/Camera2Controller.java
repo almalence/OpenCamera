@@ -3244,8 +3244,6 @@ public class Camera2Controller
 				pluginManager.onPreviewFrame(data);
 			} else
 			{
-				Log.e("Camera2", "onImageAvailable");
-
 				int frame = 0;
 				byte[] frameData = new byte[0];
 				int frame_len = 0;
@@ -3301,7 +3299,6 @@ public class Camera2Controller
 
 				} else if (im.getFormat() == ImageFormat.JPEG)
 				{
-//					Log.e(TAG, "captured JPEG");
 					ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
 
 					frame_len = jpeg.limit();
@@ -3332,6 +3329,7 @@ public class Camera2Controller
 						{
 							frame = SwapHeap.SwapToHeap(frameData);
 							frameData = null;
+							System.gc();
 						}
 					}
 				} else if (im.getFormat() == ImageFormat.RAW_SENSOR)
@@ -3380,7 +3378,6 @@ public class Camera2Controller
 						isYUV = true;
 						
 					} else {
-//						Log.e(TAG, "captured RAW");
 						ByteBuffer raw = im.getPlanes()[0].getBuffer();
 						
 						frame_len = raw.limit();
@@ -3391,6 +3388,7 @@ public class Camera2Controller
 						{
 							frame = SwapHeap.SwapToHeap(frameData);
 							frameData = null;
+							System.gc();
 						}
 					}
 					

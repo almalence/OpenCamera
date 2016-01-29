@@ -493,7 +493,6 @@ public class FocusVFPlugin extends PluginViewfinder
 	@Override
 	public void onAutoFocusMoving(boolean start)
 	{
-		Log.wtf(TAG, "FOCUS MOVING!");
 		if (!splitMode)
 			return;
 
@@ -1160,7 +1159,6 @@ public class FocusVFPlugin extends PluginViewfinder
 
 	private void cancelAutoFocus()
 	{
-		Log.e(TAG, "cancelAutofocus");
 		// Note: CameraController.getFocusMode(); will return
 		// 'FOCUS_MODE_AUTO' if actual
 		// mode is in fact FOCUS_MODE_CONTINUOUS_PICTURE or
