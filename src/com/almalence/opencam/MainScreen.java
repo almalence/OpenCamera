@@ -2594,22 +2594,22 @@ public class MainScreen extends ApplicationScreen
 
 				// /////////////////////////////////////////////////////
 				// juliusapp promotion
-				if (promo.equalsIgnoreCase("promo2015"))
-				{
-					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-					panoramaPurchased = true;
-					objectRemovalBurstPurchased = true;
-
-					Editor prefsEditor = prefs.edit();
-					prefsEditor.putBoolean("plugin_almalence_panorama", true);
-					prefsEditor.putBoolean("plugin_almalence_moving_burst", true);
-					prefsEditor.commit();
-					dialog.dismiss();
-					guiManager.hideStore();
-					showPromoRedeemedJulius = true;
-					guiManager.showStore();
-					return;
-				}
+//				if (promo.equalsIgnoreCase("promo2015"))
+//				{
+//					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+//					panoramaPurchased = true;
+//					objectRemovalBurstPurchased = true;
+//
+//					Editor prefsEditor = prefs.edit();
+//					prefsEditor.putBoolean("plugin_almalence_panorama", true);
+//					prefsEditor.putBoolean("plugin_almalence_moving_burst", true);
+//					prefsEditor.commit();
+//					dialog.dismiss();
+//					guiManager.hideStore();
+//					showPromoRedeemedJulius = true;
+//					guiManager.showStore();
+//					return;
+//				}
 				// /////////////////////////////////////////////////////
 
 				for (int i = 0; i < sep.length; i++)
