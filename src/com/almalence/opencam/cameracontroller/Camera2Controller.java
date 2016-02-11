@@ -210,7 +210,7 @@ public class Camera2Controller
 		}
 	}
 
-	//We support only FULL and LIMITED devices
+	//We support only FULL LIMITED and LEGACY devices
 	//Back and front cameras may have (and usually it is) different hardware level
 	//Method returns TRUE if we support hardware level of current device
 	public static boolean checkHardwareLevel()
@@ -223,8 +223,7 @@ public class Camera2Controller
 				Camera2Controller.getInstance().camCharacter = Camera2Controller.getInstance().manager
 				.getCameraCharacteristics(CameraController.cameraIdList[0]);
 			int level = Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL);
-			return (level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED || level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL
-					|| level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY);
+			return (level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED || level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL || level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY);
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -1892,7 +1891,8 @@ public class Camera2Controller
 	{
 		needPreviewFrame = pluginManager.needPreviewFrame();
 		
-		if(needPreviewFrame)
+		//On some devices such as Nexus 6P in video mode (when MediaRecorder is created) creating of preview image readers leads to crash
+		if(CameraController.mMediaRecorder == null)
 		{
 			// ImageReader for preview frames in YUV format
 			mImageReaderPreviewYUV = ImageReader.newInstance(CameraController.iPreviewWidth, CameraController.iPreviewHeight,
@@ -2342,7 +2342,9 @@ public class Camera2Controller
 				}
 			}
 
-			if (checkHardwareLevel())
+			//On devices such as Nexus 6P in video mode (when MediaRecorder is created) preview image reader isn't constructed
+			//so precaptureRequest doesn't has any surface for provide image data (in such situation trying to call capture leads to crash)
+			if (checkHardwareLevel() && CameraController.mMediaRecorder == null)
 			{
 				if(Camera2Controller.getInstance().mCaptureSession != null)
 				{
