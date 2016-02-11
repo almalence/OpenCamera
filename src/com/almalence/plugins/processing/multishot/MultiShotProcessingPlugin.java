@@ -253,7 +253,7 @@ public class MultiShotProcessingPlugin extends PluginProcessing implements OnTas
 			int yuv = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID));
 			mYUVBufferList.add(i - 1, yuv);
 			
-			if (CameraController.isNexus6 && CameraController.isFrontCamera())
+			if (CameraController.isFlippedSensorDevice() && CameraController.isFrontCamera())
 			{
 				int imageWidth = CameraController.getCameraImageSize().getWidth();
 				int imageHeight = CameraController.getCameraImageSize().getHeight();

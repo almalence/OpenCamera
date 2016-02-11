@@ -223,7 +223,8 @@ public class Camera2Controller
 				Camera2Controller.getInstance().camCharacter = Camera2Controller.getInstance().manager
 				.getCameraCharacteristics(CameraController.cameraIdList[0]);
 			int level = Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL);
-			return (level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED || level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL);
+			return (level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED || level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL
+					|| level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY);
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -413,7 +414,8 @@ public class Camera2Controller
 		if (blackPatternLevel != null) {
 			blevel = blackPatternLevel.getOffsetForIndex(0, 0);
 		}
-		wlevel = Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_WHITE_LEVEL);
+		if(Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_WHITE_LEVEL) != null)
+			wlevel = Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_WHITE_LEVEL);
 
 //		Log.d(TAG, "HARWARE_SUPPORT_LEVEL = " + Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL));
 		
@@ -1576,18 +1578,8 @@ public class Camera2Controller
 			{
 				Rect r = meteringAreas.get(i).rect;
 
-				Matrix matrix = new Matrix();
-				matrix.setScale(1, 1);
-				matrix.preTranslate(1000.0f, 1000.0f);
-				matrix.postScale((zoomRect.width() - 1) / 2000.0f, (zoomRect.height() - 1) / 2000.0f);
-				matrix.postTranslate((activeRect.width() - zoomRect.width()) / 2, (activeRect.height() - zoomRect.height()) / 2);
-
-				RectF rectF = new RectF(r.left, r.top, r.right, r.bottom);
-				matrix.mapRect(rectF);
-				Util.rectFToRect(rectF, r);
-
 				int currRegion = i;
-				ae_regions[currRegion] = new MeteringRectangle(r.left, r.top, r.right, r.bottom, 1000);
+				ae_regions[currRegion] = new MeteringRectangle(r, 1000);
 			}
 		} else
 		{
@@ -1631,6 +1623,31 @@ public class Camera2Controller
 		rect.bottom = fy + focusHeight / 2;	
 	}
 	
+	
+	//Based on user's tap on screen information calculate appropriate sensor's coordinate for focusing or exposure metering
+	public static Rect getSensorCoordinates(Rect rect)
+	{
+		final Rect activeRect = Camera2Controller.getActiveRect();
+		final float zoom = CameraController.getZoom();
+		
+		final int previewWidth  = ApplicationScreen.getPreviewSurfaceView().getWidth();
+		final int previewHeight =ApplicationScreen.getPreviewSurfaceView().getHeight();
+		
+		final float scale;
+		if ((float)activeRect.width() / activeRect.height() >= previewHeight / previewWidth)
+			scale = activeRect.height() / (zoom * previewWidth);
+		else
+			scale = activeRect.width() / (zoom * previewHeight);
+		
+		rect.left = (int)(rect.left * scale);
+		rect.top = (int)(rect.top * scale);
+		rect.right = (int)(rect.right * scale);
+		rect.bottom = (int)(rect.bottom * scale);
+		
+		return rect;
+	}
+		
+		
 	public static void setVideoStabilizationCamera2(boolean stabilization)
 	{
 		if (CameraController.mVideoStabilizationSupported)
@@ -1648,7 +1665,7 @@ public class Camera2Controller
 			}
 		}
 	}
-	
+
 	//Repeating request used for preview frames
 	public static void setRepeatingRequest()
 	{
@@ -1875,9 +1892,12 @@ public class Camera2Controller
 	{
 		needPreviewFrame = pluginManager.needPreviewFrame();
 		
-		// ImageReader for preview frames in YUV format
-		mImageReaderPreviewYUV = ImageReader.newInstance(CameraController.iPreviewWidth, CameraController.iPreviewHeight,
-					ImageFormat.YUV_420_888, 2);
+		if(needPreviewFrame)
+		{
+			// ImageReader for preview frames in YUV format
+			mImageReaderPreviewYUV = ImageReader.newInstance(CameraController.iPreviewWidth, CameraController.iPreviewHeight,
+						ImageFormat.YUV_420_888, 2);
+		}
 		
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		// ImageReader for YUV still images
@@ -3089,24 +3109,30 @@ public class Camera2Controller
 			// good place to extract sensor gain and other parameters
 	
 			// Note: not sure which units are used for exposure time (ms?)
-			 currentExposure = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
-			 currentSensitivity = result.get(CaptureResult.SENSOR_SENSITIVITY);
+			if(result.get(CaptureResult.SENSOR_EXPOSURE_TIME) != null)
+			{
+				currentExposure = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
+				ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_EV_CHANGED);
+			}
+			if(result.get(CaptureResult.SENSOR_SENSITIVITY) != null)
+			{
+			 	currentSensitivity = result.get(CaptureResult.SENSOR_SENSITIVITY);
+			 	ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_ISO_CHANGED);
+			}
 			 
-			 ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_EV_CHANGED);
-			 ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_ISO_CHANGED);
 			
-			 if (request.get(CaptureRequest.SENSOR_SENSITIVITY) >= 50 && currentSensitivity != request.get(CaptureRequest.SENSOR_SENSITIVITY) && request.get(CaptureRequest.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_OFF && !resetInProgress) 
-			 {
-				try {
-					resetCaptureCallback();
-				} catch (Exception e)
-				{
-					e.printStackTrace();
-				}
-			 }
+//			 if (request.get(CaptureRequest.SENSOR_SENSITIVITY) >= 50 && currentSensitivity != request.get(CaptureRequest.SENSOR_SENSITIVITY) && request.get(CaptureRequest.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_OFF && !resetInProgress) 
+//			 {
+//				try {
+//					resetCaptureCallback();
+//				} catch (Exception e)
+//				{
+//					e.printStackTrace();
+//				}
+//			 }
 			 
-			rggbChannelVector = result
-						.get(CaptureResult.COLOR_CORRECTION_GAINS); 
+			if(result.get(CaptureResult.COLOR_CORRECTION_GAINS) != null)
+				rggbChannelVector = result.get(CaptureResult.COLOR_CORRECTION_GAINS); 
 			 
 			try {
 				int focusState = result.get(CaptureResult.CONTROL_AF_STATE);

@@ -172,6 +172,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																		&& (Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("two") || 
 																			Build.MODEL.contains("2"));
 	
+	public static boolean							isMotoXPure 	 = Build.MODEL.toLowerCase().replace(" ", "").contains("xt1575");
+	
+	
 
 	// Android camera parameters constants
 	private static String							sceneAuto;
@@ -828,7 +831,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			//Now only LG Flex2, G4, Nexus 5\6 and Andoid One devices support camera2 without critical problems
 			//We have to test Samsung Galaxy S6 to include in this list of allowed devices
 			if (!(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService(Context.CAMERA_SERVICE) != null)
-					|| (!isFlex2 && !isNexus5or6 && !isAndroidOne  && !isOnePlusTwo/*&& !isGalaxyS6 &&*/ /* && !isG4*/))
+					|| !checkHardwareLevel())
+//					|| (!isMotoXPure && !isFlex2 && !isNexus5or6 && !isAndroidOne  && !isOnePlusTwo/*&& !isGalaxyS6 &&*/ /* && !isG4*/))
 			{
 				isCamera2 = false;
 				isCamera2Allowed = false;
@@ -975,7 +979,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static void onDestroy()
 	{
 	}
-
+	
+	public static boolean checkHardwareLevel()
+	{
+		if (CameraController.isCamera2Supported)
+			return Camera2Controller.checkHardwareLevel();
+		else
+			return false;
+	}
 
 	/* Get different list and maps of camera parameters */
 	public static List<Integer> getIsoValuesList()
@@ -3840,6 +3851,46 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						previewWidth, previewHeight, xRaw, yRaw, rect);
 		}		
 	}
+	
+	//Based on user's tap on screen information calculate appropriate drivers's coordinate for focusing or exposure metering
+	public static Rect getSensorCoordinates(Rect rect)
+	{
+		if (!CameraController.isRemoteCamera())
+		{
+			if (!CameraController.isCamera2)
+			{
+				RectF rectF = new RectF(rect.left, rect.top, rect.right, rect.bottom);
+				Matrix meteringMatrix = Util.getMeteringMatrix();
+				meteringMatrix.mapRect(rectF);
+				Util.rectFToRect(rectF, rect);
+
+				if (rect.left < -1000)
+					rect.left = -1000;
+				if (rect.left > 1000)
+					rect.left = 1000;
+
+				if (rect.right < -1000)
+					rect.right = -1000;
+				if (rect.right > 1000)
+					rect.right = 1000;
+
+				if (rect.top < -1000)
+					rect.top = -1000;
+				if (rect.top > 1000)
+					rect.top = 1000;
+
+				if (rect.bottom < -1000)
+					rect.bottom = -1000;
+				if (rect.bottom > 1000)
+					rect.bottom = 1000;
+
+				return rect;
+			} else
+				return Camera2Controller.getSensorCoordinates(rect);
+		}
+		else
+			return null;
+	}
 
 	public static void setFocusState(int state)
 	{
@@ -4033,6 +4084,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			return -1;
 		}
+	}
+	
+	public static boolean isFlippedSensorDevice()
+	{
+		return isNexus6 || isNexus6p;
 	}
 
 	// CAMERA PARAMETERS AND CAPABILITIES

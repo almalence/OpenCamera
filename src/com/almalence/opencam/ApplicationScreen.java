@@ -1522,16 +1522,16 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	protected void prepareMeteringAreas()
 	{
-		Rect centerRect = Util.convertToDriverCoordinates(new Rect(previewWidth / 4, previewHeight / 4, previewWidth
+		Rect centerRect = CameraController.getSensorCoordinates(new Rect(previewWidth / 4, previewHeight / 4, previewWidth
 				- previewWidth / 4, previewHeight - previewHeight / 4));
-		Rect topLeftRect = Util.convertToDriverCoordinates(new Rect(0, 0, previewWidth / 2, previewHeight / 2));
-		Rect topRightRect = Util.convertToDriverCoordinates(new Rect(previewWidth / 2, 0, previewWidth,
+		Rect topLeftRect = CameraController.getSensorCoordinates(new Rect(0, 0, previewWidth / 2, previewHeight / 2));
+		Rect topRightRect = CameraController.getSensorCoordinates(new Rect(previewWidth / 2, 0, previewWidth,
 				previewHeight / 2));
-		Rect bottomRightRect = Util.convertToDriverCoordinates(new Rect(previewWidth / 2, previewHeight / 2,
+		Rect bottomRightRect = CameraController.getSensorCoordinates(new Rect(previewWidth / 2, previewHeight / 2,
 				previewWidth, previewHeight));
-		Rect bottomLeftRect = Util.convertToDriverCoordinates(new Rect(0, previewHeight / 2, previewWidth / 2,
+		Rect bottomLeftRect = CameraController.getSensorCoordinates(new Rect(0, previewHeight / 2, previewWidth / 2,
 				previewHeight));
-		Rect spotRect = Util.convertToDriverCoordinates(new Rect(previewWidth / 2 - 10, previewHeight / 2 - 10,
+		Rect spotRect = CameraController.getSensorCoordinates(new Rect(previewWidth / 2 - 10, previewHeight / 2 - 10,
 				previewWidth / 2 + 10, previewHeight / 2 + 10));
 
 		mMeteringAreaMatrix5.clear();

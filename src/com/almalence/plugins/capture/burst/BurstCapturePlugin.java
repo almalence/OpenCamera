@@ -337,7 +337,7 @@ public class BurstCapturePlugin extends PluginCapture
 					{
 						LinearLayout bottom_layout = (LinearLayout) ApplicationScreen.instance.findViewById(R.id.mainButtons);
 
-						capturingDialog = Toast.makeText(ApplicationScreen.instance, R.string.not_enough_memory_for_capture, Toast.LENGTH_LONG);
+						capturingDialog = Toast.makeText(ApplicationScreen.instance, R.string.capture_less_raw, Toast.LENGTH_LONG);
 						capturingDialog.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, bottom_layout.getHeight());
 						capturingDialog.show();
 						
@@ -353,6 +353,11 @@ public class BurstCapturePlugin extends PluginCapture
 				}
 			}
 			//If no one RAW frame can be captured, capture JPEG frames.
+			LinearLayout bottom_layout = (LinearLayout) ApplicationScreen.instance.findViewById(R.id.mainButtons);
+
+			capturingDialog = Toast.makeText(ApplicationScreen.instance, R.string.capture_only_jpeg, Toast.LENGTH_LONG);
+			capturingDialog.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, bottom_layout.getHeight());
+			capturingDialog.show();
 		}
 		
 		final int[] pause = new int[imageAmount];

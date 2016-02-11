@@ -816,6 +816,11 @@ public final class Util
 				ApplicationScreen.getPreviewHeight());
 		matrix.invert(mMeteringMatrix);
 	}
+	
+	public static Matrix getMeteringMatrix()
+	{
+		return mMeteringMatrix;
+	}
 
 	public static Rect convertToDriverCoordinates(Rect rect)
 	{

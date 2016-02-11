@@ -1084,7 +1084,7 @@ public class VideoCapturePlugin extends PluginCapture
 			mMediaRecorder.setPreviewDisplay(ApplicationScreen.getPreviewSurfaceHolder().getSurface());
 		}
 
-		if (CameraController.isNexus6 && CameraController.isFrontCamera())
+		if (CameraController.isFlippedSensorDevice() && CameraController.isFrontCamera())
 		{
 			mMediaRecorder.setOrientationHint(ApplicationScreen.getWantLandscapePhoto() ? (ApplicationScreen
 					.getGUIManager().getImageDataOrientation() + 180) % 360 : (ApplicationScreen.getGUIManager()

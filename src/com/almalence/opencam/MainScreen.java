@@ -422,7 +422,8 @@ public class MainScreen extends ApplicationScreen
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 
 		boolean isCamera2 = prefs.getBoolean(getResources().getString(R.string.Preference_UseCamera2Key),
-				(CameraController.isNexus5or6 || CameraController.isFlex2 || CameraController.isAndroidOne || CameraController.isGalaxyS6 || CameraController.isOnePlusTwo/*|| CameraController.isG4*/) ? true : false);
+				CameraController.checkHardwareLevel());
+//						(CameraController.isMotoXPure || CameraController.isNexus5or6 || CameraController.isFlex2 || CameraController.isAndroidOne || CameraController.isGalaxyS6 || CameraController.isOnePlusTwo/*|| CameraController.isG4*/) ? true : false);
 		CameraController.setUseCamera2(isCamera2);
 		prefs.edit()
 				.putBoolean(getResources().getString(R.string.Preference_UseCamera2Key), CameraController.isUseCamera2())

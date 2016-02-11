@@ -712,8 +712,10 @@ public class NightCapturePlugin extends PluginCapture
 		 //This is only one place in plugin's code where we can identify that capturing is occurs in camera2 mode
 		isAllCaptureResultsCompleted = false;
 		
-		sensorGain = result.get(CaptureResult.SENSOR_SENSITIVITY);
-		exposureTime = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
+		if(result.get(CaptureResult.SENSOR_SENSITIVITY) != null)
+			sensorGain = result.get(CaptureResult.SENSOR_SENSITIVITY);
+		if(result.get(CaptureResult.SENSOR_EXPOSURE_TIME) != null)
+			exposureTime = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
 		
 		int requestID = requestIDArray[resultCompleted];
 		resultCompleted++;
@@ -806,7 +808,7 @@ public class NightCapturePlugin extends PluginCapture
 						dataRotated = new byte[dataS.length];
 						
 						////////////REMOVE THIS TO NORMAL CODE!!!!! SM 29.12.14
-						if (CameraController.isNexus6)
+						if (CameraController.isFlippedSensorDevice())
 							ImageConversion.TransformNV21(dataS, dataRotated, imageWidth, imageHeight, 0, 1, 0);
 						else
 						////////////REMOVE THIS TO NORMAL CODE!!!!! SM 29.12.14

@@ -184,7 +184,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 				"isSuperMode" + sessionID));
 		int sensorGain = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("burstGain" + sessionID));
 
-		if (CameraController.isNexus6 && CameraController.isFrontCamera())
+		if (CameraController.isFlippedSensorDevice() && CameraController.isFrontCamera())
 		{
 			if (mDisplayOrientation == 0 || mDisplayOrientation == 90)
 				mDisplayOrientation += 180;
