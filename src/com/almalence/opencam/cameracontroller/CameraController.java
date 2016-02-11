@@ -826,12 +826,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			//General support of camera2 interface. OpenCamera allows to use camera2 not on all devices which implements camera2
 			if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService(Context.CAMERA_SERVICE) != null)
+			{
 				isCamera2Supported = true;
+				Camera2Controller.onCreateCamera2(mainContext, appInterface, pluginManager, messageHandler);
+			}
 			
 			//Now only LG Flex2, G4, Nexus 5\6 and Andoid One devices support camera2 without critical problems
 			//We have to test Samsung Galaxy S6 to include in this list of allowed devices
-			if (!(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService(Context.CAMERA_SERVICE) != null)
-					|| !checkHardwareLevel())
+			if (!isCamera2Supported || !checkHardwareLevel())
 //					|| (!isMotoXPure && !isFlex2 && !isNexus5or6 && !isAndroidOne  && !isOnePlusTwo/*&& !isGalaxyS6 &&*/ /* && !isG4*/))
 			{
 				isCamera2 = false;
@@ -848,19 +850,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			isCamera2Supported = false;
 			prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera2Key), false)
 					.commit();
-		}
-
-		if (CameraController.isCamera2Supported)
-		{
-			Camera2Controller.onCreateCamera2(mainContext, appInterface, pluginManager, messageHandler);
-			//We supports only devices with hardware level FULL and LIMITED
-			if (!Camera2Controller.checkHardwareLevel())
-			{
-				isCamera2 = false;
-				isCamera2Allowed = false;
-				prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera2Key), false)
-						.commit();
-			}
 		}
 
 		SonyRemoteCamera.onCreateSonyRemoteCamera(mainContext, appInterface, pluginManager, messageHandler);
@@ -4280,8 +4269,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	@Override
 	public void onPictureTakenSonyRemote(byte[] paramArrayOfByte, boolean fromRequest)
 	{
-		Log.d(TAG, "onPictureTaken Sony remote");
-
 		if (fromRequest)
 		{
 			pluginManager.collectExifData(paramArrayOfByte);
@@ -4324,7 +4311,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	@Override
 	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
 	{
-		Log.d(TAG, "onPictureTaken");
 		CameraController.setPreviewCallbackWithBuffer();
 
 		pluginManager.collectExifData(paramArrayOfByte);
@@ -4590,7 +4576,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	private static void takeImage()
 	{
-		Log.e(TAG, "takeImage called");
 		synchronized (SYNC_OBJECT)
 		{
 			if (imageSize == null)
@@ -4637,7 +4622,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	private static void nextFrame()
 	{
-		Log.d(TAG, "MSG_NEXT_FRAME");
 		if (++frame_num < total_frames)
 		{
 			if (pauseBetweenShots == null || Array.getLength(pauseBetweenShots) < frame_num)
