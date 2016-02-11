@@ -1228,6 +1228,20 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					manualControlsLayout.setVisibility(View.GONE);
 				} else
 				{
+					RelativeLayout.LayoutParams explp = (RelativeLayout.LayoutParams) guiView.findViewById(R.id.expandManualControls).getLayoutParams();
+					RelativeLayout.LayoutParams mlp = (RelativeLayout.LayoutParams) manualControlsLayout.getLayoutParams();
+					if (AlmalenceGUI.mDeviceOrientation == 90 || AlmalenceGUI.mDeviceOrientation == 270)
+					{	
+						// Set manualControlsLayout position right after expandManualControls.
+						mlp.bottomMargin = explp.bottomMargin + guiView.findViewById(R.id.expandManualControls).getHeight() - (manualControlsLayout.getHeight() - manualControlsLayout.getWidth()) / 2;
+						manualControlsLayout.requestLayout();
+						manualControlsLayout.setRotation(AlmalenceGUI.mDeviceOrientation + 180);
+					} else {
+						// Set manualControlsLayout position right after expandManualControls.
+						mlp.bottomMargin = explp.bottomMargin + guiView.findViewById(R.id.expandManualControls).getHeight();					
+						manualControlsLayout.requestLayout();
+						manualControlsLayout.setRotation(AlmalenceGUI.mDeviceOrientation);
+					}
 					manualControlsLayout.setVisibility(View.VISIBLE);
 				}
 			}
@@ -2416,6 +2430,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 							guiView.findViewById(R.id.topPanel).setVisibility(View.VISIBLE);
 							quickControlsVisible = false;
+							
+							guiView.findViewById(R.id.expandManualControls).setVisibility(View.GONE);
+							guiView.findViewById(R.id.manualControlsLayout).setVisibility(View.GONE);
 						}
 					});
 
