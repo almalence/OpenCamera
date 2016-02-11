@@ -24,11 +24,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
-import android.graphics.DashPathEffect;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.Point;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.view.Display;
@@ -101,7 +98,6 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 
 	public void onStart()
 	{
-		getPrefs();
 	}
 
 	public void onStartProcessing(long SessionID)
@@ -139,8 +135,6 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 		}
 
 		mAlmaCLRShot = AlmaCLRShot.getInstance();
-
-		getPrefs();
 
 		try
 		{
@@ -257,7 +251,6 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 	}
 
 	public static ArrayList<Bitmap>	mInputBitmapList	= new ArrayList<Bitmap>();
-	Paint							paint				= null;
 
 	private boolean					postProcessingRun	= false;
 
@@ -272,11 +265,6 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 		{
 			PreviewBmp.recycle();
 		}
-
-		paint = new Paint();
-		paint.setColor(0xFF00AAEA);
-		paint.setStrokeWidth(5);
-		paint.setPathEffect(new DashPathEffect(new float[] { 5, 5 }, 0));
 
 		PreviewBmp = mAlmaCLRShot.getPreviewBitmap();
 
@@ -515,21 +503,6 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 		}
 
 		mHandler.sendEmptyMessage(MSG_REDRAW);
-	}
-
-	private void getPrefs()
-	{
-		/*
-		 Code commented out because there are no correspondent controls exposed to the user
-		 ToDo: either delete (more likely), or add these controls as advanced
-		 
-		// Get the xml/preferences.xml preferences
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.instance
-				.getBaseContext());
-		mSensitivity = prefs.getInt("Sensitivity", 22); // 19);
-		mMinSize = prefs.getInt("MinSize", 1000);
-		mGhosting = prefs.getString("Ghosting", "0");
-		*/
 	}
 	/************************************************
 	 * POST PROCESSING END
