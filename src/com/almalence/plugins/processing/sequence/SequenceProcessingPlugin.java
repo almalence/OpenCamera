@@ -26,6 +26,7 @@ import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.view.Display;
@@ -36,6 +37,7 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
@@ -83,6 +85,8 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 	private int							mDisplayOrientation;
 	private boolean						mCameraMirrored;
 
+	private ProgressBar 				progressBar;
+	
 	private int[]						indexes;
 
 	private OrderControl				sequenceView;
@@ -350,6 +354,10 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 		saveLayoutParams.setMargins((int) (density * 8), (int) (density * 8), 0, 0);
 		((RelativeLayout) postProcessingView.findViewById(R.id.sequenceLayout)).addView(mSaveButton, saveLayoutParams);
 		mSaveButton.setRotation(mLayoutOrientationCurrent);
+		
+		//add progress control
+		progressBar = (ProgressBar) postProcessingView.findViewById(R.id.progressBarProcessing);
+		progressBar.setVisibility(View.GONE);
 	}
 
 	public void onOrientationChanged(int orientation)
@@ -423,6 +431,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 				PreviewBmp.recycle();
 			if (finishing)
 				return true;
+			sequenceView.setEnabled(true);
 			PreviewBmp = mAlmaCLRShot.getPreviewBitmap();
 			if (PreviewBmp != null)
 			{
@@ -437,7 +446,6 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 						: 0);
 			}
 
-			sequenceView.setEnabled(true);
 			break;
 		default:
 			break;
@@ -465,44 +473,74 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 	{
 		sequenceView.setEnabled(false);
 
-		CameraController.Size imageSize = CameraController.getCameraImageSize();
-		Size input = new Size(imageSize.getWidth(), imageSize.getHeight());
-		int minSize = 1000;
-		if (mMinSize == 0)
-		{
-			minSize = 0;
-		} else
-		{
-			minSize = input.getWidth() * input.getHeight() / mMinSize;
-		}
+		ProcessingTask task = new ProcessingTask();
+		task.idxInput = idx;
+		task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);		
+	}
+	
+	
+	private class ProcessingTask extends AsyncTask<Void, Void, Void>
+	{
+		public int[] idxInput;
 
-		Size preview = new Size(mDisplayWidth, mDisplayHeight);
-		try
+		@Override
+		protected void onPreExecute()
 		{
-			mAlmaCLRShot.initialize(preview, mAngle,
-			/*
-			 * sensitivity for objection detection
-			 */
-			mSensitivity - 15,
-			/*
-			 * Minimum size of object to be able to detect -15 ~ 15 max -> easy
-			 * detection dull detection min ->
-			 */
-			minSize,
-			/*
-			 * ghosting parameter 0 : normal operation 1 : detect ghosted
-			 * objects but not remove them 2 : detect and remove all object
-			 */
-			Integer.parseInt(mGhosting), idx);
-		} catch (NumberFormatException e)
-		{
-			e.printStackTrace();
-		} catch (Exception e)
-		{
-			e.printStackTrace();
+			progressBar.setVisibility(View.VISIBLE);
 		}
+		
+		@Override
+		protected Void doInBackground(Void... params)
+		{
+			android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_DEFAULT);
+			CameraController.Size imageSize = CameraController.getCameraImageSize();
+			Size input = new Size(imageSize.getWidth(), imageSize.getHeight());
+			int minSize = 1000;
+			if (mMinSize == 0)
+			{
+				minSize = 0;
+			} else
+			{
+				minSize = input.getWidth() * input.getHeight() / mMinSize;
+			}
 
-		mHandler.sendEmptyMessage(MSG_REDRAW);
+			Size preview = new Size(mDisplayWidth, mDisplayHeight);
+			try
+			{
+				
+				
+				mAlmaCLRShot.initialize(preview, mAngle,
+				/*
+				 * sensitivity for objection detection
+				 */
+				mSensitivity - 15,
+				/*
+				 * Minimum size of object to be able to detect -15 ~ 15 max -> easy
+				 * detection dull detection min ->
+				 */
+				minSize,
+				/*
+				 * ghosting parameter 0 : normal operation 1 : detect ghosted
+				 * objects but not remove them 2 : detect and remove all object
+				 */
+				Integer.parseInt(mGhosting), idxInput);
+			} catch (NumberFormatException e)
+			{
+				e.printStackTrace();
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Void result)
+		{
+			progressBar.setVisibility(View.GONE);
+			mHandler.sendEmptyMessage(MSG_REDRAW);
+		}
 	}
 	/************************************************
 	 * POST PROCESSING END
