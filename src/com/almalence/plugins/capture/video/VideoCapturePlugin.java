@@ -176,6 +176,8 @@ public class VideoCapturePlugin extends PluginCapture
 
 	private boolean								displayTakePicture;
 	private ContentValues						values;
+	
+	private int 								videoOrientation			= 0;
 
 	private static final String					DEFAULT_VIDEO_QUALITY			= String.valueOf(CamcorderProfile.QUALITY_1080P);
 	
@@ -590,6 +592,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 		rotatorLayout = inflator.inflate(R.layout.plugin_capture_video_lanscaperotate_layout, null, false);
 		rotatorLayout.setVisibility(View.VISIBLE);
+		initRotateNotification(videoOrientation);
 
 		rotateToLandscapeNotifier = (ImageView) rotatorLayout.findViewById(R.id.rotatorImageView);
 
@@ -621,12 +624,6 @@ public class VideoCapturePlugin extends PluginCapture
 
 		((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout)).addView(
 				this.rotatorLayout, paramsRotator);
-
-		// rotatorLayout.setLayoutParams(paramsRotator);
-		// rotatorLayout.requestLayout();
-
-		// ((RelativeLayout)
-		// ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout)).requestLayout();
 	}
 
 	@Override
@@ -688,6 +685,17 @@ public class VideoCapturePlugin extends PluginCapture
 			// timeLapseButton.requestLayout();
 		}
 
+		initRotateNotification(orientation);
+		
+
+		if (timeLapseDialog != null)
+		{
+			timeLapseDialog.setRotate(ApplicationScreen.getGUIManager().getLayoutOrientation());
+		}
+	}
+
+	private void initRotateNotification(int orientation)
+	{
 		if (rotatorLayout != null && showLandscapeNotification)
 		{
 			if (!isRecording && (orientation == 90 || orientation == 270))
@@ -705,13 +713,11 @@ public class VideoCapturePlugin extends PluginCapture
 				}
 			}
 		}
-
-		if (timeLapseDialog != null)
-		{
-			timeLapseDialog.setRotate(ApplicationScreen.getGUIManager().getLayoutOrientation());
-		}
+		else
+			//if we started video but orientation change already fired. Save fo t=fotore and set orientation of rotator layout creation
+			videoOrientation = orientation;
 	}
-
+	
 	@Override
 	public boolean muteSound()
 	{
@@ -741,7 +747,7 @@ public class VideoCapturePlugin extends PluginCapture
 	{
 		try
 		{
-			if (rotateToLandscapeNotifier != null && rotateToLandscapeNotifier.getVisibility() == View.VISIBLE)
+			if (rotateToLandscapeNotifier != null && rotateToLandscapeNotifier.getVisibility() == View.GONE)
 				return;
 
 			if (rotatorLayout != null && showLandscapeNotification)
