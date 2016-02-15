@@ -961,11 +961,18 @@ public class FocusVFPlugin extends PluginViewfinder
 		xRaw = Util.clamp(xRaw - diffWidth, 0, previewWidth);
 		yRaw = Util.clamp(yRaw - diffHeight, 0, previewHeight);
 		
+		//TODO: Logic of coordinate's swapping must be based on sensor orientation not on device model!
 		if (!CameraController.isNexus5x)
 		{
 			int tmpX = xRaw;
 			xRaw = yRaw;
 			yRaw = previewWidth - tmpX - 1;
+		}
+		else
+		{
+			int tmpX = xRaw;
+			xRaw = previewHeight - yRaw - 1;
+			yRaw = tmpX;
 		}
 		
 		CameraController.calculateTapArea(focusWidth, focusHeight, 1f, top, left,
@@ -975,8 +982,11 @@ public class FocusVFPlugin extends PluginViewfinder
 		
 			
 		if (exposureControlEnaled && ApplicationScreen.getMeteringMode() != -1 && (ApplicationScreen.getMeteringMode() == CameraParameters.meteringModeSpot || CameraController.getFocusMode() == CameraParameters.MF_MODE))
-			CameraController.calculateTapArea(focusWidth, focusHeight, 1f, top, left, ApplicationScreen.getPreviewSurfaceView()
-					.getWidth(), ApplicationScreen.getPreviewSurfaceView().getHeight(), xRaw, yRaw, mMatrix, mMeteringArea.get(0).rect);
+			CameraController.calculateTapArea(focusWidth, focusHeight, 1f, top, left,
+					ApplicationScreen.getPreviewSurfaceView()
+					.getWidth(), ApplicationScreen.getPreviewSurfaceView().getHeight(),
+					xRaw, yRaw, mMatrix,
+					mMeteringArea.get(0).rect);
 		else
 			mMeteringArea = null;
 
