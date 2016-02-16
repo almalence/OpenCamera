@@ -132,8 +132,6 @@ public class ShutterSwitch extends View
 	{
 		super(context, attrs, defStyle);
 
-		Resources res = getResources();
-
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Switch, defStyle, 0);
 
 		mThumbDrawable = a.getDrawable(R.styleable.Switch_thumb);
@@ -150,7 +148,7 @@ public class ShutterSwitch extends View
 		// Refresh display with current params
 		refreshDrawableState();
 		
-		setThumbPositionDefault();
+		setState(STATE_PHOTO_ACTIVE);
 	}
 
 	public void setState(int newState)
