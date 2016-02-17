@@ -361,7 +361,8 @@ public class FocusVFPlugin extends PluginViewfinder
 		if (supportedFocusModes != null && supportedFocusModes.length > 0)
 		{
 			if (!CameraController.isModeAvailable(supportedFocusModes, preferenceFocusMode)
-					&& preferenceFocusMode != CameraParameters.MF_MODE)
+					&& preferenceFocusMode != CameraParameters.MF_MODE
+					&& preferenceFocusMode != CameraParameters.AF_MODE_LOCK)
 			{
 				if (CameraController.isModeAvailable(supportedFocusModes, CameraParameters.AF_MODE_AUTO))
 					preferenceFocusMode = CameraParameters.AF_MODE_AUTO;
@@ -1176,7 +1177,8 @@ public class FocusVFPlugin extends PluginViewfinder
 		int fm = CameraController.getFocusMode();
 		if (fm != CameraParameters.AF_MODE_UNSUPPORTED)
 		{
-			if (fm != preferenceFocusMode && preferenceFocusMode != CameraParameters.MF_MODE)
+			if (fm != preferenceFocusMode && preferenceFocusMode != CameraParameters.MF_MODE
+					&& preferenceFocusMode != CameraParameters.AF_MODE_LOCK)
 			{
 				CameraController.cancelAutoFocus();
 				CameraController.setCameraFocusMode(preferenceFocusMode);

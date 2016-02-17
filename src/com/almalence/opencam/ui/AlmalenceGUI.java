@@ -2419,7 +2419,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							CameraController.setCameraFocusMode(afMode);
 							ApplicationScreen.instance.setAutoFocusLock(true);
 
-							ApplicationScreen.instance.setFocusModePref(afMode);
+							ApplicationScreen.instance.setFocusModePref(mFocusMode);
 
 							ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
 									ApplicationInterface.MSG_FOCUS_CHANGED);
@@ -2585,6 +2585,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						afMode = supported_focus[0];
 
 					CameraController.setCameraFocusMode(afMode);
+					ApplicationScreen.instance.setAutoFocusLock(true);
+					ApplicationScreen.instance.setFocusModePref(mFocusMode);
 				} else if (mFocusMode == CameraParameters.MF_MODE)
 				{
 					CameraController.setCameraFocusDistance(mFocusDistance);
