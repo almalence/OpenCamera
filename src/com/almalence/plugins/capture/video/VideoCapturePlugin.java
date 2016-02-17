@@ -169,7 +169,6 @@ public class VideoCapturePlugin extends PluginCapture
 
 	public static final int						QUALITY_4K					= 9;
 
-	private ImageView							rotateToLandscapeNotifier;
 	private boolean								showLandscapeNotification	= true;
 	private View								rotatorLayout;
 	private TimeLapseDialog						timeLapseDialog;
@@ -319,7 +318,7 @@ public class VideoCapturePlugin extends PluginCapture
 						ApplicationScreen.instance.hideOpenGLLayer();
 						if (!CameraController.isUseCamera2())
 						{
-							CameraController.setupCamera(ApplicationScreen.instance.getPreviewSurfaceHolder(), true);
+							CameraController.setupCamera(ApplicationScreen.getPreviewSurfaceHolder(), true);
 						}
 						CameraController.startCameraPreview();
 					}
@@ -437,7 +436,6 @@ public class VideoCapturePlugin extends PluginCapture
 					this.modeSwitcher, params);
 
 			this.modeSwitcher.setLayoutParams(params);
-			// this.modeSwitcher.requestLayout();
 		}
 
 		// Calculate right sizes for plugin's controls
@@ -534,10 +532,6 @@ public class VideoCapturePlugin extends PluginCapture
 				this.buttonsLayout, params);
 
 		this.buttonsLayout.setLayoutParams(params);
-		// this.buttonsLayout.requestLayout();
-		//
-		// ((RelativeLayout)
-		// ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout2)).requestLayout();
 
 		if (snapshotSupported)
 		{
@@ -552,8 +546,6 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 
 		timeLapseButton.setOrientation(ApplicationScreen.getGUIManager().getLayoutOrientation());
-		// timeLapseButton.invalidate();
-		// timeLapseButton.requestLayout();
 
 		if (this.modeDRO() || CameraController.isRemoteCamera())
 		{
@@ -593,8 +585,6 @@ public class VideoCapturePlugin extends PluginCapture
 		rotatorLayout = inflator.inflate(R.layout.plugin_capture_video_lanscaperotate_layout, null, false);
 		rotatorLayout.setVisibility(View.VISIBLE);
 		initRotateNotification(videoOrientation);
-
-		rotateToLandscapeNotifier = (ImageView) rotatorLayout.findViewById(R.id.rotatorImageView);
 
 		List<View> specialViewRotator = new ArrayList<View>();
 		RelativeLayout specialLayoutRotator = (RelativeLayout) ApplicationScreen.instance
@@ -672,26 +662,15 @@ public class VideoCapturePlugin extends PluginCapture
 		if (snapshotSupported)
 		{
 			if (takePictureButton != null)
-			{
 				takePictureButton.setOrientation(ApplicationScreen.getGUIManager().getLayoutOrientation());
-				// takePictureButton.invalidate();
-				// takePictureButton.requestLayout();
-			}
 		}
 		if (timeLapseButton != null)
-		{
 			timeLapseButton.setOrientation(ApplicationScreen.getGUIManager().getLayoutOrientation());
-			// timeLapseButton.invalidate();
-			// timeLapseButton.requestLayout();
-		}
 
 		initRotateNotification(orientation);
 		
-
 		if (timeLapseDialog != null)
-		{
 			timeLapseDialog.setRotate(ApplicationScreen.getGUIManager().getLayoutOrientation());
-		}
 	}
 
 	private void initRotateNotification(int orientation)
@@ -700,21 +679,30 @@ public class VideoCapturePlugin extends PluginCapture
 		{
 			if (!isRecording && (orientation == 90 || orientation == 270))
 			{
-				startRotateAnimation();
-				rotatorLayout.findViewById(R.id.rotatorImageView).setVisibility(View.VISIBLE);
-				rotatorLayout.findViewById(R.id.rotatorInnerImageView).setVisibility(View.VISIBLE);
+				try
+				{
+					int height = (int) ApplicationScreen.getAppResources().getDimension(R.dimen.gui_element_2size);
+					Animation rotation = new RotateAnimation(0, -180, height / 2, height / 2);
+					rotation.setDuration(2000);
+					rotation.setRepeatCount(1000);
+					rotation.setInterpolator(new DecelerateInterpolator());
+
+					rotatorLayout.findViewById(R.id.rotatorImageView).startAnimation(rotation);
+					rotatorLayout.findViewById(R.id.rotatorImageView).setVisibility(View.VISIBLE);
+					rotatorLayout.findViewById(R.id.rotatorInnerImageView).setVisibility(View.VISIBLE);
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+				}
 			} else
 			{
 				rotatorLayout.findViewById(R.id.rotatorInnerImageView).setVisibility(View.GONE);
 				rotatorLayout.findViewById(R.id.rotatorImageView).setVisibility(View.GONE);
-				if (rotateToLandscapeNotifier != null)
-				{
-					rotateToLandscapeNotifier.clearAnimation();
-				}
+				rotatorLayout.findViewById(R.id.rotatorImageView).clearAnimation();
 			}
 		}
 		else
-			//if we started video but orientation change already fired. Save fo t=fotore and set orientation of rotator layout creation
+			//if we started video but orientation change already fired. Save and set orientation on rotator layout creation
 			videoOrientation = orientation;
 	}
 	
@@ -724,43 +712,19 @@ public class VideoCapturePlugin extends PluginCapture
 		return true;
 	}
 
-	private void startRotateAnimation()
-	{
-		try
-		{
-			if (rotateToLandscapeNotifier != null && rotateToLandscapeNotifier.getVisibility() == View.VISIBLE)
-				return;
-
-			int height = (int) ApplicationScreen.getAppResources().getDimension(R.dimen.gui_element_2size);
-			Animation rotation = new RotateAnimation(0, -180, height / 2, height / 2);
-			rotation.setDuration(2000);
-			rotation.setRepeatCount(1000);
-			rotation.setInterpolator(new DecelerateInterpolator());
-
-			rotateToLandscapeNotifier.startAnimation(rotation);
-		} catch (Exception e)
-		{
-		}
-	}
-	
 	private void stopRotateAnimation()
 	{
 		try
 		{
-			if (rotateToLandscapeNotifier != null && rotateToLandscapeNotifier.getVisibility() == View.GONE)
-				return;
-
 			if (rotatorLayout != null && showLandscapeNotification)
 			{
 				rotatorLayout.findViewById(R.id.rotatorInnerImageView).setVisibility(View.GONE);
 				rotatorLayout.findViewById(R.id.rotatorImageView).setVisibility(View.GONE);
-				if (rotateToLandscapeNotifier != null)
-				{
-					rotateToLandscapeNotifier.clearAnimation();
-				}
+				rotatorLayout.findViewById(R.id.rotatorImageView).clearAnimation();
 			}
 		} catch (Exception e)
 		{
+			e.printStackTrace();
 		}
 	}
 
@@ -783,11 +747,11 @@ public class VideoCapturePlugin extends PluginCapture
 	@TargetApi(19)
 	private static DocumentFile getOutputMediaDocumentFile()
 	{
-		DocumentFile saveDir = PluginManager.getInstance().getSaveDirNew(false);
+		DocumentFile saveDir = PluginManager.getSaveDirNew(false);
 
 		if (saveDir == null || !saveDir.exists() || !saveDir.canWrite())
 		{
-			saveDir = PluginManager.getInstance().getSaveDirNew(true);
+			saveDir = PluginManager.getSaveDirNew(true);
 		}
 
 		Calendar d = Calendar.getInstance();
@@ -803,13 +767,6 @@ public class VideoCapturePlugin extends PluginCapture
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		preferenceVideoMuteMode = prefs.getBoolean("preferenceVideoMuteMode", false);
-//		if (preferenceVideoMuteMode)
-//		{
-////			AudioManager audioMgr = (AudioManager) ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE);
-////			soundVolume = audioMgr.getStreamVolume(AudioManager.STREAM_RING);
-////			audioMgr.setStreamVolume(AudioManager.STREAM_RING, 0, 0);
-//			muteAllSounds();
-//		}
 
 		preferenceFocusMode = prefs.getInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
 				: ApplicationScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
