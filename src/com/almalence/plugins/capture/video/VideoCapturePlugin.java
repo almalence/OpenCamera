@@ -150,8 +150,8 @@ public class VideoCapturePlugin extends PluginCapture
 	private static ParcelFileDescriptor			documentFileSavedFd				= null;
 	private ArrayList<DocumentFile>				documentFilesList				= new ArrayList<DocumentFile>();
 
-	private int									preferenceFocusMode;
-	private int									preferenceVideoFocusMode;
+	private int									preferenceFocusMode				= CameraParameters.AF_MODE_AUTO;
+	private int									preferenceVideoFocusMode		= CameraParameters.AF_MODE_CONTINUOUS_VIDEO;
 
 	private RotateImageView						timeLapseButton;
 	private RotateImageView						pauseVideoButton;
@@ -1081,6 +1081,7 @@ public class VideoCapturePlugin extends PluginCapture
 		prefs.edit()
 				.putInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
 						: ApplicationScreen.sFrontFocusModePref, preferenceFocusMode).commit();
+		ApplicationScreen.instance.setFocusModePref(preferenceVideoFocusMode);
 
 		if (!CameraController.isRemoteCamera())
 		{

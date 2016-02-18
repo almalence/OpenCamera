@@ -1538,19 +1538,6 @@ public class MainScreen extends ApplicationScreen
 	//
 	// all events translated to PluginManager
 	// Description<<
-
-	@Override
-	public void setAutoFocusLock(boolean locked)
-	{
-		mAFLocked = locked;
-	}
-
-	@Override
-	public boolean getAutoFocusLock()
-	{
-		return mAFLocked;
-	}
-
 	@Override
 	public boolean onKeyUpEvent(int keyCode, KeyEvent event)
 	{

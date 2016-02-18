@@ -339,6 +339,7 @@ public class Camera2Controller
 				}
 				
 				zoomCropPreview = null;
+				autoFocusTriggered = false;
 			}
 		}
 	}
@@ -1915,7 +1916,7 @@ public class Camera2Controller
 					.newInstance(imageSize.getWidth(), imageSize.getHeight(), ImageFormat.JPEG, 2);
 
 		
-		if(CameraController.isCaptureFormatSupported(CameraController.RAW))
+		if(CameraController.isCaptureFormatSupported(CameraController.RAW) && !CameraController.isGalaxyS6)
 		{
 			CameraController.Size rawImageSize = CameraController.getMaxCameraImageSize(CameraController.RAW);
 			// ImageReader for RAW still images
@@ -2650,8 +2651,7 @@ public class Camera2Controller
 
 	public static void cancelAutoFocusCamera2()
 	{
-		int focusMode = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).
-						getInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref : ApplicationScreen.sFrontFocusModePref, -1);
+		int focusMode = ApplicationScreen.instance.getFocusModePref(ApplicationScreen.sDefaultFocusValue);
 		
 		//Canceling is usefull only in auto focus modes, not in manual focus
 		if (Camera2Controller.previewRequestBuilder != null && Camera2Controller.getInstance().camDevice != null &&
@@ -3075,7 +3075,7 @@ public class Camera2Controller
 		{
 			try
 			{
-//				if(Camera2.autoFocusTriggered)
+//				if(Camera2Controller.autoFocusTriggered)
 //					Log.e(TAG, "CAPTURE_AF_STATE = " + result.get(CaptureResult.CONTROL_AF_STATE));
 				if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED
 						&& Camera2Controller.autoFocusTriggered)
