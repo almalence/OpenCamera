@@ -1434,6 +1434,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			this.shutterSwitch.setOnShutterClickListener(null);
 			this.shutterSwitch.setOnShutterCheckedListener(null);
 		}
+		
+		//Coz we use AF_MODE_AUTO(or MACRO) to manage AF_MODE_LOCK, so shared preference for focus mode
+		//is set to AF_MODE_AUTO during mode working, we have to re-write preference to AF_MODE_LOCK
+		//only in mode changing or application pausing to re-init AF-L icon and AF-L logic during
+		//next start of application or new mode initialization. Without that AF_MODE_AUTO(MACRO) will be set
+		//on next start.
+		if(mFocusMode == CameraParameters.AF_MODE_LOCK)
+			ApplicationScreen.instance.setFocusModePref(CameraParameters.AF_MODE_LOCK);
 	}
 
 	@Override
@@ -2419,7 +2427,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							CameraController.setCameraFocusMode(afMode);
 							ApplicationScreen.instance.setAutoFocusLock(true);
 
-							ApplicationScreen.instance.setFocusModePref(mFocusMode);
+//							ApplicationScreen.instance.setFocusModePref(mFocusMode);
+							ApplicationScreen.instance.setFocusModePref(afMode);
 
 							ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
 									ApplicationInterface.MSG_FOCUS_CHANGED);
@@ -2586,7 +2595,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 					CameraController.setCameraFocusMode(afMode);
 					ApplicationScreen.instance.setAutoFocusLock(true);
-					ApplicationScreen.instance.setFocusModePref(mFocusMode);
+//					ApplicationScreen.instance.setFocusModePref(mFocusMode);
+					ApplicationScreen.instance.setFocusModePref(afMode);
 				} else if (mFocusMode == CameraParameters.MF_MODE)
 				{
 					CameraController.setCameraFocusDistance(mFocusDistance);
