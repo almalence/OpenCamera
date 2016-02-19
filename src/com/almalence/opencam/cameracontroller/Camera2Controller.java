@@ -223,8 +223,27 @@ public class Camera2Controller
 				Camera2Controller.getInstance().camCharacter = Camera2Controller.getInstance().manager
 				.getCameraCharacteristics(CameraController.cameraIdList[0]);
 			int level = Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL);
-			return (level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED || level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL || level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY);
+			return (level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED || level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL);
+//					|| level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY);
 		} catch (Exception e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	//Return TRUE if device has hardware level LEGACY
+	public static boolean isLegacyHardwareLevel()
+	{
+		if(CameraController.cameraIdList == null || CameraController.cameraIdList.length == 0)
+			return false;
+		try
+		{
+			Camera2Controller.getInstance().camCharacter = Camera2Controller.getInstance().manager
+					.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
+			
+			return Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY;
+		} catch (CameraAccessException e)
 		{
 			e.printStackTrace();
 			return false;
@@ -448,6 +467,10 @@ public class Camera2Controller
 		boolean isSupported = false;
 		try
 		{
+			//According to google's doc and our surfaces set, we can provide only JPEG capturing on device with legace hardware level
+//			if(captureFormat != CameraController.JPEG && Camera2Controller.isLegacyHardwareLevel())
+//				return false;
+			
 			CameraCharacteristics cc = Camera2Controller.getInstance().manager.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
 			StreamConfigurationMap configMap = cc.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 			isSupported = configMap.isOutputSupportedFor(captureFormat);
@@ -752,6 +775,12 @@ public class Camera2Controller
 		StreamConfigurationMap configMap = Camera2Controller.getInstance().camCharacter
 				.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 		Size[] cs = configMap.getOutputSizes(SurfaceHolder.class);
+
+//		DisplayMetrics metrics = new DisplayMetrics();
+//		ApplicationScreen.instance.getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
+//		int width = metrics.widthPixels;
+//		int height = metrics.heightPixels;
+		
 		//Only with such preview size Galaxy S6 isn't crashed in camera2 mode
 		if(CameraController.isGalaxyS6)
 			cs = new Size[]{new Size(1920, 1080)};
