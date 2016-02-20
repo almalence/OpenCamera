@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.ui.EglEncoder;
  +++ --> */
 //<!-- -+-
