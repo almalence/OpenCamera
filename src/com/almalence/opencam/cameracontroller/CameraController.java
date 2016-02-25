@@ -36,6 +36,7 @@ import java.util.Set;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
@@ -1815,6 +1816,18 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		} else
 			Camera2Controller.fillVideoSizeList(videoSizes);
 
+		// hack to rule out phones unlikely to have 4K video, so no point even offering the option!
+		// both S5 and Note 3 have 128MB standard and 512MB large heap (tested via Samsung RTL), as does Galaxy K Zoom
+		// also added the check for having 128MB standard heap, to support modded LG G2, which has 128MB standard, 256MB large - see https://sourceforge.net/p/opencamera/tickets/9/
+		// 4K video now only supported in camera1 mode and on main back camera.
+		ActivityManager activityManager = (ActivityManager) mainContext.getSystemService(Context.ACTIVITY_SERVICE);
+		if( (activityManager.getMemoryClass() >= 128 || activityManager.getLargeMemoryClass() >= 512)
+			 && !CameraController.isCamera2 && CameraController.CameraIndex == 0)
+		{
+			videoSizes.add(new CameraController.Size(4096, 2160));
+			videoSizes.add(new CameraController.Size(3840, 2160));
+		}
+		
 		SupportedVideoSizesList = new ArrayList<CameraController.Size>(videoSizes);
 		return videoSizes;
 	}

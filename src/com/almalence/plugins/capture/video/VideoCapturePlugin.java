@@ -937,7 +937,32 @@ public class VideoCapturePlugin extends PluginCapture
 					sz = new CameraController.Size(1920, 1080);
 					break;
 				case CamcorderProfile.QUALITY_2160P:
-					sz = new CameraController.Size(3840, 2160);
+					{
+						if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_2160P))
+							sz = new CameraController.Size(3840, 2160);
+						else
+						{
+							CamcorderProfile prof = CamcorderProfile.get(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_HIGH);
+							prof.videoFrameWidth = 3840;
+							prof.videoFrameHeight = 2160;
+							prof.videoBitRate = (int)(prof.videoBitRate*2.8); // need a higher bitrate for the better quality - this is roughly based on the bitrate used by an S5's native camera app at 4K (47.6 Mbps, compared to 16.9 Mbps which is what's returned by the QUALITY_HIGH profile)
+							if (ApplicationScreen.isMicrophonePermissionGranted())
+							{
+								mMediaRecorder.setProfile(prof);
+							} else
+							{
+								mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+								mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
+								mMediaRecorder.setVideoSize(prof.videoFrameWidth, prof.videoFrameHeight);
+								mMediaRecorder.setVideoFrameRate(30);
+								mMediaRecorder.setVideoEncodingBitRate((int)(prof.videoBitRate * 2.8)); // need a higher bitrate for the better quality
+							}
+							lastCamcorderProfile = prof;
+							useProf = true;
+							lastUseProf = useProf;
+						}
+						
+					}
 					break;
 				case QUALITY_4K:
 					{
@@ -990,6 +1015,8 @@ public class VideoCapturePlugin extends PluginCapture
 
 					lastSz = sz;
 				}
+				else
+					lastUseProfile = true;
 			}
 
 			if (swChecked)
