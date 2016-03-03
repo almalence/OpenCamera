@@ -15,7 +15,7 @@
     <string name="Pref_Common_ShotOnTap_Title">Dotknij, aby zrobić zdjęcie</string>
     <string name="Pref_Common_ShotOnTap_Summary">Dotknij, aby ustawić ostrość i zrobić zdjęcie</string>
     <string name="Pref_Common_UseCamera2_Title">Użyj interfejsu Сamera2</string>
-    <string name="Pref_Common_UseCamera2_Summary">Tryb eksperymentalny. Działa na wybranych urządzeniach (Google Nexus 5, 7 z Androidem L)</string>    
+    <string name="Pref_Common_UseCamera2_Summary">Tryb eksperymentalny. Działa na wybranych urządzeniach</string>    
     <string name="Pref_Common_MediaRescan_Title">Wyszukuj nowe pliki po zamknięciu aplikacji</string>
     <string name="Pref_Common_MediaRescan_Summary">Zalecane w przypadku niewyświetlania się zdjęć w galerii.</string>
     <string name="Pref_Common_Gallery_Title">Pozwól na wybranie zewnętrznej galerii</string>

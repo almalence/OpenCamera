@@ -30,7 +30,7 @@ public class MLocation
 {
 	public static LocationManager	lm;
 
-	public static void subsribe(Context context)
+	public static void subscribe(Context context)
 	{
 		lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 

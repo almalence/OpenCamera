@@ -181,6 +181,14 @@ public class GyroVFPlugin extends PluginViewfinder
 		updatePreferences();
 	}
 
+	public boolean needPreviewFrame()
+	{
+		if (mGyroState == ON)
+			return true;
+		else
+			return false;
+	}
+	
 	void updatePreferences()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
@@ -202,7 +210,6 @@ public class GyroVFPlugin extends PluginViewfinder
 
 		if (mGyroState == ON)
 		{
-			CameraController.setNeedPreviewFrame(true);
 			quickControlIconID = R.drawable.gui_almalence_settings_gyro;
 			if (mHorizonIndicatorContainer != null)
 			{
@@ -264,6 +271,8 @@ public class GyroVFPlugin extends PluginViewfinder
 		editor.commit();
 
 		updatePreferences();
+		
+		CameraController.checkNeedPreviewFrame();
 	}
 
 	@Override

@@ -335,24 +335,39 @@ public class Thumbnail
 				}
 	
 				// Try to build max deep file path
-				DocumentFile parentFile = saveDir.getParentFile();
-				name = saveDir.getName();
-				while (parentFile != null)
-				{
-					name = parentFile.getName() + "/" + name;
-					parentFile = parentFile.getParentFile(); 
-				}
+//				DocumentFile parentFile = saveDir.getParentFile();
+//				name = saveDir.getName();
+//				while (parentFile != null)
+//				{
+//					name = parentFile.getName() + "/" + name;
+//					parentFile = parentFile.getParentFile(); 
+//				}
+//				
+//				// If we able to get File object, than get path from it
+//				try
+//				{
+//					File file = new File(URI.create(saveDir.getUri().toString()));
+//					name = file.getAbsolutePath();
+//				} catch (Exception e)
+//				{
+//				} finally
+//				{
+//				}
 				
-				// If we able to get File object, than get path from it
-				try
+				
+				// If we able to get File object, than get path from it.
+				// fileObject should not be null for files on phone memory.
+				File fileObject = Util.getFileFromDocumentFile(saveDir);
+				if (fileObject != null)
 				{
-					File file = new File(URI.create(saveDir.getUri().toString()));
-					name = file.getAbsolutePath();
-				} catch (Exception e)
+					name = fileObject.getAbsolutePath();
+				} else
 				{
-				} finally
-				{
+					// This case should typically happen for files saved to SD
+					// card.
+					name = Util.getAbsolutePathFromDocumentFile(saveDir);
 				}
+
 			}
 		} else
 		{

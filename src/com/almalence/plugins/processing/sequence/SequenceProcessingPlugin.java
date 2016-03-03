@@ -24,11 +24,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
-import android.graphics.DashPathEffect;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.Point;
-import android.os.Build;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.view.Display;
@@ -39,6 +37,7 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
@@ -86,6 +85,8 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 	private int							mDisplayOrientation;
 	private boolean						mCameraMirrored;
 
+	private ProgressBar 				progressBar;
+	
 	private int[]						indexes;
 
 	private OrderControl				sequenceView;
@@ -101,7 +102,6 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 
 	public void onStart()
 	{
-		getPrefs();
 	}
 
 	public void onStartProcessing(long SessionID)
@@ -139,8 +139,6 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 		}
 
 		mAlmaCLRShot = AlmaCLRShot.getInstance();
-
-		getPrefs();
 
 		try
 		{
@@ -257,7 +255,6 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 	}
 
 	public static ArrayList<Bitmap>	mInputBitmapList	= new ArrayList<Bitmap>();
-	Paint							paint				= null;
 
 	private boolean					postProcessingRun	= false;
 
@@ -272,11 +269,6 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 		{
 			PreviewBmp.recycle();
 		}
-
-		paint = new Paint();
-		paint.setColor(0xFF00AAEA);
-		paint.setStrokeWidth(5);
-		paint.setPathEffect(new DashPathEffect(new float[] { 5, 5 }, 0));
 
 		PreviewBmp = mAlmaCLRShot.getPreviewBitmap();
 
@@ -362,6 +354,10 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 		saveLayoutParams.setMargins((int) (density * 8), (int) (density * 8), 0, 0);
 		((RelativeLayout) postProcessingView.findViewById(R.id.sequenceLayout)).addView(mSaveButton, saveLayoutParams);
 		mSaveButton.setRotation(mLayoutOrientationCurrent);
+		
+		//add progress control
+		progressBar = (ProgressBar) postProcessingView.findViewById(R.id.progressBarProcessing);
+		progressBar.setVisibility(View.GONE);
 	}
 
 	public void onOrientationChanged(int orientation)
@@ -399,9 +395,9 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 		PluginManager.getInstance().addToSharedMem("resultframe1" + sessionID, String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem("resultframelen1" + sessionID, String.valueOf(frame_len));
 
-		//Nexus 6 has a original front camera sensor orientation, we have to manage it
+		//Nexus 6 and 6p has a original front camera sensor orientation, we have to manage it
 		PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID,
-				String.valueOf((CameraController.isNexus6 && mCameraMirrored)? (mDisplayOrientation + 180) % 360 : mDisplayOrientation));
+				String.valueOf((CameraController.isFlippedSensorDevice() && mCameraMirrored)? (mDisplayOrientation + 180) % 360 : mDisplayOrientation));
 		PluginManager.getInstance().addToSharedMem("resultframemirrored1" + sessionID, String.valueOf(mCameraMirrored));
 
 		PluginManager.getInstance().addToSharedMem("amountofresultframes" + sessionID, String.valueOf(1));
@@ -435,6 +431,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 				PreviewBmp.recycle();
 			if (finishing)
 				return true;
+			sequenceView.setEnabled(true);
 			PreviewBmp = mAlmaCLRShot.getPreviewBitmap();
 			if (PreviewBmp != null)
 			{
@@ -449,7 +446,6 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 						: 0);
 			}
 
-			sequenceView.setEnabled(true);
 			break;
 		default:
 			break;
@@ -477,59 +473,74 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 	{
 		sequenceView.setEnabled(false);
 
-		CameraController.Size imageSize = CameraController.getCameraImageSize();
-		Size input = new Size(imageSize.getWidth(), imageSize.getHeight());
-		int minSize = 1000;
-		if (mMinSize == 0)
-		{
-			minSize = 0;
-		} else
-		{
-			minSize = input.getWidth() * input.getHeight() / mMinSize;
-		}
-
-		Size preview = new Size(mDisplayWidth, mDisplayHeight);
-		try
-		{
-			mAlmaCLRShot.initialize(preview, mAngle,
-			/*
-			 * sensitivity for objection detection
-			 */
-			mSensitivity - 15,
-			/*
-			 * Minimum size of object to be able to detect -15 ~ 15 max -> easy
-			 * detection dull detection min ->
-			 */
-			minSize,
-			/*
-			 * ghosting parameter 0 : normal operation 1 : detect ghosted
-			 * objects but not remove them 2 : detect and remove all object
-			 */
-			Integer.parseInt(mGhosting), idx);
-		} catch (NumberFormatException e)
-		{
-			e.printStackTrace();
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-
-		mHandler.sendEmptyMessage(MSG_REDRAW);
+		ProcessingTask task = new ProcessingTask();
+		task.idxInput = idx;
+		task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);		
 	}
-
-	private void getPrefs()
+	
+	
+	private class ProcessingTask extends AsyncTask<Void, Void, Void>
 	{
-		/*
-		 Code commented out because there are no correspondent controls exposed to the user
-		 ToDo: either delete (more likely), or add these controls as advanced
-		 
-		// Get the xml/preferences.xml preferences
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.instance
-				.getBaseContext());
-		mSensitivity = prefs.getInt("Sensitivity", 22); // 19);
-		mMinSize = prefs.getInt("MinSize", 1000);
-		mGhosting = prefs.getString("Ghosting", "0");
-		*/
+		public int[] idxInput;
+
+		@Override
+		protected void onPreExecute()
+		{
+			progressBar.setVisibility(View.VISIBLE);
+		}
+		
+		@Override
+		protected Void doInBackground(Void... params)
+		{
+			android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_DEFAULT);
+			CameraController.Size imageSize = CameraController.getCameraImageSize();
+			Size input = new Size(imageSize.getWidth(), imageSize.getHeight());
+			int minSize = 1000;
+			if (mMinSize == 0)
+			{
+				minSize = 0;
+			} else
+			{
+				minSize = input.getWidth() * input.getHeight() / mMinSize;
+			}
+
+			Size preview = new Size(mDisplayWidth, mDisplayHeight);
+			try
+			{
+				
+				
+				mAlmaCLRShot.initialize(preview, mAngle,
+				/*
+				 * sensitivity for objection detection
+				 */
+				mSensitivity - 15,
+				/*
+				 * Minimum size of object to be able to detect -15 ~ 15 max -> easy
+				 * detection dull detection min ->
+				 */
+				minSize,
+				/*
+				 * ghosting parameter 0 : normal operation 1 : detect ghosted
+				 * objects but not remove them 2 : detect and remove all object
+				 */
+				Integer.parseInt(mGhosting), idxInput);
+			} catch (NumberFormatException e)
+			{
+				e.printStackTrace();
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Void result)
+		{
+			progressBar.setVisibility(View.GONE);
+			mHandler.sendEmptyMessage(MSG_REDRAW);
+		}
 	}
 	/************************************************
 	 * POST PROCESSING END

@@ -19,13 +19,20 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.capture.burst;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.hardware.camera2.CaptureResult;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Gravity;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
@@ -47,6 +54,7 @@ import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
 //-+- -->
+import com.almalence.util.HeapUtil;
 
 
 /***
@@ -62,6 +70,20 @@ public class BurstCapturePlugin extends PluginCapture
 
 	private static String	sImagesAmountPref;
 	private static String	sPauseBetweenShotsPref;
+	
+	private static Toast	capturingDialog;
+	
+	//That map helps to find suitable amount of RAW frames to be captured in case of low memory
+	protected static final LinkedHashMap<Integer, Integer> IMAGE_AMOUNT_VALUES		= new LinkedHashMap<Integer, Integer>()
+	{
+		{
+			put(0, 20);
+			put(1, 15);
+			put(2, 10);
+			put(3, 5);
+			put(4, 3);
+		}
+	};
 
 	public BurstCapturePlugin()
 	{
@@ -123,6 +145,17 @@ public class BurstCapturePlugin extends PluginCapture
 	@Override
 	public void setupCameraParameters()
 	{
+		//Warn user if current free memory level is not enough to capture all RAW frames
+		//in case of RAW capturing enabled, for other capture formats amount of memory is enough by default
+		if(!checkFreeMemory(imageAmount))
+		{
+			LinearLayout bottom_layout = (LinearLayout) ApplicationScreen.instance.findViewById(R.id.mainButtons);
+
+			capturingDialog = Toast.makeText(ApplicationScreen.instance, R.string.not_enough_memory_for_capture, Toast.LENGTH_LONG);
+			capturingDialog.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, bottom_layout.getHeight());
+			capturingDialog.show();
+		}
+		
 		try
 		{
 			int[] flashModes = CameraController.getSupportedFlashModes();
@@ -221,27 +254,43 @@ public class BurstCapturePlugin extends PluginCapture
 		case 0:
 			quickControlIconID = R.drawable.gui_almalence_mode_burst3;
 			editor.putString("burstImagesAmount", "3");
+			imageAmount = 3;
 			break;
 		case 1:
 			quickControlIconID = R.drawable.gui_almalence_mode_burst5;
 			editor.putString("burstImagesAmount", "5");
+			imageAmount = 5;
 			break;
 		case 2:
 			quickControlIconID = R.drawable.gui_almalence_mode_burst10;
 			editor.putString("burstImagesAmount", "10");
+			imageAmount = 10;
 			break;
 		case 3:
 			quickControlIconID = R.drawable.gui_almalence_mode_burst15;
 			editor.putString("burstImagesAmount", "15");
+			imageAmount = 15;
 			break;
 		case 4:
 			quickControlIconID = R.drawable.gui_almalence_mode_burst20;
 			editor.putString("burstImagesAmount", "20");
+			imageAmount = 20;
 			break;
 		default:
 			break;
 		}
 		editor.commit();
+		
+		//Warn user if current free memory level is not enough to capture all RAW frames
+		//in case of RAW capturing enabled, for other capture formats amount of memory is enough by default
+		if(!checkFreeMemory(imageAmount))
+		{
+			LinearLayout bottom_layout = (LinearLayout) ApplicationScreen.instance.findViewById(R.id.mainButtons);
+
+			capturingDialog = Toast.makeText(ApplicationScreen.instance, R.string.not_enough_memory_for_capture, Toast.LENGTH_LONG);
+			capturingDialog.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, bottom_layout.getHeight());
+			capturingDialog.show();
+		}
 	}
 
 	public boolean delayedCaptureSupported()
@@ -255,16 +304,67 @@ public class BurstCapturePlugin extends PluginCapture
 		inCapture = true;
 		resultCompleted = 0;
 
-		int[] pause = new int[imageAmount];
-		Arrays.fill(pause, pauseBetweenShots);
-		createRequestIDList(captureRAW? imageAmount * 2 : imageAmount);
 		if (captureRAW)
 		{
-			CameraController.captureImagesWithParams(imageAmount, CameraController.RAW, pause, null, null, null, false, true,
-					true);
-		} else
-			CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, pause, null, null, null, false, true,
-					true);
+			//Some device (such as LG G Flex 2 has a bad memory management.)
+			//As a result on such devices is impossible to capture all set of amount of RAW frames.
+			//To prevent crash we used 'reduced amount of frames' logic:
+			//Checking one by one RAW frames amount starting from initial imageAmount to suit current free memory
+			//If current RAW amount can't be captured we try to capture less images.
+			//If we can't capture even 3 RAW picture we capture only JPEG frames but initial amount.
+			
+			//Find index of current imageAmount in helper's map
+			int idx = IMAGE_AMOUNT_VALUES.size();
+			for (Entry<Integer, Integer> entry : IMAGE_AMOUNT_VALUES.entrySet())
+			{
+		        if (imageAmount == entry.getValue())
+		        {
+		            idx =  entry.getKey();
+		            break;
+		        }
+			}
+			
+			//Iterate trough image amount map. Values is reduced on each step
+			for(int i = idx; i < IMAGE_AMOUNT_VALUES.size(); i++)
+			{
+				int imageAmountChecked = IMAGE_AMOUNT_VALUES.get(i);
+				if(checkFreeMemory(imageAmountChecked))
+				{
+					//Checked image amount is suitable for current memory level
+					
+					//If checked image amount is less than initial then warn user about that and change initial image amount to suitable amount
+					if(imageAmount > imageAmountChecked)
+					{
+						LinearLayout bottom_layout = (LinearLayout) ApplicationScreen.instance.findViewById(R.id.mainButtons);
+
+						capturingDialog = Toast.makeText(ApplicationScreen.instance, R.string.capture_less_raw, Toast.LENGTH_LONG);
+						capturingDialog.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, bottom_layout.getHeight());
+						capturingDialog.show();
+						
+						imageAmount = imageAmountChecked;
+					}
+					
+					final int[] pause = new int[imageAmount];
+					Arrays.fill(pause, pauseBetweenShots);
+					createRequestIDList(imageAmount * 2);
+					CameraController.captureImagesWithParams(imageAmount, CameraController.RAW, pause, null, null, null, false, true,
+							true);
+					return;
+				}
+			}
+			//If no one RAW frame can be captured, capture JPEG frames.
+			LinearLayout bottom_layout = (LinearLayout) ApplicationScreen.instance.findViewById(R.id.mainButtons);
+
+			capturingDialog = Toast.makeText(ApplicationScreen.instance, R.string.capture_only_jpeg, Toast.LENGTH_LONG);
+			capturingDialog.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, bottom_layout.getHeight());
+			capturingDialog.show();
+		}
+		
+		final int[] pause = new int[imageAmount];
+		Arrays.fill(pause, pauseBetweenShots);
+		createRequestIDList(imageAmount);
+		CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, pause, null, null, null, false, true,
+				true);
 	}
 
 	@Override
@@ -273,12 +373,15 @@ public class BurstCapturePlugin extends PluginCapture
 		if (frame == 0)
 		{
 			Log.d("Burst", "Load to heap failed");
-			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 
 			imagesTaken = 0;
 			imagesTakenRAW = 0;
 			resultCompleted = 0;
+			isAllImagesTaken = false;
+			inCapture = false;
 			ApplicationScreen.instance.muteShutter(false);
+			
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED_NORESULT, String.valueOf(SessionID));
 			return;
 		}
 
@@ -333,7 +436,6 @@ public class BurstCapturePlugin extends PluginCapture
 			else
 				isAllImagesTaken = true;
 		}
-
 	}
 
 	@TargetApi(21)
@@ -377,5 +479,23 @@ public class BurstCapturePlugin extends PluginCapture
 	@Override
 	public void onPreviewFrame(byte[] data)
 	{
+	}
+	
+	//On some devices which supports RAW capturing may be not enough free memory to capture several RAW
+	//So we need to check available size of memory and compare it to approximate size of all RAWs to be captured 
+	private boolean checkFreeMemory(int imgAmount)
+	{
+		if(captureRAW)
+		{
+			CameraController.Size imageSize = CameraController.getCameraImageSize();
+			int imageWidth = imageSize.getWidth();
+			int imageHeight = imageSize.getHeight();
+			
+			final int freeMemoryAprox = (int) (HeapUtil.getAmountOfMemoryToFitFrames() - (HeapUtil.getRAWFrameSizeInBytes(imageWidth, imageHeight)*imgAmount));
+			if(freeMemoryAprox < 20000000.f) //Left 20 Mb for safety reason - to prevent unexpected system's behavior
+				return false;
+		}
+		
+		return true;
 	}
 }

@@ -132,7 +132,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 		ApplicationScreen.instance.muteShutter(false);
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		preferenceEVCompensationValue = ApplicationScreen.instance.getEVPref();
 		preferenceSceneMode = ApplicationScreen.instance.getSceneModePref();
 		preferenceFlashMode = ApplicationScreen.instance.getFlashModePref(ApplicationScreen.sDefaultFlashValue);
@@ -627,13 +626,51 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		// isHDRMode? CameraController.YUV : CameraController.JPEG, new int[0],
 		// evValues, true);
 
+		int gain[] = null;
+		long exposure[] = null;
+		
+		// On Nexus5x and Nexus6p we can't change exposure compensation.
+		// That's why we will use manual exposure (shutter speed) settings to capture HDR.
+		// Adjust the shutter speed one or two stops faster (i.e. if you're at 1/250 sec, go to 1/500 or 1/1000 sec), take a photo, 
+		// then adjust it one or two stops slower than your original shutter speed 
+		// (i.e. if you were at 1/250 sec, then set it to 1/125 or 1/60 sec), and take another photo.
+		// Also if we use manual exposure settings, we should set ISO manually (get ISO and Exposure original values from preview).
+		if (CameraController.isNexus5x || CameraController.isNexus6p || CameraController.isFlex2)
+		{
+			gain = new int[3];
+			gain[0] = CameraController.getCurrentSensitivity();
+			gain[1] = CameraController.getCurrentSensitivity();
+			gain[2] = CameraController.getCurrentSensitivity();
+			
+			switch (Integer.parseInt(EvPreference))
+			{
+			case 1: // -1 to +1 Ev compensation
+				exposure = new long[3];
+				exposure[0] = CameraController.getCameraExposureTime();
+				exposure[1] = CameraController.getCameraExposureTime() * 2;
+				exposure[2] = CameraController.getCameraExposureTime() / 2;
+				break;
+			case 2: // -2 to +2 Ev compensation
+				exposure = new long[3];
+				exposure[0] = CameraController.getCameraExposureTime();
+				exposure[1] = CameraController.getCameraExposureTime() * 4;
+				exposure[2] = CameraController.getCameraExposureTime() / 4;
+			default:
+				exposure = new long[3];
+				exposure[0] = CameraController.getCameraExposureTime();
+				exposure[1] = CameraController.getCameraExposureTime() * 4;
+				exposure[2] = CameraController.getCameraExposureTime() / 4;
+				break;
+			}
+		}
+		
 		createRequestIDList(captureRAW? total_frames*2 : total_frames);
 		if (captureRAW)
-			CameraController.captureImagesWithParams(total_frames, CameraController.RAW, null, evValues, null, null,
+			CameraController.captureImagesWithParams(total_frames, CameraController.RAW, null, evValues, gain, exposure,
 					false, true, true);
 		else
 			CameraController.captureImagesWithParams(total_frames, isHDRMode ? CameraController.YUV
-					: CameraController.JPEG, null, evValues, null, null, false, true, true);
+					: CameraController.JPEG, null, evValues, gain, exposure, false, true, true);
 	}
 
 	public void onAutoFocus(boolean paramBoolean)

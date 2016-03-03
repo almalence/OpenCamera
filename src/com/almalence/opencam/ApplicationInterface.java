@@ -132,25 +132,6 @@ public interface ApplicationInterface
 	//Inform Application that current capturing is failed.
 	public void captureFailed();
 	
-	//ImageReaders is used in camera2 mode. Pass created image available listener
-	@TargetApi(21)
-	public void createImageReaders(ImageReader.OnImageAvailableListener imageAvailableListener);
-	
-	//Commonly camera2 applications uses 4 types of surfaces - JPEG, YUV, RAW and Preview (YUV)
-	@TargetApi(19)
-	public Surface getPreviewYUVImageSurface();
-	
-	@TargetApi(19)
-	public Surface getYUVImageSurface();
-
-	@TargetApi(19)
-	public Surface getJPEGImageSurface();
-
-	@TargetApi(19)
-	public Surface getRAWImageSurface();
-	
-	public MediaRecorder getMediaRecorder();
-	
 	public SimpleStreamSurfaceView getSimpleStreamSurfaceView();
 	
 	//Surface of camera viewfinder

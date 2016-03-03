@@ -190,7 +190,7 @@ extern "C" JNIEXPORT int JNICALL Java_com_almalence_YuvImage_CreateYUVImageFromR
 
 	free(rawCropped);
 
-	__android_log_print(ANDROID_LOG_INFO, "OpenCamera. CreateYUV", "NV21 created from RAW");
+//	__android_log_print(ANDROID_LOG_INFO, "OpenCamera. CreateYUV", "NV21 created from RAW");
 
 	return 0;
 }
@@ -232,7 +232,7 @@ extern "C" JNIEXPORT int JNICALL Java_com_almalence_YuvImage_CreateYUVImage
 
 	ExtractYuvFromDirectBuffer(Y, U, V, yuv, pixelStrideY, rowStrideY, pixelStrideU, rowStrideU, pixelStrideV, rowStrideV, sx, sy);
 
-	__android_log_print(ANDROID_LOG_INFO, "OpenCamera. CreateYUV", "NV21 created");
+//	__android_log_print(ANDROID_LOG_INFO, "OpenCamera. CreateYUV", "NV21 created");
 
 	return 0;
 }
