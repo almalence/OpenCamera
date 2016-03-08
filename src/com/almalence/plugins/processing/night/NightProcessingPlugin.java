@@ -125,10 +125,16 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 		// camera indexes in libalmalib corresponding to models
 		if (CameraController.isNexus5)
 			cameraIndex = 100;
-		if (CameraController.isNexus6)
+		else if (CameraController.isNexus6)
+			cameraIndex = 105;
+		else if (CameraController.isNexus5x)
+			cameraIndex = 106;
+		else if (CameraController.isNexus6p)
 			cameraIndex = 103;
-		if (CameraController.isFlex2)
+		else if (CameraController.isFlex2)
 			cameraIndex = 507;
+		else if (CameraController.isOnePlusTwo)
+			cameraIndex = 2000;
 //		if (CameraController.isG4)
 //			cameraIndex = 506;
 
@@ -177,7 +183,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 				"isSuperMode" + sessionID));
 		int sensorGain = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("burstGain" + sessionID));
 
-		if (CameraController.isNexus6 && CameraController.isFrontCamera())
+		if (CameraController.isFlippedSensorDevice() && CameraController.isFrontCamera())
 		{
 			if (mDisplayOrientation == 0 || mDisplayOrientation == 90)
 				mDisplayOrientation += 180;

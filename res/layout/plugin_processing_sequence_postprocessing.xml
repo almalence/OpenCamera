@@ -19,6 +19,14 @@
 		 android:layout_width="fill_parent"
 		 android:layout_height="128dp"
 		 android:layout_alignParentBottom="true"/>
+    
+    <ProgressBar android:id="@+id/progressBarProcessing"
+	    		 android:layout_width="wrap_content"
+	    		 android:layout_height="wrap_content"
+	    		 android:indeterminate="true"
+	    		 android:layout_centerInParent="true"
+	    		 android:layout_margin="10dp"
+	    		 style="@android:style/Widget.Holo.Light.ProgressBar"/>
 <!-- 
     <ProgressBar
         android:id="@+id/sequenceProgressBar"

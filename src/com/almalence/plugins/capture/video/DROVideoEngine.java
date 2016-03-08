@@ -19,15 +19,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.cameracontroller.CameraController;
 import com.almalence.opencamunderground.ui.EglEncoder;
 import com.almalence.util.FpsMeasurer;
-/* <!-- +++
- import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.ui.EglEncoder;
- +++ --> */
-//<!-- -+-
-
-//-+- -->
 
 public class DROVideoEngine
 {
@@ -154,7 +148,8 @@ public class DROVideoEngine
 							try
 							{
 								DROVideoEngine.this.encoder = new EglEncoder(path, DROVideoEngine.this.previewWidth,
-										DROVideoEngine.this.previewHeight, 24, 20000000, ApplicationScreen
+										DROVideoEngine.this.previewHeight, 24, 20000000, CameraController.isNexus5x ? (ApplicationScreen
+												.getGUIManager().getImageDataOrientation() + 180) % 360 : ApplicationScreen
 												.getGUIManager().getImageDataOrientation(), EGL14
 												.eglGetCurrentContext());
 							} catch (RuntimeException e)

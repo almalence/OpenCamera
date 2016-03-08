@@ -18,7 +18,14 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.vf.zoom;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import android.content.SharedPreferences;
 import android.graphics.PointF;
+import android.os.Handler;
+import android.os.Message;
+import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -26,26 +33,27 @@ import android.view.ScaleGestureDetector;
 import android.view.ScaleGestureDetector.OnScaleGestureListener;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 
+import com.almalence.opencamunderground.ApplicationInterface;
 import com.almalence.opencamunderground.ApplicationScreen;
 import com.almalence.opencamunderground.MainScreen;
 import com.almalence.opencamunderground.PluginViewfinder;
 import com.almalence.opencamunderground.R;
 import com.almalence.opencamunderground.cameracontroller.CameraController;
 import com.almalence.sony.cameraremote.ZoomCallbackSonyRemote;
-/* <!-- +++
- import com.almalence.opencam_plus.cameracontroller.CameraController;
- import com.almalence.opencam_plus.MainScreen;
- import com.almalence.opencam_plus.PluginManager;
- import com.almalence.opencam_plus.PluginViewfinder;
- import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.R;
- +++ --> */
-// <!-- -+-
+import com.almalence.ui.VerticalSeekBar;
+
 
 //-+- -->
 
@@ -55,32 +63,57 @@ import com.almalence.sony.cameraremote.ZoomCallbackSonyRemote;
 
 public class ZoomVFPlugin extends PluginViewfinder
 {
-	private ImageButton		mButtonZoomIn		= null;
-	private ImageButton		mButtonZoomOut		= null;
-	private float			zoomCurrent			= 0;
+	private VerticalSeekBar			zoomBar				= null;
+	private ImageButton				mButtonZoomIn		= null;
+	private ImageButton				mButtonZoomOut		= null;
+	private float					zoomCurrent			= 0;
+	private View					zoomPanelView		= null;
+	private LinearLayout			zoomPanel			= null;
 
-	private int				mainLayoutHeight	= 0;
-	private View			zoomPanelView		= null;
-	private LinearLayout	zoomPanel			= null;
-	private int				zoomPanelWidth		= 0;
+	private int						mainLayoutHeight	= 0;
+	private int						zoomPanelWidth		= 0;
 
-	//private boolean			mZoomDisabled		= false;
+	private boolean					panelOpened			= false;
+	private boolean					panelToBeOpen		= false;
+	private boolean					panelOpening		= false;
+	private boolean					panelClosing		= false;
+	private boolean					mZoomDisabled		= false;
 
-	//private boolean			isEnabled			= true;
+	private boolean					isEnabled			= true;
+
+	private Handler					zoomHandler;
+	
+	private boolean				zoomStopping			= false;
+	
+	private static final int	CLOSE_ZOOM_PANEL		= 0;
+	private static final int	CLOSE_ZOOM_PANEL_DELAY	= 1500;
+	
+	private class ZoomHandler extends Handler
+	{
+		@Override
+		public void handleMessage(Message msg)
+		{
+			if (msg.what == CLOSE_ZOOM_PANEL)
+				closeZoomPanel();
+		}
+	}
 	
 	private ScaleGestureDetector  scaleGestureDetector;
 
 	public ZoomVFPlugin()
 	{
-		super("com.almalence.plugins.zoomvf", 0, 0, 0, null);
+		super("com.almalence.plugins.zoomvf",  R.xml.preferences_vf_zoom, 0, 0, null);
+		zoomHandler = new ZoomHandler();
 	}
 
 	@Override
 	public void onCreate()
 	{
-//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-//		isEnabled = prefs.getBoolean("enabledPrefZoom", true);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		isEnabled = prefs.getBoolean("enabledPrefZoom", true);
 
+		panelOpened = false;
+		
 		LayoutInflater inflator = MainScreen.getInstance().getLayoutInflater();
 		zoomPanelView = inflator.inflate(R.layout.plugin_vf_zoom_layout, null, false);
 		zoomPanel = (LinearLayout) zoomPanelView.findViewById(R.id.zoomLayout);
@@ -139,6 +172,89 @@ public class ZoomVFPlugin extends PluginViewfinder
 			}
 		};
 		CameraController.setZoomCallbackSonyRemote(zoomCallbackSonyRemote);
+		
+		this.zoomBar = (VerticalSeekBar) zoomPanelView.findViewById(R.id.zoomSeekBar);
+		this.zoomBar.setOnTouchListener(new OnTouchListener()
+		{
+			@Override
+			public boolean onTouch(View v, MotionEvent event)
+			{
+				if (mZoomDisabled)
+				{
+					if (panelOpened)
+						zoomHandler.sendEmptyMessageDelayed(CLOSE_ZOOM_PANEL, CLOSE_ZOOM_PANEL_DELAY);
+					return true;
+				}
+
+				switch (event.getAction() & MotionEvent.ACTION_MASK)
+				{
+				case MotionEvent.ACTION_DOWN:
+					{
+						if (!panelOpened)
+						{
+							openZoomPanel();
+							zoomHandler.removeMessages(CLOSE_ZOOM_PANEL);
+							return true;
+						}
+						if (panelClosing)
+						{
+							panelToBeOpen = true;
+							return true;
+						}
+					}
+					break;
+				case MotionEvent.ACTION_UP:
+					{
+						if (panelOpened || panelOpening)
+							zoomHandler.sendEmptyMessageDelayed(CLOSE_ZOOM_PANEL, CLOSE_ZOOM_PANEL_DELAY);
+					}
+					break;
+				case MotionEvent.ACTION_MOVE:
+					return false;
+				default:
+					break;
+				}
+
+				return false;
+			}
+		});
+		this.zoomBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener()
+		{
+
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar)
+			{
+			}
+
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar)
+			{
+				zoomHandler.removeMessages(CLOSE_ZOOM_PANEL);
+			}
+
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+			{
+				if (fromUser)
+				{
+					zoomHandler.removeMessages(CLOSE_ZOOM_PANEL);
+					
+					zoomCurrent = progress;
+					if (CameraController.isUseCamera2())
+					{
+						// Calculate scaleFactor from seekBar progress.
+						zoomCurrent = (float)progress / 10.f + 1.f;
+					}
+					
+					if (zoomCurrent > CameraController.getMaxZoom())
+					{
+						zoomCurrent = CameraController.getMaxZoom();
+					}
+
+					CameraController.setZoom(zoomCurrent);
+				}
+			}
+		});
 	}
 
 	private void prepareActZoomButtons(boolean flag)
@@ -252,13 +368,15 @@ public class ZoomVFPlugin extends PluginViewfinder
 	@Override
 	public void onStart()
 	{
-//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-//		isEnabled = prefs.getBoolean("enabledPrefZoom", true);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		isEnabled = prefs.getBoolean("enabledPrefZoom", true);
+		zoomStopping = false;
 	}
 
 	@Override
 	public void onStop()
 	{
+		zoomStopping = true;
 		MainScreen.getGUIManager().removeViews(zoomPanel, R.id.specialPluginsLayout);
 	}
 
@@ -337,8 +455,9 @@ public class ZoomVFPlugin extends PluginViewfinder
 	@Override
 	public void onResume()
 	{
-//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-//		isEnabled = prefs.getBoolean("enabledPrefZoom", true);
+		zoomStopping = false;
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		isEnabled = prefs.getBoolean("enabledPrefZoom", true);
 		showZoomControls();
 	}
 
@@ -347,14 +466,19 @@ public class ZoomVFPlugin extends PluginViewfinder
 		if (!CameraController.isRemoteCamera())
 		{
 			zoomPanel.findViewById(R.id.zoom_buttons_container).setVisibility(View.GONE);
+			if (!isEnabled)
+
+				zoomBar.setVisibility(View.GONE);
+			else
+				zoomBar.setVisibility(View.VISIBLE);
+		} else
+		{
+			zoomBar.setVisibility(View.GONE);
+			if (!isEnabled)
+				zoomPanel.findViewById(R.id.zoom_buttons_container).setVisibility(View.GONE);
+			else
+				zoomPanel.findViewById(R.id.zoom_buttons_container).setVisibility(View.VISIBLE);
 		}
-//		else
-//		{
-//			if (!isEnabled)
-//				zoomPanel.findViewById(R.id.zoom_buttons_container).setVisibility(View.GONE);
-//			else
-//				zoomPanel.findViewById(R.id.zoom_buttons_container).setVisibility(View.VISIBLE);
-//		}
 	}
 
 	@Override
@@ -369,6 +493,10 @@ public class ZoomVFPlugin extends PluginViewfinder
 
 		if (CameraController.isZoomSupported())
 		{
+			// If isCamera2 mode, then decrease value by 1 and multiple maxZoom 10x, because it represent by scale factor (from 1.0 to maxZoom).
+			// Else just set the exact value, given by CameraController (from 0 to maxZoom).
+			zoomBar.setMax(CameraController.isUseCamera2() ? (int)(CameraController.getMaxZoom() * 10 - 10) : (int)CameraController.getMaxZoom());
+			zoomBar.setProgressAndThumb(0);
 			zoomPanel.setVisibility(View.VISIBLE);
 			CameraController.setZoom(zoomCurrent);
 		} else
@@ -399,6 +527,8 @@ public class ZoomVFPlugin extends PluginViewfinder
 				}
 
 				CameraController.setZoom(zoomCurrent);
+				
+				zoomBar.setProgressAndThumb((int) (CameraController.isUseCamera2() ? zoomCurrent * 10.f - 10 : zoomCurrent));
 			} catch (Exception e)
 			{
 				e.printStackTrace();
@@ -410,11 +540,11 @@ public class ZoomVFPlugin extends PluginViewfinder
 	{
 		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_ZOOM_OUT)
 		{
-			this.zoomModify(-1);
+			this.zoomModify(CameraController.isUseCamera2() ? -0.1f : -1);
 			return true;
 		} else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_ZOOM_IN)
 		{
-			this.zoomModify(1);
+			this.zoomModify(CameraController.isUseCamera2() ? 0.1f : 1);
 			return true;
 		}
 		return false;
@@ -426,17 +556,155 @@ public class ZoomVFPlugin extends PluginViewfinder
 	static final int	ZOOM	= 2;
 	int					mode	= NONE;
 
-//	@Override
-//	public boolean onBroadcast(int arg1, int arg2)
-//	{
-//		if (!isEnabled)
-//			return false;
-//		if (arg1 == ApplicationInterface.MSG_CONTROL_LOCKED)
-//			mZoomDisabled = true;
-//		else if (arg1 == ApplicationInterface.MSG_CONTROL_UNLOCKED)
-//			mZoomDisabled = false;
-//		return false;
-//	}
+	public void closeZoomPanel()
+	{
+		panelClosing = true;
+
+		this.zoomPanel.clearAnimation();
+		Animation animation = new TranslateAnimation(0, -zoomPanelWidth / 2, 0, 0);
+		animation.setDuration(300);
+		animation.setRepeatCount(0);
+		animation.setInterpolator(new LinearInterpolator());
+		animation.setFillAfter(true);
+
+		this.zoomPanel.setAnimation(animation);
+
+		animation.setAnimationListener(new AnimationListener()
+		{
+			@Override
+			public void onAnimationEnd(Animation animation)
+			{
+				if (zoomStopping)
+				{
+					List<View> specialView = new ArrayList<View>();
+					RelativeLayout specialLayout = (RelativeLayout) MainScreen.getInstance().findViewById(
+							R.id.specialPluginsLayout);
+					for (int i = 0; i < specialLayout.getChildCount(); i++)
+						specialView.add(specialLayout.getChildAt(i));
+
+					for (int j = 0; j < specialView.size(); j++)
+					{
+						final View view = specialView.get(j);
+						int view_id = view.getId();
+						int zoom_id = zoomPanel.getId();
+						if (view_id == zoom_id)
+						{
+							final ViewGroup parentView = (ViewGroup) view.getParent();
+							if (parentView != null)
+							{
+								parentView.post(new Runnable()
+								{
+									public void run()
+									{
+										// it works without the runOnUiThread,
+										// but all UI updates must
+										// be done on the UI thread
+										MainScreen.getInstance().runOnUiThread(new Runnable()
+										{
+											public void run()
+											{
+												parentView.removeView(view);
+											}
+										});
+									}
+								});
+							}
+						}
+					}
+					return;
+				}
+
+				RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) zoomPanel.getLayoutParams();
+				if (params == null)
+				{
+					zoomPanel.clearAnimation();
+					return;
+				}
+				params.setMargins(-zoomPanelWidth / 2, 0, 0, 0);
+				zoomPanel.setLayoutParams(params);
+				zoomPanel.clearAnimation();
+
+				panelOpened = false;
+				panelClosing = false;
+
+				if (panelToBeOpen)
+				{
+					panelToBeOpen = false;
+					openZoomPanel();
+				}
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation)
+			{
+			}
+
+			@Override
+			public void onAnimationStart(Animation animation)
+			{
+			}
+		});
+	}
+
+	public void openZoomPanel()
+	{
+		panelOpening = true;
+		this.zoomPanel.clearAnimation();
+		Animation animation = new TranslateAnimation(0, zoomPanelWidth / 2, 0, 0);
+		animation.setDuration(500);
+		animation.setRepeatCount(0);
+		animation.setInterpolator(new LinearInterpolator());
+		animation.setFillAfter(true);
+
+		this.zoomPanel.setAnimation(animation);
+
+		animation.setAnimationListener(new AnimationListener()
+		{
+
+			@Override
+			public void onAnimationEnd(Animation animation)
+			{
+				RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) zoomPanel.getLayoutParams();
+
+				if (params == null)
+				{
+					zoomPanel.clearAnimation();
+					return;
+				}
+
+				params.setMargins(0, 0, 0, 0);
+				zoomPanel.setLayoutParams(params);
+
+				zoomPanel.clearAnimation();
+				zoomPanel.requestLayout();
+
+				panelOpened = true;
+				panelOpening = false;
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation)
+			{
+			}
+
+			@Override
+			public void onAnimationStart(Animation animation)
+			{
+			}
+		});
+	}
+
+	@Override
+	public boolean onBroadcast(int arg1, int arg2)
+	{
+		if (!isEnabled)
+			return false;
+		if (arg1 == ApplicationInterface.MSG_CONTROL_LOCKED)
+			mZoomDisabled = true;
+		else if (arg1 == ApplicationInterface.MSG_CONTROL_UNLOCKED)
+			mZoomDisabled = false;
+		return false;
+	}
 	
 	@Override
 	public boolean onMultiTouch(View view, MotionEvent e)

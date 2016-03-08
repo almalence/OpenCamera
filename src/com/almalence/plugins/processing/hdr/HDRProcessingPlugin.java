@@ -234,7 +234,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 							compressed_frame_len[ExpoBracketingCapturePlugin.evIdx[i]]);
 					int yuvBuffer = compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]];
 			
-					if (CameraController.isNexus6 && CameraController.isFrontCamera())
+					if (CameraController.isFlippedSensorDevice() && CameraController.isFrontCamera())
 					{
 						int imageWidth = ApplicationScreen.getPreviewWidth();
 						int imageHeight = ApplicationScreen.getPreviewHeight();
@@ -276,7 +276,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	private void HDRProcessing()
 	{
 		if (HDRProcessingPlugin.SaveInputPreference == 0)
-		if (CameraController.isNexus6 && CameraController.isFrontCamera())
+		if (CameraController.isFlippedSensorDevice() && CameraController.isFrontCamera())
 		{
 			if (mDisplayOrientationOnStartProcessing==0 || mDisplayOrientationOnStartProcessing==90)
 				mDisplayOrientationOnStartProcessing+=180;
@@ -509,7 +509,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		canvas.drawBitmap(bitmapCropped, rect, rect, paint);
 
 		if (HDRProcessingPlugin.SaveInputPreference == 0)
-			if (CameraController.isNexus6 && CameraController.isFrontCamera())
+			if (CameraController.isFlippedSensorDevice() && CameraController.isFrontCamera())
 			{	
 				Matrix matrix = new Matrix();
 				matrix.postRotate(180);
@@ -1240,7 +1240,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 				this.previewTaskCurrent = null;
 
 				if (HDRProcessingPlugin.SaveInputPreference == 0)
-					if (CameraController.isNexus6 && CameraController.isFrontCamera())
+					if (CameraController.isFlippedSensorDevice() && CameraController.isFrontCamera())
 					{	
 						Matrix matrix = new Matrix();
 						matrix.postRotate(180);

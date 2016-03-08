@@ -219,7 +219,7 @@
 	
 	    <export 	id="com.almalence.plugins.export"/>
 
-		<sku		id="plugin_almalence_multishot"/>
+		<sku		id="plugin_almalence_moving_burst"/>
 		
 		<howtotext  id=""/>
 			

@@ -41,8 +41,10 @@ JNIEXPORT jint JNICALL Java_com_almalence_SwapHeap_SwapToHeap
 
 
 	heap = (unsigned char *)malloc(data_length);
-	if (heap)
+	if (heap != NULL)
 		memcpy (heap, data, data_length);
+	else
+		__android_log_print(ANDROID_LOG_ERROR, "SwapToHeap", "heap is NULL");
 
 	env->ReleaseByteArrayElements(jdata, (jbyte*)data, JNI_ABORT);
 

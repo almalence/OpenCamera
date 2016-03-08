@@ -155,6 +155,28 @@ public class AeAwLockVFPlugin extends PluginViewfinder
 
 			((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout2)).requestLayout();
 		}
+		
+		// Update manual controls margin, to prevent intersection with AeAwlock controls.
+		if (showAEAWLock && ((aeLockButton != null && aeLockButton.getVisibility() == View.VISIBLE) || (awLockButton != null && awLockButton.getVisibility() == View.VISIBLE)))
+		{
+			RotateImageView expandManualControls = ((RotateImageView) ApplicationScreen.instance.findViewById(R.id.expandManualControls));
+			if (expandManualControls != null)
+			{
+				RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) expandManualControls.getLayoutParams();
+				params.bottomMargin += (int) ApplicationScreen.getAppResources().getDimension(R.dimen.aeawlock_size);
+				expandManualControls.requestLayout();
+			}
+		}
+		else
+		{
+			RotateImageView expandManualControls = ((RotateImageView) ApplicationScreen.instance.findViewById(R.id.expandManualControls));
+			if (expandManualControls != null)
+			{
+				RelativeLayout.LayoutParams params = (android.widget.RelativeLayout.LayoutParams) expandManualControls.getLayoutParams();
+				params.bottomMargin = 0;
+				expandManualControls.requestLayout();
+			}
+		}
 	}
 
 	@Override

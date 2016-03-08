@@ -109,7 +109,6 @@ public class PreshotCapturePlugin extends PluginCapture
 	@Override
 	public void onResume()
 	{
-		CameraController.setNeedPreviewFrame(true);
 		preferenceFocusMode = ApplicationScreen.instance.getFocusModePref(CameraParameters.AF_MODE_AUTO);
 		ApplicationScreen.instance.muteShutter(false);
 		captureStarted = false;
@@ -186,6 +185,12 @@ public class PreshotCapturePlugin extends PluginCapture
 		this.modeSwitcher.setLayoutParams(params);
 	}
 
+	@Override
+	public boolean needPreviewFrame()
+	{
+		return true;
+	}
+	
 	private void getPrefs()
 	{
 		// Get the xml/preferences.xml preferences

@@ -25,12 +25,7 @@
         android:summary="@string/Pref_Saving_Preference_Summary">
         <extra android:name="type" android:value="saving_settings" />
     </header>
-    <header 
-        android:fragment="com.almalence.opencamunderground.Fragment"
-        android:title="@string/Pref_Help_Preference_Title"
-        android:summary="@string/Pref_Help_Preference_Summary">
-        <extra android:name="type" android:value="plugins_settings" />
-    </header>
+
     
     <header 
         android:id="@+id/about_header"
@@ -63,12 +58,6 @@
         android:title="@string/Pref_Saving_Preference_Title"
         android:summary="@string/Pref_Saving_Preference_Summary">
         <extra android:name="type" android:value="saving_settings" />
-    </header>
-    <header 
-        android:fragment="com.almalence.opencam_plus.Fragment"
-        android:title="@string/Pref_Help_Preference_Title"
-        android:summary="@string/Pref_Help_Preference_Summary">
-        <extra android:name="type" android:value="plugins_settings" />
     </header>
     <header 
         android:id="@+id/about_header"

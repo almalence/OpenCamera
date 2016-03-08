@@ -11,8 +11,8 @@
     <string name="Preference_ImageSizePrefPanoramaBackValue">imageSizePrefPanoramaBack</string>
     <string name="Preference_ImageSizePrefPanoramaFrontValue">imageSizePrefPanoramaFront</string>
     
-    <string name="Preference_ImageSizePrefVideoBackValue">imageSizePrefVideoBack</string>
-    <string name="Preference_ImageSizePrefVideoFrontValue">imageSizePrefVideoFront</string>
+    <string name="Preference_ImageSizePrefVideoBackValue">imageSizePrefVideoBack_v2</string>
+    <string name="Preference_ImageSizePrefVideoFrontValue">imageSizePrefVideoFront_v2</string>
     
     <string name="Preference_CaptureRAWValue">captureRAW</string>
     
