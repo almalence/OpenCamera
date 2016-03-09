@@ -19,7 +19,9 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.capture.multishot;
 
 import android.annotation.TargetApi;
+import android.content.SharedPreferences;
 import android.os.CountDownTimer;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -37,6 +39,7 @@ import com.almalence.opencam_plus.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.PluginCapture;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.R;
@@ -52,6 +55,8 @@ public class MultiShotCapturePlugin extends PluginCapture
 	private static int			captureIndex			= -1;
 	private static int			imgCaptureWidth			= 0;
 	private static int			imgCaptureHeight		= 0;
+	
+	private int					preferenceFocusMode		= CameraParameters.AF_MODE_AUTO;
 
 	// defaul val. value should come from config
 	private int					imageAmount				= 8;
@@ -72,8 +77,21 @@ public class MultiShotCapturePlugin extends PluginCapture
 		
 		isAllImagesTaken = false;
 		isAllCaptureResultsCompleted = true;
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		preferenceFocusMode = prefs.getInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
+				: ApplicationScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
 
 		ApplicationScreen.setCaptureFormat(CameraController.YUV);
+	}
+	
+	@Override
+	public void onPause()
+	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		prefs.edit().putInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
+						: ApplicationScreen.sFrontFocusModePref, preferenceFocusMode).commit();
+		ApplicationScreen.instance.setFocusModePref(preferenceFocusMode);
 	}
 
 	@Override
@@ -82,6 +100,16 @@ public class MultiShotCapturePlugin extends PluginCapture
 		ApplicationScreen.getGUIManager().showHelp(ApplicationScreen.instance.getString(R.string.MultiShot_Help_Header),
 				ApplicationScreen.getAppResources().getString(R.string.MultiShot_Help),
 				R.drawable.plugin_help_multishot, "multiShotShowHelp");
+	}
+	
+	@Override
+	public void setupCameraParameters()
+	{
+		if (CameraController.isModeAvailable(CameraController.getSupportedFocusModes(), CameraParameters.AF_MODE_CONTINUOUS_PICTURE))
+		{
+			CameraController.setCameraFocusMode(CameraParameters.AF_MODE_CONTINUOUS_PICTURE);
+			ApplicationScreen.instance.setFocusModePref(CameraParameters.AF_MODE_CONTINUOUS_PICTURE);
+		}
 	}
 
 	public static int getCaptureIndex()
