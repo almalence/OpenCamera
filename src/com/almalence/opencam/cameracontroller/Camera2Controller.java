@@ -26,6 +26,8 @@ package com.almalence.opencam.cameracontroller;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -73,6 +75,7 @@ import com.almalence.util.Util;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.ApplicationInterface;
+import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginManagerInterface;
 //-+- -->
 /* <!-- +++
@@ -145,7 +148,7 @@ public class Camera2Controller
 	protected static float				multiplierB					= 2.4f;
 
 	private static boolean 				needPreviewFrame			= false; //Indicate that camera2controller has to return to PluginManager byte array of received frame or not
-	
+	private static boolean 				previewRunning				= false;
 
 	public static Camera2Controller getInstance()
 	{
@@ -166,6 +169,7 @@ public class Camera2Controller
 	private CameraCaptureSession			mCaptureSession			= null;
 
 	protected CameraDevice					camDevice				= null;
+	protected static Semaphore 				captureSessionOpenCloseLock = new Semaphore(1);
 
 	private static boolean					autoFocusTriggered		= false; //Flag to inform that auto focus is in action
 	
@@ -175,6 +179,13 @@ public class Camera2Controller
 	
 	private static PluginManagerInterface	pluginManager			= null;
 	private static ApplicationInterface		appInterface			= null;
+	
+	private static ImageReader				mImageReaderPreviewYUV;
+	private static ImageReader				mImageReaderYUV;
+	private static ImageReader				mImageReaderJPEG;
+	private static ImageReader				mImageReaderRAW;
+	private static Surface					viewFinderSurface;
+	
 
 	public static void onCreateCamera2(Context context, ApplicationInterface app, PluginManagerInterface pluginManagerBase, Handler msgHandler)
 	{
@@ -199,7 +210,7 @@ public class Camera2Controller
 		}
 	}
 
-	//We support only FULL and LIMITED devices
+	//We support only FULL LIMITED and LEGACY devices
 	//Back and front cameras may have (and usually it is) different hardware level
 	//Method returns TRUE if we support hardware level of current device
 	public static boolean checkHardwareLevel()
@@ -213,7 +224,26 @@ public class Camera2Controller
 				.getCameraCharacteristics(CameraController.cameraIdList[0]);
 			int level = Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL);
 			return (level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED || level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL);
+//					|| level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY);
 		} catch (Exception e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	//Return TRUE if device has hardware level LEGACY
+	public static boolean isLegacyHardwareLevel()
+	{
+		if(CameraController.cameraIdList == null || CameraController.cameraIdList.length == 0)
+			return false;
+		try
+		{
+			Camera2Controller.getInstance().camCharacter = Camera2Controller.getInstance().manager
+					.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
+			
+			return Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY;
+		} catch (CameraAccessException e)
 		{
 			e.printStackTrace();
 			return false;
@@ -302,37 +332,40 @@ public class Camera2Controller
 
 	public static void onPauseCamera2()
 	{
-			if (null != Camera2Controller.getInstance().camDevice && null != Camera2Controller.getInstance().mCaptureSession)
+		stopCameraPreview();
+		if (null != Camera2Controller.getInstance().camDevice && null != Camera2Controller.getInstance().mCaptureSession)
+		{
+			try
 			{
-				try
+				Camera2Controller.getInstance().mCaptureSession.stopRepeating();
+				Camera2Controller.getInstance().mCaptureSession.close();  //According to google docs isn't necessary to close session
+				Camera2Controller.getInstance().mCaptureSession = null;
+			} catch (final CameraAccessException e)
+			{
+				// Doesn't matter, closing device anyway
+				e.printStackTrace();
+			} catch (final IllegalStateException e2)
+			{
+				// Doesn't matter, closing device anyway
+				e2.printStackTrace();
+			} finally
+			{
+				//If onPause occurs for swithching from camera2 to camera1 interface, we have to close camera device (it will release camera module)
+				if(ApplicationScreen.getPluginManager().isSwitchToOldCameraInterface())
 				{
-					Camera2Controller.getInstance().mCaptureSession.stopRepeating();
-					Camera2Controller.getInstance().mCaptureSession.close();  //According to google docs isn't necessary to close session
-					Camera2Controller.getInstance().mCaptureSession = null;
-				} catch (final CameraAccessException e)
-				{
-					// Doesn't matter, closing device anyway
-					e.printStackTrace();
-				} catch (final IllegalStateException e2)
-				{
-					// Doesn't matter, closing device anyway
-					e2.printStackTrace();
-				} finally
-				{
-					//If onPause occurs for swithching from camera2 to camera1 interface, we have to close camera device (it will release camera module)
-					if(ApplicationScreen.getPluginManager().isSwitchToOldCameraInterface())
-					{
-						Camera2Controller.getInstance().camDevice.close();
-						Camera2Controller.getInstance().camDevice = null;
-					}
-					
-					zoomCropPreview = null;
+					Camera2Controller.getInstance().camDevice.close();
+					Camera2Controller.getInstance().camDevice = null;
 				}
+				
+				zoomCropPreview = null;
+				autoFocusTriggered = false;
 			}
+		}
 	}
 	
 	public static void onStopCamera2()
 	{
+		stopCameraPreview();
 		//It's need to close camera device to let it be re-used by other applications
 		if (null != Camera2Controller.getInstance().camDevice)
 		{
@@ -383,14 +416,25 @@ public class Camera2Controller
 		//Back or front camera
 		CameraController.CameraMirrored = (Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT);
 
-		CameraController.mVideoStabilizationSupported = Camera2Controller.getInstance().camCharacter
-				.get(CameraCharacteristics.CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES) == null ? false : true;
-		
+		CameraController.mVideoStabilizationSupported = false;
+		int[] videoStabilizationModes = Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES);
+		if (videoStabilizationModes != null)
+		{
+			for (int mode : videoStabilizationModes)
+			{
+				if (mode == CameraMetadata.CONTROL_VIDEO_STABILIZATION_MODE_ON)
+				{
+					CameraController.mVideoStabilizationSupported = true;
+				}
+			}
+		}
+
 		BlackLevelPattern blackPatternLevel = Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_BLACK_LEVEL_PATTERN);
 		if (blackPatternLevel != null) {
 			blevel = blackPatternLevel.getOffsetForIndex(0, 0);
 		}
-		wlevel = Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_WHITE_LEVEL);
+		if(Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_WHITE_LEVEL) != null)
+			wlevel = Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_WHITE_LEVEL);
 
 //		Log.d(TAG, "HARWARE_SUPPORT_LEVEL = " + Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL));
 		
@@ -405,11 +449,17 @@ public class Camera2Controller
 		// ^^ Camera2 open camera
 		// -----------------------------------------------------------------
 	}
+	
+	//Return sensor area rectangle
+	public static Rect getActiveRect()
+	{
+		return activeRect;
+	}
 
 	
 	public static void setupImageReadersCamera2()
 	{
-		appInterface.createImageReaders(imageAvailableListener);
+		createImageReaders(imageAvailableListener);
 	}
 	
 	public static boolean isCaptureFormatSupported(int captureFormat)
@@ -417,6 +467,10 @@ public class Camera2Controller
 		boolean isSupported = false;
 		try
 		{
+			//According to google's doc and our surfaces set, we can provide only JPEG capturing on device with legace hardware level
+//			if(captureFormat != CameraController.JPEG && Camera2Controller.isLegacyHardwareLevel())
+//				return false;
+			
 			CameraCharacteristics cc = Camera2Controller.getInstance().manager.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
 			StreamConfigurationMap configMap = cc.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 			isSupported = configMap.isOutputSupportedFor(captureFormat);
@@ -433,12 +487,22 @@ public class Camera2Controller
 
 	public static void setCaptureFormat(int captureFormat)
 	{
-//		Log.e(TAG, "set captureFormat.");
 		Camera2Controller.captureFormat = captureFormat;
 	}
 
 	public static boolean createCaptureSession(List<Surface> sfl)
 	{
+		try
+		{
+			if (!captureSessionOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
+				Log.e(TAG, "Create capture session failed. Semaphore is locked");
+			}
+		} catch (InterruptedException e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+		
 		try
 		{
 			CameraDevice camera = Camera2Controller.getCamera2();
@@ -711,6 +775,12 @@ public class Camera2Controller
 		StreamConfigurationMap configMap = Camera2Controller.getInstance().camCharacter
 				.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 		Size[] cs = configMap.getOutputSizes(SurfaceHolder.class);
+
+//		DisplayMetrics metrics = new DisplayMetrics();
+//		ApplicationScreen.instance.getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
+//		int width = metrics.widthPixels;
+//		int height = metrics.heightPixels;
+		
 		//Only with such preview size Galaxy S6 isn't crashed in camera2 mode
 		if(CameraController.isGalaxyS6)
 			cs = new Size[]{new Size(1920, 1080)};
@@ -1399,24 +1469,27 @@ public class Camera2Controller
 			//Set custom exposure time/frame duration/ISO allows preview looks like real but on high fps.
 			if(!isRealExposureTimeOnPreview)
 			{
-				if(iTime == 100000000L)
+				//if > 1/10 preview will be the same
+				if(iTime >= 100000000L)
 				{
 					exposureTime = 70000000L;
 					frameDuration = 70000000L;
-					sensorSensitivity = 500;
+					//sensorSensitivity = 500;
 				}
-				else if(iTime == 142857142L)
-				{
-					exposureTime = 35000000L;
-					frameDuration = 39000000L;
-					sensorSensitivity = 1100;
-				}
-				else if(iTime >= 200000000L)
-				{
-					exposureTime = 40000000L;
-					frameDuration = 40000000L;
-					sensorSensitivity = 1300;
-				}
+//				//if > 1/7
+//				else if(iTime == 142857142L)
+//				{
+//					exposureTime = 35000000L;
+//					frameDuration = 39000000L;
+//					//sensorSensitivity = 1100;
+//				}
+//				//if > 1/5
+//				else if(iTime >= 200000000L)
+//				{
+//					exposureTime = 40000000L;
+//					frameDuration = 40000000L;
+//					//sensorSensitivity = 1300;
+//				}
 			}
 			previewRequestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF);
 			Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
@@ -1493,17 +1566,19 @@ public class Camera2Controller
 			{
 				Rect r = focusAreas.get(i).rect;
 
-				Matrix matrix = new Matrix();
-				matrix.setScale(1, 1);
-				matrix.preTranslate(1000.0f, 1000.0f);
-				matrix.postScale((zoomRect.width() - 1) / 2000.0f, (zoomRect.height() - 1) / 2000.0f);
-
-				RectF rectF = new RectF(r.left, r.top, r.right, r.bottom);
-				matrix.mapRect(rectF);
-				Util.rectFToRect(rectF, r);
-
+//				Matrix matrix = new Matrix();
+//				matrix.setScale(1, 1);
+//				matrix.preTranslate(1000.0f, 1000.0f);
+//				matrix.postScale((zoomRect.width() - 1) / 2000.0f, (zoomRect.height() - 1) / 2000.0f);
+//				matrix.postTranslate((activeRect.width() - zoomRect.width()) / 2, (activeRect.height() - zoomRect.height()) / 2);
+//
+//				RectF rectF = new RectF(r.left, r.top, r.right, r.bottom);
+//				matrix.mapRect(rectF);
+//				Util.rectFToRect(rectF, r);
+//
 				int currRegion = i;
-				af_regions[currRegion] = new MeteringRectangle(r.left, r.top, r.right, r.bottom, 1000);
+//				af_regions[currRegion] = new MeteringRectangle(r.left, r.top, r.right, r.bottom, 1000);
+				af_regions[currRegion] = new MeteringRectangle(r, 1000);
 			}
 		} else
 		{
@@ -1532,22 +1607,13 @@ public class Camera2Controller
 			{
 				Rect r = meteringAreas.get(i).rect;
 
-				Matrix matrix = new Matrix();
-				matrix.setScale(1, 1);
-				matrix.preTranslate(1000.0f, 1000.0f);
-				matrix.postScale((zoomRect.width() - 1) / 2000.0f, (zoomRect.height() - 1) / 2000.0f);
-
-				RectF rectF = new RectF(r.left, r.top, r.right, r.bottom);
-				matrix.mapRect(rectF);
-				Util.rectFToRect(rectF, r);
-
 				int currRegion = i;
-				ae_regions[currRegion] = new MeteringRectangle(r.left, r.top, r.right, r.bottom, 10);
+				ae_regions[currRegion] = new MeteringRectangle(r, 1000);
 			}
 		} else
 		{
 			ae_regions = new MeteringRectangle[1];
-			ae_regions[0] = new MeteringRectangle(0, 0, activeRect.width() - 1, activeRect.height() - 1, 10);
+			ae_regions[0] = new MeteringRectangle(0, 0, activeRect.width() - 1, activeRect.height() - 1, 1000);
 		}
 
 		if (Camera2Controller.previewRequestBuilder != null && Camera2Controller.getInstance().camDevice != null)
@@ -1558,11 +1624,82 @@ public class Camera2Controller
 		}
 	}
 	
+	//Based on user's tap on screen information calculate appropriate sensor's coordinate for focusing or exposure metering
+	public static void calculateTapArea(int focusWidth, int focusHeight, float areaMultiple, int top, int left,
+			int previewWidth, int previewHeight, int xRaw, int yRaw, Rect rect)
+	{
+		final Rect activeRect = Camera2Controller.getActiveRect();
+		final float zoom = CameraController.getZoom();
+		
+		final int focusSize = (((int)(0.02f * (Camera2Controller.getActiveRect().width() + Camera2Controller.getActiveRect().height()) / zoom)) / 2) * 2;
+		focusWidth  = focusSize;
+		focusHeight = focusSize;
+		
+		final float scale;
+		if ((float)activeRect.width() / activeRect.height() >= previewHeight / previewWidth)
+			scale = activeRect.height() / (zoom * previewWidth);
+		else
+			scale = activeRect.width() / (zoom * previewHeight);
+		
+		final int fx = (int)Math.max(focusWidth / 2, Math.min(activeRect.width() - focusWidth / 2,
+				xRaw * scale + 0.5f * (activeRect.width() - previewHeight * scale)));
+		final int fy = (int)Math.max(focusHeight / 2, Math.min(activeRect.height() - focusHeight / 2,
+				yRaw * scale + 0.5f * (activeRect.height() - previewWidth * scale)));
+		
+		rect.left = fx - focusWidth / 2;
+		rect.top = fy - focusHeight / 2;
+		rect.right = fx + focusWidth / 2;
+		rect.bottom = fy + focusHeight / 2;	
+	}
+	
+	
+	//Based on user's tap on screen information calculate appropriate sensor's coordinate for focusing or exposure metering
+	public static Rect getSensorCoordinates(Rect rect)
+	{
+		final Rect activeRect = Camera2Controller.getActiveRect();
+		final float zoom = CameraController.getZoom();
+		
+		final int previewWidth  = ApplicationScreen.getPreviewSurfaceView().getWidth();
+		final int previewHeight =ApplicationScreen.getPreviewSurfaceView().getHeight();
+		
+		final float scale;
+		if ((float)activeRect.width() / activeRect.height() >= previewHeight / previewWidth)
+			scale = activeRect.height() / (zoom * previewWidth);
+		else
+			scale = activeRect.width() / (zoom * previewHeight);
+		
+		rect.left = (int)(rect.left * scale);
+		rect.top = (int)(rect.top * scale);
+		rect.right = (int)(rect.right * scale);
+		rect.bottom = (int)(rect.bottom * scale);
+		
+		return rect;
+	}
+		
+		
+	public static void setVideoStabilizationCamera2(boolean stabilization)
+	{
+		if (CameraController.mVideoStabilizationSupported)
+		{
+			if (Camera2Controller.previewRequestBuilder != null && Camera2Controller.getInstance().camDevice != null)
+			{
+				if (stabilization)
+				{
+					Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE, CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE_ON);
+				} else
+				{
+					Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE, CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE_OFF);
+				}
+				Camera2Controller.setRepeatingRequest();
+			}
+		}
+	}
+
 	//Repeating request used for preview frames
 	public static void setRepeatingRequest()
 	{
 		//Second part of operator if is experimental. Used only for RAW capturing in Super mode on Galaxy S6
-		if(Camera2Controller.getInstance().mCaptureSession == null/* || (inCapture == true && lastCaptureFormat == CameraController.YUV_RAW && CameraController.isGalaxyS6)*/)
+		if(Camera2Controller.getInstance().mCaptureSession == null) //|| Camera2Controller.getInstance().mImageReaderPreviewYUV == null/* || (inCapture == true && lastCaptureFormat == CameraController.YUV_RAW && CameraController.isGalaxyS6)*/)
 			return;
 
 		try
@@ -1655,9 +1792,206 @@ public class Camera2Controller
 			return -1;
 		}
 	}
-
 	
+	public static void startCameraPreview()
+	{
+		if (previewRunning)
+			return;
+		
+		previewRunning = true;
+		
+		createImageReaders(imageAvailableListener);
+		final List<Surface> surfaceList = getSurfacesList();
+		viewFinderSurface = appInterface.getCameraSurface();
+		if (viewFinderSurface != null)
+		{
+			surfaceList.add(viewFinderSurface);
+			createCaptureSession(surfaceList);	
+		}
+		else
+		{
+			CountDownTimer timer = new CountDownTimer(3000, 10)
+			{
+				@Override
+				public void onTick(long millisUntilFinished)
+				{
+					viewFinderSurface = appInterface.getCameraSurface();
+					if (viewFinderSurface!= null)
+					{
+						this.cancel();
+						surfaceList.add(viewFinderSurface);
+						createCaptureSession(surfaceList);	
+					}
+				}
+				
+				@Override
+				public void onFinish()
+				{
+				}
+			};
+			timer.start();
+		}
+	}
+	
+	public static void stopCameraPreview()
+	{
+		previewRunning = false;
+		
+		if (Camera2Controller.getInstance().mCaptureSession != null)
+		{
+			try
+			{
+				Camera2Controller.getInstance().mCaptureSession.stopRepeating();
+			} catch (CameraAccessException e)
+			{
+				e.printStackTrace();
+			} catch (final IllegalStateException e2)
+			{
+				e2.printStackTrace();
+			}
+		}
+		stopImageReaders();
+	}
+	
+	@TargetApi(21)
+	public static List<Surface> getSurfacesList()
+	{
+		List<Surface> surfaceList = new ArrayList<Surface>();
+		
+		if(mImageReaderPreviewYUV != null)
+			surfaceList.add(mImageReaderPreviewYUV.getSurface()); // surface for
+																	// preview yuv
+	
+		if (CameraController.mMediaRecorder == null)
+		{
+			// images
+			if (captureFormat == CameraController.YUV && mImageReaderYUV != null)
+			{
+				Log.d("MainScreen",
+						"add mImageReaderYUV " + mImageReaderYUV.getWidth() + " x " + mImageReaderYUV.getHeight());
+				surfaceList.add(mImageReaderYUV.getSurface());
+				
+				//Temporary disable RAW capturing on Galaxy S6 in all modes, including Super mode
+//				String modeName = PluginManager.getInstance().getActiveModeID();
+//				if (CameraController.isGalaxyS6 && modeName.contains("nightmode"))
+//					surfaceList.add(mImageReaderRAW.getSurface());
+//				else
+//				{
+//					Log.d("MainScreen",
+//							"add mImageReaderYUV " + mImageReaderYUV.getWidth() + " x " + mImageReaderYUV.getHeight());
+//					surfaceList.add(mImageReaderYUV.getSurface());
+//				}
+				// capture
+			} else if (captureFormat == CameraController.JPEG && mImageReaderJPEG != null)
+			{
+				Log.d("MainScreen",
+						"add mImageReaderJPEG " + mImageReaderJPEG.getWidth() + " x " + mImageReaderJPEG.getHeight());
+				surfaceList.add(mImageReaderJPEG.getSurface()); // surface for jpeg
+																// image
+				// capture
+			} else if (captureFormat == CameraController.RAW && mImageReaderJPEG != null && mImageReaderRAW != null)
+			{
+				Log.d("MainScreen", "add mImageReaderRAW + mImageReaderJPEG " + mImageReaderRAW.getWidth() + " x "
+						+ mImageReaderRAW.getHeight());
+				surfaceList.add(mImageReaderJPEG.getSurface()); // surface for jpeg
+																// image
+				// capture
+				if (CameraController.isRAWCaptureSupported())
+					surfaceList.add(mImageReaderRAW.getSurface());
+				else
+					captureFormat = CameraController.JPEG;
+			}
+		}
+		else
+		{
+			// video
+			surfaceList.add(CameraController.mMediaRecorder.getSurface()); // surface for MediaRecorder
+		}
+		
+		if (mImageReaderPreviewYUV != null)
+		{
+			CameraController.setPreviewSurface(mImageReaderPreviewYUV.getSurface());
+		}
+		ApplicationScreen.setCaptureFormat(captureFormat);
+		return surfaceList;
+	}
 
+	@TargetApi(21)
+	public static void createImageReaders(ImageReader.OnImageAvailableListener imageAvailableListener)
+	{
+		needPreviewFrame = pluginManager.needPreviewFrame();
+		
+		//On some devices such as Nexus 6P in video mode (when MediaRecorder is created) creating of preview image readers leads to crash
+		if(CameraController.mMediaRecorder == null)
+		{
+			// ImageReader for preview frames in YUV format
+			mImageReaderPreviewYUV = ImageReader.newInstance(CameraController.iPreviewWidth, CameraController.iPreviewHeight,
+						ImageFormat.YUV_420_888, 2);
+		}
+		
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		// ImageReader for YUV still images
+		mImageReaderYUV = ImageReader.newInstance(imageSize.getWidth(), imageSize.getHeight(), ImageFormat.YUV_420_888,
+				2);
+
+		// ImageReader for JPEG still images
+		if (captureFormat == CameraController.RAW)
+		{
+			CameraController.Size imageSizeJPEG = CameraController.getMaxCameraImageSize(CameraController.JPEG);
+			mImageReaderJPEG = ImageReader.newInstance(imageSizeJPEG.getWidth(), imageSizeJPEG.getHeight(),
+					ImageFormat.JPEG, 2);
+		} else
+			mImageReaderJPEG = ImageReader
+					.newInstance(imageSize.getWidth(), imageSize.getHeight(), ImageFormat.JPEG, 2);
+
+		
+		if(CameraController.isCaptureFormatSupported(CameraController.RAW) && !CameraController.isGalaxyS6)
+		{
+			CameraController.Size rawImageSize = CameraController.getMaxCameraImageSize(CameraController.RAW);
+			// ImageReader for RAW still images
+			mImageReaderRAW = ImageReader.newInstance(rawImageSize.getWidth(), rawImageSize.getHeight(), ImageFormat.RAW_SENSOR,
+					3);
+		}
+
+		if (mImageReaderPreviewYUV != null)
+			mImageReaderPreviewYUV.setOnImageAvailableListener(imageAvailableListener, null);
+		
+		if (mImageReaderYUV != null)
+			mImageReaderYUV.setOnImageAvailableListener(imageAvailableListener, null);
+		
+		if (mImageReaderJPEG != null)
+			mImageReaderJPEG.setOnImageAvailableListener(imageAvailableListener, null);
+		
+		if(mImageReaderRAW != null)
+			mImageReaderRAW.setOnImageAvailableListener(imageAvailableListener, null);
+	}
+
+	@TargetApi(21)
+	protected static void stopImageReaders()
+	{
+		// IamgeReader should be closed
+		if (mImageReaderPreviewYUV != null)
+		{
+			mImageReaderPreviewYUV.close();
+			mImageReaderPreviewYUV = null;
+		}
+		if (mImageReaderYUV != null)
+		{
+			mImageReaderYUV.close();
+			mImageReaderYUV = null;
+		}
+		if (mImageReaderJPEG != null)
+		{
+			mImageReaderJPEG.close();
+			mImageReaderJPEG = null;
+		}
+		if (mImageReaderRAW != null)
+		{
+			mImageReaderRAW.close();
+			mImageReaderRAW = null;
+		}
+	}
+	
     //Create 3 request:
 	//pre-capture request - used for exposure metering before main capture occurs
 	//still request - main capture request for still image
@@ -1756,7 +2090,7 @@ public class Camera2Controller
 		
 		if (format == CameraController.JPEG || captureFormat == CameraController.JPEG)
 		{
-			stillRequestBuilder.addTarget(appInterface.getJPEGImageSurface());
+			stillRequestBuilder.addTarget(mImageReaderJPEG.getSurface());
 		}
 		else if (format == CameraController.YUV || format == CameraController.YUV_RAW)
 		{
@@ -1764,15 +2098,18 @@ public class Camera2Controller
 //			if (CameraController.isGalaxyS6 && format == CameraController.YUV_RAW)
 //				stillRequestBuilder.addTarget(appInterface.getRAWImageSurface()); //Used only for Super mode
 //			else
-				stillRequestBuilder.addTarget(appInterface.getYUVImageSurface());
+				stillRequestBuilder.addTarget(mImageReaderYUV.getSurface());
 		}
 		else if (format == CameraController.RAW)
 		{
-			rawRequestBuilder.addTarget(appInterface.getRAWImageSurface());
-			stillRequestBuilder.addTarget(appInterface.getJPEGImageSurface());
+			rawRequestBuilder.addTarget(mImageReaderRAW.getSurface());
+			stillRequestBuilder.addTarget(mImageReaderJPEG.getSurface());
 		}
-		precaptureRequestBuilder.addTarget(appInterface.getPreviewYUVImageSurface());
 		
+		if (mImageReaderPreviewYUV != null)
+		{
+			precaptureRequestBuilder.addTarget(mImageReaderPreviewYUV.getSurface());
+		}
 		
 		boolean isAutoExTime = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getBoolean(ApplicationScreen.sExposureTimeModePref, true);
 		long exTime = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getLong(ApplicationScreen.sExposureTimePref, 0);
@@ -2035,7 +2372,9 @@ public class Camera2Controller
 				}
 			}
 
-			if (checkHardwareLevel())
+			//On devices such as Nexus 6P in video mode (when MediaRecorder is created) preview image reader isn't constructed
+			//so precaptureRequest doesn't has any surface for provide image data (in such situation trying to call capture leads to crash)
+			if (checkHardwareLevel() && CameraController.mMediaRecorder == null)
 			{
 				if(Camera2Controller.getInstance().mCaptureSession != null)
 				{
@@ -2341,8 +2680,7 @@ public class Camera2Controller
 
 	public static void cancelAutoFocusCamera2()
 	{
-		int focusMode = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).
-						getInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref : ApplicationScreen.sFrontFocusModePref, -1);
+		int focusMode = ApplicationScreen.instance.getFocusModePref(ApplicationScreen.sDefaultFocusValue);
 		
 		//Canceling is usefull only in auto focus modes, not in manual focus
 		if (Camera2Controller.previewRequestBuilder != null && Camera2Controller.getInstance().camDevice != null &&
@@ -2412,8 +2750,13 @@ public class Camera2Controller
 		
 		int colorEffect = appInterface.getColorEffectPref();
 
-//		Log.e(TAG, "configurePreviewRequest()");
-		previewRequestBuilder = camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+		if (CameraController.mMediaRecorder == null)
+		{
+			previewRequestBuilder = camDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+		} else 
+		{
+			previewRequestBuilder = camDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
+		}
 		
 		previewRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, colorEffect);
 		
@@ -2592,24 +2935,27 @@ public class Camera2Controller
 			//Set custom exposure time/frame duration/ISO allows preview looks like real but on high fps.
 			if(!isRealExposureTimeOnPreview)
 			{
-				if(exTime == 100000000L)
+				//if > 1/10 preview will be the same
+				if(exTime >= 100000000L)
 				{
 					exposureTime = 70000000L;
 					frameDuration = 70000000L;
-					sensorSensitivity = 500;
+					//sensorSensitivity = 500;
 				}
-				else if(exTime == 142857142L)
-				{
-					exposureTime = 35000000L;
-					frameDuration = 39000000L;
-					sensorSensitivity = 1100;
-				}
-				else if(exTime >= 200000000L)
-				{
-					exposureTime = 40000000L;
-					frameDuration = 40000000L;
-					sensorSensitivity = 1300;
-				}
+//				//if > 1/7
+//				else if(exTime == 142857142L)
+//				{
+//					exposureTime = 35000000L;
+//					frameDuration = 39000000L;
+//					//sensorSensitivity = 1100;
+//				}
+//				//if > 1/5
+//				else if(exTime >= 200000000L)
+//				{
+//					exposureTime = 40000000L;
+//					frameDuration = 40000000L;
+//					//sensorSensitivity = 1300;
+//				}
 			}
 			
 			previewRequestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_OFF);
@@ -2623,17 +2969,21 @@ public class Camera2Controller
 				Camera2Controller.previewRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, sensorSensitivity);
 		}
 
-		Surface cameraSurface = appInterface.getCameraSurface();
-		if(cameraSurface != null)
-			previewRequestBuilder.addTarget(appInterface.getCameraSurface());
+		if(viewFinderSurface != null)
+			previewRequestBuilder.addTarget(viewFinderSurface);
 		
 		
 		//Disable Image Reader for Nexus 6 according to slow focusing issue
-		if (!CameraController.isNexus6  && captureFormat != CameraController.RAW)
+		if (!CameraController.isNexus6  && captureFormat != CameraController.RAW && mImageReaderPreviewYUV != null)
 		{
-			Surface previewSurface = appInterface.getPreviewYUVImageSurface();
-			if(previewSurface != null)
+			Surface previewSurface = mImageReaderPreviewYUV.getSurface();
+			if(previewSurface != null && needPreviewFrame)
 				previewRequestBuilder.addTarget(previewSurface);
+		}
+		
+		if (CameraController.mMediaRecorder != null)
+		{
+			previewRequestBuilder.addTarget(CameraController.mMediaRecorder.getSurface());
 		}
 		
 		if(needZoom && zoomCropPreview != null)
@@ -2697,6 +3047,7 @@ public class Camera2Controller
 		public void onConfigureFailed(final CameraCaptureSession session)
 		{
 			Log.e(TAG, "CaptureSessionConfigure failed");
+			captureSessionOpenCloseLock.release();
 			onPauseCamera2();
 			appInterface.stopApplication();
 		}
@@ -2705,7 +3056,8 @@ public class Camera2Controller
 		public void onConfigured(final CameraCaptureSession session)
 		{
 			Camera2Controller.getInstance().mCaptureSession = session;
-
+			captureSessionOpenCloseLock.release();
+			
 			try
 			{
 				try
@@ -2738,7 +3090,7 @@ public class Camera2Controller
 	};
 
 	
-	public final static CameraCaptureSession.CaptureCallback captureCallback	= new CameraCaptureSession.CaptureCallback()
+	private final static CameraCaptureSession.CaptureCallback captureCallback	= new CameraCaptureSession.CaptureCallback()
 	{
 		boolean resetInProgress = false;
 		int resetRequestId = 0;
@@ -2752,7 +3104,7 @@ public class Camera2Controller
 		{
 			try
 			{
-//				if(Camera2.autoFocusTriggered)
+//				if(Camera2Controller.autoFocusTriggered)
 //					Log.e(TAG, "CAPTURE_AF_STATE = " + result.get(CaptureResult.CONTROL_AF_STATE));
 				if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED
 						&& Camera2Controller.autoFocusTriggered)
@@ -2788,24 +3140,30 @@ public class Camera2Controller
 			// good place to extract sensor gain and other parameters
 	
 			// Note: not sure which units are used for exposure time (ms?)
-			 currentExposure = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
-			 currentSensitivity = result.get(CaptureResult.SENSOR_SENSITIVITY);
+			if(result.get(CaptureResult.SENSOR_EXPOSURE_TIME) != null)
+			{
+				currentExposure = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
+				ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_EV_CHANGED);
+			}
+			if(result.get(CaptureResult.SENSOR_SENSITIVITY) != null)
+			{
+			 	currentSensitivity = result.get(CaptureResult.SENSOR_SENSITIVITY);
+			 	ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_ISO_CHANGED);
+			}
 			 
-			 ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_EV_CHANGED);
-			 ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_ISO_CHANGED);
 			
-			 if (request.get(CaptureRequest.SENSOR_SENSITIVITY) >= 50 && currentSensitivity != request.get(CaptureRequest.SENSOR_SENSITIVITY) && request.get(CaptureRequest.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_OFF && !resetInProgress) 
-			 {
-				try {
-					resetCaptureCallback();
-				} catch (Exception e)
-				{
-					e.printStackTrace();
-				}
-			 }
+//			 if (request.get(CaptureRequest.SENSOR_SENSITIVITY) >= 50 && currentSensitivity != request.get(CaptureRequest.SENSOR_SENSITIVITY) && request.get(CaptureRequest.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_OFF && !resetInProgress) 
+//			 {
+//				try {
+//					resetCaptureCallback();
+//				} catch (Exception e)
+//				{
+//					e.printStackTrace();
+//				}
+//			 }
 			 
-			rggbChannelVector = result
-						.get(CaptureResult.COLOR_CORRECTION_GAINS); 
+			if(result.get(CaptureResult.COLOR_CORRECTION_GAINS) != null)
+				rggbChannelVector = result.get(CaptureResult.COLOR_CORRECTION_GAINS); 
 			 
 			try {
 				int focusState = result.get(CaptureResult.CONTROL_AF_STATE);
@@ -2878,14 +3236,14 @@ public class Camera2Controller
 		}
 	};
 
-	public static void setNeedPreviewFrame(boolean needPreviewFrames)
+	public static void checkNeedPreviewFrame()
 	{
-		needPreviewFrame |= needPreviewFrames;
-	}
-	
-	public static void resetNeedPreviewFrame()
-	{
-		needPreviewFrame = false;
+		// If current surface configuration doesn't meet plugins requirement and preview is running, then restart preview.
+		if (needPreviewFrame != pluginManager.needPreviewFrame() && previewRunning)
+		{
+			stopCameraPreview();
+			startCameraPreview();
+		}
 	}
 	
 	public final static ImageReader.OnImageAvailableListener imageAvailableListener = new ImageReader.OnImageAvailableListener()
@@ -2943,8 +3301,6 @@ public class Camera2Controller
 				pluginManager.onPreviewFrame(data);
 			} else
 			{
-				Log.e("Camera2", "onImageAvailable");
-
 				int frame = 0;
 				byte[] frameData = new byte[0];
 				int frame_len = 0;
@@ -3000,7 +3356,6 @@ public class Camera2Controller
 
 				} else if (im.getFormat() == ImageFormat.JPEG)
 				{
-//					Log.e(TAG, "captured JPEG");
 					ByteBuffer jpeg = im.getPlanes()[0].getBuffer();
 
 					frame_len = jpeg.limit();
@@ -3031,6 +3386,7 @@ public class Camera2Controller
 						{
 							frame = SwapHeap.SwapToHeap(frameData);
 							frameData = null;
+							System.gc();
 						}
 					}
 				} else if (im.getFormat() == ImageFormat.RAW_SENSOR)
@@ -3079,7 +3435,6 @@ public class Camera2Controller
 						isYUV = true;
 						
 					} else {
-//						Log.e(TAG, "captured RAW");
 						ByteBuffer raw = im.getPlanes()[0].getBuffer();
 						
 						frame_len = raw.limit();
@@ -3090,6 +3445,7 @@ public class Camera2Controller
 						{
 							frame = SwapHeap.SwapToHeap(frameData);
 							frameData = null;
+							System.gc();
 						}
 					}
 					

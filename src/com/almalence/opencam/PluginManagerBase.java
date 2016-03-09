@@ -149,10 +149,6 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	protected static Map<Integer, Integer>		exifOrientationMap;
 
 	protected int								saveOption;
-	private boolean								useGeoTaggingPrefExport;
-	private boolean								enableExifTagOrientation;
-	private int									additionalRotation;
-	private int									additionalRotationValue	= 0;
 
 	// plugin manager ctor. plugins initialization and filling plugin list
 	protected PluginManagerBase()
@@ -305,6 +301,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		}
 	}
 
+	//shows if camera has to be restarted on mode change
 	protected boolean	isRestart					= false;
 	protected boolean	switchToOldCameraInterface	= false;
 
@@ -326,9 +323,9 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	public void switchMode(final Mode mode)
 	{
 		String modeName = mode.modeID;
-		if (modeName.equals("video")
-			|| (CameraController.isNexus6 && (modeName.equals("panorama_augmented") || modeName.equals("preshot")))
-			|| (CameraController.isFlex2 && (modeName.equals("hdrmode") || modeName.equals("expobracketing"))))
+		if (CameraController.isNexus6 && (modeName.equals("panorama_augmented") || modeName.equals("preshot")))
+			//commented. should work on flex2 too
+			//|| (CameraController.isFlex2 && (modeName.equals("hdrmode") || modeName.equals("expobracketing"))))
 			switchToOldCameraInterface = true;
 		else
 			switchToOldCameraInterface = false;
@@ -339,8 +336,6 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		ApplicationScreen.instance.pauseMain();
 		onStop();
 		onDestroy();
-
-		CameraController.resetNeedPreviewFrame();
 
 		// clear lists and fill with new active plugins
 		activeVF.clear();

@@ -112,7 +112,7 @@ public class SavingService extends NotificationService
 		@Override
 		protected void onPreExecute()
 		{
-			showNotification();
+			//showNotification();
 		}
 
 		@Override
@@ -133,7 +133,7 @@ public class SavingService extends NotificationService
 		@Override
 		protected void onPostExecute(Void result)
 		{
-			hideNotification();
+//			hideNotification();
 		}
 	}
 
@@ -372,7 +372,7 @@ public class SavingService extends NotificationService
 //				sensorOrientation = (360 + sensorOrientation + (cameraMirrored ? -displayOrientation
 //						: displayOrientation)) % 360;
 
-				if (CameraController.isNexus6 && cameraMirrored)
+				if (CameraController.isFlippedSensorDevice() && cameraMirrored)
 					orientation = (orientation + 180) % 360;
 
 				switch (orientation)
@@ -731,7 +731,7 @@ public class SavingService extends NotificationService
 //				// the image upright relative to the device orientation
 //				orientation = (sensorOrientation + displayOrientation + 360) % 360;
 				
-				if (CameraController.isNexus6 && cameraMirrored)
+				if (CameraController.isFlippedSensorDevice() && cameraMirrored)
 					orientation = (orientation + 180) % 360;
 
 				switch (orientation)

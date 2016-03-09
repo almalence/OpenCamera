@@ -16,7 +16,7 @@
     <string name="Pref_Common_ShotOnTap_Title">Kliknutím vyfotit</string>
     <string name="Pref_Common_ShotOnTap_Summary">Zaostřit a vyfotit kliknutím na displej</string>
     <string name="Pref_Common_UseCamera2_Title">Použít Сamera2 rozhraní</string>
-    <string name="Pref_Common_UseCamera2_Summary">Experimentální mód, funkční pouze na limitovaném počtu zařízení (Google Nexus 5, 7 s Androidem L)</string>    
+    <string name="Pref_Common_UseCamera2_Summary">Experimentální mód, funkční pouze na limitovaném počtu zařízení</string>    
     <string name="Pref_Common_MediaRescan_Title">Přeskenování galerie</string>
     <string name="Pref_Common_MediaRescan_Summary">Pomůže, pokud se fotky neobjeví ve fotogalerii</string>
     <string name="Pref_Common_Gallery_Title">Povolit jiný prohlížeč fotek</string>
@@ -75,7 +75,7 @@
 	<string name="Pref_Saving_Preference_Summary">Název souborů, formát, poloha a další doplňující parametry</string>
 	<string name="Pref_Advanced_Preference_Title">Pokročilé</string>
 	<string name="Pref_Advanced_Preference_Summary">Nastavení pro pokročilé uživatele</string>
-	<string name="Pref_Unlock_Preference_Title">Odemknout</string>
+	<string name="Pref_Unlock_Preference_Title">Odemknout/Pomoc</string>
 	<string name="Pref_Unlock_Preference_Summary">Odemknout prémiové doplňky</string>
 	
 	<string name="layout_hint_bottom">Vyberte režim focení</string>

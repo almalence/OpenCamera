@@ -90,6 +90,15 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 		updatePreferences();
 	}
 
+	@Override
+	public boolean needPreviewFrame()
+	{
+		if (mBarcodeScannerState == ON)
+			return true;
+		else
+			return false;
+	}
+	
 	void updatePreferences()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
@@ -97,7 +106,6 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 
 		if (mBarcodeScannerState == ON)
 		{
-			CameraController.setNeedPreviewFrame(true);
 			quickControlIconID = R.drawable.gui_almalence_settings_scene_barcode_on;
 		} else
 		{
@@ -135,7 +143,6 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 
 		if (mBarcodeScannerState == ON)
 		{
-			CameraController.setNeedPreviewFrame(true);
 			quickControlIconID = R.drawable.gui_almalence_settings_off_barcode_scanner;
 			editor.putBoolean("PrefBarcodescannerVF", false);
 		} else
@@ -144,8 +151,10 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 			editor.putBoolean("PrefBarcodescannerVF", true);
 		}
 		editor.commit();
-
+		
 		updatePreferences();
+
+		CameraController.checkNeedPreviewFrame();
 	}
 
 	/**

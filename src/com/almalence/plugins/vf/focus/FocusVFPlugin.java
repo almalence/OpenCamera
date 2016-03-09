@@ -145,6 +145,7 @@ public class FocusVFPlugin extends PluginViewfinder
 
 	private int					preferenceFocusMode				= -1;
 	private boolean				splitMode						= false;
+	private boolean				exposureControlEnaled 			= false;
 
 	private class MainHandler extends Handler
 	{
@@ -166,7 +167,7 @@ public class FocusVFPlugin extends PluginViewfinder
 
 	public FocusVFPlugin()
 	{
-		super("com.almalence.plugins.focusvf", 0, 0, 0, null);
+		super("com.almalence.plugins.focusvf", R.xml.preferences_vf_focus, 0, 0, null);
 
 		mHandler = new MainHandler();
 		mMatrix = new Matrix();
@@ -338,6 +339,7 @@ public class FocusVFPlugin extends PluginViewfinder
 	@Override
 	public void onResume()
 	{
+		exposureControlEnaled = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getBoolean("Pref_EnableExposureMetering", true);
 	}
 
 	@Override
@@ -359,7 +361,8 @@ public class FocusVFPlugin extends PluginViewfinder
 		if (supportedFocusModes != null && supportedFocusModes.length > 0)
 		{
 			if (!CameraController.isModeAvailable(supportedFocusModes, preferenceFocusMode)
-					&& preferenceFocusMode != CameraParameters.MF_MODE)
+					&& preferenceFocusMode != CameraParameters.MF_MODE
+					&& preferenceFocusMode != CameraParameters.AF_MODE_LOCK)
 			{
 				if (CameraController.isModeAvailable(supportedFocusModes, CameraParameters.AF_MODE_AUTO))
 					preferenceFocusMode = CameraParameters.AF_MODE_AUTO;
@@ -491,7 +494,6 @@ public class FocusVFPlugin extends PluginViewfinder
 	@Override
 	public void onAutoFocusMoving(boolean start)
 	{
-		Log.wtf(TAG, "FOCUS MOVING!");
 		if (!splitMode)
 			return;
 
@@ -738,7 +740,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		if (e.getPointerCount() > 1)
 		{
 			final int location[] = { 0, 0 };
-			focusLayout.getLocationOnScreen(location);
+			mFocusIndicatorRotateLayout.getLocationOnScreen(location);
 			xRaw = (int) e.getX(0) + location[0];
 			yRaw = (int) e.getY(0) + location[1];
 		}
@@ -779,9 +781,20 @@ public class FocusVFPlugin extends PluginViewfinder
 		rules[RelativeLayout.CENTER_IN_PARENT] = 0;
 
 		mFocusIndicatorRotateLayout.setLayoutParams(p);
-
-		calculateTapAreaByTopLeft(focusWidth, focusHeight, 1f, top, left,
+		
+		xRaw = Util.clamp(xRaw - diffWidth, 0, previewWidth);
+		yRaw = Util.clamp(yRaw - diffHeight, 0, previewHeight);
+		
+		if (!CameraController.isNexus5x)
+		{
+			int tmpX = xRaw;
+			xRaw = yRaw;
+			yRaw = previewWidth - tmpX - 1;
+		}
+		
+		CameraController.calculateTapArea(focusWidth, focusHeight, 1f, top, left,
 				ApplicationScreen.getPreviewSurfaceView().getWidth(), ApplicationScreen.getPreviewSurfaceView().getHeight(),
+				xRaw, yRaw, mMatrix,
 				mFocusArea.get(0).rect);
 
 		// Set the focus area and metering area.
@@ -817,15 +830,20 @@ public class FocusVFPlugin extends PluginViewfinder
 			return;
 		}
 
+		if (!exposureControlEnaled)
+		{
+			return;
+		}
+		
 		int xRaw = (int) e.getRawX();
 		int yRaw = (int) e.getRawY();
 
 		if (e.getPointerCount() > 1)
 		{
 			final int location[] = { 0, 0 };
-			focusLayout.getLocationOnScreen(location);
-			xRaw = (int) e.getX(1) + location[0];
-			yRaw = (int) e.getY(1) + location[1];
+			mMeteringIndicatorRotateLayout.getLocationOnScreen(location);
+			xRaw = (int) e.getX(0) + location[0];
+			yRaw = (int) e.getY(0) + location[1];
 		}
 
 		int meteringWidth = mMeteringIndicatorRotateLayout.getWidth();
@@ -861,10 +879,22 @@ public class FocusVFPlugin extends PluginViewfinder
 
 		mMeteringIndicatorRotateLayout.setLayoutParams(p);
 
-		// Convert the coordinates to driver format.
-		calculateTapAreaByTopLeft(meteringWidth, meteringHeight, 1f, top, left, ApplicationScreen.getPreviewSurfaceView()
-				.getWidth(), ApplicationScreen.getPreviewSurfaceView().getHeight(), mMeteringArea.get(0).rect);
-
+		
+		xRaw = Util.clamp(xRaw - diffWidth, 0, previewWidth);
+		yRaw = Util.clamp(yRaw - diffHeight, 0, previewHeight);
+		
+		if (!CameraController.isNexus5x)
+		{
+			int tmpX = xRaw;
+			xRaw = yRaw;
+			yRaw = previewWidth - tmpX - 1;
+		}
+		
+		CameraController.calculateTapArea(meteringWidth, meteringHeight, 1f, top, left,
+				ApplicationScreen.getPreviewSurfaceView().getWidth(), ApplicationScreen.getPreviewSurfaceView().getHeight(),
+				xRaw, yRaw, mMatrix,
+				mMeteringArea.get(0).rect);
+		
 		if (e.getActionMasked() == MotionEvent.ACTION_POINTER_UP || e.getActionMasked() == MotionEvent.ACTION_UP)
 		{
 			setMeteringParameters();
@@ -929,13 +959,35 @@ public class FocusVFPlugin extends PluginViewfinder
 		mrules[RelativeLayout.CENTER_IN_PARENT] = 0;
 		mMeteringIndicatorRotateLayout.setLayoutParams(mp);
 		
-		calculateTapAreaByTopLeft(focusWidth, focusHeight, 1f, top, left,
+		xRaw = Util.clamp(xRaw - diffWidth, 0, previewWidth);
+		yRaw = Util.clamp(yRaw - diffHeight, 0, previewHeight);
+		
+		//TODO: Logic of coordinate's swapping must be based on sensor orientation not on device model!
+		if (!CameraController.isNexus5x)
+		{
+			int tmpX = xRaw;
+			xRaw = yRaw;
+			yRaw = previewWidth - tmpX - 1;
+		}
+		else
+		{
+			int tmpX = xRaw;
+			xRaw = previewHeight - yRaw - 1;
+			yRaw = tmpX;
+		}
+		
+		CameraController.calculateTapArea(focusWidth, focusHeight, 1f, top, left,
 				ApplicationScreen.getPreviewSurfaceView().getWidth(), ApplicationScreen.getPreviewSurfaceView().getHeight(),
+				xRaw, yRaw, mMatrix,
 				mFocusArea.get(0).rect);
-
-		if (ApplicationScreen.getMeteringMode() != -1 && (ApplicationScreen.getMeteringMode() == CameraParameters.meteringModeSpot || CameraController.getFocusMode() == CameraParameters.MF_MODE))
-			calculateTapAreaByTopLeft(focusWidth, focusHeight, 1f, top, left, ApplicationScreen.getPreviewSurfaceView()
-					.getWidth(), ApplicationScreen.getPreviewSurfaceView().getHeight(), mMeteringArea.get(0).rect);
+		
+			
+		if (exposureControlEnaled && ApplicationScreen.getMeteringMode() != -1 && (ApplicationScreen.getMeteringMode() == CameraParameters.meteringModeSpot || CameraController.getFocusMode() == CameraParameters.MF_MODE))
+			CameraController.calculateTapArea(focusWidth, focusHeight, 1f, top, left,
+					ApplicationScreen.getPreviewSurfaceView()
+					.getWidth(), ApplicationScreen.getPreviewSurfaceView().getHeight(),
+					xRaw, yRaw, mMatrix,
+					mMeteringArea.get(0).rect);
 		else
 			mMeteringArea = null;
 
@@ -990,6 +1042,8 @@ public class FocusVFPlugin extends PluginViewfinder
 		mFocusIndicatorRotateLayout.requestLayout();
 	}
 
+	
+	//Probably is used only for remote Sony camera
 	public void onTouchAreas(MotionEvent e)
 	{
 		// Initialize variables.
@@ -1104,11 +1158,6 @@ public class FocusVFPlugin extends PluginViewfinder
 		onPreviewStopped();
 	}
 
-	private void manualFocusStart()
-	{
-		updateFocusUI();
-	}
-
 	private void autoFocus()
 	{
 		if (CameraController.autoFocus())
@@ -1121,7 +1170,6 @@ public class FocusVFPlugin extends PluginViewfinder
 
 	private void cancelAutoFocus()
 	{
-		Log.e(TAG, "cancelAutofocus");
 		// Note: CameraController.getFocusMode(); will return
 		// 'FOCUS_MODE_AUTO' if actual
 		// mode is in fact FOCUS_MODE_CONTINUOUS_PICTURE or
@@ -1129,7 +1177,8 @@ public class FocusVFPlugin extends PluginViewfinder
 		int fm = CameraController.getFocusMode();
 		if (fm != CameraParameters.AF_MODE_UNSUPPORTED)
 		{
-			if (fm != preferenceFocusMode && preferenceFocusMode != CameraParameters.MF_MODE)
+			if (fm != preferenceFocusMode && preferenceFocusMode != CameraParameters.MF_MODE
+					&& preferenceFocusMode != CameraParameters.AF_MODE_LOCK)
 			{
 				CameraController.cancelAutoFocus();
 				CameraController.setCameraFocusMode(preferenceFocusMode);
@@ -1252,7 +1301,7 @@ public class FocusVFPlugin extends PluginViewfinder
 			}
 		}
 		
-		if (ApplicationScreen.getMeteringMode() == CameraParameters.meteringModeManual || !mMeteringAreaSupported || CameraController.isGalaxyNote3) {
+		if (!exposureControlEnaled || ApplicationScreen.getMeteringMode() == CameraParameters.meteringModeManual || !mMeteringAreaSupported || CameraController.isGalaxyNote3) {
 			mMeteringIndicatorRotateLayout.setVisibility(View.GONE);	
 		}
 		

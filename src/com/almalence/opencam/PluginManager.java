@@ -1312,12 +1312,26 @@ public class PluginManager extends PluginManagerBase
 			return false;
 	}
 
+	public boolean needPreviewFrame()
+	{
+		boolean needPreviewFrame = false;
+		for (int i = 0; i < activeVF.size(); i++)
+			needPreviewFrame |= pluginList.get(activeVF.get(i)).needPreviewFrame();
+		if (null != pluginList.get(activeCapture))
+			needPreviewFrame |= pluginList.get(activeCapture).needPreviewFrame();
+		if (null != pluginList.get(activeProcessing))
+			needPreviewFrame |= pluginList.get(activeProcessing).needPreviewFrame();
+		if (null != pluginList.get(activeExport))
+			needPreviewFrame |= pluginList.get(activeExport).needPreviewFrame();
+		
+		return needPreviewFrame;
+	}
+	
 	public boolean isCamera2InterfaceAllowed()
 	{
 		String modeID = getActiveModeID();
 
-		if (modeID.equals("video")
-				|| (CameraController.isNexus6 && (modeID.equals("preshot") || modeID.equals("panorama_augmented")))
+		if ((CameraController.isNexus6 && (modeID.equals("preshot") || modeID.equals("panorama_augmented")))
 				|| ((CameraController.isFlex2 /*|| CameraController.isG4*/) && (modeID.equals("hdrmode") || modeID.equals("expobracketing"))))
 			return false;
 		else

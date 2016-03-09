@@ -17,7 +17,7 @@
     <string name="Pref_Common_ShotOnTap_Title">Dodirni za slikanje</string>
     <string name="Pref_Common_ShotOnTap_Summary">Fokusiraj i slikaj na dodir</string>
     <string name="Pref_Common_UseCamera2_Title">Koristite Kamera2 sučelje</string>
-    <string name="Pref_Common_UseCamera2_Summary">Pokusni način. Raditi će na određenim mobilnim uređajima (Google Nexus 5, 7 sa Androidom L)</string>    
+    <string name="Pref_Common_UseCamera2_Summary">Pokusni način. Raditi će na određenim mobilnim uređajima</string>    
     <string name="Pref_Common_MediaRescan_Title">Skenira se mediji na izlazu</string>
     <string name="Pref_Common_MediaRescan_Summary">Pomogni ako se slike ne prikazuju u galeriji.</string>
     <string name="Pref_Common_Gallery_Title">Dopusti odabrati drugu galeriju</string>

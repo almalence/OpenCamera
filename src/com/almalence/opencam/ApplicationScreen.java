@@ -30,7 +30,10 @@ import java.util.List;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
@@ -42,8 +45,6 @@ import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.media.AudioManager;
-import android.media.ImageReader;
-import android.media.MediaRecorder;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
@@ -76,14 +77,12 @@ import android.widget.Toast;
 
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
- import com.almalence.opencam_plus.cameracontroller.Camera2Controller;
  import com.almalence.opencam_plus.ui.GLLayer;
  import com.almalence.opencam_plus.ui.GUI;
  import com.almalence.opencam_plus.R;
  +++ --> */
 //<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.cameracontroller.Camera2Controller;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
 import com.almalence.opencam.R;
@@ -159,8 +158,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	// Common preferences
 	protected boolean					keepScreenOn				= false;
 
-	protected List<Surface>				surfaceList;
-
 	protected static boolean			mAFLocked					= false;
 	// // shows if mode is currently switching
 	protected boolean					switchingMode				= false;
@@ -175,7 +172,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	//
 	// Description<<
 
-	protected static boolean			isCreating					= false;
 	protected static boolean			mApplicationStarted			= false;
 	protected static boolean			mCameraStarted				= false;
 	protected static boolean			isForceClose				= false;
@@ -270,7 +266,16 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	private static Uri					forceFilenameUri;
 	
 	private final static int			CAMERA_PERMISSION_CODE			= 0;
-	private static boolean				cameraPermissionGranted			= true; //TODO: grand permissions on runtime
+	protected static boolean			cameraPermissionGranted			= false;
+	
+	private final static int			LOCATION_PERMISSION_CODE		= 1;
+	protected static boolean			locationPermissionGranted		= false;
+	
+	private final static int			MICROPHONE_PERMISSION_CODE		= 2;
+	protected static boolean			microphonePermissionGranted		= false;
+	
+	private final static int			STORAGE_PERMISSION_CODE			= 3;
+	protected static boolean			storagePermissionGranted		= false;
 
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -360,10 +365,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 				WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
 						| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 		
-		
-//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-//			grandPermissions();
-
 		// set some common view here
 //		setContentView(R.layout.opencamera_main_layout);
 
@@ -499,8 +500,68 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		afterOnCreate();
 	}
 	
+	private void showRationaly(final String permission)
+	{
+		int titleId = 0;
+		int messageId = 0;
+		int permissionCodeTemp = -1;
+		String[] permissionsTemp = null;
+		
+		if (permission.contains(Manifest.permission.CAMERA))
+		{
+			titleId = R.string.camera_permission_rationaly_title;
+			messageId = R.string.camera_permission_rationaly_message;
+			permissionCodeTemp = ApplicationScreen.CAMERA_PERMISSION_CODE;
+			permissionsTemp = new String[]{Manifest.permission.CAMERA};
+		}
+		
+		if (permission.contains(Manifest.permission.ACCESS_COARSE_LOCATION) || permission.contains(Manifest.permission.ACCESS_FINE_LOCATION))
+		{
+			titleId = R.string.location_permission_rationaly_title;
+			messageId = R.string.location_permission_rationaly_message;
+			permissionCodeTemp = ApplicationScreen.LOCATION_PERMISSION_CODE;
+			permissionsTemp = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
+		}
+		
+		if (permission.contains(Manifest.permission.RECORD_AUDIO))
+		{
+			titleId = R.string.microphone_permission_rationaly_title;
+			messageId = R.string.microphone_permission_rationaly_message;
+			permissionCodeTemp = ApplicationScreen.MICROPHONE_PERMISSION_CODE;
+			permissionsTemp = new String[]{Manifest.permission.RECORD_AUDIO};
+		}
+		
+		if (permission.contains(Manifest.permission.WRITE_EXTERNAL_STORAGE) || permission.contains(Manifest.permission.READ_EXTERNAL_STORAGE))
+		{
+			titleId = R.string.storage_permission_rationaly_title;
+			messageId = R.string.storage_permission_rationaly_message;
+			permissionCodeTemp = ApplicationScreen.STORAGE_PERMISSION_CODE;
+			permissionsTemp = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+		}
+		
+		final int permissionCode = permissionCodeTemp;
+		final String[] permissions = permissionsTemp;
+		
+		if (titleId != 0 && messageId != 0 && permissionCode != -1 && permissions != null)
+		{
+			new AlertDialog.Builder(this)
+			.setTitle(titleId)
+			.setMessage(messageId)
+			.setCancelable(true)
+			.setIcon(android.R.drawable.ic_dialog_alert)
+			.setOnDismissListener(new OnDismissListener()
+			{
+				@Override
+				public void onDismiss(DialogInterface dialog)
+				{
+					ActivityCompat.requestPermissions(ApplicationScreen.instance, permissions, permissionCode);
+				}
+			}).show();
+		}
+	}
+	
 	@TargetApi(23)
-	protected void grandPermissions()
+	protected void checkCameraPermission()
 	{
 		if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
 		{
@@ -508,57 +569,154 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		    // Should we show an explanation?
 		    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA))
 		    {
-		
 		        // Show an explanation to the user *asynchronously* -- don't block
 		        // this thread waiting for the user's response! After the user
 		        // sees the explanation, try again to request the permission.
-		
+		    	showRationaly(Manifest.permission.CAMERA);
 		    }
 		    else 
 		    {
 		
 		        // No explanation needed, we can request the permission.
-		
 		        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, ApplicationScreen.CAMERA_PERMISSION_CODE);
-		
-		        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-		        // app-defined int constant. The callback method gets the
-		        // result of the request.
 		    }
 		}
 		else
 			cameraPermissionGranted = true;
 	}
 	
+	@TargetApi(23)
+	public void checkLocationPermission()
+	{
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+		{
+			locationPermissionGranted = false;
+		    // Should we show an explanation?
+		    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION) || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION))
+		    {
+		        // Show an explanation to the user *asynchronously* -- don't block
+		        // this thread waiting for the user's response! After the user
+		        // sees the explanation, try again to request the permission.
+		    	showRationaly(Manifest.permission.ACCESS_FINE_LOCATION);
+		    }
+		    else 
+		    {
+		
+		        // No explanation needed, we can request the permission.
+		        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, ApplicationScreen.LOCATION_PERMISSION_CODE);
+		    }
+		}
+		else
+			locationPermissionGranted = true;
+	}
+	
+	@TargetApi(23)
+	public void checkMicrophonePermission()
+	{
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)
+		{
+			microphonePermissionGranted = false;
+		    // Should we show an explanation?
+		    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO))
+		    {
+		        // Show an explanation to the user *asynchronously* -- don't block
+		        // this thread waiting for the user's response! After the user
+		        // sees the explanation, try again to request the permission.
+		    	showRationaly(Manifest.permission.RECORD_AUDIO);
+		    }
+		    else 
+		    {
+		        // No explanation needed, we can request the permission.
+		        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, ApplicationScreen.MICROPHONE_PERMISSION_CODE);
+		    }
+		}
+		else
+			microphonePermissionGranted = true;
+	}
+	
+	@TargetApi(23)
+	public void checkStoragePermission()
+	{
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+		{
+			storagePermissionGranted = false;
+		    // Should we show an explanation?
+		    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE))
+		    {
+		        // Show an explanation to the user *asynchronously* -- don't block
+		        // this thread waiting for the user's response! After the user
+		        // sees the explanation, try again to request the permission.
+		    	showRationaly(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+		    }
+		    else 
+		    {
+		        // No explanation needed, we can request the permission.
+		        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, ApplicationScreen.STORAGE_PERMISSION_CODE);
+		    }
+		}
+		else
+			storagePermissionGranted = true;
+	}
+	
 	@Override
 	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
 	{
+		boolean permissionResult = false;
+	
+		// If request is cancelled, the result arrays are empty.
+		if (grantResults.length > 0)
+    	{
+    		for (int result : grantResults)
+    		{
+    			// If any of requested permission is granted, we consider that as success.
+    			if (result == PackageManager.PERMISSION_GRANTED)
+    			{
+    				permissionResult = true;
+    			}
+    		}
+    	}
+		
 	    switch (requestCode)
 	    {
 	        case ApplicationScreen.CAMERA_PERMISSION_CODE:
 	        {
-	            // If request is cancelled, the result arrays are empty.
-	            if (grantResults.length > 0
-	                && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-	            {
-
-	            	cameraPermissionGranted = true;
-	                // permission was granted, yay! Do the
-	                // contacts-related task you need to do.
-	            	if(CameraController.openCameraWaiting)
-	            		Camera2Controller.openCameraCamera2();
-
-	            }
-	            else {
-
-	                // permission denied, boo! Disable the
-	                // functionality that depends on this permission.
-	            }
-	            return;
+            	cameraPermissionGranted = permissionResult;
+            	return;
 	        }
-
-	        // other 'case' lines to check for other
-	        // permissions this app might request
+	        case ApplicationScreen.LOCATION_PERMISSION_CODE:
+	        {
+				locationPermissionGranted = permissionResult;
+	        	return;
+	        }
+	        case ApplicationScreen.MICROPHONE_PERMISSION_CODE:
+	        {
+    			microphonePermissionGranted = permissionResult;
+    			//restart camera if granted. on Nexus 5 camera hangs without restart.
+    			if (microphonePermissionGranted)
+    				relaunchCamera();
+    			
+	        	return;
+	        }
+	        case ApplicationScreen.STORAGE_PERMISSION_CODE:
+	        {
+	        	if (grantResults.length > 0)
+	        	{
+	        		permissionResult = true;
+	        		for (int result : grantResults)
+	        		{
+	        			// For storage permissions we should check, that all permissions are granted.
+	        			// If one of storage permissions isn't granted, then we don't have enough access to device's memory.
+	        			// It means, that we can't read or write files. So we treat it as we don't have access to storage at all.
+	        			if (result != PackageManager.PERMISSION_GRANTED)
+	        			{
+	        				permissionResult = false;
+	        			}
+	        		}
+	        	}
+	        	
+	        	storagePermissionGranted = permissionResult;
+	        	return;
+	        }
 	    }
 	}
 	
@@ -566,7 +724,22 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	{
 		return cameraPermissionGranted;
 	}
+	
+	public static boolean isLocationPermissionGranted()
+	{
+		return locationPermissionGranted;
+	}
+	
+	public static boolean isMicrophonePermissionGranted()
+	{
+		return microphonePermissionGranted;
+	}
 
+	public static boolean isStoragePermissionGranted()
+	{
+		return storagePermissionGranted;
+	}
+	
 	abstract protected void createPluginManager();
 
 	public static PluginManagerBase getPluginManager()
@@ -601,28 +774,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	{
 		return instance.guiManager;
 	}
-
-	@TargetApi(21)
-	abstract public void createImageReaders(ImageReader.OnImageAvailableListener imageAvailableListener);
-
-	@TargetApi(19)
-	@Override
-	abstract public Surface getPreviewYUVImageSurface();
-
-	@TargetApi(19)
-	@Override
-	abstract public Surface getYUVImageSurface();
-
-	@TargetApi(19)
-	@Override
-	abstract public Surface getJPEGImageSurface();
-
-	@TargetApi(19)
-	@Override
-	abstract public Surface getRAWImageSurface();
-	
-	@Override
-	abstract public MediaRecorder getMediaRecorder();
 
 	public static SurfaceHolder getPreviewSurfaceHolder()
 	{
@@ -681,14 +832,50 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		instance.surfaceLayoutHeight = height;
 	}
 
-	public static void setSurfaceHolderSize(int width, int height)
+	// Return true, if surface is resized or changed.
+	// return false, if changes are not required.
+	public static boolean setSurfaceHolderSize(int width, int height)
 	{
-		if (instance.surfaceHolder != null)
+		if (instance.surfaceWidth != width && instance.surfaceHeight != height)
 		{
-			instance.surfaceWidth = width;
-			instance.surfaceHeight = height;
-			instance.surfaceHolder.setFixedSize(width, height);
+			if (instance.surfaceWidth != 0 && instance.surfaceHeight != 0)
+			{
+				// We can't change size of surfaceHolder. That's why, we replace the preview View with new one.
+				((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.mainLayout2)).removeView(ApplicationScreen.instance.preview);
+				
+				ApplicationScreen.instance.preview = new SurfaceView(ApplicationScreen.instance);
+				ApplicationScreen.instance.surfaceHolder = ApplicationScreen.instance.preview.getHolder();
+				ApplicationScreen.instance.surfaceHolder.addCallback(ApplicationScreen.instance);
+				ApplicationScreen.instance.preview.setVisibility(View.VISIBLE);
+				ApplicationScreen.instance.preview.setOnClickListener(ApplicationScreen.instance);
+				ApplicationScreen.instance.preview.setOnTouchListener(ApplicationScreen.instance);
+				ApplicationScreen.instance.preview.setKeepScreenOn(true);
+				ApplicationScreen.instance.preview.setId(R.id.SurfaceView01);
+				
+				((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.mainLayout2)).addView(ApplicationScreen.instance.preview, 0);
+			}
+			
+			if (ApplicationScreen.instance.surfaceHolder != null)
+			{
+				instance.surfaceWidth = width;
+				instance.surfaceHeight = height;
+				
+				instance.mCameraSurface = null;
+				instance.surfaceHolder.setFixedSize(width, height);
+			}
+			
+			if (instance.glView != null)
+			{
+				if (instance.glView.getSurfaceTexture() != null)
+				{
+					instance.glView.getSurfaceTexture().setDefaultBufferSize(width, height);
+				}
+			}
+			
+			return true;
 		}
+		
+		return false;
 	}
 
 	abstract public int getImageSizeIndex();
@@ -748,12 +935,22 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	public int glGetPreviewTexture()
 	{
-		return glView.getPreviewTexture();
+		if (glView != null)
+		{
+			return glView.getPreviewTexture();
+		}
+		
+		return 0;
 	}
 
 	public SurfaceTexture glGetSurfaceTexture()
 	{
-		return glView.getSurfaceTexture();
+		if (glView != null)
+		{
+			return glView.getSurfaceTexture();
+		}
+		
+		return null;
 	}
 
 	@Override
@@ -795,15 +992,12 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		ApplicationScreen.getPluginManager().onStop();
 		CameraController.onStop();
 
-		if (!CameraController.isRemoteCamera())
-		{
-			if (CameraController.isUseCamera2())
-				stopImageReaders();
-		}
+//		if (!CameraController.isRemoteCamera())
+//		{
+//			if (CameraController.isUseCamera2())
+//				stopImageReaders();
+//		}
 	}
-
-	@TargetApi(21)
-	abstract protected void stopImageReaders();
 
 	abstract protected void stopRemotePreview();
 
@@ -830,6 +1024,15 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	protected void onResume()
 	{
 		super.onResume();
+		
+		checkCameraPermission();
+		if (!cameraPermissionGranted)
+			return;
+		
+		checkStoragePermission();
+		if (!storagePermissionGranted)
+			return;
+		
 		onApplicationResume();
 	}
 
@@ -837,74 +1040,73 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	{
 		isCameraConfiguring = false;
 
-		if (!isCreating)
-			onResumeTimer = new CountDownTimer(50, 50)
+		onResumeTimer = new CountDownTimer(50, 50)
+		{
+			public void onTick(long millisUntilFinished)
 			{
-				public void onTick(long millisUntilFinished)
+				// Not used
+			}
+
+			public void onFinish()
+			{
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen
+						.getMainContext());
+
+				preview.setKeepScreenOn(true);
+
+				captureFormat = CameraController.JPEG;
+
+				String modeId = ApplicationScreen.getPluginManager().getActiveModeID();
+				if (CameraController.isRemoteCamera() && !(modeId.contains("single") || modeId.contains("video")))
 				{
-					// Not used
+					prefs.edit().putInt(ApplicationScreen.sCameraModePref, 0).commit();
+					CameraController.setCameraIndex(0);
+					guiManager.setCameraModeGUI(0);
 				}
 
-				public void onFinish()
-				{
-					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen
-							.getMainContext());
+				CameraController.onResume();
+				ApplicationScreen.getGUIManager().onResume();
+				ApplicationScreen.getPluginManager().onResume();
+				
+				ApplicationScreen.instance.mPausing = false;
 
+				if (!CameraController.isRemoteCamera())
+				{
+					// set preview, on click listener and surface buffers
+					findViewById(R.id.SurfaceView02).setVisibility(View.GONE);
+					preview = (SurfaceView) findViewById(R.id.SurfaceView01);
+					preview.setOnClickListener(ApplicationScreen.this);
+					preview.setOnTouchListener(ApplicationScreen.this);
 					preview.setKeepScreenOn(true);
 
-					captureFormat = CameraController.JPEG;
+					surfaceHolder = preview.getHolder();
+					surfaceHolder.addCallback(ApplicationScreen.this);
 
-					String modeId = ApplicationScreen.getPluginManager().getActiveModeID();
-					if (CameraController.isRemoteCamera() && !(modeId.contains("single") || modeId.contains("video")))
+					// One of device camera is selected.
+					if (CameraController.isUseCamera2())
 					{
-						prefs.edit().putInt(ApplicationScreen.sCameraModePref, 0).commit();
-						CameraController.setCameraIndex(0);
-						guiManager.setCameraModeGUI(0);
-					}
+						ApplicationScreen.instance.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+						CameraController.setupCamera(null, true);
 
-					CameraController.onResume();
-					ApplicationScreen.getGUIManager().onResume();
-					ApplicationScreen.getPluginManager().onResume();
-					
-					ApplicationScreen.instance.mPausing = false;
-
-					if (!CameraController.isRemoteCamera())
+						if (glView != null)
+							glView.onResume();
+					} else if ((surfaceCreated && (!CameraController.isCameraCreated())))
 					{
-						// set preview, on click listener and surface buffers
-						findViewById(R.id.SurfaceView02).setVisibility(View.GONE);
-						preview = (SurfaceView) findViewById(R.id.SurfaceView01);
-						preview.setOnClickListener(ApplicationScreen.this);
-						preview.setOnTouchListener(ApplicationScreen.this);
-						preview.setKeepScreenOn(true);
+						ApplicationScreen.instance.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+						CameraController.setupCamera(surfaceHolder, true);
 
-						surfaceHolder = preview.getHolder();
-						surfaceHolder.addCallback(ApplicationScreen.this);
-
-						// One of device camera is selected.
-						if (CameraController.isUseCamera2())
+						if (glView != null)
 						{
-							ApplicationScreen.instance.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-							CameraController.setupCamera(null, true);
-
-							if (glView != null)
-								glView.onResume();
-						} else if ((surfaceCreated && (!CameraController.isCameraCreated())))
-						{
-							ApplicationScreen.instance.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-							CameraController.setupCamera(surfaceHolder, true);
-
-							if (glView != null)
-							{
-								glView.onResume();
-							}
+							glView.onResume();
 						}
-					} else
-					{
-						sonyCameraSelected();
 					}
-					orientListener.enable();
+				} else
+				{
+					sonyCameraSelected();
 				}
-			}.start();
+				orientListener.enable();
+			}
+		}.start();
 
 		shutterPlayer = new SoundPlayer(this.getBaseContext(), getResources().openRawResourceFd(
 				R.raw.plugin_capture_tick));
@@ -1020,8 +1222,8 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 		if (!CameraController.isRemoteCamera())
 		{
-			if (CameraController.isUseCamera2())
-				stopImageReaders();
+//			if (CameraController.isUseCamera2())
+//				stopImageReaders();
 		} else
 		{
 			stopRemotePreview();
@@ -1059,6 +1261,9 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	@Override
 	public void surfaceChanged(final SurfaceHolder holder, final int format, final int width, final int height)
 	{
+		if (!cameraPermissionGranted || !storagePermissionGranted)
+			return;
+		
 		Log.e("ApplicationScreen", "SURFACE CHANGED");
 		mCameraSurface = holder.getSurface();
 
@@ -1066,7 +1271,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		{
 			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_SURFACE_CONFIGURED, 0);
 			isCameraConfiguring = false;
-		} else if (!isCreating)
+		} else
 		{
 			new CountDownTimer(50, 50)
 			{
@@ -1125,10 +1330,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	boolean	isCameraConfiguring		= false;
 	
-	//Is used to implement google's advice how to prevent surfaceView bug in Android 6
-	//Will be removed when google will fix the bug
-	boolean	isSurfaceConfiguring	= false; 
-
 	@Override
 	public void configureCamera(boolean createGUI)
 	{
@@ -1309,27 +1510,28 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	protected void configureCamera2Camera(int captureFormat)
 	{
 		isCameraConfiguring = true;
-
-		surfaceList = new ArrayList<Surface>();
-
-		setSurfaceHolderSize(surfaceWidth, surfaceHeight);
+		boolean needChange = setSurfaceHolderSize(previewWidth, previewHeight);
+		if (!needChange)
+		{
+			// If surface will not be changed, then configuring is finished. Send message about it.
+			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_SURFACE_CONFIGURED, 0);
+			isCameraConfiguring = false;
+		}
+		
 	}
-
-	@TargetApi(21)
-	abstract public void createCaptureSession();
 
 	protected void prepareMeteringAreas()
 	{
-		Rect centerRect = Util.convertToDriverCoordinates(new Rect(previewWidth / 4, previewHeight / 4, previewWidth
+		Rect centerRect = CameraController.getSensorCoordinates(new Rect(previewWidth / 4, previewHeight / 4, previewWidth
 				- previewWidth / 4, previewHeight - previewHeight / 4));
-		Rect topLeftRect = Util.convertToDriverCoordinates(new Rect(0, 0, previewWidth / 2, previewHeight / 2));
-		Rect topRightRect = Util.convertToDriverCoordinates(new Rect(previewWidth / 2, 0, previewWidth,
+		Rect topLeftRect = CameraController.getSensorCoordinates(new Rect(0, 0, previewWidth / 2, previewHeight / 2));
+		Rect topRightRect = CameraController.getSensorCoordinates(new Rect(previewWidth / 2, 0, previewWidth,
 				previewHeight / 2));
-		Rect bottomRightRect = Util.convertToDriverCoordinates(new Rect(previewWidth / 2, previewHeight / 2,
+		Rect bottomRightRect = CameraController.getSensorCoordinates(new Rect(previewWidth / 2, previewHeight / 2,
 				previewWidth, previewHeight));
-		Rect bottomLeftRect = Util.convertToDriverCoordinates(new Rect(0, previewHeight / 2, previewWidth / 2,
+		Rect bottomLeftRect = CameraController.getSensorCoordinates(new Rect(0, previewHeight / 2, previewWidth / 2,
 				previewHeight));
-		Rect spotRect = Util.convertToDriverCoordinates(new Rect(previewWidth / 2 - 10, previewHeight / 2 - 10,
+		Rect spotRect = CameraController.getSensorCoordinates(new Rect(previewWidth / 2 - 10, previewHeight / 2 - 10,
 				previewWidth / 2 + 10, previewHeight / 2 + 10));
 
 		mMeteringAreaMatrix5.clear();
@@ -1383,6 +1585,10 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	@Override
 	public Surface getCameraSurface()
 	{
+		if (glView != null)
+		{
+			return new Surface(glView.getSurfaceTexture());
+		}
 		return mCameraSurface;
 	}
 
@@ -1593,9 +1799,12 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 					// if (surfaceCreated && (Camera2.getCamera2() != null))
 					if (surfaceCreated)
 					{
-						configureCamera(!CameraController.isUseCamera2() || modeName.contains("video")
+						configureCamera(
+								   !CameraController.isUseCamera2() 
+								//|| modeName.contains("video")
 								|| (CameraController.isNexus6 && modeName.contains("preshot"))
-								|| (CameraController.isFlex2 && (modeName.contains("hdrmode") || modeName.contains("expobracketing"))));
+								|| (CameraController.isFlex2 && (modeName.contains("hdrmode") || modeName.contains("expobracketing")))
+								);
 						mCameraStarted = true;
 					}
 				} else
@@ -1611,7 +1820,9 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 			break;
 		case ApplicationInterface.MSG_SURFACE_CONFIGURED:
 			{
-				createCaptureSession();
+				guiManager.setupViewfinderPreviewSize(new CameraController.Size(previewWidth, previewHeight));
+				CameraController.setCaptureFormat(captureFormat);
+				CameraController.startCameraPreview();
 				ApplicationScreen.getGUIManager().onGUICreate();
 				ApplicationScreen.getPluginManager().onGUICreate();
 				mCameraStarted = true;

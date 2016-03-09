@@ -28,6 +28,24 @@ public class HeapUtil
 	 * [0] = megabytes used [1] = megabytes free
 	 */
 	public static native int[] getMemoryInfo();
+	
+	//Method based on similar method from AugmentedPanorama plugin.
+	public static long getAmountOfMemoryToFitFrames()
+	{
+		// activityManager returning crap (way less than really available)
+		final int[] mi = HeapUtil.getMemoryInfo();
+
+		//Log.e(TAG, "Memory: used: " + mi[0] + "Mb  free: " + mi[1] + "Mb");
+
+		return (long) ((mi[1] - 10.f) * 1000000.f * 0.6f); // use up to 60% and
+															// ensure at least
+															// 64Mb left free
+	}
+
+	public static int getRAWFrameSizeInBytes(int width, int height)
+	{
+		return (2 * width * height);
+	}
 
 	static
 	{

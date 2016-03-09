@@ -238,6 +238,11 @@ public abstract class Plugin
 		return false;
 	}
 
+	public boolean needPreviewFrame()
+	{
+		return false;
+	}
+	
 	/******************************************************************************************************
 	 * VF/Capture Interfaces
 	 ******************************************************************************************************/
@@ -495,16 +500,12 @@ public abstract class Plugin
 	{
 		requestIDArray = new int[nFrames];
 		requestIDArrayLenght = nFrames;
-		
-		Log.e("Plugin", "CREATE REQUEST ID LIST. SIZE = " + nFrames);
-		
 	}
 	
 	public void addRequestID(int nFrame, int requestID)
 	{
 		if(nFrame < requestIDArrayLenght)
 		{
-			Log.e("Plugin", "ADD REQUEST ID LIST. Frame " + nFrame);
 			requestIDArray[nFrame] = requestID;
 		}
 	}

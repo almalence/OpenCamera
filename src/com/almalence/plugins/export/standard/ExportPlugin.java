@@ -22,6 +22,7 @@ import android.content.SharedPreferences;
 import android.location.GpsStatus;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -82,15 +83,24 @@ public class ExportPlugin extends PluginExport
 	}
 
 	@Override
-	public void onResume()
+	public void onStart()
 	{
 		getPrefs();
 
+		if (useGeoTaggingPrefExport)
+		{
+			ApplicationScreen.instance.checkLocationPermission();
+		}		
+	}
+	
+	@Override
+	public void onResume()
+	{
 		isFirstGpsFix = true;
 
 		clearInfoViews();
 
-		if (useGeoTaggingPrefExport)
+		if (useGeoTaggingPrefExport && ApplicationScreen.isLocationPermissionGranted())
 		{
 			View v = LayoutInflater.from(ApplicationScreen.getMainContext()).inflate(R.layout.plugin_export_gps, null);
 			gpsInfoImage = (RotateImageView) v.findViewById(R.id.gpsInfoImage);
@@ -98,7 +108,7 @@ public class ExportPlugin extends PluginExport
 
 			addInfoView(gpsInfoImage);
 
-			MLocation.subsribe(ApplicationScreen.instance);
+			MLocation.subscribe(ApplicationScreen.instance);
 			MLocation.lm.addGpsStatusListener(new GpsStatus.Listener()
 			{
 
