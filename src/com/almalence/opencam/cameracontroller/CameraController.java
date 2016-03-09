@@ -1822,9 +1822,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		// 4K video now only supported in camera1 mode and on main back camera.
 		ActivityManager activityManager = (ActivityManager) mainContext.getSystemService(Context.ACTIVITY_SERVICE);
 		if( (activityManager.getMemoryClass() >= 128 || activityManager.getLargeMemoryClass() >= 512)
-			 && !CameraController.isCamera2 && CameraController.CameraIndex == 0)
+			 && !CameraController.isCamera2 && CameraController.CameraIndex == 0
+			 && ((CameraController.isGalaxyNote4 || CameraController.isGalaxyS5 || CameraController.isGalaxyS6) //Add 4K resolution only for tested devices! For example, Nexus 5 can't record 4K video
+			 && !videoSizes.contains(new CameraController.Size(3840, 2160))))  //If device already supports 4K resolution skip adding
 		{
-			videoSizes.add(new CameraController.Size(4096, 2160));
 			videoSizes.add(new CameraController.Size(3840, 2160));
 		}
 		
@@ -4086,6 +4087,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			return -1;
 		}
+	}
+	
+	public static int getSensorOrientation(boolean cameraMirrored)
+	{
+		return getSensorOrientation(cameraMirrored? 1 : 0);
 	}
 	
 	public static boolean isFlippedSensorDevice()
