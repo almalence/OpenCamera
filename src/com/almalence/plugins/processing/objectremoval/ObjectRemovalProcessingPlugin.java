@@ -62,6 +62,7 @@ import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 import com.almalence.util.Size;
+import com.almalence.plugins.processing.multishot.MultiShotProcessingPlugin;
 import com.almalence.plugins.processing.objectremoval.AlmaCLRShot.ObjBorderInfo;
 import com.almalence.plugins.processing.objectremoval.AlmaCLRShot.ObjectInfo;
 import com.almalence.plugins.processing.objectremoval.AlmaCLRShot.OnProcessingListener;
@@ -70,7 +71,7 @@ import com.almalence.plugins.processing.objectremoval.AlmaCLRShot.OnProcessingLi
  * Implements night processing
  ***/
 
-public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickListener
+public class ObjectRemovalProcessingPlugin extends MultiShotProcessingPlugin
 {
 
 	private View			postProcessingView;
@@ -85,8 +86,6 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 	private boolean			released		= false;
 	private AlmaCLRShot		mAlmaCLRShot;
 
-	private static int		imgWidthOR;
-	private static int		imgHeightOR;
 	private int				mDisplayOrientation;
 	private boolean			mCameraMirrored;
 
@@ -127,16 +126,6 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		int iSaveImageWidth = imageSize.getWidth();
 		int iSaveImageHeight = imageSize.getHeight();
-
-		if (mDisplayOrientation == 0 || mDisplayOrientation == 180)
-		{
-			imgWidthOR = imageSize.getHeight();
-			imgHeightOR = imageSize.getWidth();
-		} else
-		{
-			imgWidthOR = imageSize.getWidth();
-			imgHeightOR = imageSize.getHeight();
-		}
 
 		mAlmaCLRShot = AlmaCLRShot.getInstance();
 
@@ -222,7 +211,8 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 
 	public static ArrayList<Integer>	mYUVBufferList;
 
-	public static void setYUVBufferList(ArrayList<Integer> YUVBufferList)
+	@Override
+	public void setYUVBufferList(ArrayList<Integer> YUVBufferList)
 	{
 		ObjectRemovalProcessingPlugin.mYUVBufferList = YUVBufferList;
 	}
