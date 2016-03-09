@@ -251,14 +251,11 @@ public class ObjectRemovalProcessingPlugin extends MultiShotProcessingPlugin
 		if (PreviewBmp != null)
 		{
 			Matrix matrix = new Matrix();
-			//Workaround for Nexus5x, image is flipped because of sensor orientation
-			matrix.postRotate(CameraController.isNexus5x? (mCameraMirrored ? 90 : -90) : 90);
+			boolean mIsLandscape = mDisplayOrientation == 0 || mDisplayOrientation == 180;
+			matrix.postRotate(mCameraMirrored ? (mIsLandscape ? 90 : 270) : (CameraController.isNexus5x? 270 : 90));
 			Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
 					matrix, true);
 			mImgView.setImageBitmap(rotated);
-			mImgView.setRotation(CameraController.isFrontCamera() ? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 0
-					: 180)
-					: 0);
 		}
 
 		mHandler.sendEmptyMessage(MSG_END_OF_LOADING);
@@ -440,14 +437,11 @@ public class ObjectRemovalProcessingPlugin extends MultiShotProcessingPlugin
 			if (PreviewBmp != null)
 			{
 				Matrix matrix = new Matrix();
-				//Workaround for Nexus5x, image is flipped because of sensor orientation
-				matrix.postRotate(CameraController.isNexus5x? (mCameraMirrored ? 90 : -90) : 90);
+				boolean mIsLandscape = mDisplayOrientation == 0 || mDisplayOrientation == 180;
+				matrix.postRotate(mCameraMirrored ? (mIsLandscape ? 90 : 270) : (CameraController.isNexus5x? 270 : 90));
 				Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
 						matrix, true);
 				mImgView.setImageBitmap(rotated);
-				mImgView.setRotation(CameraController.isFrontCamera() ? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 0
-						: 180)
-						: 0);
 			}
 			break;
 		default:

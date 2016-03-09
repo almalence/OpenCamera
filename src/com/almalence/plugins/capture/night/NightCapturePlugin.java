@@ -803,32 +803,44 @@ public class NightCapturePlugin extends PluginCapture
 					int imageHeight = ApplicationScreen.getPreviewHeight();
 					
 					ImageConversion.sumByteArraysNV21(data1, data2, dataS, imageWidth, imageHeight);
-					if (CameraController.isFrontCamera())
+					
+					boolean cameraMirrored = CameraController.isFrontCamera();
+					int sensorOrientation = CameraController.getSensorOrientation(cameraMirrored);
+					int flipLR = 0;
+					int flipUD = 0;
+					
+					//Values of flipLR and flipUD was get from tests of devices with different sensor orientation
+					//Right now it doesn't based on some sort of calculation.
+					switch(sensorOrientation)
+					{
+						case 90:
+						{
+							if(cameraMirrored)
+								flipUD = 1;
+						}
+							break;
+						case 270:
+						{
+							if(cameraMirrored)
+								flipLR = 1;
+							else
+							{
+								flipLR = 1;
+								flipUD = 1;
+							}
+						}
+							break;
+					}
+					
+					if(flipLR == 1 || flipUD == 1) //If any transform is need
 					{
 						dataRotated = new byte[dataS.length];
-						
-						////////////REMOVE THIS TO NORMAL CODE!!!!! SM 29.12.14
-						if (CameraController.isFlippedSensorDevice())
-							ImageConversion.TransformNV21(dataS, dataRotated, imageWidth, imageHeight, 0, 1, 0);
-						else
-						////////////REMOVE THIS TO NORMAL CODE!!!!! SM 29.12.14
-							ImageConversion.TransformNV21(dataS, dataRotated, imageWidth, imageHeight, 1, 0, 0);
-	
+						ImageConversion.TransformNV21(dataS, dataRotated, imageWidth, imageHeight, flipLR, flipUD, 0);
 						yuvData = dataRotated;
 					}
 					else
-					{
-						//Workaround for Nexus5x, image is flipped because of sensor orientation
-						if(CameraController.isNexus5x)
-						{
-							dataRotated = new byte[dataS.length];
-							ImageConversion.TransformNV21(dataS, dataRotated, imageWidth, imageHeight, 1, 1, 0);
-							yuvData = dataRotated;
-						}
-						else
-							yuvData = dataS;
-					}
-									
+						yuvData = dataS;
+					
 					data1 = data2;
 					data2 = null;
 				}

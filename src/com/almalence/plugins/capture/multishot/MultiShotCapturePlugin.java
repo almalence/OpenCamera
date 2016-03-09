@@ -56,7 +56,7 @@ public class MultiShotCapturePlugin extends PluginCapture
 	// defaul val. value should come from config
 	private int					IMAGES_AMOUNT				= 8;
 	private int[]				pauseBetweenShots		= { 0, 0, 250, 250, 500, 750, 1000, 1250 };
-	private int[]				pauseBetweenShotsCamera2= { 100, 200, 250, 250, 500, 750, 1000, 1250 };
+	private int[]				pauseBetweenShotsCamera2= { 0, 0, 250, 250, 500, 750, 1000, 1250 };//{ 100, 200, 250, 250, 500, 750, 1000, 1250 };
 
 	public MultiShotCapturePlugin()
 	{

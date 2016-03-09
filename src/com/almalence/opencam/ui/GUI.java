@@ -28,10 +28,13 @@ import java.util.List;
 import java.util.Map;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
 /* <!-- +++
@@ -304,18 +307,22 @@ public abstract class GUI
 	public int getDisplayOrientation()
 	{
 		return (mDeviceOrientation + 90) % 360;
-	} // used to operate with image's data
+	} //Real device orientation. Landscape is 0
 	
 	public int getImageDataOrientation()
 	{
-		//Workaround for Nexus5x, image is flipped because of sensor orientation
-		return (mDeviceOrientation + (CameraController.isNexus5x? (CameraController.isFrontCamera()? 90 : 270) : 90)) % 360;
+		int sensorOrientation = CameraController.getSensorOrientation(CameraController.isFrontCamera()? 1 : 0);
+		
+		int imageOrientation = (mDeviceOrientation + (sensorOrientation + (CameraController.isFrontCamera()? 180 : 0))%360) % 360;
+		return imageOrientation;
 	} // used to operate with image's data
+	//Universal logic to calculate image data orientation based on camera sensor orientation, device orientation and front\back camera mode
 
 	public int getLayoutOrientation()
 	{
 		return (mDeviceOrientation) % 360;
 	} // used to operate with ui controls
+	//Portrait mode is 0 because we locked app's orientation to portrait mode
 
 	public int getDisplayRotation()
 	{

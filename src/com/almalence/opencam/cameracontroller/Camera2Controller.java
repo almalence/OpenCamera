@@ -58,6 +58,7 @@ import android.media.ImageReader;
 import android.media.MediaRecorder;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Range;
@@ -122,6 +123,8 @@ public class Camera2Controller
 	private static boolean				isManualExposureTime		= false; //Flag to know that image captured with manual exposure time value
 
 	protected static boolean			resultInHeap				= false; //Capture plugin may request still image to be stored in heap or in byte array
+	
+	protected static boolean 			isRAWCapture 				= false; //Based on requested format
 
 	private static int					MAX_SUPPORTED_PREVIEW_SIZE	= 1920 * 1088;
 
@@ -149,6 +152,8 @@ public class Camera2Controller
 
 	private static boolean 				needPreviewFrame			= false; //Indicate that camera2controller has to return to PluginManager byte array of received frame or not
 	private static boolean 				previewRunning				= false;
+	
+	private static int 					NEXT_IMAGE_MSG				= 0; //Message code to take next image in case of multishot capturing (capturing with pauses)
 
 	public static Camera2Controller getInstance()
 	{
@@ -2408,6 +2413,27 @@ public class Camera2Controller
 	}
 
 
+	// Handles number of shots in multishot captures
+    private static Handler mHandler = new Handler()
+    {
+
+        @Override
+        public void handleMessage(Message msg)
+        {
+        	if (msg.what == Camera2Controller.NEXT_IMAGE_MSG)
+    		{
+				currentFrameIndex++;
+				if (currentFrameIndex < totalFrames)
+					captureNextImageWithParams(
+							CameraController.frameFormat, currentFrameIndex,
+							pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
+							evCompensation == null ? 0 : evCompensation[currentFrameIndex],
+							sensorGain == null ? currentSensitivity : sensorGain[currentFrameIndex],
+							exposureTime == null ? 0 : exposureTime[currentFrameIndex], manualPowerGamma);
+    		}
+        }
+    };
+    
 	//Exact here we request capture session to capture frame
 	public static int captureImageWithParamsCamera2Simple(final int nFrames, final int format, final int[] pause,
 														  final int[] evRequested, final int[] gain, final long[] exposure,
@@ -2416,7 +2442,7 @@ public class Camera2Controller
 		
 		int requestID = -1;
 
-		final boolean isRAWCapture = (format == CameraController.RAW);
+		isRAWCapture = (format == CameraController.RAW);
 
 		// ToDo: burst capture is implemented now in Camera2 API
 		/*
@@ -2442,8 +2468,7 @@ public class Camera2Controller
 		
 		manualPowerGamma = setPowerGamma;
 		
-		int selectedEvCompensation = 0;
-		selectedEvCompensation = appInterface.getEVPref();
+		final int selectedEvCompensation = appInterface.getEVPref();
 		
 		if(hasPause)
 		{
@@ -2453,11 +2478,52 @@ public class Camera2Controller
 			evCompensation = evRequested;
 			sensorGain = gain;
 			exposureTime = exposure;
-			captureNextImageWithParams(format, 0,
-									   pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
-									   evCompensation == null ? selectedEvCompensation : evCompensation[currentFrameIndex],
-									   sensorGain == null ? currentSensitivity : sensorGain[currentFrameIndex],
-									   exposureTime == null ? 0 : exposureTime[currentFrameIndex], manualPowerGamma);
+			
+			try
+			{
+				CreateRequests(format);
+			
+			
+				if (checkHardwareLevel())
+				{
+					//Pre-capture is need to start auto exposure routine before still image capture occurs
+					//Do it only once in case of multishot capture
+					if(Camera2Controller.getInstance().mCaptureSession != null)
+					{
+						precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+								CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
+						requestID = Camera2Controller.getInstance().mCaptureSession.capture(precaptureRequestBuilder.build(),
+								new CameraCaptureSession.CaptureCallback()
+								{
+									@Override
+									public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request,
+											TotalCaptureResult result)
+									{
+										precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+												CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
+										
+										captureNextImageWithParams(format, 0,
+												   pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
+												   evCompensation == null ? selectedEvCompensation : evCompensation[currentFrameIndex],
+												   sensorGain == null ? currentSensitivity : sensorGain[currentFrameIndex],
+												   exposureTime == null ? 0 : exposureTime[currentFrameIndex], manualPowerGamma);
+									}
+								}, null);
+					}
+				} else
+				{
+					captureNextImageWithParams(format, 0,
+							   pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
+							   evCompensation == null ? selectedEvCompensation : evCompensation[currentFrameIndex],
+							   sensorGain == null ? currentSensitivity : sensorGain[currentFrameIndex],
+							   exposureTime == null ? 0 : exposureTime[currentFrameIndex], manualPowerGamma);
+				}
+			} catch (CameraAccessException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		} else
 		{
 			pauseBetweenShots = new int[totalFrames];
@@ -2520,9 +2586,9 @@ public class Camera2Controller
 	{
 		int requestID = -1;
 
-		try
-		{
-			CreateRequests(format);
+//		try
+//		{
+//			CreateRequests(format);
 			
 			if(setPowerGamma)
 			{
@@ -2534,40 +2600,8 @@ public class Camera2Controller
 
 			final boolean isRAWCapture = (format == CameraController.RAW);
 			SetupPerFrameParameters(evRequested, gain, exposure, isRAWCapture);
+			captureNextImageWithParamsSimple(format, frameIndex, pause, evRequested, gain, exposure);
 			
-			if (checkHardwareLevel())
-			{
-				if(Camera2Controller.getInstance().mCaptureSession != null)
-				{
-					precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
-							CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
-					requestID = Camera2Controller.getInstance().mCaptureSession.capture(precaptureRequestBuilder.build(),
-							new CameraCaptureSession.CaptureCallback()
-							{
-								@Override
-								public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request,
-										TotalCaptureResult result)
-								{
-//									Log.e(TAG, "TRIGER CAPTURE COMPLETED");
-									
-									precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
-											CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
-									
-									captureNextImageWithParamsSimple(format, frameIndex, pause, evRequested, gain, exposure);
-								}
-							}, null);
-				}
-			} else
-			{
-				captureNextImageWithParamsSimple(format, frameIndex, pause, evRequested, gain, exposure);
-			}
-		} catch (CameraAccessException e)
-		{
-			Log.e(TAG, "setting up still image capture request failed");
-			e.printStackTrace();
-			throw new RuntimeException();
-		}
-
 		return requestID;
 	}
 
@@ -2596,12 +2630,15 @@ public class Camera2Controller
 							// FixMe: Why aren't requestID assigned if there is
 							// request with ev's being adjusted??
 							int requestID = Camera2Controller.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
-																									captureCallback, null);
+																									stillCaptureCallback, null);
 	
 							pluginManager.addRequestID(frameIndex, requestID);
 							if (isRAWCapture)
-								Camera2Controller.getInstance().mCaptureSession.capture(rawRequestBuilder.build(), captureCallback,
+								Camera2Controller.getInstance().mCaptureSession.capture(rawRequestBuilder.build(), stillCaptureCallback,
 										null);
+							
+							//Initiate capture next image without waiting for current capture completed
+							mHandler.sendEmptyMessage(Camera2Controller.NEXT_IMAGE_MSG);
 						}
 						catch (CameraAccessException e)
 						{
@@ -2623,6 +2660,9 @@ public class Camera2Controller
 				if (isRAWCapture)
 					Camera2Controller.getInstance().mCaptureSession.capture(rawRequestBuilder.build(), stillCaptureCallback,
 							null);
+				
+				//Initiate capture next image without waiting for current capture completed
+				mHandler.sendEmptyMessage(Camera2Controller.NEXT_IMAGE_MSG);
 			} catch (CameraAccessException e)
 			{
 				e.printStackTrace();
@@ -3220,7 +3260,6 @@ public class Camera2Controller
 				CaptureRequest request,
 				TotalCaptureResult result)
 		{
-//			Log.e(TAG, "CAPTURE COMPLETED");
 			RggbChannelVector rggb = result.get(CaptureResult.COLOR_CORRECTION_GAINS);
 			ColorSpaceTransform transformMatrix = result.get(CaptureResult.COLOR_CORRECTION_TRANSFORM);
 //			Log.e(TAG, "RGGB = R: " + rggb.getRed() + " G_even: " + rggb.getGreenEven()+ " G_odd: " + rggb.getGreenOdd() + " B: " + rggb.getBlue());
@@ -3457,15 +3496,6 @@ public class Camera2Controller
 						Camera2Controller.cancelAutoFocusCamera2();
 					}
 				}
-
-				currentFrameIndex++;
-				if (currentFrameIndex < totalFrames)
-					captureNextImageWithParams(
-							CameraController.frameFormat, currentFrameIndex,
-							pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
-							evCompensation == null ? 0 : evCompensation[currentFrameIndex],
-							sensorGain == null ? currentSensitivity : sensorGain[currentFrameIndex],
-							exposureTime == null ? 0 : exposureTime[currentFrameIndex], manualPowerGamma);
 			}
 
 			// Image should be closed after we are done with it

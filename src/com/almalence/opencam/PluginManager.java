@@ -825,7 +825,6 @@ public class PluginManager extends PluginManagerBase
 		{
 			AlarmReceiver.getInstance().takePicture();
 		}
-
 	}
 
 	/******************************************************************************************************

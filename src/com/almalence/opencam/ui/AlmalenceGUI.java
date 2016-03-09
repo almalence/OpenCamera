@@ -1272,6 +1272,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	
 	private void initOrientationListener()
 	{
+		final Display display = ((WindowManager) ApplicationScreen.instance
+				.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+		final int orientationProc = (display.getWidth() <= display.getHeight()) ? Configuration.ORIENTATION_PORTRAIT
+				: Configuration.ORIENTATION_LANDSCAPE;
+			final int rotation = display.getRotation();
+			
 		Util.setOrientationIntervalInitial();
 		// set orientation listener to rotate controls
 		this.orientListener = new OrientationEventListener(ApplicationScreen.getMainContext())
@@ -1286,12 +1292,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				if (Util.checkOrientationInterval(orientation))
 					return;
 				
-				final Display display = ((WindowManager) ApplicationScreen.instance
-						.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-				final int orientationProc = (display.getWidth() <= display.getHeight()) ? Configuration.ORIENTATION_PORTRAIT
-						: Configuration.ORIENTATION_LANDSCAPE;
- 				final int rotation = display.getRotation();
-
 				boolean remapOrientation = Util.shouldRemapOrientation(orientationProc, rotation);
 
 				if (remapOrientation)
