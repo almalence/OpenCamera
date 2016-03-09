@@ -15,7 +15,7 @@
     <string name="Pref_Common_ShotOnTap_Title">タッチして撮影</string>
     <string name="Pref_Common_ShotOnTap_Summary">タップしてフォーカス、撮影</string>
     <string name="Pref_Common_UseCamera2_Title">カメラ2のインターフェースを使用</string>
-    <string name="Pref_Common_UseCamera2_Summary">実験的モード。限定された種類のデバイスでしか作動しません。(Android Lを搭載したGoogle Nexus 5・7)</string>    
+    <string name="Pref_Common_UseCamera2_Summary">実験的モード。限定された種類のデバイスでしか作動しません。</string>    
     <string name="Pref_Common_MediaRescan_Title">終了時にメディアを再スキャン</string>
     <string name="Pref_Common_MediaRescan_Summary">ギャラリーに画像が表示されない場合に役立ちます。</string>
     <string name="Pref_Common_Gallery_Title">外部ギャラリーの選択を許可</string>

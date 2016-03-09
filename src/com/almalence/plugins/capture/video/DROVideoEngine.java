@@ -22,10 +22,12 @@ import android.widget.Toast;
 
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.ui.EglEncoder;
  +++ --> */
 //<!-- -+-
 import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.EglEncoder;
 
 //-+- -->
@@ -155,7 +157,8 @@ public class DROVideoEngine
 							try
 							{
 								DROVideoEngine.this.encoder = new EglEncoder(path, DROVideoEngine.this.previewWidth,
-										DROVideoEngine.this.previewHeight, 24, 20000000, ApplicationScreen
+										DROVideoEngine.this.previewHeight, 24, 20000000, CameraController.isNexus5x ? (ApplicationScreen
+												.getGUIManager().getImageDataOrientation() + 180) % 360 : ApplicationScreen
 												.getGUIManager().getImageDataOrientation(), EGL14
 												.eglGetCurrentContext());
 							} catch (RuntimeException e)

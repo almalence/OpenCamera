@@ -134,7 +134,9 @@ public class VerticalSeekBar extends SeekBar
 		{
 			// Only enact listener if the progress has actually changed
 			lastProgress = progress;
-			onChangeListener.onProgressChanged(this, progress, true);
+			
+			// Just update UI. This change caused programmaticaly, not by user.
+			onChangeListener.onProgressChanged(this, progress, false);
 		}
 	}
 

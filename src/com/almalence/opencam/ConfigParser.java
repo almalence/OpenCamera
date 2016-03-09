@@ -175,9 +175,9 @@ public class ConfigParser
 		String modeID = parser.getAttributeValue(null, "id");
 		
 		//set super mode by default on these devices
-		if (CameraController.isNexus5 || 
-		    CameraController.isNexus6 ||
-		    CameraController.isFlex2)
+		if (CameraController.isNexus5or6 ||
+		    CameraController.isFlex2 ||
+		    CameraController.isOnePlusTwo)
 		{
 			Iterator<Mode> it = modes.iterator();
 			while(it.hasNext())

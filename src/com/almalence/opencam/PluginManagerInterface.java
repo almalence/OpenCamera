@@ -59,6 +59,8 @@ public interface PluginManagerInterface
 	
 	public boolean isPreviewDependentMode();
 	
+	public boolean needPreviewFrame();
+	
 	//Check if current device is allowed to use camera2 interface
 	//At that time we limit numbers of devices which may use camera2 interface
 	public boolean isCamera2InterfaceAllowed();

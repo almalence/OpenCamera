@@ -53,6 +53,7 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 
 /**
@@ -143,6 +144,7 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 			GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, 0);
 
 			this.surfaceTexture = new SurfaceTexture(this.texture_preview);
+			this.surfaceTexture.setDefaultBufferSize(ApplicationScreen.getPreviewWidth(), ApplicationScreen.getPreviewHeight());
 			this.surfaceTexture.setOnFrameAvailableListener(new OnFrameAvailableListener()
 			{
 				@Override
@@ -152,29 +154,43 @@ public class GLLayer extends GLSurfaceView implements SurfaceHolder.Callback, Re
 				}
 			});
 
-			final Camera camera = CameraController.getCamera();
-			if (camera == null)
+			if (CameraController.isUseCamera2())
 			{
-				return;
+				ApplicationScreen.instance.runOnUiThread(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						CameraController.stopCameraPreview();
+						CameraController.startCameraPreview();
+					}
+				});
+			} else
+			{
+				final Camera camera = CameraController.getCamera();
+				if (camera == null)
+				{
+					return;
+				}
+				
+				try
+				{
+					camera.setDisplayOrientation(90);
+				} catch (RuntimeException e)
+				{
+					e.printStackTrace();
+				}
+				
+				try
+				{
+					camera.setPreviewTexture(this.surfaceTexture);
+				} catch (final IOException e)
+				{
+					e.printStackTrace();
+				}
+				
+				camera.startPreview();
 			}
-
-			try
-			{
-				camera.setDisplayOrientation(90);
-			} catch (RuntimeException e)
-			{
-				e.printStackTrace();
-			}
-
-			try
-			{
-				camera.setPreviewTexture(this.surfaceTexture);
-			} catch (final IOException e)
-			{
-				e.printStackTrace();
-			}
-
-			camera.startPreview();
 		}
 	}
 
