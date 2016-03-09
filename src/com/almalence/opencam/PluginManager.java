@@ -67,7 +67,7 @@ import com.almalence.plugins.capture.video.VideoCapturePlugin;
 import com.almalence.plugins.export.standard.ExportPlugin;
 import com.almalence.plugins.processing.bestshot.BestshotProcessingPlugin;
 import com.almalence.plugins.processing.hdr.HDRProcessingPlugin;
-import com.almalence.plugins.processing.multishot.MultiShotProcessingPlugin;
+import com.almalence.plugins.processing.multishot.MultiShotProcessingRouter;
 import com.almalence.plugins.processing.night.NightProcessingPlugin;
 import com.almalence.plugins.processing.panorama.PanoramaProcessingPlugin;
 import com.almalence.plugins.processing.preshot.PreshotProcessingPlugin;
@@ -232,7 +232,7 @@ public class PluginManager extends PluginManagerBase
 		pluginList.put(hdrProcessingPlugin.getID(), hdrProcessingPlugin);
 		listProcessing.add(hdrProcessingPlugin);
 
-		MultiShotProcessingPlugin multiShotProcessingPlugin = new MultiShotProcessingPlugin();
+		MultiShotProcessingRouter multiShotProcessingPlugin = new MultiShotProcessingRouter();
 		pluginList.put(multiShotProcessingPlugin.getID(), multiShotProcessingPlugin);
 		listProcessing.add(multiShotProcessingPlugin);
 

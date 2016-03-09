@@ -70,12 +70,13 @@ import com.almalence.opencam.cameracontroller.CameraController;
 
 import com.almalence.util.ImageConversion;
 import com.almalence.util.Size;
+import com.almalence.plugins.processing.multishot.MultiShotProcessingPlugin;
 
 /***
  * Implements group shot processing
  ***/
 @SuppressWarnings("deprecation")
-public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListener
+public class GroupShotProcessingPlugin extends MultiShotProcessingPlugin
 {
 	private View						postProcessingView;
 
@@ -141,7 +142,8 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 	 */
 	private static ArrayList<Integer>	mYUVBufferList;
 
-	public static void setmYUVBufferList(ArrayList<Integer> mYUVBufferList)
+	@Override
+	public void setYUVBufferList(ArrayList<Integer> mYUVBufferList)
 	{
 		GroupShotProcessingPlugin.mYUVBufferList = mYUVBufferList;
 	}

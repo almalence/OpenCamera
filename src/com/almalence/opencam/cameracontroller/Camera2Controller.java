@@ -484,7 +484,6 @@ public class Camera2Controller
 			
 		} catch (CameraAccessException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return isSupported;
 		}
@@ -1347,7 +1346,6 @@ public class Camera2Controller
 				Camera2Controller.getInstance().configurePreviewRequest(true);
 			} catch (CameraAccessException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -1366,7 +1364,6 @@ public class Camera2Controller
 				Camera2Controller.getInstance().configurePreviewRequest(true);
 			} catch (CameraAccessException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -2301,7 +2298,8 @@ public class Camera2Controller
 //		inCapture = true; Debug variable. Used in logic to capture RAW in Super mode on Galaxy S6
 		int requestID = -1;
 
-		if (CameraController.getFocusMode() == CameraParameters.AF_MODE_CONTINUOUS_PICTURE && captureAllowed == false)
+		// Force to lock focus if it's moving, or if burst is requested. 
+		if (CameraController.getFocusMode() == CameraParameters.AF_MODE_CONTINUOUS_PICTURE && (captureAllowed == false || nFrames > 1))
 		{
 			Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, af_regions);
 			Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
@@ -2673,9 +2671,6 @@ public class Camera2Controller
 
 		return requestID;
 	}
-	
-	
-
 
 	//Initiate auto focus regardless to focus mode
 	//actually used to 'lock' focus before manual exposure metering is set
@@ -3228,6 +3223,7 @@ public class Camera2Controller
 		
 		private void resetCaptureCallback()
 		{
+			Log.d(TAG, "resetCaptureCallback");
 			if(Camera2Controller.getInstance().mCaptureSession != null)
 			{
 				resetInProgress = true;

@@ -60,13 +60,14 @@ import com.almalence.opencam.ApplicationInterface;
 
 import com.almalence.util.ImageConversion;
 import com.almalence.util.Size;
+import com.almalence.plugins.processing.multishot.MultiShotProcessingPlugin;
 import com.almalence.plugins.processing.sequence.OrderControl.SequenceListener;
 
 /***
  * Implements night processing
  ***/
 
-public class SequenceProcessingPlugin implements Handler.Callback, OnClickListener, SequenceListener
+public class SequenceProcessingPlugin extends MultiShotProcessingPlugin implements SequenceListener
 {
 
 	private View						postProcessingView;
@@ -249,7 +250,7 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 
 	private static ArrayList<Integer>	mYUVBufferList;
 
-	public static void setmYUVBufferList(ArrayList<Integer> mYUVBufferList)
+	public void setYUVBufferList(ArrayList<Integer> mYUVBufferList)
 	{
 		SequenceProcessingPlugin.mYUVBufferList = mYUVBufferList;
 	}
