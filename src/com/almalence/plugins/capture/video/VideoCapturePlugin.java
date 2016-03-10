@@ -1074,18 +1074,10 @@ public class VideoCapturePlugin extends PluginCapture
 			mMediaRecorder.setPreviewDisplay(ApplicationScreen.getPreviewSurfaceHolder().getSurface());
 		}
 
-		if (CameraController.isFlippedSensorDevice() && CameraController.isFrontCamera())
-		{
-			mMediaRecorder.setOrientationHint(ApplicationScreen.getWantLandscapePhoto() ? (ApplicationScreen
-					.getGUIManager().getImageDataOrientation() + 180) % 360 : (ApplicationScreen.getGUIManager()
-					.getImageDataOrientation()) % 360);
-		} else
-		{
-			mMediaRecorder.setOrientationHint(CameraController.isFrontCamera() ? (ApplicationScreen
-					.getWantLandscapePhoto() ? ApplicationScreen.getGUIManager().getImageDataOrientation()
-					: (ApplicationScreen.getGUIManager().getImageDataOrientation() + 180) % 360) : ApplicationScreen
-					.getGUIManager().getImageDataOrientation());
-		}
+		mMediaRecorder.setOrientationHint(CameraController.isFrontCamera() ? (ApplicationScreen
+				.getWantLandscapePhoto() ? ApplicationScreen.getGUIManager().getImageDataOrientation()
+				: (ApplicationScreen.getGUIManager().getImageDataOrientation() + 180) % 360) : ApplicationScreen
+				.getGUIManager().getImageDataOrientation());
 
 		// Step 6: Prepare configured MediaRecorder
 		try

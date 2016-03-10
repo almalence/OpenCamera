@@ -372,8 +372,8 @@ public class SavingService extends NotificationService
 //				sensorOrientation = (360 + sensorOrientation + (cameraMirrored ? -displayOrientation
 //						: displayOrientation)) % 360;
 
-				if (CameraController.isFlippedSensorDevice() && cameraMirrored)
-					orientation = (orientation + 180) % 360;
+//				if (CameraController.isFlippedSensorDevice() && cameraMirrored)
+//					orientation = (orientation + 180) % 360;
 
 				switch (orientation)
 				{
