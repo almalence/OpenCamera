@@ -28,6 +28,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.Camera.Area;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -907,7 +908,7 @@ public class FocusVFPlugin extends PluginViewfinder
 
 	public void onTouchFocusAndMeteringArea(MotionEvent e)
 	{
-		if (!mFocusAreaSupported)
+		if (!mFocusAreaSupported || e.getAction() != MotionEvent.ACTION_UP )
 			return;
 
 		int xRaw = (int) e.getRawX();
@@ -999,12 +1000,36 @@ public class FocusVFPlugin extends PluginViewfinder
 					|| preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
 			{
 				CameraController.setCameraFocusMode(CameraParameters.AF_MODE_AUTO);
+				
+				//If call autoFocus right after set new focus mode
+				//auto focus routine may never been finished
+				//so we have to wait little time to perform autoFocus
+				new CountDownTimer(150,150)
+				{
+
+					@Override
+					public void onFinish()
+					{
+						setFocusParameters();
+						setMeteringParameters();
+						autoFocus();
+					}
+
+					@Override
+					public void onTick(long millisUntilFinished)
+					{
+						// TODO Auto-generated method stub
+						
+					}
+					
+				}.start();
 			}
-
-			setFocusParameters();
-			setMeteringParameters();
-			autoFocus();
-
+			else
+			{
+				setFocusParameters();
+				setMeteringParameters();
+				autoFocus();	
+			}
 		} else if (mMeteringArea != null && ApplicationScreen.getMeteringMode() != CameraParameters.meteringModeManual)
 		{
 			setMeteringParameters();

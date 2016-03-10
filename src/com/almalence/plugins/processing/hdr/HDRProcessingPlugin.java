@@ -233,22 +233,12 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 					if(!CameraController.isExposureCompensationSupported() && tmpImagesAmount > 1)
 						evmark = evmark + String.format("_%d", i+1);
 
-					byte[] buffer = SwapHeap.CopyFromHeap(compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]],
-							compressed_frame_len[ExpoBracketingCapturePlugin.evIdx[i]]);
+					//Code is commented, because method saveInputFile uses only yuvBuffer pointer to save YUV image
+//					byte[] buffer = SwapHeap.CopyFromHeap(compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]],
+//							compressed_frame_len[ExpoBracketingCapturePlugin.evIdx[i]]);
 					int yuvBuffer = compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]];
 			
-					if (CameraController.isFlippedSensorDevice() && CameraController.isFrontCamera())
-					{
-						int imageWidth = ApplicationScreen.getPreviewWidth();
-						int imageHeight = ApplicationScreen.getPreviewHeight();
-						ImageConversion.TransformNV21N(yuvBuffer,
-								yuvBuffer,
-								imageWidth,
-								imageHeight,
-								1, 1, 0);
-					}
-	
-					PluginManager.getInstance().saveInputFile(true, sessionID, i, buffer, yuvBuffer, fileFormat + evmark);
+					PluginManager.getInstance().saveInputFile(true, sessionID, i, null, yuvBuffer, fileFormat + evmark);
 				}
 			} catch (Exception e)
 			{
@@ -278,15 +268,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 
 	private void HDRProcessing()
 	{
-		if (HDRProcessingPlugin.SaveInputPreference == 0)
-		if (CameraController.isFlippedSensorDevice() && CameraController.isFrontCamera())
-		{
-			if (mDisplayOrientationOnStartProcessing==0 || mDisplayOrientationOnStartProcessing==90)
-				mDisplayOrientationOnStartProcessing+=180;
-			else if (mDisplayOrientationOnStartProcessing==180 || mDisplayOrientationOnStartProcessing==270)
-				mDisplayOrientationOnStartProcessing-=180;
-		}
-		
 		yuv = AlmaShotHDR.HDRProcess(mImageWidth, mImageHeight, HDRProcessingPlugin.crop,
 				mDisplayOrientationOnStartProcessing, mCameraMirrored);
 	}
