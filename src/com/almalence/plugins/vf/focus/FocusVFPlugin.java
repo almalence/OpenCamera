@@ -412,7 +412,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		mPreviewHeight = ApplicationScreen.getPreviewSurfaceLayoutHeight();
 
 		Matrix matrix = new Matrix();
-		Util.prepareMatrix(matrix, mirror, (CameraController.isNexus5x && !mirror)? 270 : 90 , mPreviewWidth, mPreviewHeight);
+		Util.prepareMatrix(matrix, mirror, CameraController.getSensorOrientation(mirror) , mPreviewWidth, mPreviewHeight);
 		// In face detection, the matrix converts the driver coordinates to UI
 		// coordinates. In tap focus, the inverted matrix converts the UI
 		// coordinates to driver coordinates.
@@ -786,11 +786,17 @@ public class FocusVFPlugin extends PluginViewfinder
 		xRaw = Util.clamp(xRaw - diffWidth, 0, previewWidth);
 		yRaw = Util.clamp(yRaw - diffHeight, 0, previewHeight);
 		
-		if (!CameraController.isNexus5x)
+		if (CameraController.getSensorOrientation(CameraController.isFrontCamera()) == 90)
 		{
 			int tmpX = xRaw;
 			xRaw = yRaw;
 			yRaw = previewWidth - tmpX - 1;
+		}
+		else //Sensor 270
+		{
+			int tmpX = xRaw;
+			xRaw = previewHeight - yRaw - 1;
+			yRaw = tmpX;
 		}
 		
 		CameraController.calculateTapArea(focusWidth, focusHeight, 1f, top, left,
@@ -884,11 +890,17 @@ public class FocusVFPlugin extends PluginViewfinder
 		xRaw = Util.clamp(xRaw - diffWidth, 0, previewWidth);
 		yRaw = Util.clamp(yRaw - diffHeight, 0, previewHeight);
 		
-		if (!CameraController.isNexus5x)
+		if (CameraController.getSensorOrientation(CameraController.isFrontCamera()) == 90)
 		{
 			int tmpX = xRaw;
 			xRaw = yRaw;
 			yRaw = previewWidth - tmpX - 1;
+		}
+		else //Sensor 270
+		{
+			int tmpX = xRaw;
+			xRaw = previewHeight - yRaw - 1;
+			yRaw = tmpX;
 		}
 		
 		CameraController.calculateTapArea(meteringWidth, meteringHeight, 1f, top, left,
@@ -964,13 +976,13 @@ public class FocusVFPlugin extends PluginViewfinder
 		yRaw = Util.clamp(yRaw - diffHeight, 0, previewHeight);
 		
 		//TODO: Logic of coordinate's swapping must be based on sensor orientation not on device model!
-		if (!CameraController.isNexus5x)
+		if (CameraController.getSensorOrientation(CameraController.isFrontCamera()) == 90)
 		{
 			int tmpX = xRaw;
 			xRaw = yRaw;
 			yRaw = previewWidth - tmpX - 1;
 		}
-		else
+		else //Sensor 270
 		{
 			int tmpX = xRaw;
 			xRaw = previewHeight - yRaw - 1;
