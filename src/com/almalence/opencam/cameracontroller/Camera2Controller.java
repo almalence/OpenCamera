@@ -2377,6 +2377,7 @@ public class Camera2Controller
 
 			//On devices such as Nexus 6P in video mode (when MediaRecorder is created) preview image reader isn't constructed
 			//so precaptureRequest doesn't has any surface for provide image data (in such situation trying to call capture leads to crash)
+			//Also Pre-capture is useful when flash is using. In case when flash is off its calling is redundant
 			if (checkHardwareLevel() && CameraController.mMediaRecorder == null && CameraController.getFlashMode() != CameraParameters.FLASH_MODE_OFF)
 			{
 				if(Camera2Controller.getInstance().mCaptureSession != null)
@@ -2489,6 +2490,8 @@ public class Camera2Controller
 						   sensorGain == null ? currentSensitivity : sensorGain[currentFrameIndex],
 						   exposureTime == null ? 0 : exposureTime[currentFrameIndex], manualPowerGamma);
 				
+				//Pre-capture was commented because it was second time when it called!
+				//First time it's calling in captureImageWithParamsCamera2Allowed method
 //				if (checkHardwareLevel())
 //				{
 //					//Pre-capture is need to start auto exposure routine before still image capture occurs
