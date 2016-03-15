@@ -2377,7 +2377,7 @@ public class Camera2Controller
 
 			//On devices such as Nexus 6P in video mode (when MediaRecorder is created) preview image reader isn't constructed
 			//so precaptureRequest doesn't has any surface for provide image data (in such situation trying to call capture leads to crash)
-			if (checkHardwareLevel() && CameraController.mMediaRecorder == null)
+			if (checkHardwareLevel() && CameraController.mMediaRecorder == null && CameraController.getFlashMode() != CameraParameters.FLASH_MODE_OFF)
 			{
 				if(Camera2Controller.getInstance().mCaptureSession != null)
 				{
@@ -2483,41 +2483,46 @@ public class Camera2Controller
 			{
 				CreateRequests(format);
 			
-			
-				if (checkHardwareLevel())
-				{
-					//Pre-capture is need to start auto exposure routine before still image capture occurs
-					//Do it only once in case of multishot capture
-					if(Camera2Controller.getInstance().mCaptureSession != null)
-					{
-						precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
-								CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
-						requestID = Camera2Controller.getInstance().mCaptureSession.capture(precaptureRequestBuilder.build(),
-								new CameraCaptureSession.CaptureCallback()
-								{
-									@Override
-									public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request,
-											TotalCaptureResult result)
-									{
-										precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
-												CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
-										
-										captureNextImageWithParams(format, 0,
-												   pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
-												   evCompensation == null ? selectedEvCompensation : evCompensation[currentFrameIndex],
-												   sensorGain == null ? currentSensitivity : sensorGain[currentFrameIndex],
-												   exposureTime == null ? 0 : exposureTime[currentFrameIndex], manualPowerGamma);
-									}
-								}, null);
-					}
-				} else
-				{
-					captureNextImageWithParams(format, 0,
-							   pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
-							   evCompensation == null ? selectedEvCompensation : evCompensation[currentFrameIndex],
-							   sensorGain == null ? currentSensitivity : sensorGain[currentFrameIndex],
-							   exposureTime == null ? 0 : exposureTime[currentFrameIndex], manualPowerGamma);
-				}
+				captureNextImageWithParams(format, 0,
+						   pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
+						   evCompensation == null ? selectedEvCompensation : evCompensation[currentFrameIndex],
+						   sensorGain == null ? currentSensitivity : sensorGain[currentFrameIndex],
+						   exposureTime == null ? 0 : exposureTime[currentFrameIndex], manualPowerGamma);
+				
+//				if (checkHardwareLevel())
+//				{
+//					//Pre-capture is need to start auto exposure routine before still image capture occurs
+//					//Do it only once in case of multishot capture
+//					if(Camera2Controller.getInstance().mCaptureSession != null)
+//					{
+//						precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+//								CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
+//						requestID = Camera2Controller.getInstance().mCaptureSession.capture(precaptureRequestBuilder.build(),
+//								new CameraCaptureSession.CaptureCallback()
+//								{
+//									@Override
+//									public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request,
+//											TotalCaptureResult result)
+//									{
+//										precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+//												CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
+//										
+//										captureNextImageWithParams(format, 0,
+//												   pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
+//												   evCompensation == null ? selectedEvCompensation : evCompensation[currentFrameIndex],
+//												   sensorGain == null ? currentSensitivity : sensorGain[currentFrameIndex],
+//												   exposureTime == null ? 0 : exposureTime[currentFrameIndex], manualPowerGamma);
+//									}
+//								}, null);
+//					}
+//				} else
+//				{
+//					captureNextImageWithParams(format, 0,
+//							   pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
+//							   evCompensation == null ? selectedEvCompensation : evCompensation[currentFrameIndex],
+//							   sensorGain == null ? currentSensitivity : sensorGain[currentFrameIndex],
+//							   exposureTime == null ? 0 : exposureTime[currentFrameIndex], manualPowerGamma);
+//				}
 			} catch (CameraAccessException e)
 			{
 				// TODO Auto-generated catch block
