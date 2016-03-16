@@ -36,6 +36,7 @@ import android.widget.RelativeLayout;
 
 import com.almalence.asynctaskmanager.OnTaskCompleteListener;
 import com.almalence.plugins.processing.groupshot.GroupShotProcessingPlugin;
+import com.almalence.plugins.processing.groupshot.GroupShotProcessingPluginRefactored;
 import com.almalence.plugins.processing.objectremoval.ObjectRemovalProcessingPlugin;
 import com.almalence.plugins.processing.sequence.SequenceProcessingPlugin;
 import com.almalence.ui.RotateLayout;
@@ -74,7 +75,7 @@ public class MultiShotProcessingRouter extends PluginProcessing implements OnTas
 
 	private View									mButtonsLayout;
 
-	private static GroupShotProcessingPlugin		groupShotProcessingPlugin		= new GroupShotProcessingPlugin();
+	private static GroupShotProcessingPluginRefactored		groupShotProcessingPlugin		= new GroupShotProcessingPluginRefactored();
 	private static SequenceProcessingPlugin			sequenceProcessingPlugin		= new SequenceProcessingPlugin();
 	private static ObjectRemovalProcessingPlugin	objectRemovalProcessingPlugin	= new ObjectRemovalProcessingPlugin();
 	private static MultiShotProcessingPlugin		selectedProcessingPlugin		= null;

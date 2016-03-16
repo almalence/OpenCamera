@@ -2751,7 +2751,7 @@ public class MainScreen extends ApplicationScreen
 		}
 
 		int launchesLeft = MainScreen.getLeftLaunches(mode.modeID);
-//		launchesLeft = 100; //Using for testing free version
+		launchesLeft = 100; //Using for testing free version
 		int id = MainScreen.getAppResources().getIdentifier(
 				(CameraController.isUseCamera2() ? mode.modeNameHAL : mode.modeName), "string",
 				MainScreen.thiz.getPackageName());

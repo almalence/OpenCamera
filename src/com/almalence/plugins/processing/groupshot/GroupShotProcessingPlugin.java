@@ -133,7 +133,7 @@ public class GroupShotProcessingPlugin extends MultiShotProcessingPlugin
 	private Gallery						mGallery;
 	private TextView					textVeiw;
 
-	private Seamless					mSeamless;
+	private GroupShotCore					mSeamless;
 
 	private ImageAdapter				mImageAdapter;
 
@@ -210,19 +210,19 @@ public class GroupShotProcessingPlugin extends MultiShotProcessingPlugin
 		int iImageWidth = imageSize.getWidth();
 		int iImageHeight = imageSize.getHeight();
 
-		if (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
-		{
-			imgWidthFD = Seamless.getInstance().getWidthForFaceDetection(iImageHeight,
-					iImageWidth);
-			imgHeightFD = Seamless.getInstance().getHeightForFaceDetection(iImageHeight,
-					iImageWidth);
-		} else
-		{
-			imgWidthFD = Seamless.getInstance().getWidthForFaceDetection(iImageWidth,
-					iImageHeight);
-			imgHeightFD = Seamless.getInstance().getHeightForFaceDetection(iImageWidth,
-					iImageHeight);
-		}
+//		if (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
+//		{
+//			imgWidthFD = GroupShotCore.getInstance().getWidthForFaceDetection(iImageHeight,
+//					iImageWidth);
+//			imgHeightFD = GroupShotCore.getInstance().getHeightForFaceDetection(iImageHeight,
+//					iImageWidth);
+//		} else
+//		{
+//			imgWidthFD = GroupShotCore.getInstance().getWidthForFaceDetection(iImageWidth,
+//					iImageHeight);
+//			imgHeightFD = GroupShotCore.getInstance().getHeightForFaceDetection(iImageWidth,
+//					iImageHeight);
+//		}
 
 		try
 		{
@@ -316,7 +316,7 @@ public class GroupShotProcessingPlugin extends MultiShotProcessingPlugin
 
 		for (int index = 0; index < mFrameCount; index++)
 		{
-			int numberOfFacesDetected = AlmaShotSeamless.GetFaces(index, mFaces);
+			int numberOfFacesDetected = AlmaShotGroupShot.GetFaces(index, mFaces);
 
 			int Scale;
 			if (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
@@ -346,7 +346,7 @@ public class GroupShotProcessingPlugin extends MultiShotProcessingPlugin
 
 	private void loadingSeamless()
 	{
-		mSeamless = Seamless.getInstance();
+		mSeamless = GroupShotCore.getInstance();
 		Size preview = new Size(PreviewBmp.getWidth(), PreviewBmp.getHeight());
 		// correctness of w/h here depends on orientation while taking image,
 		// only product of inputSize is used later - this is why code still
@@ -362,12 +362,12 @@ public class GroupShotProcessingPlugin extends MultiShotProcessingPlugin
 			int rotation = mCameraMirrored
 					&& (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270) ? (mDisplayOrientationOnStartProcessing + 180) % 360
 					: mDisplayOrientationOnStartProcessing;
-			mSeamless.addYUVInputFrames(mYUVBufferList, inputSize, fdSize, needRotation, false, rotation);
+//			mSeamless.setYUVInputFrames(mYUVBufferList, inputSize, fdSize, needRotation, false, rotation);
 			getFaceRects();
 
 			sortFaceList();
 
-			mSeamless.initialize(mBaseFrame, mFaceList, preview);
+			//mSeamless.initialize(mBaseFrame, mFaceList, preview);
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -595,10 +595,10 @@ public class GroupShotProcessingPlugin extends MultiShotProcessingPlugin
 
 	private void setupImageSelector()
 	{
-		mImageAdapter = new ImageAdapter(ApplicationScreen.getMainContext(), mYUVBufferList,
-				mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180,
-				mCameraMirrored, true);
-		mGallery = (Gallery) postProcessingView.findViewById(R.id.groupshotGallery);
+//		mImageAdapter = new ImageAdapter(ApplicationScreen.getMainContext(), mYUVBufferList,
+//				mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180,
+//				mCameraMirrored, true);
+//		mGallery = (Gallery) postProcessingView.findViewById(R.id.groupshotGallery);
 		mGallery.setAdapter(mImageAdapter);
 		mGallery.setOnItemClickListener(new AdapterView.OnItemClickListener()
 		{
@@ -757,7 +757,7 @@ public class GroupShotProcessingPlugin extends MultiShotProcessingPlugin
 
 				changingFace = true;
 				mChosenFace[mBaseFrame][i] = newFrameIndex;
-				mSeamless.changeFace(i, mChosenFace[mBaseFrame][i] % nFrames);
+				//mSeamless.changeFace(i, mChosenFace[mBaseFrame][i] % nFrames);
 				changingFace = false;
 				return true;
 			}
