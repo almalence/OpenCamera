@@ -165,6 +165,8 @@ public class MultiShotCapturePlugin extends PluginCapture
 		PluginManager.getInstance().addToSharedMem(frameLengthName + SessionID, String.valueOf(frame_len));
 		PluginManager.getInstance().addToSharedMem("frameorientation" + imagesTaken + SessionID,
 				String.valueOf(ApplicationScreen.getGUIManager().getImageDataOrientation()));
+		PluginManager.getInstance().addToSharedMem("deviceorientation" + imagesTaken + SessionID,
+				String.valueOf(ApplicationScreen.getGUIManager().getLayoutOrientation()));
 		PluginManager.getInstance().addToSharedMem("framemirrored" + imagesTaken + SessionID,
 				String.valueOf(CameraController.isFrontCamera()));
 

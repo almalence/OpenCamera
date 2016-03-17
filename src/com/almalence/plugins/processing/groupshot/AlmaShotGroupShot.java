@@ -22,7 +22,7 @@ import com.almalence.util.Size;
 
 import android.graphics.Rect;
 
-public final class AlmaShotSeamless
+public final class AlmaShotGroupShot
 {
 
 	/**
@@ -38,25 +38,7 @@ public final class AlmaShotSeamless
 	public static synchronized native int Release(int nFrames);
 
 	/**
-	 * Prepare JPEG buffer in native for Seamless engine
-	 * 
-	 * @param frame
-	 *            array of JPEG frame buffers
-	 * @param frame_len
-	 *            array of length of JPEG frame buffers
-	 * @param nFrames
-	 *            number of frames
-	 * @param sx
-	 *            width of input frame
-	 * @param sy
-	 *            height of input frame
-	 * @return status string such as "frames total: "
-	 */
-	public static synchronized native int ConvertAndDetectFacesFromJpegs(int[] frame, int[] frame_len, int nFrames,
-			int sx, int sy, int fd_sx, int fd_sy, boolean needRotation, boolean cameraMirrored, int rotationDegree);
-
-	/**
-	 * Prepare YUV buffer in native for Seamless engine
+	 * Prepare YUV buffer in native for Face detection engine
 	 * 
 	 * @param frame
 	 *            array of YUV frame buffers
@@ -71,11 +53,11 @@ public final class AlmaShotSeamless
 	 * @return status string such as "frames total: "
 	 */
 	public static synchronized native int DetectFacesFromYUVs(int[] frame, int[] frame_len, int nFrames, int sx,
-			int sy, int fd_sx, int fd_sy, boolean needRotation, boolean cameraMirrored, int rotationDegree);
+			int sy, int fd_sx, int fd_sy, boolean mirrored, int rotationDegree);
 
 	public static synchronized native int GetFaces(int index, Face[] faces);
 
-	public static synchronized native int[] NV21toARGB(int inptr, Size src, Rect rect, Size dst);
+	public static synchronized native int[] NV21toARGB(int inptr, int width, int height, Rect rect, int dstWidth, int dstHeight);
 
 	public static synchronized native int getInputFrame(int index);
 
@@ -89,7 +71,7 @@ public final class AlmaShotSeamless
 	 * @param baseFrame
 	 *            to set as background image
 	 * @param numOfImg
-	 *            number of JPEG frames used for Seamless
+	 *            number of frames used for Seamless
 	 * @return 1 if all is ok, otherwise false
 	 */
 	public static synchronized native int Align(int sx, int sy, int baseFrame, int numOfImg);
@@ -97,6 +79,8 @@ public final class AlmaShotSeamless
 	/**
 	 * Get ARGB8888 pixel data for preview
 	 * 
+	 * @param buffer
+	 * 			  array for result.
 	 * @param baseFrame
 	 *            to set as background image
 	 * @param inWidth
@@ -109,9 +93,8 @@ public final class AlmaShotSeamless
 	 *            output frame Height size
 	 * @param layout
 	 *            filled with index of frame.
-	 * @return ARGB888 pixel data
 	 */
-	public static synchronized native int[] Preview(int baseFrame, int inWidth, int inHeight, int outWidth,
+	public static synchronized native void Preview(int[] buffer, int baseFrame, int inWidth, int inHeight, int outWidth,
 			int outHeight, byte[] layout);
 
 	/**
@@ -131,10 +114,6 @@ public final class AlmaShotSeamless
 	 * @return NV21(YVU420 planer)
 	 */
 	public static synchronized native int RealView(int width, int height, int[] crop, byte[] layout);
-
-	/**
-	 * Free seamless processing instance
-	 */
 
 	static
 	{

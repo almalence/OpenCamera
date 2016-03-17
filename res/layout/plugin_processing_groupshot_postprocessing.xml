@@ -35,5 +35,17 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/groupshotProgressBar"
         android:layout_centerHorizontal="true"/>
+    
+    <Button 
+        android:id="@+id/groupshotSaveButton"
+        android:layout_width="@dimen/postprocessing_savebutton_size"
+        android:layout_height="@dimen/postprocessing_savebutton_size"
+        android:background="@drawable/button_save_background"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true" />
 
 </RelativeLayout>
