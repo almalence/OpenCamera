@@ -23,6 +23,7 @@ package com.almalence.opencam_plus;
 package com.almalence.opencam;
 //-+- -->
 
+import com.almalence.opencam.ui.GUI;
 import com.almalence.sony.cameraremote.SimpleStreamSurfaceView;
 
 import android.annotation.TargetApi;
@@ -143,7 +144,9 @@ public interface ApplicationInterface
 	
 	//Specific prefernce to check that onPreviewFrame is working
 	public void setExpoPreviewPref(boolean previewMode);
-	public boolean getExpoPreviewPref();	
+	public boolean getExpoPreviewPref();
+	
+	public int getCameraParameterPref(GUI.CameraParameter iParam);
 	
 	//Set/Get camera parameters preference
 	public void setEVPref(int iEv);

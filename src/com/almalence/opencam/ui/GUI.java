@@ -289,6 +289,8 @@ public abstract class GUI
 	abstract public boolean onKeyDown(boolean isFromMain, int keyCode, KeyEvent event);
 
 	abstract public void disableCameraParameter(CameraParameter iParam, boolean bDisable, boolean bInitMenu, boolean bModeInit);
+	
+	abstract public void filterCameraParameter(CameraParameter iParam, int[] allowedParams);
 
 	abstract public void startProcessingAnimation();
 

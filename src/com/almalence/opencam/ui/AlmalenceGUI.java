@@ -2280,7 +2280,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							// MainScreen.sRearFocusModePref
 							// : MainScreen.sFrontFocusModePref,
 							// MainScreen.sDefaultFocusValue);
-							CameraController.setCameraWhiteBalance(CameraParameters.WB_MODE_OFF);
+							CameraController.setCameraWhiteBalanceMode(CameraParameters.WB_MODE_OFF);
 							CameraController.setCameraColorTemperature(iColorTempValue);
 
 							ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
@@ -2356,7 +2356,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					but.setImageResource(icon_id);
 				}
 
-				CameraController.setCameraWhiteBalance(mWB);
+				CameraController.setCameraWhiteBalanceMode(mWB);
 			} else
 			{
 				mWBSupported = false;
@@ -3368,6 +3368,91 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			}
 		}
 
+	}
+	
+	//Interface which may be used to configure sets of camera parameters
+	//For example: plugin may ask to left in flash modes menu only flash ON and flash OFF
+	//Other supported values of flash mode will be removed from that menu.
+	public void filterCameraParameter(CameraParameter iParam, int[] allowedParams)
+	{
+		switch (iParam)
+		{
+		case CAMERA_PARAMETER_SCENE:
+			fillCameraParameterSetting(iParam, allowedParams, activeScene, sceneModeButtons, activeSceneNames,
+									   (GridView) guiView.findViewById(R.id.scenemodeGrid), ICONS_SCENE, MODE_SCENE);
+			break;
+		case CAMERA_PARAMETER_WB:
+			fillCameraParameterSetting(iParam, allowedParams, activeWB, wbModeButtons, activeWBNames,
+					   (GridView) guiView.findViewById(R.id.wbGrid), ICONS_WB, MODE_WB);
+			break;
+		case CAMERA_PARAMETER_FOCUS:
+			fillCameraParameterSetting(iParam, allowedParams, activeFocus, focusModeButtons, activeFocusNames,
+					   (GridView) guiView.findViewById(R.id.focusmodeGrid), ICONS_FOCUS, MODE_FOCUS);
+			break;
+		case CAMERA_PARAMETER_FLASH:
+			fillCameraParameterSetting(iParam, allowedParams, activeFlash, flashModeButtons, activeFlashNames,
+					   (GridView) guiView.findViewById(R.id.flashmodeGrid), ICONS_FLASH, MODE_FLASH);
+			break;
+		default: //All other parameters is not configurable
+			return;
+		}
+	}
+	
+	private void fillCameraParameterSetting(CameraParameter iParam,
+											int[] allowedParams,
+											List<View> activeParam,
+											Map<Integer, View> paramModeButtons,
+											List<Integer> activeParamNames,
+											GridView paramView,
+											Map<Integer, Integer> ICONS,
+											int MODE_ID)
+	{
+		// Create Scene mode button and adding supported scene modes
+		if (allowedParams != null && allowedParams.length > 0 && activeParam != null)
+		{
+			activeParam.clear();
+			for (int param_name : allowedParams)
+			{
+				if (paramModeButtons.containsKey(param_name))
+				{
+					activeParam.add(paramModeButtons.get(Integer.valueOf(param_name)));
+					activeParamNames.add(Integer.valueOf(param_name));
+				}
+			}
+
+			if (!activeParamNames.isEmpty())
+			{
+				setCameraParameterSupported(MODE_ID, true);
+				ElementAdapter paramAdapter = new ElementAdapter();
+				paramAdapter.Elements = activeParam;
+				paramView.setAdapter(null);
+				paramView.setAdapter(paramAdapter);
+
+				int initValue = ApplicationScreen.instance.getCameraParameterPref(iParam);
+				if (!activeParamNames.contains(initValue))
+					initValue = activeParamNames.get(0);
+
+				setButtonSelected(paramModeButtons, initValue);
+				setCameraParameterValue(MODE_ID, initValue);
+
+				if (ICONS != null && ICONS.containsKey(initValue))
+				{
+					RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_ID);
+					int icon_id = ICONS.get(initValue);
+					but.setImageResource(icon_id);
+				}
+
+				setCameraParameterMode(MODE_ID, getCameraParameterValue(MODE_ID));
+			} else
+			{
+				setCameraParameterSupported(MODE_ID, false);
+				setCameraParameterValue(MODE_ID, -1);
+			}
+		} else
+		{
+			setCameraParameterSupported(MODE_ID, false);
+			setCameraParameterValue(MODE_ID, -1);
+		}		
 	}
 
 	private void correctTopMenuButtonBackground(View topMenuView, boolean isEnabled)
@@ -5830,7 +5915,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					&& CameraController.isSceneModeSupported())
 				setSceneMode(CameraParameters.SCENE_MODE_AUTO);
 
-			CameraController.setCameraWhiteBalance(newMode);
+			CameraController.setCameraWhiteBalanceMode(newMode);
 
 			mWB = newMode;
 			setButtonSelected(wbModeButtons, mWB);
@@ -6347,6 +6432,80 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		case MODE_CAM:
 			mCameraMode = sValue;
 			break;
+		default:
+			break;
+		}
+	}
+	
+	private int getCameraParameterValue(int iParameter)
+	{
+		switch (iParameter)
+		{
+		case MODE_SCENE:
+			return mSceneMode;
+		case MODE_WB:
+			return mWB;
+		case MODE_FOCUS:
+			return mFocusMode;
+		case MODE_FLASH:
+			return mFlashMode;
+		case MODE_ISO:
+			return mISO;
+		case MODE_MET:
+			return mMeteringMode;
+		case MODE_CAM:
+			return mCameraMode;
+		default:
+			break;
+		}
+		
+		return -1;
+	}
+	
+	private void setCameraParameterMode(int iParameter, int mode)
+	{
+		switch (iParameter)
+		{
+		case MODE_SCENE:
+			CameraController.setCameraSceneMode(mode);
+			break;
+		case MODE_WB:
+			CameraController.setCameraWhiteBalanceMode(mode);
+			break;
+		case MODE_FOCUS:
+			CameraController.setCameraFocusMode(mode);
+			break;
+		case MODE_FLASH:
+			CameraController.setCameraFlashMode(mode);
+			break;
+		case MODE_ISO:
+			CameraController.setCameraISO(mode);
+			break;
+		default:
+			break;
+		}
+	}
+	
+	private void setCameraParameterSupported(int iParameter, boolean isSupported)
+	{
+		switch (iParameter)
+		{
+		case MODE_SCENE:
+			mSceneModeSupported = isSupported;
+		case MODE_WB:
+			mWBSupported = isSupported;
+		case MODE_FLASH:
+			mFlashModeSupported = isSupported;
+		case MODE_FOCUS:
+			mFocusModeSupported = isSupported;
+		case MODE_ISO:
+			mISOSupported = isSupported;
+		case MODE_MET:
+			mMeteringAreasSupported = isSupported;
+		case MODE_COLLOR_EFFECT:
+			mCollorEffectsSupported = isSupported;
+		case MODE_CAM:
+			mCameraChangeSupported = isSupported;
 		default:
 			break;
 		}

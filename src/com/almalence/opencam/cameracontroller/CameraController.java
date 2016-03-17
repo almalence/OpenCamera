@@ -160,6 +160,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public static boolean							isGalaxyNote4	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-n910");
 	
+	public static boolean							isGalaxyNote5	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-n920");
+	
 	public static boolean							isHTCOne		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("htcone");
 	public static boolean							isHTCOneX		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("htconex");
 	
@@ -832,9 +834,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				Camera2Controller.onCreateCamera2(mainContext, appInterface, pluginManager, messageHandler);
 			}
 			
-			//Now only LG Flex2, G4, Nexus 5\6 and Andoid One devices support camera2 without critical problems
-			//We have to test Samsung Galaxy S6 to include in this list of allowed devices
-			if (!isCamera2Supported || !checkHardwareLevel())
+			//Samsung Galaxy S6 and Note5 was reported as not worked in camera2 mode
+			//Always not focused preview and blinking on every try of focusing
+			if (!isCamera2Supported || !checkHardwareLevel() || isGalaxyS6 || isGalaxyNote5)
 //					|| (!isMotoXPure && !isFlex2 && !isNexus5or6 && !isAndroidOne  && !isOnePlusTwo/*&& !isGalaxyS6 &&*/ /* && !isG4*/))
 			{
 				isCamera2 = false;
@@ -3487,7 +3489,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 
-	public static void setCameraWhiteBalance(int mode)
+	public static void setCameraWhiteBalanceMode(int mode)
 	{
 		if (!isRemoteCamera())
 		{

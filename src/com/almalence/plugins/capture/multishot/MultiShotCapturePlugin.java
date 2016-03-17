@@ -37,6 +37,7 @@ import com.almalence.opencam_plus.R;
 +++ --> */
 //<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam.ui.GUI.CameraParameter;
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.CameraParameters;
@@ -100,6 +101,12 @@ public class MultiShotCapturePlugin extends PluginCapture
 		ApplicationScreen.getGUIManager().showHelp(ApplicationScreen.instance.getString(R.string.MultiShot_Help_Header),
 				ApplicationScreen.getAppResources().getString(R.string.MultiShot_Help),
 				R.drawable.plugin_help_multishot, "multiShotShowHelp");
+	}
+	
+	@Override
+	public void onCameraParametersSetup()
+	{
+		ApplicationScreen.getGUIManager().filterCameraParameter(CameraParameter.CAMERA_PARAMETER_FLASH, new int[]{CameraParameters.FLASH_MODE_SINGLE, CameraParameters.FLASH_MODE_OFF});
 	}
 	
 	@Override

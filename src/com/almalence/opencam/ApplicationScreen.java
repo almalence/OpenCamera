@@ -2009,6 +2009,23 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	}
 
 	// Set/Get camera parameters preference
+	@Override
+	public int getCameraParameterPref(GUI.CameraParameter iParam)
+	{
+		switch (iParam)
+		{
+		case CAMERA_PARAMETER_SCENE:
+			return getSceneModePref();
+		case CAMERA_PARAMETER_WB:
+			return getWBModePref();
+		case CAMERA_PARAMETER_FOCUS:
+			return getFocusModePref(-1);
+		case CAMERA_PARAMETER_FLASH:
+			return getFlashModePref(-1);
+		default: //All other parameters is not configurable
+			return -1;
+		}
+	}
 
 	// EXPOSURE COMPENSATION PREFERENCE
 	@Override
