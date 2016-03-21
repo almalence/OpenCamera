@@ -53,6 +53,7 @@
     <string name="Preference_UseFrontCameraValue">useFrontCamera</string>
     <string name="Preference_ShutterCommonValue">Preference_ShutterCommonValue</string>
     <string name="Preference_ShotOnTapValue">Preference_ShotOnTapListValue</string>
+    <string name="Preference_ShotOnReleaseValue">Preference_ShotOnReleaseListValue</string>
     <string name="Preference_AntibandingValue">Preference_AntibandingListValue</string>
     <string name="Preference_AELockValue">Preference_AELockValue</string>
     <string name="Preference_AWBLockValue">Preference_AWBLockValue</string>
