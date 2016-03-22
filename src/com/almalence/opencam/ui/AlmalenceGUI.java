@@ -1757,7 +1757,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			setFlashMode(system_name);
 			break;
 		case MODE_ISO:
-			setISO(system_name);
+			setISO(system_name, true);
 			break;
 		case MODE_MET:
 			setMeteringMode(system_name);
@@ -2830,7 +2830,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							// Set ISO to 400, as default for manual metering mode.
 							isoValue = CameraParameters.ISO_400;
 						}
-						setISO(isoValue);
+						setISO(isoValue, false);
 
 						initSettingsMenu(true);
 						hideSecondaryMenus();
@@ -2941,9 +2941,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 					if (CameraController.isUseCamera2())
 					{
-						mISO = CameraParameters.ISO_AUTO;
-						setISO(mISO);
-						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true, false);
+						//added to avoid slow function. Seems nothing should be changed if ISO_AUTO already set. SergeyM 22.03.16
+						if (mISO != CameraParameters.ISO_AUTO)
+						{
+							mISO = CameraParameters.ISO_AUTO;
+							setISO(mISO, true);
+							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true, false);
+						}
 					}
 
 					preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, true).commit();
@@ -6039,7 +6043,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				ApplicationInterface.MSG_FLASH_CHANGED);
 	}
 
-	private void setISO(int newMode)
+	//rebuildGUI shows if we need to update GUI or not.
+	private void setISO(int newMode, boolean rebuildGUI)
 	{
 		if (newMode != -1)
 		{
@@ -6060,9 +6065,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		int icon_id = ICONS_ISO.get(mISO);
 		but.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(icon_id));
 
-		initSettingsMenu(false);
-		hideSecondaryMenus();
-		unselectPrimaryTopMenuButtons(-1);
+		if (rebuildGUI)
+		{
+			initSettingsMenu(false);
+			hideSecondaryMenus();
+			unselectPrimaryTopMenuButtons(-1);
+		}
 	}
 
 	private void setMeteringMode(int newMode)
@@ -6085,8 +6093,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, false, true, false);
 		else
 		{
-			mISO = CameraParameters.ISO_AUTO;
-			setISO(mISO);
+			if (mISO != CameraParameters.ISO_AUTO)
+			{
+				mISO = CameraParameters.ISO_AUTO;
+				setISO(mISO, true);
+			}
 			disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true, false);
 		}
 
