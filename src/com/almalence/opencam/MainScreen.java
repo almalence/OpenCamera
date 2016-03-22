@@ -2807,7 +2807,7 @@ public class MainScreen extends ApplicationScreen
 		ll.setPadding((int) (10 * density), (int) (10 * density), (int) (10 * density), (int) (10 * density));
 
 		ImageView img = new ImageView(thiz);
-		img.setImageResource(R.drawable.store_subscription);
+		img.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.store_subscription));
 		img.setAdjustViewBounds(true);
 		ll.addView(img);
 

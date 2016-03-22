@@ -257,7 +257,7 @@ public class AlmalenceStore
 			{
 			case 0:
 				// unlock all
-				icon.setImageResource(R.drawable.store_all);
+				icon.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.store_all));
 				description.setText(MainScreen.getAppResources()
 						.getString(R.string.Pref_Upgrde_All_Preference_Title));
 
@@ -279,7 +279,7 @@ public class AlmalenceStore
 				break;
 			case 1:
 				// Super
-				icon.setImageResource(R.drawable.store_super);
+				icon.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.store_super));
 				description.setText(MainScreen.getAppResources()
 						.getString(R.string.Pref_Upgrde_Super_Preference_Title));
 				if (MainScreen.getInstance().isPurchasedSuper() || MainScreen.getInstance().isPurchasedAll())
@@ -295,7 +295,7 @@ public class AlmalenceStore
 				break;
 			case 2:
 				// HDR
-				icon.setImageResource(R.drawable.store_hdr);
+				icon.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.store_hdr));
 				description.setText(MainScreen.getAppResources()
 						.getString(R.string.Pref_Upgrde_HDR_Preference_Title));
 				if (MainScreen.getInstance().isPurchasedHDR() || MainScreen.getInstance().isPurchasedAll())
@@ -305,7 +305,7 @@ public class AlmalenceStore
 				break;
 			case 3:
 				// Panorama
-				icon.setImageResource(R.drawable.store_panorama);
+				icon.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.store_panorama));
 				description.setText(MainScreen.getAppResources()
 						.getString(R.string.Pref_Upgrde_Panorama_Preference_Title));
 				if (MainScreen.getInstance().isPurchasedPanorama() || MainScreen.getInstance().isPurchasedAll())
@@ -315,7 +315,7 @@ public class AlmalenceStore
 				break;
 			case 4:
 				// multishot
-				icon.setImageResource(R.drawable.store_moving);
+				icon.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.store_moving));
 				description.setText(MainScreen.getAppResources()
 						.getString(R.string.Pref_Upgrde_Moving_Preference_Title));
 				if (MainScreen.getInstance().isPurchasedMoving() || MainScreen.getInstance().isPurchasedAll())
@@ -325,7 +325,7 @@ public class AlmalenceStore
 				break;
 			case 5:
 				// Promo code
-				icon.setImageResource(R.drawable.store_promo);
+				icon.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.store_promo));
 				description.setText(MainScreen.getAppResources()
 						.getString(R.string.Pref_Upgrde_PromoCode_Preference_Title));
 				if (MainScreen.getInstance().isPurchasedAll())
@@ -399,7 +399,7 @@ public class AlmalenceStore
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		boolean bOnSale = prefs.getBoolean("bOnSale", false);
 		final RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
-		unlock.setImageResource(bOnSale ? R.drawable.unlock_sale : R.drawable.unlock);
+		unlock.setImageDrawable(MainScreen.getAppResources().getDrawable(bOnSale ? R.drawable.unlock_sale : R.drawable.unlock));
 		unlock.setAlpha(1.0f);
 		unlock.setVisibility(View.VISIBLE);
 
@@ -413,7 +413,7 @@ public class AlmalenceStore
 			public void onAnimationEnd(Animation animation)
 			{
 				unlock.clearAnimation();
-				unlock.setImageResource(R.drawable.unlock_gray);
+				unlock.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.unlock_gray));
 				unlock.setAlpha(0.4f);
 			}
 
@@ -436,7 +436,7 @@ public class AlmalenceStore
 		final RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
 		if (unlock.getVisibility() == View.VISIBLE)
 			return;
-		unlock.setImageResource(R.drawable.unlock_gray);
+		unlock.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.unlock_gray));
 		unlock.setAlpha(0.4f);
 		unlock.setVisibility(View.VISIBLE);
 	}
