@@ -2065,7 +2065,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	@Override
 	public void onCameraCreate()
 	{
-		Log.e("!!!!!!!!!!", "start");
 		String defaultQuickControl1 = "";
 		String defaultQuickControl2 = "";
 		String defaultQuickControl3 = "";
@@ -3156,7 +3155,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				}
 			});
 		}
-		Log.e("!!!!!!!!!!", "finished");
 	}
 
 	protected int getMinExposureTimeIndex(long expTime)
