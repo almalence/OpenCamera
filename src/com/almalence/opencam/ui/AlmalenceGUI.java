@@ -1745,25 +1745,25 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		switch (mode)
 		{
 		case MODE_SCENE:
-			setSceneMode(system_name);
+			setSceneMode(system_name, true);
 			break;
 		case MODE_WB:
-			setWhiteBalance(system_name);
+			setWhiteBalance(system_name, true);
 			break;
 		case MODE_FOCUS:
-			setFocusMode(system_name);
+			setFocusMode(system_name, true);
 			break;
 		case MODE_FLASH:
-			setFlashMode(system_name);
+			setFlashMode(system_name, true);
 			break;
 		case MODE_ISO:
 			setISO(system_name, true);
 			break;
 		case MODE_MET:
-			setMeteringMode(system_name);
+			setMeteringMode(system_name, true);
 			break;
 		case MODE_CAM:
-			setCameraMode(system_name);
+			setCameraMode(system_name, true);
 			break;
 		default:
 			break;
@@ -2946,8 +2946,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						{
 							mISO = CameraParameters.ISO_AUTO;
 							setISO(mISO, true);
-							disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true, false);
 						}
+						disableCameraParameter(CameraParameter.CAMERA_PARAMETER_ISO, true, true, false);
 					}
 
 					preferences.edit().putBoolean(MainScreen.sExposureTimeModePref, true).commit();
@@ -4675,7 +4675,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							|| (iCamerasSupported > 2 && !(modeName.contains("video") || modeName.contains("single"))))
 					{
 						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
-						setCameraMode((CameraController.getCameraIndex() + 1) % 2);
+						setCameraMode((CameraController.getCameraIndex() + 1) % 2, true);
 						return;
 					}
 					((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
@@ -4951,14 +4951,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		lrvisible.setInterpolator(new DecelerateInterpolator());
 
 		int duration_invisible = 0;
-		duration_invisible = isAnimate ? com.almalence.util.Util
-				.clamp(Math.abs(Math.round(((toLeft ? xToVisible : (screenWidth - xToVisible)) * 500) / screenWidth)),
-						10, 500) : 0;
+		duration_invisible = isAnimate 
+				? com.almalence.util.Util.clamp(Math.abs(Math.round(((toLeft ? xToVisible : (screenWidth - xToVisible)) * 500) / screenWidth)), 10, 250) 
+				: 0;
 
 		int duration_visible = 0;
-		duration_visible = isAnimate ? com.almalence.util.Util.clamp(
-				Math.abs(Math.round(((toLeft ? xToInvisible : (screenWidth - xToInvisible)) * 500) / screenWidth)), 10,
-				500) : 0;
+		duration_visible = isAnimate 
+				? com.almalence.util.Util.clamp(Math.abs(Math.round(((toLeft ? xToInvisible : (screenWidth - xToInvisible)) * 500) / screenWidth)), 10, 250) 
+				: 0;
 
 		Animation invisible_alpha = new AlphaAnimation(1, 0);
 		invisible_alpha.setDuration(duration_invisible);
@@ -5700,7 +5700,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				if (!sonyCamerasSettingOn
 						|| (iCamerasSupported > 2 && !(modeName.contains("video") || modeName.contains("single"))))
 				{
-					setCameraMode((CameraController.getCameraIndex() + 1) % 2);
+					setCameraMode((CameraController.getCameraIndex() + 1) % 2, true);
 					return;
 				}
 
@@ -5772,9 +5772,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		return false;
 	}
-
-	private void setSceneMode(int newMode)
-	{
+	
+	//rebuildGUI shows if we need to update GUI or not.
+	private void setSceneMode(int newMode, boolean rebuildGUI)
+	{ 
 		if (newMode != -1 && sceneModeButtons.containsKey(newMode))
 		{
 			if (newMode != CameraParameters.SCENE_MODE_AUTO)
@@ -5904,21 +5905,24 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		icon_id = ICONS_SCENE.get(mSceneMode);
 		but.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(icon_id));
 
-		initSettingsMenu(false);
-		hideSecondaryMenus();
-		unselectPrimaryTopMenuButtons(-1);
+		if (rebuildGUI)
+		{
+			initSettingsMenu(false);
+			hideSecondaryMenus();
+			unselectPrimaryTopMenuButtons(-1);
+		}
 
 		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
 				ApplicationInterface.MSG_SCENE_CHANGED);
 	}
 
-	private void setWhiteBalance(int newMode)
+	private void setWhiteBalance(int newMode, boolean rebuildGUI)
 	{
 		if (newMode != -1)
 		{
 			if ((mSceneMode != CameraParameters.SCENE_MODE_AUTO || mWB != newMode)
 					&& CameraController.isSceneModeSupported())
-				setSceneMode(CameraParameters.SCENE_MODE_AUTO);
+				setSceneMode(CameraParameters.SCENE_MODE_AUTO, false);
 
 			CameraController.setCameraWhiteBalanceMode(newMode);
 
@@ -5953,9 +5957,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			icon_id = ICONS_WB.get(mWB);
 		but.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(icon_id));
 
-		initSettingsMenu(false);
-		hideSecondaryMenus();
-		unselectPrimaryTopMenuButtons(-1);
+		if (rebuildGUI)
+		{
+			initSettingsMenu(false);
+			hideSecondaryMenus();
+			unselectPrimaryTopMenuButtons(-1);
+		}
 
 		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
 				ApplicationInterface.MSG_WB_CHANGED);
@@ -5966,13 +5973,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		CameraController.setCameraColorTemperature(iTemp);
 	}
 
-	private void setFocusMode(int newMode)
+	//rebuildGUI shows if we need to update GUI or not.
+	private void setFocusMode(int newMode, boolean rebuildGUI)
 	{
 		if (newMode != -1)
 		{
 			if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && mFocusMode != CameraParameters.AF_MODE_AUTO)
 				if (CameraController.isSceneModeSupported())
-					setSceneMode(CameraParameters.SCENE_MODE_AUTO);
+					setSceneMode(CameraParameters.SCENE_MODE_AUTO, false);
 
 			CameraController.setCameraFocusMode(newMode);
 
@@ -6009,20 +6017,24 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
 				ApplicationInterface.MSG_FOCUS_CHANGED);
 
-		initSettingsMenu(false);
-		hideSecondaryMenus();
-		unselectPrimaryTopMenuButtons(-1);
+		if (rebuildGUI)
+		{
+			initSettingsMenu(false);
+			hideSecondaryMenus();
+			unselectPrimaryTopMenuButtons(-1);
+		}
 
 		ApplicationScreen.instance.setAutoFocusLock(false);
 	}
 
-	private void setFlashMode(int newMode)
+	//rebuildGUI shows if we need to update GUI or not.
+	private void setFlashMode(int newMode, boolean rebuildGUI)
 	{
 		if (newMode != -1)
 		{
 			if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && mFlashMode != CameraParameters.FLASH_MODE_AUTO
 					&& CameraController.isSceneModeSupported())
-				setSceneMode(CameraParameters.SCENE_MODE_AUTO);
+				setSceneMode(CameraParameters.SCENE_MODE_AUTO, false);
 
 			CameraController.setCameraFlashMode(newMode);
 			mFlashMode = newMode;
@@ -6035,10 +6047,13 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		int icon_id = ICONS_FLASH.get(mFlashMode);
 		but.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(icon_id));
 
-		initSettingsMenu(false);
-		hideSecondaryMenus();
-		unselectPrimaryTopMenuButtons(-1);
-
+		if (rebuildGUI)
+		{
+			initSettingsMenu(false);
+			hideSecondaryMenus();
+			unselectPrimaryTopMenuButtons(-1);
+		}
+		
 		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
 				ApplicationInterface.MSG_FLASH_CHANGED);
 	}
@@ -6049,7 +6064,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		if (newMode != -1)
 		{
 			if (mSceneMode != CameraParameters.SCENE_MODE_AUTO && CameraController.isSceneModeSupported())
-				setSceneMode(CameraParameters.SCENE_MODE_AUTO);
+				setSceneMode(CameraParameters.SCENE_MODE_AUTO, false);
 
 			CameraController.setCameraISO(newMode);
 			mISO = newMode;
@@ -6073,7 +6088,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		}
 	}
 
-	private void setMeteringMode(int newMode)
+	//rebuildGUI shows if we need to update GUI or not.
+	private void setMeteringMode(int newMode, boolean rebuildGUI)
 	{
 		guiView.findViewById(R.id.exposureTimeLayout).setVisibility(View.GONE);
 
@@ -6124,9 +6140,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		int icon_id = ICONS_METERING.get(mMeteringMode);
 		but.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(icon_id));
 
-		initSettingsMenu(false);
-		hideSecondaryMenus();
-		unselectPrimaryTopMenuButtons(-1);
+		if (rebuildGUI)
+		{
+			initSettingsMenu(false);
+			hideSecondaryMenus();
+			unselectPrimaryTopMenuButtons(-1);
+		}
 	}
 
 	@Override
@@ -6135,7 +6154,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		mCameraMode = mode;
 	}
 
-	private void setCameraMode(int newMode)
+	//rebuildGUI shows if we need to update GUI or not.
+	private void setCameraMode(int newMode, boolean rebuildGUI)
 	{
 		if (newMode != -1 && mCameraMode != newMode)
 		{
@@ -6163,9 +6183,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				int icon_id = ICONS_CAMS.get(mCameraMode);
 				but.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(icon_id));
 
-				initSettingsMenu(false);
-				hideSecondaryMenus();
-				unselectPrimaryTopMenuButtons(-1);
+				if (rebuildGUI)
+				{
+					initSettingsMenu(false);
+					hideSecondaryMenus();
+					unselectPrimaryTopMenuButtons(-1);
+				}
 			}
 		}
 	}
