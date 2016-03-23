@@ -5757,7 +5757,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		default:
 			break;
 		}
-		this.initSettingsMenu(false);
+		//Commented out as decided as unnecessary SM 23.3.16	
+		//this.initSettingsMenu(false);
 	}
 
 	private boolean changeQuickControlIfVisible(View button)
