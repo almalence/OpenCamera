@@ -444,20 +444,27 @@ public class MainScreen extends ApplicationScreen
 	protected void onApplicationResume()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        
 // <!-- -+-
         //check appturbo app of the month conditions
-        if (!unlockAllPurchased)
-        {
-        	if (isAppturboUnlockable(this))
-        	{
-        		unlockAllPurchased = true;
-    			Editor prefsEditor = prefs.edit();
-    			prefsEditor.putBoolean("unlock_all_forever", true).commit();
-        		Toast.makeText(MainScreen.getMainContext(), this.getResources().getString(R.string.string_appoftheday), Toast.LENGTH_LONG).show();
-        	}
-        }
+//        if (!unlockAllPurchased)
+//        {
+//        	if (isAppturboUnlockable(this))
+//        	{
+//        		unlockAllPurchased = true;
+//    			Editor prefsEditor = prefs.edit();
+//    			prefsEditor.putBoolean("unlock_all_forever", true).commit();
+//        		Toast.makeText(MainScreen.getMainContext(), this.getResources().getString(R.string.string_appoftheday), Toast.LENGTH_LONG).show();
+//        	}
+//        }
+
+ 		if (isABCUnlockedInstalled(this))
+ 		{
+ 			unlockAllPurchased = true;
+ 			prefs.edit().putBoolean("unlock_all_forever", true).commit();
+ 		}
 // -+- -->
-        
+ 		
 		isCameraConfiguring = false;
 
 		mWifiHandler.register();
@@ -513,16 +520,8 @@ public class MainScreen extends ApplicationScreen
 							WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
 									| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 		}
-
-		// <!-- -+-
-		if (isABCUnlockedInstalled(this))
-		{
-			unlockAllPurchased = true;
-			prefs.edit().putBoolean("unlock_all_forever", true).commit();
-		}
-		// -+- -->
 	}
-	
+
 	protected void onResumeCamera()
 	{
 		SharedPreferences prefs = PreferenceManager
