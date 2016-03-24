@@ -3810,7 +3810,17 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		LayoutInflater inflator = ApplicationScreen.instance.getLayoutInflater();
 		View settingView = inflator.inflate(R.layout.gui_almalence_quick_control_grid_element, null, false);
 		ImageView iconView = (ImageView) settingView.findViewById(R.id.imageView);
-		iconView.setImageDrawable(MainScreen.getAppResources().getDrawable(icon_id));
+		
+		//for cases if some modes are not processed and aplication can fail. Fixed this case for flash, but no idea if other settings can be a problem
+		try
+		{
+			iconView.setImageDrawable(MainScreen.getAppResources().getDrawable(icon_id));
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
 		TextView textView = (TextView) settingView.findViewById(R.id.textView);
 		textView.setText(icon_text);
 		
