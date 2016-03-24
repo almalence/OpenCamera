@@ -124,7 +124,7 @@ public class AppWidgetNotifier
 		ll.setPadding((int) (10 * density), (int) (10 * density), (int) (10 * density), (int) (10 * density));
 
 		ImageView img = new ImageView(mContext);
-		img.setImageResource(R.drawable.widget_adv);
+		img.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.widget_adv));
 		ll.addView(img);
 
 		TextView tv = new TextView(mContext);

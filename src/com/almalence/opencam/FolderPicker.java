@@ -488,19 +488,19 @@ public class FolderPicker extends Activity implements OnItemClickListener, OnCli
 				if (position == 0)
 				{
 					((ImageView) convertView.findViewById(R.id.folderpicker_cell_icon))
-							.setImageResource(R.drawable.ic_menu_back);
+							.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.ic_menu_back));
 					((TextView) convertView.findViewById(R.id.folderpicker_cell_text)).setText("...");
 				} else
 				{
 					((ImageView) convertView.findViewById(R.id.folderpicker_cell_icon))
-							.setImageResource(R.drawable.ic_menu_archive);
+							.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.ic_menu_archive));
 					((TextView) convertView.findViewById(R.id.folderpicker_cell_text)).setText(FolderPicker.this.items
 							.get(position - 1));
 				}
 			} else
 			{
 				((ImageView) convertView.findViewById(R.id.folderpicker_cell_icon))
-						.setImageResource(R.drawable.ic_menu_archive);
+						.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.ic_menu_archive));
 				((TextView) convertView.findViewById(R.id.folderpicker_cell_text)).setText(FolderPicker.this.items
 						.get(position));
 			}
