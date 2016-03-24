@@ -374,21 +374,16 @@ public class GroupShotProcessingPluginRefactored extends MultiShotProcessingPlug
 				{
 					if (mFinishing || mChangingFace)
 						return true;
-//					if (mGallery.getVisibility() == Gallery.VISIBLE)
-//					{
-//						mGallery.setVisibility(Gallery.INVISIBLE);
-//						return false;
-//					}
-					mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_VISIBLE);
-					new Thread(new Runnable()
+					if (GroupShotCore.getInstance().eventContainsFace(event.getX(), event.getY(), v))
 					{
-						public void run()
+						mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_VISIBLE);
+						new Thread(new Runnable()
 						{
-							synchronized (syncObject)
+							public void run()
 							{
-								mChangingFace = true;
-								if (GroupShotCore.getInstance().eventContainsFace(event.getX(), event.getY(), v))
+								synchronized (syncObject)
 								{
+									mChangingFace = true;
 									GroupShotCore.getInstance().updateBitmap();
 
 									// Update screen
@@ -403,12 +398,12 @@ public class GroupShotProcessingPluginRefactored extends MultiShotProcessingPlug
 											}
 										}
 									});
+									mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_INVISIBLE);
+									mChangingFace = false;
 								}
-								mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_INVISIBLE);
-								mChangingFace = false;
 							}
-						}
-					}).start();
+						}).start();
+					}
 				}
 				return false;
 			}
