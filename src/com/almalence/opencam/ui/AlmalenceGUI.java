@@ -3692,6 +3692,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					icon_id = R.drawable.gui_almalence_settings_focus_aflock;
 				else if (mFocusMode == CameraParameters.MF_MODE)
 					icon_id = R.drawable.gui_almalence_settings_focus_manual;
+				else if (mFocusMode == -1)
+				{
+					isEnabled = false;
+					icon_id = ICONS_FOCUS.get(CameraParameters.AF_MODE_FIXED);
+				}
 				else
 					icon_id = ICONS_FOCUS.get(mFocusMode);
 				icon_text = ApplicationScreen.getAppResources().getString(R.string.settings_mode_focus);
@@ -3805,10 +3810,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		LayoutInflater inflator = ApplicationScreen.instance.getLayoutInflater();
 		View settingView = inflator.inflate(R.layout.gui_almalence_quick_control_grid_element, null, false);
 		ImageView iconView = (ImageView) settingView.findViewById(R.id.imageView);
-		iconView.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(icon_id));
+		iconView.setImageDrawable(MainScreen.getAppResources().getDrawable(icon_id));
 		TextView textView = (TextView) settingView.findViewById(R.id.textView);
 		textView.setText(icon_text);
-
+		
 		if (!isEnabled && !isQuickControl)
 		{
 			iconView.setColorFilter(ApplicationScreen.getMainContext().getResources().getColor(R.color.buttonDisabled),
