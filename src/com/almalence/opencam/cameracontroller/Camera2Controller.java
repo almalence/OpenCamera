@@ -395,7 +395,7 @@ public class Camera2Controller
 			//Information about success or failure will be received in callback object 'StateCallback openCallback'
 			try
 			{
-				Log.e(TAG, "try to manager.openCamera");
+//				Log.e(TAG, "try to manager.openCamera");
 				String cameraId = CameraController.cameraIdList[CameraController.CameraIndex];
 				Camera2Controller.getInstance().camCharacter = Camera2Controller.getInstance().manager
 						.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);

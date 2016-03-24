@@ -1411,7 +1411,7 @@ public class MainScreen extends ApplicationScreen
 			onCameraConfigured();
 		}
 
-		Log.e("MainScreen", "createGUI is " + createGUI);
+//		Log.e("MainScreen", "createGUI is " + createGUI);
 		if (createGUI)
 		{
 			MainScreen.getGUIManager().onGUICreate();
@@ -1422,7 +1422,7 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	public void surfaceCreated(SurfaceHolder holder)
 	{
-		Log.e("MainScreen", "SURFACE CREATED");
+//		Log.e("MainScreen", "SURFACE CREATED");
 		// ----- Find 'normal' orientation of the device
 
 		Display display = ((WindowManager) this.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
