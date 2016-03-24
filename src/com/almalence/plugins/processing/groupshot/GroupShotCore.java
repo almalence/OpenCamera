@@ -507,18 +507,17 @@ public class GroupShotCore
 			}
 		}
 
+		
 		if(mImageDataOrientation != 0 && mImageDataOrientation != 180)
 		{
-			mPreviewWidthRotated = mImageHeight;
-			mPreviewHeightRotated = mImageWidth;
+			mPreviewWidthRotated = mPreviewBitmap.getWidth();
+			mPreviewHeightRotated = mPreviewBitmap.getHeight();
 		}
 		else
 		{
-			mPreviewWidthRotated = mImageWidth;
-			mPreviewHeightRotated = mImageHeight;
+			mPreviewWidthRotated = mPreviewBitmap.getHeight();
+			mPreviewHeightRotated = mPreviewBitmap.getWidth();
 		}
-//		mPreviewWidthRotated = mPreviewBitmap.getWidth();
-//		mPreviewHeightRotated = mPreviewBitmap.getHeight();
 
 		ARGBBuffer = new int[mPreviewBitmap.getWidth() * mPreviewBitmap.getHeight() * 4];
 	}
