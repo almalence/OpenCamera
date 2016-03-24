@@ -31,6 +31,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -70,13 +71,14 @@ import com.almalence.opencam.cameracontroller.CameraController;
 
 import com.almalence.util.ImageConversion;
 import com.almalence.util.Size;
+import com.almalence.plugins.processing.groupshot.HorizontalGalleryView.SequenceListener;
 import com.almalence.plugins.processing.multishot.MultiShotProcessingPlugin;
 
 /***
  * Implements group shot processing
  ***/
 @SuppressWarnings("deprecation")
-public class GroupShotProcessingPluginRefactored extends MultiShotProcessingPlugin
+public class GroupShotProcessingPluginRefactored extends MultiShotProcessingPlugin implements SequenceListener
 {
 	private View				postProcessingView;
 
@@ -117,10 +119,13 @@ public class GroupShotProcessingPluginRefactored extends MultiShotProcessingPlug
 	private final Handler		mHandler					= new Handler(this);
 
 	private ProgressBar			mProgressBar;
-	private Gallery				mGallery;
+//	private Gallery				mGallery;
 	private TextView			mInfoTextVeiw;
 
+	private HorizontalGalleryView	    sequenceView;
+	private static ArrayList<Bitmap>	thumbnails		= new ArrayList<Bitmap>();
 	private ImageAdapter		mImageAdapter;
+	private int					iMatrixRotation			= 0;
 
 	@Override
 	public void setYUVBufferList(ArrayList<Integer> YUVBufferList)
@@ -138,6 +143,7 @@ public class GroupShotProcessingPluginRefactored extends MultiShotProcessingPlug
 
 	public GroupShotProcessingPluginRefactored()
 	{
+		super("com.almalence.plugins.groupshotprocessing", "groupshot", 0, 0, 0, null);
 	}
 
 	public View getPostProcessingView()
@@ -193,8 +199,31 @@ public class GroupShotProcessingPluginRefactored extends MultiShotProcessingPlug
 		PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(imageWidth));
 		PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(imageHeight));
 		
-		mDisplayOrientation = ApplicationScreen.getGUIManager().getDisplayOrientation();
+		int orientation = ApplicationScreen.getGUIManager().getLayoutOrientation();
+		mDisplayOrientation = orientation == 0 || orientation == 180 ? orientation : (orientation + 180) % 360;
 		mImageAdapter = new ImageAdapter(ApplicationScreen.getMainContext(), GroupShotCore.getInstance().getYUVBufferList(), imageDataOrientation, cameraMirrored);
+		
+		
+		
+		
+		int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
+				"amountofcapturedframes" + sessionID));
+		if(imagesAmount == 0)
+			imagesAmount = 1;
+		
+		ArrayList<Integer>	mYUVBufferList = GroupShotCore.getInstance().getYUVBufferList();
+		thumbnails.clear();
+		int heightPixels = ApplicationScreen.getAppResources().getDisplayMetrics().heightPixels;
+		for (int i = 1; i <= imagesAmount; i++)
+		{
+			thumbnails
+					.add(Bitmap.createScaledBitmap(ImageConversion.decodeYUVfromBuffer(
+							mYUVBufferList.get(i - 1), imageWidth, imageHeight), heightPixels
+							/ imagesAmount, (int) (imageHeight * (((float)heightPixels / imagesAmount) / imageWidth)),
+							false));
+		}
+		
+		iMatrixRotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(imageDataOrientation, deviceOrientation, cameraMirrored);
 	}
 
 	/************************************************
@@ -222,53 +251,109 @@ public class GroupShotProcessingPluginRefactored extends MultiShotProcessingPlug
 
 	private void setupImageSelector()
 	{
-		mGallery = (Gallery) postProcessingView.findViewById(R.id.groupshotGallery);
-		mGallery.setAdapter(mImageAdapter);
-		mGallery.setOnItemClickListener(new AdapterView.OnItemClickListener()
+		sequenceView = ((HorizontalGalleryView) postProcessingView.findViewById(R.id.seqView));
+		final Bitmap[] thumbnailsArray = new Bitmap[thumbnails.size()];
+		for (int i = 0; i < thumbnailsArray.length; i++)
 		{
-			public void onItemClick(AdapterView<?> parent, View v, int position, long id)
+			Bitmap bmp = thumbnails.get(i);
+			Matrix matrix = new Matrix();
+			if(iMatrixRotation != 0)
+				matrix.postRotate(iMatrixRotation);
+			//Workaround for Nexus5x, image is flipped because of sensor orientation
+//			if(CameraController.isNexus5x)
+//				matrix.postRotate(mCameraMirrored ? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 270
+//						: 90)
+//						: 270);
+//			else
+//				matrix.postRotate(mCameraMirrored ? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 270
+//						: 90)
+//						: 90);	
+			Bitmap rotated = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
+			thumbnailsArray[i] = rotated;
+		}
+		sequenceView.setContent(thumbnailsArray, this);
+		LayoutParams lp = (LayoutParams) sequenceView.getLayoutParams();
+		lp.height = thumbnailsArray[0].getHeight();
+		sequenceView.setLayoutParams(lp);
+//		mGallery = (Gallery) postProcessingView.findViewById(R.id.groupshotGallery);
+//		mGallery.setAdapter(mImageAdapter);
+//		mGallery.setOnItemClickListener(new AdapterView.OnItemClickListener()
+//		{
+//			public void onItemClick(AdapterView<?> parent, View v, int position, long id)
+//			{
+//				mImageAdapter.setCurrentSeleted(position);
+//				mImageAdapter.notifyDataSetChanged();
+//				mGallery.setVisibility(Gallery.INVISIBLE);
+//				mBaseFrame = position;
+//				GroupShotCore.getInstance().setBaseFrame(mBaseFrame);
+//				new Thread(new Runnable()
+//				{
+//					public void run()
+//					{
+//						mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_VISIBLE);
+//						GroupShotCore.getInstance().updateBitmap();
+//						mHandler.post(new Runnable()
+//						{
+//							public void run()
+//							{
+//								if (GroupShotCore.getInstance().getPreviewBitmap() != null)
+//								{
+//									mResultImageView.setImageBitmap(GroupShotCore.getInstance().getPreviewBitmap());
+//								}
+//							}
+//						});
+//
+//						mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_INVISIBLE);
+//					}
+//				}).start();
+//			}
+//		});
+//
+//		mGallery.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+//		{
+//			@Override
+//			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)
+//			{
+//			}
+//
+//			@Override
+//			public void onNothingSelected(AdapterView<?> arg0)
+//			{
+//			}
+//		});
+		return;
+	}
+	
+	@Override
+	public void onSequenceChanged(int position)
+	{
+		mBaseFrame = position;
+		GroupShotCore.getInstance().setBaseFrame(mBaseFrame);
+		new Thread(new Runnable()
+		{
+			public void run()
 			{
-				mImageAdapter.setCurrentSeleted(position);
-				mImageAdapter.notifyDataSetChanged();
-				mGallery.setVisibility(Gallery.INVISIBLE);
-				mBaseFrame = position;
-				GroupShotCore.getInstance().setBaseFrame(mBaseFrame);
-				new Thread(new Runnable()
+				mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_VISIBLE);
+				GroupShotCore.getInstance().updateBitmap();
+				mHandler.post(new Runnable()
 				{
 					public void run()
 					{
-						mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_VISIBLE);
-						GroupShotCore.getInstance().updateBitmap();
-						mHandler.post(new Runnable()
+						if (GroupShotCore.getInstance().getPreviewBitmap() != null)
 						{
-							public void run()
-							{
-								if (GroupShotCore.getInstance().getPreviewBitmap() != null)
-								{
-									mResultImageView.setImageBitmap(GroupShotCore.getInstance().getPreviewBitmap());
-								}
-							}
-						});
-
-						mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_INVISIBLE);
+							mResultImageView.setImageBitmap(GroupShotCore.getInstance().getPreviewBitmap());
+						}
 					}
-				}).start();
-			}
-		});
+				});
 
-		mGallery.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-		{
-			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)
-			{
+				mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_INVISIBLE);
 			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0)
-			{
-			}
-		});
-		return;
+		}).start();
+//		sequenceView.setEnabled(false);
+//
+//		ProcessingTask task = new ProcessingTask();
+//		task.idxInput = idx;
+//		task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);		
 	}
 
 	private void setupImageView()
@@ -289,11 +374,11 @@ public class GroupShotProcessingPluginRefactored extends MultiShotProcessingPlug
 				{
 					if (mFinishing || mChangingFace)
 						return true;
-					if (mGallery.getVisibility() == Gallery.VISIBLE)
-					{
-						mGallery.setVisibility(Gallery.INVISIBLE);
-						return false;
-					}
+//					if (mGallery.getVisibility() == Gallery.VISIBLE)
+//					{
+//						mGallery.setVisibility(Gallery.INVISIBLE);
+//						return false;
+//					}
 					mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_VISIBLE);
 					new Thread(new Runnable()
 					{
@@ -362,12 +447,12 @@ public class GroupShotProcessingPluginRefactored extends MultiShotProcessingPlug
 		case MSG_PROGRESS_BAR_VISIBLE:
 			mProgressBar.setVisibility(View.VISIBLE);
 			break;
-		case MSG_SELECTOR_VISIBLE:
-			mGallery.setVisibility(View.VISIBLE);
-			break;
-		case MSG_SELECTOR_INVISIBLE:
-			mGallery.setVisibility(View.GONE);
-			break;
+//		case MSG_SELECTOR_VISIBLE:
+//			mGallery.setVisibility(View.VISIBLE);
+//			break;
+//		case MSG_SELECTOR_INVISIBLE:
+//			mGallery.setVisibility(View.GONE);
+//			break;
 		case MSG_LEAVING:
 			ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_POSTPROCESSING_FINISHED);
 			GroupShotCore.getInstance().release();
@@ -414,12 +499,12 @@ public class GroupShotProcessingPluginRefactored extends MultiShotProcessingPlug
 		}
 	}
 
+	@Override
 	public void onOrientationChanged(int orientation)
 	{
 		if (orientation != mDisplayOrientation)
 		{
 			mDisplayOrientation = (orientation == 0 || orientation == 180) ? orientation + 90 : orientation - 90;
-			mDisplayOrientation = orientation;
 			if (postProcessingRun)
 				mSaveButton.setRotation(mDisplayOrientation);
 		}

@@ -193,6 +193,9 @@ public class GroupShotCore
 		initializeSizeParameters();
 		mIsBaseFrameChanged = true;
 		mDeviceRotationTransform.postRotate(-mDeviceOrientation);
+//		int defaultRotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(mImageDataOrientation, mDeviceOrientation, mCameraMirrored);
+//		int finalRotation = defaultRotation  - mDeviceOrientation;
+//		mDeviceRotationTransform.postRotate(0);
 	}
 
 	// Detect faces, create and sort list with faces parameters.
@@ -460,8 +463,10 @@ public class GroupShotCore
 		}
 
 		int error = 0;
+//		int rotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(mImageDataOrientation, mDeviceOrientation, mCameraMirrored);
+		int rotation = (mImageDataOrientation + (mCameraMirrored?(mImageDataOrientation == 90 || mImageDataOrientation == 270? 180 : 0) : 0))%360;
 		error = AlmaShotGroupShot.DetectFacesFromYUVs(yuvPtrs, yuvSizes, mNumOfFrame, mImageWidth, mImageHeight,
-				mImageWidthFD, mImageHeightFD, mCameraMirrored, mImageDataOrientation);
+				mImageWidthFD, mImageHeightFD, false/*mCameraMirrored*/, rotation);
 
 		if (error < 0)
 		{
@@ -487,10 +492,11 @@ public class GroupShotCore
 		}
 		mPreviewBitmap = ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(0), mImageWidth, mImageHeight);
 
-		if (mImageDataOrientation != 0)
+		int rotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(mImageDataOrientation, mDeviceOrientation, mCameraMirrored);
+		if (rotation != 0)
 		{
 			Matrix rotateMatrix = new Matrix();
-			rotateMatrix.postRotate(mImageDataOrientation);
+			rotateMatrix.postRotate(rotation);
 			Bitmap rotatedBitmap = Bitmap.createBitmap(mPreviewBitmap, 0, 0, mPreviewBitmap.getWidth(),
 					mPreviewBitmap.getHeight(), rotateMatrix, true);
 
@@ -501,8 +507,18 @@ public class GroupShotCore
 			}
 		}
 
-		mPreviewWidthRotated = mPreviewBitmap.getWidth();
-		mPreviewHeightRotated = mPreviewBitmap.getHeight();
+		if(mImageDataOrientation != 0 && mImageDataOrientation != 180)
+		{
+			mPreviewWidthRotated = mImageHeight;
+			mPreviewHeightRotated = mImageWidth;
+		}
+		else
+		{
+			mPreviewWidthRotated = mImageWidth;
+			mPreviewHeightRotated = mImageHeight;
+		}
+//		mPreviewWidthRotated = mPreviewBitmap.getWidth();
+//		mPreviewHeightRotated = mPreviewBitmap.getHeight();
 
 		ARGBBuffer = new int[mPreviewBitmap.getWidth() * mPreviewBitmap.getHeight() * 4];
 	}

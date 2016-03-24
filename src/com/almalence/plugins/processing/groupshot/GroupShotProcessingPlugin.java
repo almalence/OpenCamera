@@ -165,6 +165,7 @@ public class GroupShotProcessingPlugin extends MultiShotProcessingPlugin
 
 	public GroupShotProcessingPlugin()
 	{
+		super("com.almalence.plugins.groupshotprocessing", "groupshot", 0, 0, 0, null);
 	}
 
 	public View getPostProcessingView()

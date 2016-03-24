@@ -332,6 +332,16 @@ public abstract class GUI
 		int displayRotationCurrent = orientation == 0 || orientation == 180 ? orientation : (orientation + 180) % 360;
 		return displayRotationCurrent;
 	} // used to operate with plugin's views
+	
+	//Post-processing plugins used that method to get right rotation of preview Bitmap
+	public int getMatrixRotationForBitmap(int iImageDataOrientation, int iLayoutOrientation, boolean isCameraMirrored)
+	{
+		int compensateRotation = iLayoutOrientation + (iLayoutOrientation == 90 || iLayoutOrientation == 270 ? 180 : 0)%360;
+		
+		int rotation = (iImageDataOrientation + compensateRotation + ((isCameraMirrored && (iImageDataOrientation == 90 || iImageDataOrientation == 270)) ? 180 : 0))%360;
+		
+		return rotation;
+	}
 
 	// mode help procedure
 	abstract public void showHelp(String modeName, String text, int imageID, String Prefs);

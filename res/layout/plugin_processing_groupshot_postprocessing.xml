@@ -20,14 +20,12 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:visibility="visible" />
-
-    <Gallery
-        android:id="@+id/groupshotGallery"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:visibility="invisible" 
-        android:spacing="3dp" />
+    
+	<com.almalence.plugins.processing.groupshot.HorizontalGalleryView
+         android:id="@+id/seqView"
+		 android:layout_width="fill_parent"
+		 android:layout_height="128dp"
+		 android:layout_alignParentBottom="true"/>    
 
     <TextView
         android:id="@+id/groupshotTextView"

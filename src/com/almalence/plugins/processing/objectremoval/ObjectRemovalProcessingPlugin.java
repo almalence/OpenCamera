@@ -91,6 +91,11 @@ public class ObjectRemovalProcessingPlugin extends MultiShotProcessingPlugin
 
 	// indicates that no more user interaction needed
 	private boolean			finishing		= false;
+	
+	public ObjectRemovalProcessingPlugin()
+	{
+		super("com.almalence.plugins.objectremovalprocessing", "objectremoval", 0, 0, 0, null);
+	}
 
 	public View getPostProcessingView()
 	{

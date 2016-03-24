@@ -95,6 +95,11 @@ public class SequenceProcessingPlugin extends MultiShotProcessingPlugin implemen
 
 	// indicates that no more user interaction needed
 	private boolean						finishing		= false;
+	
+	public SequenceProcessingPlugin()
+	{
+		super("com.almalence.plugins.sequenceprocessing", "sequence", 0, 0, 0, null);
+	}
 
 	public View getPostProcessingView()
 	{

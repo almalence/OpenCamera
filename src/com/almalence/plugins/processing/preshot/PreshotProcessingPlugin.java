@@ -538,11 +538,8 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 			bitmap = Bitmap.createScaledBitmap(bitmap, W / 2, H / 2, false);
 
 			int orient = PreShot.getOrientation(index);
-			int imgOrient = ApplicationScreen.getGUIManager().getImageDataOrientation();
 			int layoutOrient = ApplicationScreen.getGUIManager().getLayoutOrientation();
-			int compensateRotation = layoutOrient + (layoutOrient == 90 || layoutOrient == 270 ? 180 : 0)%360;
-			
-			int rotation = (imgOrient + compensateRotation + ((mCameraMirrored && (orient == 90 || orient == 270)) ? 180 : 0))%360;
+			int rotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(orient, layoutOrient, mCameraMirrored);
 			Matrix matrix = new Matrix();
 			matrix.postRotate(rotation);
 			bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
@@ -565,11 +562,8 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 			photo = Bitmap.createScaledBitmap(photo, W, H, false);
 
 			int orient = PreShot.getOrientation(index);
-			int imgOrient = ApplicationScreen.getGUIManager().getImageDataOrientation();
 			int layoutOrient = ApplicationScreen.getGUIManager().getLayoutOrientation();
-			int compensateRotation = layoutOrient + (layoutOrient == 90 || layoutOrient == 270 ? 180 : 0)%360;
-			
-			int rotation = (imgOrient + compensateRotation + ((mCameraMirrored && (orient == 90 || orient == 270)) ? 180 : 0))%360;
+			int rotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(orient, layoutOrient, mCameraMirrored);
 			Matrix matrix = new Matrix();
 			matrix.postRotate(rotation);
 			photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
