@@ -356,6 +356,8 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		mainContext = this.getBaseContext();
 		messageHandler = new Handler(this);
 		instance = this;
+		
+		surfaceCreated = false;
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		// ensure landscape orientation

@@ -310,23 +310,26 @@ public class Camera2Controller
 	{
 		try
 		{
-//			Log.e(TAG, "onResumeCamera2. CameraIndex = " + CameraController.CameraIndex);
-			Camera2Controller.getInstance().camCharacter = Camera2Controller.getInstance().manager
-					.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
-
-			int[] keys = Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES);
-			CameraController.isRAWCaptureSupported = false;
-			CameraController.isManualSensorSupported = false;
-			for (int key : keys)
-				if (key == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_RAW && !CameraController.isGalaxyS6)
-					CameraController.isRAWCaptureSupported = true;
-				else if(key == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_MANUAL_SENSOR)
-					CameraController.isManualSensorSupported = true;
-			
-			originalCaptureFormat = CameraController.JPEG; //Default capture format
-			
-			zoomCropPreview = null;
-			activeRect = null;
+			if(CameraController.cameraIdList != null && CameraController.cameraIdList.length >= CameraController.CameraIndex)
+			{
+//				Log.e(TAG, "onResumeCamera2. CameraIndex = " + CameraController.CameraIndex);
+				Camera2Controller.getInstance().camCharacter = Camera2Controller.getInstance().manager
+						.getCameraCharacteristics(CameraController.cameraIdList[CameraController.CameraIndex]);
+	
+				int[] keys = Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES);
+				CameraController.isRAWCaptureSupported = false;
+				CameraController.isManualSensorSupported = false;
+				for (int key : keys)
+					if (key == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_RAW && !CameraController.isGalaxyS6)
+						CameraController.isRAWCaptureSupported = true;
+					else if(key == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_MANUAL_SENSOR)
+						CameraController.isManualSensorSupported = true;
+				
+				originalCaptureFormat = CameraController.JPEG; //Default capture format
+				
+				zoomCropPreview = null;
+				activeRect = null;
+			}
 			
 //			inCapture = false; Debug variable. Used in logic to capture RAW in Super mode on Galaxy S6
 		} catch (CameraAccessException e)
@@ -500,6 +503,7 @@ public class Camera2Controller
 		{
 			if (!captureSessionOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
 				Log.e(TAG, "Create capture session failed. Semaphore is locked");
+				return false;
 			}
 		} catch (InterruptedException e)
 		{
@@ -1798,7 +1802,14 @@ public class Camera2Controller
 	public static void startCameraPreview()
 	{
 		if (previewRunning)
-			return;
+		{
+			//In some rare case (starting app from blocked device with screen off)
+			//even supposed preview to be running, there may be gui controls isn't initialized
+			//and preview frames isn't visible on device screen. Is that case isApplicationStarted is FALSE.
+			//Only in that case we pass that return and move forward to create capture session again.
+			if(ApplicationScreen.isApplicationStarted())
+				return;
+		}
 		
 		previewRunning = true;
 		
@@ -1829,6 +1840,7 @@ public class Camera2Controller
 				@Override
 				public void onFinish()
 				{
+					previewRunning = false;
 				}
 			};
 			timer.start();
@@ -3079,7 +3091,8 @@ public class Camera2Controller
 		@Override
 		public void onClosed(CameraDevice arg0)
 		{
-//			Log.d(TAG,"CameraDevice.StateCallback.onClosed");
+//			Log.e(TAG,"CameraDevice.StateCallback.onClosed");
+			Camera2Controller.getInstance().camDevice = null;
 			CameraController.sendMessage(ApplicationInterface.MSG_CAMERA_STOPED, 0);
 		}
 	};
