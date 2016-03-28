@@ -160,7 +160,6 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		
 		mBitmapRotation = (mImageDataOrientation + (mImageDataOrientation == 0 || mImageDataOrientation == 180 ? 0 : 270))%360;
 
-//		AlmaShotHDR.getAffinity();
 		AlmaShotHDR.Initialize();
 
 		// hdr processing
@@ -447,10 +446,10 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.instance
 				.getBaseContext());
 		ContrastPreference = prefs.getString("contrastPrefHDR", "1");
-		mContrastPreference = prefs.getString("mcontrastPrefHDR", "1");
+		mContrastPreference = prefs.getString("mcontrastPrefHDR", "2");
 		NoisePreference = prefs.getString("noisePrefHDR", "0");
 		ExpoPreference = prefs.getString("expoPrefHDR", "1");
-		ColorPreference = prefs.getString("colorPrefHDR", "2");
+		ColorPreference = prefs.getString("colorPrefHDR", "1");
 
 		AutoAdjustments = prefs.getBoolean("autoadjustPrefHDR", false);
 
