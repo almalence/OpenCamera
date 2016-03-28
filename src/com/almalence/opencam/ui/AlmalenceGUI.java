@@ -2993,9 +2993,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				initValue = (preferences.getInt(CameraController.isFrontCamera() ? MainScreen.sRearColorEffectPref
 						: MainScreen.sFrontColorEffectPref, MainScreen.sDefaultColorEffectValue));
 			}
-
+									
 			CameraController.setCameraColorEffect(initValue);
-
+			
 			RotateImageView but = (RotateImageView) topMenuButtons.get(MODE_COLLOR_EFFECT);
 			int icon_id = ICON_COLLOR_EFFECT;
 			but.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(icon_id));
@@ -6759,8 +6759,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 						@Override
 						public boolean onTouch(View v, MotionEvent event)
 						{
-							if (event.getAction() == MotionEvent.ACTION_CANCEL)// &&
-																				// isFirstMode)
+							if (event.getAction() == MotionEvent.ACTION_CANCEL)
 							{
 								return changeMode(v);
 							}
@@ -6826,6 +6825,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		// get mode associated with pressed button
 		String key = buttonModeViewAssoc.get(v);
 		Mode mode = ConfigParser.getInstance().getMode(key);
+		
 		// if selected the same mode - do not reinitialize camera
 		// and other objects.
 		if (ApplicationScreen.getPluginManager().getActiveModeID() == mode.modeID)
