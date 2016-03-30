@@ -7645,6 +7645,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			// call onTouch of active vf and capture plugins
 			ApplicationScreen.getPluginManager().onTouch(view, event);
 
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		boolean swipingEnabled = prefs.getBoolean(MainScreen.sSwipingEnabledPref, true);
+		
+			
 		RelativeLayout pluginLayout = (RelativeLayout) guiView.findViewById(R.id.pluginsLayout);
 		RelativeLayout fullscreenLayout = (RelativeLayout) guiView.findViewById(R.id.fullscreenLayout);
 		LinearLayout paramsLayout = (LinearLayout) guiView.findViewById(R.id.paramsLayout);
@@ -7654,10 +7658,14 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 		case MotionEvent.ACTION_DOWN:
 			{
-				X = event.getX();
-				Xoffset = X;
-				Xprev = X;
-
+				//swiping can be disabled in settings 
+				if (swipingEnabled)
+				{
+					X = event.getX();
+					Xoffset = X;
+					Xprev = X;
+				}
+				
 				pluginLayout.clearAnimation();
 				fullscreenLayout.clearAnimation();
 				paramsLayout.clearAnimation();
@@ -7669,17 +7677,21 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			}
 		case MotionEvent.ACTION_UP:
 			{
-				float difX = event.getX();
-				if ((X > difX) && (X - difX > 100))
+				//swiping can be disabled in settings 
+				if (swipingEnabled)
 				{
-					sliderLeftEvent();
-					return true;
-				} else if (X < difX && (difX - X > 100))
-				{
-					sliderRightEvent();
-					return true;
+					float difX = event.getX();
+					if ((X > difX) && (X - difX > 100))
+					{
+						sliderLeftEvent();
+						return true;
+					} else if (X < difX && (difX - X > 100))
+					{
+						sliderRightEvent();
+						return true;
+					}
 				}
-
+				
 				pluginLayout.clearAnimation();
 				fullscreenLayout.clearAnimation();
 				paramsLayout.clearAnimation();
@@ -7691,128 +7703,131 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			}
 		case MotionEvent.ACTION_MOVE:
 			{
-				int pluginzoneWidth = guiView.findViewById(R.id.pluginsLayout).getWidth();
-				int infozoneWidth = guiView.findViewById(R.id.infoLayout).getWidth();
-				int screenWidth = pluginzoneWidth + infozoneWidth;
-
-				float difX = event.getX();
-
-				Animation in_animation;
-				Animation out_animation;
-				Animation reverseout_animation;
-				boolean toLeft;
-				if (difX > Xprev)
+				//swiping can be disabled in settings 
+				if (swipingEnabled)
 				{
-					out_animation = new TranslateAnimation(Xprev - Xoffset, difX - Xoffset, 0, 0);
-					out_animation.setDuration(10);
-					out_animation.setInterpolator(new LinearInterpolator());
-					out_animation.setFillAfter(true);
-
-					in_animation = new TranslateAnimation(Xprev - Xoffset - screenWidth, difX - Xoffset - screenWidth,
-							0, 0);
-					in_animation.setDuration(10);
-					in_animation.setInterpolator(new LinearInterpolator());
-					in_animation.setFillAfter(true);
-
-					reverseout_animation = new TranslateAnimation(difX + (screenWidth - Xoffset), Xprev
-							+ (screenWidth - Xoffset), 0, 0);
-					reverseout_animation.setDuration(10);
-					reverseout_animation.setInterpolator(new LinearInterpolator());
-					reverseout_animation.setFillAfter(true);
-
-					toLeft = false;
-
-					XtoRightInvisible = difX - Xoffset;
-					XtoRightVisible = difX - Xoffset - screenWidth;
-				} else
-				{
-					out_animation = new TranslateAnimation(difX - Xoffset, Xprev - Xoffset, 0, 0);
-					out_animation.setDuration(10);
-					out_animation.setInterpolator(new LinearInterpolator());
-					out_animation.setFillAfter(true);
-
-					in_animation = new TranslateAnimation(screenWidth + (Xprev - Xoffset), screenWidth
-							+ (difX - Xoffset), 0, 0);
-					in_animation.setDuration(10);
-					in_animation.setInterpolator(new LinearInterpolator());
-					in_animation.setFillAfter(true);
-
-					reverseout_animation = new TranslateAnimation(Xprev - Xoffset - screenWidth, difX - Xoffset
-							- screenWidth, 0, 0);
-					reverseout_animation.setDuration(10);
-					reverseout_animation.setInterpolator(new LinearInterpolator());
-					reverseout_animation.setFillAfter(true);
-
-					toLeft = true;
-
-					XtoLeftInvisible = Xprev - Xoffset;
-					XtoLeftVisible = screenWidth + (difX - Xoffset);
-				}
-
-				switch (infoSet)
-				{
-				case INFO_ALL:
+					int pluginzoneWidth = guiView.findViewById(R.id.pluginsLayout).getWidth();
+					int infozoneWidth = guiView.findViewById(R.id.infoLayout).getWidth();
+					int screenWidth = pluginzoneWidth + infozoneWidth;
+	
+					float difX = event.getX();
+	
+					Animation in_animation;
+					Animation out_animation;
+					Animation reverseout_animation;
+					boolean toLeft;
+					if (difX > Xprev)
 					{
-						pluginLayout.startAnimation(out_animation);
-						fullscreenLayout.startAnimation(out_animation);
-						infoLayout.startAnimation(out_animation);
-						if ((difX < X) || !isAnyViewOnViewfinder())
-							paramsLayout.startAnimation(out_animation);
+						out_animation = new TranslateAnimation(Xprev - Xoffset, difX - Xoffset, 0, 0);
+						out_animation.setDuration(10);
+						out_animation.setInterpolator(new LinearInterpolator());
+						out_animation.setFillAfter(true);
+	
+						in_animation = new TranslateAnimation(Xprev - Xoffset - screenWidth, difX - Xoffset - screenWidth,
+								0, 0);
+						in_animation.setDuration(10);
+						in_animation.setInterpolator(new LinearInterpolator());
+						in_animation.setFillAfter(true);
+	
+						reverseout_animation = new TranslateAnimation(difX + (screenWidth - Xoffset), Xprev
+								+ (screenWidth - Xoffset), 0, 0);
+						reverseout_animation.setDuration(10);
+						reverseout_animation.setInterpolator(new LinearInterpolator());
+						reverseout_animation.setFillAfter(true);
+	
+						toLeft = false;
+	
+						XtoRightInvisible = difX - Xoffset;
+						XtoRightVisible = difX - Xoffset - screenWidth;
+					} else
+					{
+						out_animation = new TranslateAnimation(difX - Xoffset, Xprev - Xoffset, 0, 0);
+						out_animation.setDuration(10);
+						out_animation.setInterpolator(new LinearInterpolator());
+						out_animation.setFillAfter(true);
+	
+						in_animation = new TranslateAnimation(screenWidth + (Xprev - Xoffset), screenWidth
+								+ (difX - Xoffset), 0, 0);
+						in_animation.setDuration(10);
+						in_animation.setInterpolator(new LinearInterpolator());
+						in_animation.setFillAfter(true);
+	
+						reverseout_animation = new TranslateAnimation(Xprev - Xoffset - screenWidth, difX - Xoffset
+								- screenWidth, 0, 0);
+						reverseout_animation.setDuration(10);
+						reverseout_animation.setInterpolator(new LinearInterpolator());
+						reverseout_animation.setFillAfter(true);
+	
+						toLeft = true;
+	
+						XtoLeftInvisible = Xprev - Xoffset;
+						XtoLeftVisible = screenWidth + (difX - Xoffset);
 					}
-					break;
-				case INFO_NO:
+	
+					switch (infoSet)
 					{
-						if ((toLeft && difX < X) || (!toLeft && difX > X))
-							fullscreenLayout.startAnimation(in_animation);
-						else
-							paramsLayout.startAnimation(reverseout_animation);
-						if (!toLeft && isAnyViewOnViewfinder())
+					case INFO_ALL:
 						{
-							pluginLayout.startAnimation(in_animation);
-							fullscreenLayout.startAnimation(in_animation);
-							infoLayout.startAnimation(in_animation);
-						} else if (toLeft && difX > X && isAnyViewOnViewfinder())
-						{
-							pluginLayout.startAnimation(reverseout_animation);
-							paramsLayout.startAnimation(reverseout_animation);
-							infoLayout.startAnimation(reverseout_animation);
-						}
-					}
-					break;
-				case INFO_GRID:
-					{
-						if (difX > X)// to INFO_NO
+							pluginLayout.startAnimation(out_animation);
 							fullscreenLayout.startAnimation(out_animation);
-						else
-						// to INFO_PARAMS
-						{
-							fullscreenLayout.startAnimation(out_animation);
-							paramsLayout.startAnimation(in_animation);
+							infoLayout.startAnimation(out_animation);
+							if ((difX < X) || !isAnyViewOnViewfinder())
+								paramsLayout.startAnimation(out_animation);
 						}
-					}
-					break;
-				case INFO_PARAMS:
-					{
-						fullscreenLayout.startAnimation(in_animation);
-						if (difX > X)
-							paramsLayout.startAnimation(out_animation);
-						if (toLeft)
+						break;
+					case INFO_NO:
 						{
-							pluginLayout.startAnimation(in_animation);
-							infoLayout.startAnimation(in_animation);
-						} else if (difX < X)
-						{
-							pluginLayout.startAnimation(reverseout_animation);
-							infoLayout.startAnimation(reverseout_animation);
+							if ((toLeft && difX < X) || (!toLeft && difX > X))
+								fullscreenLayout.startAnimation(in_animation);
+							else
+								paramsLayout.startAnimation(reverseout_animation);
+							if (!toLeft && isAnyViewOnViewfinder())
+							{
+								pluginLayout.startAnimation(in_animation);
+								fullscreenLayout.startAnimation(in_animation);
+								infoLayout.startAnimation(in_animation);
+							} else if (toLeft && difX > X && isAnyViewOnViewfinder())
+							{
+								pluginLayout.startAnimation(reverseout_animation);
+								paramsLayout.startAnimation(reverseout_animation);
+								infoLayout.startAnimation(reverseout_animation);
+							}
 						}
+						break;
+					case INFO_GRID:
+						{
+							if (difX > X)// to INFO_NO
+								fullscreenLayout.startAnimation(out_animation);
+							else
+							// to INFO_PARAMS
+							{
+								fullscreenLayout.startAnimation(out_animation);
+								paramsLayout.startAnimation(in_animation);
+							}
+						}
+						break;
+					case INFO_PARAMS:
+						{
+							fullscreenLayout.startAnimation(in_animation);
+							if (difX > X)
+								paramsLayout.startAnimation(out_animation);
+							if (toLeft)
+							{
+								pluginLayout.startAnimation(in_animation);
+								infoLayout.startAnimation(in_animation);
+							} else if (difX < X)
+							{
+								pluginLayout.startAnimation(reverseout_animation);
+								infoLayout.startAnimation(reverseout_animation);
+							}
+						}
+						break;
+					default:
+						break;
 					}
-					break;
-				default:
-					break;
+	
+					Xprev = Math.round(difX);
 				}
-
-				Xprev = Math.round(difX);
-
 			}
 			break;
 		default:
