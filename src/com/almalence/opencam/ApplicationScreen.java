@@ -1517,18 +1517,14 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	@TargetApi(21)
 	protected void configureCamera2Camera(int captureFormat)
 	{
-		Log.e("APP", "configureCamera2Camera");
 		isCameraConfiguring = true;
 		boolean needChange = setSurfaceHolderSize(previewWidth, previewHeight);
 		if (!needChange)
 		{
-			Log.e("APP", "configureCamera2Camera. !needChange. send MSG_SURFACE_CONFIGURED");
 			// If surface will not be changed, then configuring is finished. Send message about it.
 			ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_SURFACE_CONFIGURED, 0);
 			isCameraConfiguring = false;
 		}
-		else
-			Log.e("APP", "configureCamera2Camera. needChange. what we waiting for? surfaceChanged?");
 		
 	}
 
@@ -1801,8 +1797,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		case ApplicationInterface.MSG_CAMERA_OPENED:
 			if (mCameraStarted)
 				break;
-			else
-				Log.e("APP", "handle MSG_CAMERA_OPENED. Process case MSG_SURFACE_READY");
 		case ApplicationInterface.MSG_SURFACE_READY:
 			{
 				String modeName = ApplicationScreen.getPluginManager().getActiveModeID();

@@ -797,8 +797,6 @@ public class MainScreen extends ApplicationScreen
 								CameraController.setupCamera(holder, !switchingMode);
 							} else
 							{
-								Log.e("MainScreen",
-										"surfaceChanged: sendEmptyMessage(ApplicationInterface.MSG_SURFACE_READY)");
 								messageHandler.sendEmptyMessage(ApplicationInterface.MSG_SURFACE_READY);
 							}
 						}

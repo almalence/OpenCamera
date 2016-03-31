@@ -499,7 +499,7 @@ public class Camera2Controller
 		try
 		{
 			if (!captureSessionOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
-				Log.e(TAG, "Create capture session failed. Semaphore is locked");
+				Log.d(TAG, "Create capture session failed. Semaphore is locked");
 				return false;
 			}
 		} catch (InterruptedException e)
@@ -513,11 +513,10 @@ public class Camera2Controller
 			CameraDevice camera = Camera2Controller.getCamera2();
 			if(camera == null)
 			{
-				Log.e(TAG, "Create capture session. cameraDevice is null ");
 				captureSessionOpenCloseLock.release();
 				return false;
 			}
-			Log.e(TAG, "Create capture session. Surface list size = " + sfl.size());
+//			Log.e(TAG, "Create capture session. Surface list size = " + sfl.size());
 			// Here, we create a CameraCaptureSession for camera preview.
 			camera.createCaptureSession(sfl, Camera2Controller.captureSessionStateCallback, null);
 		} catch (IllegalArgumentException e)
@@ -1805,30 +1804,24 @@ public class Camera2Controller
 	
 	public static void startCameraPreview()
 	{
-		Log.e(TAG, "startCameraPreview");
 //		In some rare case (starting app from blocked device with screen off)
 //		even supposed preview to be running, there may be gui controls isn't initialized
 //		and preview frames isn't visible on device screen.
 //		To prevent that we have to re-create capture session even previewRunning already set to TRUE
 //		In normal cases startCameraPreview isn't called when preview already running.
 		if (previewRunning)
-		{
-			Log.e(TAG, "startCameraPreview. previewRunning = true. RETURN");
 			return;
-		}
 		
 		createImageReaders(imageAvailableListener);
 		final List<Surface> surfaceList = getSurfacesList();
 		viewFinderSurface = appInterface.getCameraSurface();
 		if (viewFinderSurface != null)
 		{
-			Log.e(TAG, "startCameraPreview. viewFinderSurface != null. call createCaptureSession");
 			surfaceList.add(viewFinderSurface);
 			createCaptureSession(surfaceList);	
 		}
 		else
 		{
-			Log.e(TAG, "startCameraPreview. viewFinderSurface == null. start CountDownTimer");
 			CountDownTimer timer = new CountDownTimer(3000, 10)
 			{
 				@Override
@@ -1837,7 +1830,6 @@ public class Camera2Controller
 					viewFinderSurface = appInterface.getCameraSurface();
 					if (viewFinderSurface!= null)
 					{
-						Log.e(TAG, "startCameraPreview. viewFinderSurface != null during CountDownTimer. call createCaptureSession");
 						this.cancel();
 						surfaceList.add(viewFinderSurface);
 						createCaptureSession(surfaceList);	
@@ -1847,7 +1839,6 @@ public class Camera2Controller
 				@Override
 				public void onFinish()
 				{
-					Log.e(TAG, "startCameraPreview. viewFinderSurface != null. CountDownTimer is finished. set previewRunning to FALSE");
 					previewRunning = false;
 				}
 			};
@@ -3081,7 +3072,6 @@ public class Camera2Controller
 				try
 				{
 					Camera2Controller.getInstance().camDevice.close();
-//					Camera2Controller.getInstance().camDevice = null;
 				}
 				catch (Exception e)
 				{
@@ -3101,8 +3091,6 @@ public class Camera2Controller
 		@Override
 		public void onOpened(CameraDevice arg0)
 		{
-			Log.e(TAG, "CameraDevice.StateCallback.onOpened");
-
 			Camera2Controller.getInstance().camDevice = arg0;
 
 			messageHandler.sendEmptyMessage(ApplicationInterface.MSG_CAMERA_OPENED);
@@ -3111,10 +3099,8 @@ public class Camera2Controller
 		@Override
 		public void onClosed(CameraDevice arg0)
 		{
-			Log.e(TAG, "CameraDevice.StateCallback.onClosed");
 			if(Camera2Controller.getInstance().camDevice == arg0)
 			{
-				Log.e(TAG, "CameraDevice.StateCallback.onClosed. set camDevice to null");
 				Camera2Controller.getInstance().camDevice = null;
 			}
 			CameraController.sendMessage(ApplicationInterface.MSG_CAMERA_STOPED, 0);
@@ -3126,7 +3112,6 @@ public class Camera2Controller
 		@Override
 		public void onConfigureFailed(final CameraCaptureSession session)
 		{
-			Log.e(TAG, "CaptureSessionConfigure failed");
 			captureSessionOpenCloseLock.release();
 			previewRunning = false;
 			onPauseCamera2();
@@ -3136,7 +3121,6 @@ public class Camera2Controller
 		@Override
 		public void onConfigured(final CameraCaptureSession session)
 		{
-			Log.e(TAG, "captureSession.onConfigured");
 			Camera2Controller.getInstance().mCaptureSession = session;
 			captureSessionOpenCloseLock.release();
 			previewRunning = true;
@@ -3159,7 +3143,6 @@ public class Camera2Controller
 						appInterface.relaunchCamera();
 					} else
 					{
-//						Log.e(TAG, "Session.onConfigured");
 						CameraController.sendMessage(ApplicationInterface.MSG_CAMERA_CONFIGURED, 0);
 					}
 				}
