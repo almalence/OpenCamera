@@ -33,14 +33,12 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.ImageFormat;
-import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.Camera.Area;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraCharacteristics.Key;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
@@ -76,7 +74,6 @@ import com.almalence.util.Util;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.ApplicationInterface;
-import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginManagerInterface;
 //-+- -->
 /* <!-- +++
@@ -1519,8 +1516,11 @@ public class Camera2Controller
 	{
 		if (Camera2Controller.previewRequestBuilder != null && Camera2Controller.getInstance().camDevice != null)
 		{
-			Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, mode);
-			Camera2Controller.setRepeatingRequest();
+			if (ApplicationScreen.instance.useColorFilters())
+			{
+				Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, mode);
+				Camera2Controller.setRepeatingRequest();
+			}
 		}
 	}
 	
@@ -2093,14 +2093,24 @@ public class Camera2Controller
 			precaptureRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_TRANSFORM, new ColorSpaceTransform(colorTransformMatrix));
 		}
 
-		//Color effect (filters)
-		int colorEffect = appInterface.getColorEffectPref();
-		if(colorEffect != CameraParameters.COLOR_EFFECT_MODE_OFF)
+		if (ApplicationScreen.instance.useColorFilters())
 		{
-			stillRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, colorEffect);
-			precaptureRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, colorEffect);
+			//Color effect (filters)
+			int colorEffect = appInterface.getColorEffectPref();
+			if(colorEffect != CameraParameters.COLOR_EFFECT_MODE_OFF)
+			{
+				stillRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, colorEffect);
+				precaptureRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, colorEffect);
+				if (isRAWCapture)
+					rawRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, colorEffect);
+			}
+		}
+		else
+		{
+			stillRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, CameraParameters.COLOR_EFFECT_MODE_OFF);
+			precaptureRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, CameraParameters.COLOR_EFFECT_MODE_OFF);
 			if (isRAWCapture)
-				rawRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, colorEffect);
+				rawRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, CameraParameters.COLOR_EFFECT_MODE_OFF);
 		}
 		
 		
@@ -2815,7 +2825,10 @@ public class Camera2Controller
 			previewRequestBuilder = camDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
 		}
 		
-		previewRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, colorEffect);
+		if (ApplicationScreen.instance.useColorFilters())
+			previewRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, colorEffect);
+		else
+			previewRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, CameraParameters.COLOR_EFFECT_MODE_OFF);
 		
 		if(focusMode != CameraParameters.MF_MODE)
 			previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, focusMode);

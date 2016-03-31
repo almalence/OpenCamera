@@ -2200,7 +2200,20 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 					: ApplicationScreen.sFrontColorEffectPref, ApplicationScreen.sDefaultColorEffectValue));
 		}
 	}
-
+	
+	@Override
+	public boolean useColorFilters()
+	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		boolean captureRAW = prefs.getBoolean(ApplicationScreen.sCaptureRAWPref, false);
+		return ((ApplicationScreen.getPluginManager().getActiveModeID().equals("single")||
+				  ApplicationScreen.getPluginManager().getActiveModeID().equals("burstmode")||
+				  ApplicationScreen.getPluginManager().getActiveModeID().equals("expobracketing")||
+				  ApplicationScreen.getPluginManager().getActiveModeID().equals("preshot"))
+				  &&//and if raw capture is enabled
+				  (!(captureRAW && CameraController.isRAWCaptureSupported())));
+	}
+	
 	@Override
 	public boolean getAELockPref()
 	{

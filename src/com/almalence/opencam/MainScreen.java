@@ -192,6 +192,8 @@ public class MainScreen extends ApplicationScreen
 	public static String		sPhotoTimeLapseIsRunningPref;
 	public static String		sPhotoTimeLapseCount;
 
+	public static String		sSwipingEnabledPref;
+	
 	private static String		sShutterPref;
 	private static String		sShotOnTapPref;
 	private static String		sVolumeButtonPref;
@@ -278,6 +280,8 @@ public class MainScreen extends ApplicationScreen
 		sPhotoTimeLapseIsRunningPref = getResources().getString(R.string.Preference_PhotoTimeLapseIsRunning);
 		sPhotoTimeLapseCount = getResources().getString(R.string.Preference_PhotoTimeLapseCount);
 
+		sSwipingEnabledPref = getResources().getString(R.string.Preference_SwipingEnabledChecked);
+		
 		sShutterPref = getResources().getString(R.string.Preference_ShutterCommonValue);
 		sSonyCamerasPref = getResources().getString(R.string.Preference_ConnectToSonyCameras);
 		sShotOnTapPref = getResources().getString(R.string.Preference_ShotOnTapValue);

@@ -83,6 +83,9 @@ public class HistogramVFPlugin extends PluginViewfinder
 
 	private static int			histogramType	= NONE;
 
+	//takes each X image, skipping other
+	private int					skipImgNum		= 6;
+	
 	public HistogramVFPlugin()
 	{
 		super("com.almalence.plugins.histogramvf", R.xml.preferences_vf_histogram, 0,
@@ -366,7 +369,7 @@ public class HistogramVFPlugin extends PluginViewfinder
 		if (histogramType == NONE)
 			return;
 		frameCounter++;
-		if (frameCounter != 4)
+		if (frameCounter != skipImgNum)
 		{
 			return;
 		}

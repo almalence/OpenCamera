@@ -173,6 +173,7 @@ public interface ApplicationInterface
 	public int getAntibandingModePref();
 	
 	public int getColorEffectPref();
+	public boolean useColorFilters();
 	
 	public boolean getAELockPref();
 	public boolean getAWBLockPref();
