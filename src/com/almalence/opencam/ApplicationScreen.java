@@ -53,6 +53,7 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.PowerManager;
 import android.os.StatFs;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -1494,7 +1495,10 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 				ApplicationScreen.getPluginManager().onCameraSetup();
 				guiManager.onCameraSetup();
-				ApplicationScreen.mApplicationStarted = true;
+				
+				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+				if(pm.isScreenOn())
+					ApplicationScreen.mApplicationStarted = true;
 
 				if (ApplicationScreen.isForceClose)
 					ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_APPLICATION_STOP, 0);

@@ -1801,12 +1801,14 @@ public class Camera2Controller
 	
 	public static void startCameraPreview()
 	{
+//		In some rare case (starting app from blocked device with screen off)
+//		even supposed preview to be running, there may be gui controls isn't initialized
+//		and preview frames isn't visible on device screen.
+//		To prevent that we have to re-create capture session even previewRunning already set to TRUE
+//		In normal cases startCameraPreview isn't called when preview already running.
+		
 		if (previewRunning)
 		{
-			//In some rare case (starting app from blocked device with screen off)
-			//even supposed preview to be running, there may be gui controls isn't initialized
-			//and preview frames isn't visible on device screen. Is that case isApplicationStarted is FALSE.
-			//Only in that case we pass that return and move forward to create capture session again.
 			if(ApplicationScreen.isApplicationStarted())
 				return;
 		}
