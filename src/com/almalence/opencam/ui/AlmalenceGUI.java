@@ -1504,14 +1504,15 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	{
 		initShutterButton();
 
-		ApplicationScreen.instance.runOnUiThread(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				AlmalenceGUI.this.updateThumbnailButton();
-			}
-		});
+		//removed as seems to be unnecessary SM 31.03.16
+//		ApplicationScreen.instance.runOnUiThread(new Runnable()
+//		{
+//			@Override
+//			public void run()
+//			{
+//				AlmalenceGUI.this.updateThumbnailButton();
+//			}
+//		});
 
 		setShutterIcon(ShutterButton.DEFAULT);
 
@@ -8249,6 +8250,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	public void updateThumbnailButton()
 	{
+		Log.e("!!!!!!!!!!!!!", "UPDATE");
+		
 		UpdateThumbnailButtonTask t	= null;
 		t = new UpdateThumbnailButtonTask(ApplicationScreen.instance);
 		t.execute();
