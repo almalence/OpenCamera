@@ -30,9 +30,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
@@ -8242,14 +8245,15 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		thumbnailView.invalidate();
 	}
 
-	private UpdateThumbnailButtonTask	t	= null;
+	Queue<UpdateThumbnailButtonTask> taskQueue=new ConcurrentLinkedQueue<UpdateThumbnailButtonTask>();
 
 	public void updateThumbnailButton()
 	{
-
+		UpdateThumbnailButtonTask t	= null;
 		t = new UpdateThumbnailButtonTask(ApplicationScreen.instance);
 		t.execute();
-
+		taskQueue.add(t);
+		
 		new CountDownTimer(1000, 1000)
 		{
 			public void onTick(long millisUntilFinished)
@@ -8260,6 +8264,8 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			{
 				try
 				{
+					UpdateThumbnailButtonTask t	= null;
+					t = taskQueue.poll();
 					if (t != null && t.getStatus() != AsyncTask.Status.FINISHED)
 					{
 						t.cancel(true);
