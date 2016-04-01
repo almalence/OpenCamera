@@ -1497,9 +1497,11 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 				guiManager.onCameraSetup();
 				
 				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-				if(pm.isScreenOn())
+				if(!pm.isScreenOn() && CameraController.isUseCamera2())
+					ApplicationScreen.mApplicationStarted = false;
+				else
 					ApplicationScreen.mApplicationStarted = true;
-
+				
 				if (ApplicationScreen.isForceClose)
 					ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_APPLICATION_STOP, 0);
 			}

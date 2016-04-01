@@ -76,7 +76,7 @@ public class AlmaCLRShot
 												// in
 												// pixels).
 	private int					mGhosting;
-	private int					mAngle;
+//	private int					mAngle;
 
 	private int					mOutNV21		= 0;
 	private Rect[]				mBoarderRect	= null;
@@ -146,13 +146,13 @@ public class AlmaCLRShot
 		mPreviewSize = previewSize;
 		mSensitivity = sensitivity;
 		mMinSize = minSize;
-		mAngle = angle;
-
-		if (mAngle != 0 && mAngle != 90 && mAngle != 180 && mAngle != 270)
-		{
-			Log.d(TAG, "Angle is invalid");
-			throw new Exception("Angle is invalid");
-		}
+//		mAngle = angle;
+//
+//		if (mAngle != 0 && mAngle != 90 && mAngle != 180 && mAngle != 270)
+//		{
+//			Log.d(TAG, "Angle is invalid");
+//			throw new Exception("Angle is invalid");
+//		}
 
 		if (!mPreviewSize.isValid())
 		{
@@ -207,7 +207,7 @@ public class AlmaCLRShot
 		ARGBBuffer = null;
 
 		//Log.d(TAG, "getPreviewBitmap() -- end");
-		return rotateBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), mAngle);
+		return bitmap;//rotateBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), mAngle);
 	}
 
 	public byte[] processingSaveData()
