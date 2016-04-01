@@ -212,13 +212,6 @@ public class MultiShotProcessingRouter extends PluginProcessing implements OnTas
 		{
 			int yuv = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("frame" + i + sessionID));
 			mYUVBufferList.add(i - 1, yuv);
-
-			if (CameraController.isFlippedSensorDevice() && CameraController.isFrontCamera())
-			{
-				int imageWidth = CameraController.getCameraImageSize().getWidth();
-				int imageHeight = CameraController.getCameraImageSize().getHeight();
-				ImageConversion.TransformNV21N(yuv, yuv, imageWidth, imageHeight, 1, 1, 0);
-			}
 		}
 
 		if (mSaveInputPreference)

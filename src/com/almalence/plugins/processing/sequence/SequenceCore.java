@@ -45,6 +45,7 @@ import com.almalence.SwapHeap;
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
 import com.almalence.plugins.processing.groupshot.GroupShotCore;
 import com.almalence.util.ImageConversion;
 import com.almalence.util.Size;
@@ -67,8 +68,6 @@ public class SequenceCore
 	private static int					mMinSize		= 1000;
 	private static String				mGhosting		= "0";
 
-	private static int					mAngle			= 0;
-	
 	private Handler						mHandler		= null;
 	
 	private int							mImageDataOrientation;
@@ -170,7 +169,7 @@ public class SequenceCore
 			// frames!!! should be taken from heap
 			mAlmaCLRShot.addYUVInputFrame(mYUVBufferList, input);
 	
-			mAlmaCLRShot.initialize(preview, mAngle,
+			mAlmaCLRShot.initialize(preview,
 			/*
 			 * sensitivity for objection detection
 			 */
@@ -233,7 +232,7 @@ public class SequenceCore
 			{
 				
 				
-				mAlmaCLRShot.initialize(preview, mAngle,
+				mAlmaCLRShot.initialize(preview,
 				/*
 				 * sensitivity for objection detection
 				 */

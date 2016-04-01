@@ -4096,11 +4096,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return getSensorOrientation(cameraMirrored? 1 : 0);
 	}
 	
-	public static boolean isFlippedSensorDevice()
-	{
-		return isNexus6 || isNexus6p;
-	}
-
 	// CAMERA PARAMETERS AND CAPABILITIES
 	// SECTION---------------------------------------------
 

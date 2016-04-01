@@ -24,11 +24,13 @@ package com.almalence.opencam.ui;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -94,6 +96,9 @@ public abstract class GUI
 	static protected int	mDeviceOrientation			= 0;
 	static protected int	mPreviousDeviceOrientation	= 0;
 	
+	//Rotations values for bitmaps according to Pair<imageDataOrientation, deviceLayoutOrientation>
+	static protected 		Map<Pair<Integer,Integer>, Integer>			mMatrixRotationMap;
+	
 	public enum ShutterButton
 	{
 		DEFAULT, RECORDER_START_WITH_PAUSE, RECORDER_START, RECORDER_STOP_WITH_PAUSE, RECORDER_STOP, RECORDER_RECORDING_WITH_PAUSE, RECORDER_RECORDING, RECORDER_PAUSED, TIMELAPSE_ACTIVE
@@ -124,6 +129,30 @@ public abstract class GUI
 		ExportViews = new ArrayList<View>();
 
 		ModeViews = new ArrayList<View>();
+		
+		//All possible rotations for bitmap according of combination of image data orientation
+		//and gui's layout orientation
+		mMatrixRotationMap = new HashMap<Pair<Integer, Integer>, Integer>()
+		{
+			{
+				put(new Pair<Integer, Integer>(0, 0), 0);
+				put(new Pair<Integer, Integer>(0, 90), 270);
+				put(new Pair<Integer, Integer>(0, 180), 180);
+				put(new Pair<Integer, Integer>(0, 270), 90);
+				put(new Pair<Integer, Integer>(90, 0), 90);
+				put(new Pair<Integer, Integer>(90, 90), 0);
+				put(new Pair<Integer, Integer>(90, 180), 270);
+				put(new Pair<Integer, Integer>(90, 270), 180);
+				put(new Pair<Integer, Integer>(180, 0), 180);
+				put(new Pair<Integer, Integer>(180, 90), 90);
+				put(new Pair<Integer, Integer>(180, 180), 0);
+				put(new Pair<Integer, Integer>(180, 270), 270);
+				put(new Pair<Integer, Integer>(270, 0), 270);
+				put(new Pair<Integer, Integer>(270, 90), 180);
+				put(new Pair<Integer, Integer>(270, 180), 90);
+				put(new Pair<Integer, Integer>(270, 270), 0);
+			}
+		};
 	}
 
 	abstract public void onStart();
@@ -336,11 +365,26 @@ public abstract class GUI
 	//Post-processing plugins used that method to get right rotation of preview Bitmap
 	public int getMatrixRotationForBitmap(int iImageDataOrientation, int iLayoutOrientation, boolean isCameraMirrored)
 	{
-		int compensateRotation = iLayoutOrientation + (iLayoutOrientation == 90 || iLayoutOrientation == 270 ? 180 : 0)%360;
+//		int compensateRotation = iLayoutOrientation + (iLayoutOrientation == 90 || iLayoutOrientation == 270 ? 180 : 0)%360;
+//		
+//		int rotation = (iImageDataOrientation + compensateRotation + ((isCameraMirrored && (iImageDataOrientation == 90 || iImageDataOrientation == 270)) ? 180 : 0))%360;
+//		
+//		return rotation;
 		
-		int rotation = (iImageDataOrientation + compensateRotation + ((isCameraMirrored && (iImageDataOrientation == 90 || iImageDataOrientation == 270)) ? 180 : 0))%360;
+		//For front camera in portrait mode value of image data orientation isn't mirrored
+		//so we have to correct it to get right value of matrix orientation
+		boolean isPortrait = (iImageDataOrientation == 90 || iImageDataOrientation == 270);
+		if(isCameraMirrored && isPortrait)
+			iImageDataOrientation = (iImageDataOrientation + 180)%360;
 		
-		return rotation;
+		if((iImageDataOrientation != 0 && iImageDataOrientation != 90 && iImageDataOrientation != 180 && iImageDataOrientation != 270) ||
+		   (iLayoutOrientation != 0 && iLayoutOrientation != 90 && iLayoutOrientation != 180 && iLayoutOrientation != 270))
+			return 0;
+		else
+		{
+			int rotation = mMatrixRotationMap.get(new Pair<Integer, Integer>(iImageDataOrientation, iLayoutOrientation));
+			return rotation;
+		}
 	}
 
 	// mode help procedure

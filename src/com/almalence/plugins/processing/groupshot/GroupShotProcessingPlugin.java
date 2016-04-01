@@ -1011,9 +1011,7 @@ public class GroupShotProcessingPlugin extends MultiShotProcessingPlugin
 		PluginManager.getInstance().addToSharedMem("resultframe1" + sessionID, String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem("resultframelen1" + sessionID, String.valueOf(frame_len));
 
-		//Nexus 6 has a original front camera sensor orientation, we have to manage it
-		PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID,
-				String.valueOf(((CameraController.isFlippedSensorDevice() && mCameraMirrored)? 180 : 0)));
+		PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID, String.valueOf(0));
 		PluginManager.getInstance().addToSharedMem("resultframemirrored1" + sessionID, String.valueOf(mCameraMirrored));
 
 		PluginManager.getInstance().addToSharedMem("amountofresultframes" + sessionID, String.valueOf(1));

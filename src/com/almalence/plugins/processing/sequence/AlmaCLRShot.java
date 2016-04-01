@@ -76,7 +76,6 @@ public class AlmaCLRShot
 												// in
 												// pixels).
 	private int					mGhosting;
-//	private int					mAngle;
 
 	private int					mOutNV21		= 0;
 	private Rect[]				mBoarderRect	= null;
@@ -139,20 +138,13 @@ public class AlmaCLRShot
 		return;
 	}
 
-	public boolean initialize(Size previewSize, int angle, int sensitivity, int minSize, int ghosting,
+	public boolean initialize(Size previewSize, int sensitivity, int minSize, int ghosting,
 			int[] sports_order) throws Exception
 	{
 		mGhosting = ghosting;
 		mPreviewSize = previewSize;
 		mSensitivity = sensitivity;
 		mMinSize = minSize;
-//		mAngle = angle;
-//
-//		if (mAngle != 0 && mAngle != 90 && mAngle != 180 && mAngle != 270)
-//		{
-//			Log.d(TAG, "Angle is invalid");
-//			throw new Exception("Angle is invalid");
-//		}
 
 		if (!mPreviewSize.isValid())
 		{
@@ -207,7 +199,7 @@ public class AlmaCLRShot
 		ARGBBuffer = null;
 
 		//Log.d(TAG, "getPreviewBitmap() -- end");
-		return bitmap;//rotateBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), mAngle);
+		return bitmap;
 	}
 
 	public byte[] processingSaveData()
