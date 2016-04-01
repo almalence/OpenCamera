@@ -8250,8 +8250,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 	public void updateThumbnailButton()
 	{
-		Log.e("!!!!!!!!!!!!!", "UPDATE");
-		
 		UpdateThumbnailButtonTask t	= null;
 		t = new UpdateThumbnailButtonTask(ApplicationScreen.instance);
 		t.execute();
