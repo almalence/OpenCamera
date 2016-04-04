@@ -30,7 +30,6 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.view.Display;
@@ -38,7 +37,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -47,11 +45,12 @@ import android.widget.RelativeLayout.LayoutParams;
 
 import com.almalence.SwapHeap;
 /* <!-- +++
+ import com.almalence.opencam_plus.ApplicationInterface;
  import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
- import com.almalence.opencam_plus.ApplicationInterface;
+ 
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.ApplicationInterface;
@@ -61,11 +60,9 @@ import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
-import com.almalence.util.Size;
 import com.almalence.plugins.processing.multishot.MultiShotProcessingPlugin;
 import com.almalence.plugins.processing.objectremoval.AlmaCLRShot.ObjBorderInfo;
 import com.almalence.plugins.processing.objectremoval.AlmaCLRShot.ObjectInfo;
-import com.almalence.plugins.processing.objectremoval.AlmaCLRShot.OnProcessingListener;
 
 /***
  * Implements night processing
@@ -83,7 +80,9 @@ public class ObjectRemovalProcessingPlugin extends MultiShotProcessingPlugin
 	private boolean			released		= false;
 
 	private int				mImageDataOrientation;
+	private int				mLayoutOrientation;
 	private boolean			mCameraMirrored;
+	private int				mSensorOrientation;
 
 	// indicates that no more user interaction needed
 	private boolean			finishing		= false;
@@ -123,6 +122,9 @@ public class ObjectRemovalProcessingPlugin extends MultiShotProcessingPlugin
 
 		mImageDataOrientation = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("frameorientation1" + sessionID));
 		mCameraMirrored = Boolean.valueOf(PluginManager.getInstance().getFromSharedMem("framemirrored1" + sessionID));
+		mSensorOrientation = CameraController.getSensorOrientation(mCameraMirrored);
+		
+		mLayoutOrientation = ApplicationScreen.getGUIManager().getLayoutOrientation();
 		
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		int iSaveImageWidth = imageSize.getWidth();
@@ -174,9 +176,11 @@ public class ObjectRemovalProcessingPlugin extends MultiShotProcessingPlugin
 	private final Handler			mHandler			= new Handler(this);
 	private boolean[]				mObjStatus;
 	private Bitmap					PreviewBmp			= null;
+	public static int				mPreviewWidth;
+	public static int				mPreviewHeight;
 	public static int				mDisplayWidth;
 	public static int				mDisplayHeight;
-
+	
 	@Override
 	public void setYUVBufferList(ArrayList<Integer> YUVBufferList)
 	{
@@ -210,18 +214,26 @@ public class ObjectRemovalProcessingPlugin extends MultiShotProcessingPlugin
 		paint.setColor(0xFF00AAEA);
 		paint.setStrokeWidth(5);
 		paint.setPathEffect(new DashPathEffect(new float[] { 5, 5 }, 0));
-
+		
 		PreviewBmp = ObjectRemovalCore.getPreviewBitmap();
+		mPreviewWidth = PreviewBmp.getWidth();
+		mPreviewHeight = PreviewBmp.getHeight();
 		drawObjectRectOnBitmap(PreviewBmp, ObjectRemovalCore.getObjectInfoList(), ObjectRemovalCore.getObjBorderBitmap(paint));
 
 		if (PreviewBmp != null)
 		{
-			Matrix matrix = new Matrix();
-			boolean mIsLandscape = mImageDataOrientation == 0 || mImageDataOrientation == 180;
-			matrix.postRotate(mCameraMirrored ? (mIsLandscape ? 90 : 270) : (CameraController.isNexus5x? 270 : 90));
-			Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
-					matrix, true);
-			mImgView.setImageBitmap(rotated);
+			int rotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(mImageDataOrientation, mLayoutOrientation, mCameraMirrored);
+			
+			if(rotation != 0)
+			{
+				Matrix matrix = new Matrix();
+				matrix.postRotate(rotation);
+				Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
+						matrix, true);
+				mImgView.setImageBitmap(rotated);
+			}
+			else
+				mImgView.setImageBitmap(PreviewBmp);
 		}
 
 		mHandler.sendEmptyMessage(MSG_END_OF_LOADING);
@@ -261,19 +273,28 @@ public class ObjectRemovalProcessingPlugin extends MultiShotProcessingPlugin
 				{
 					if (finishing)
 						return true;
-					float x = 0;
-					float y = 0;
-					//Workaround for Nexus5x, image is flipped horizontally & vertically because of sensor orientation
-					if(CameraController.isNexus5x && !mCameraMirrored)
+					float x = event.getX();
+					float y = event.getY();
+					
+					//Image data has different orientation according to device's sensor orientation
+					//Object removal operate with data as is, it means that seeing preview is differ by orientation from processing data.
+					//So we have to calculate new touch coordinates for real data
+					if(mSensorOrientation == 270)
 					{
 						x = mDisplayWidth - event.getY();
-						y = event.getX();	
+						y = event.getX();
 					}
-					else
+					else if(mSensorOrientation == 90)
 					{
 						x = event.getY();
 						y = mDisplayHeight - 1 - event.getX();
 					}
+					else if(mSensorOrientation == 180)
+					{
+						x = mDisplayHeight - 1 - event.getX();
+						y = mDisplayWidth - 1 - event.getY();
+					}
+					
 					int objIndex = 0;
 					try
 					{
@@ -397,15 +418,22 @@ public class ObjectRemovalProcessingPlugin extends MultiShotProcessingPlugin
 			if (finishing)
 				return true;
 			PreviewBmp = ObjectRemovalCore.getPreviewBitmap();
+			mPreviewWidth = PreviewBmp.getWidth();
+			mPreviewHeight = PreviewBmp.getHeight();
 			drawObjectRectOnBitmap(PreviewBmp, ObjectRemovalCore.getObjectInfoList(), ObjectRemovalCore.getObjBorderBitmap(paint));
 			if (PreviewBmp != null)
 			{
-				Matrix matrix = new Matrix();
-				boolean mIsLandscape = mImageDataOrientation == 0 || mImageDataOrientation == 180;
-				matrix.postRotate(mCameraMirrored ? (mIsLandscape ? 90 : 270) : (CameraController.isNexus5x? 270 : 90));
-				Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
-						matrix, true);
-				mImgView.setImageBitmap(rotated);
+				int rotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(mImageDataOrientation, mLayoutOrientation, mCameraMirrored);
+				if(rotation != 0)
+				{
+					Matrix matrix = new Matrix();
+					matrix.postRotate(rotation);
+					Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
+							matrix, true);
+					mImgView.setImageBitmap(rotated);
+				}
+				else
+					mImgView.setImageBitmap(PreviewBmp);	
 			}
 			break;
 		default:

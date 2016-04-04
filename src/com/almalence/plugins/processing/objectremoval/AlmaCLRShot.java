@@ -418,7 +418,10 @@ public class AlmaCLRShot
 		ARGBBuffer = null;
 
 //		Log.d(TAG, "getPreviewBitmap() -- end");
-		return rotateBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), mAngle);
+		if(mAngle == 0)
+			return bitmap;
+		else
+			return rotateBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), mAngle);
 	}
 
 	public int getTotalObjNum()

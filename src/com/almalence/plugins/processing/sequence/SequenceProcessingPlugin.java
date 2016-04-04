@@ -220,16 +220,10 @@ public class SequenceProcessingPlugin extends MultiShotProcessingPlugin implemen
 		{
 			Matrix matrix = new Matrix();
 			int rotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(mImageDataOrientation, mLayoutOrientation, mCameraMirrored);
-			//Workaround for Nexus5x, image is flipped because of sensor orientation
-//			matrix.postRotate(CameraController.isNexus5x? (mCameraMirrored ? 90 : -90) : 90);
 			matrix.postRotate(rotation);
-//			matrix.postRotate(0);
 			Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
 					matrix, true);
 			mImgView.setImageBitmap(rotated);
-//			mImgView.setRotation(mCameraMirrored ? ((mImageDataOrientation == 0 || mImageDataOrientation == 180) ? 0
-//					: 180)
-//					: 0);
 		}
 
 		sequenceView = ((OrderControl) postProcessingView.findViewById(R.id.seqView));
@@ -240,15 +234,6 @@ public class SequenceProcessingPlugin extends MultiShotProcessingPlugin implemen
 			Matrix matrix = new Matrix();
 			int rotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(mImageDataOrientation, mLayoutOrientation, mCameraMirrored);
 			matrix.postRotate(rotation);
-//			//Workaround for Nexus5x, image is flipped because of sensor orientation
-//			if(CameraController.isNexus5x)
-//				matrix.postRotate(mCameraMirrored ? ((mImageDataOrientation == 0 || mImageDataOrientation == 180) ? 270
-//						: 90)
-//						: 270);
-//			else
-//				matrix.postRotate(mCameraMirrored ? ((mImageDataOrientation == 0 || mImageDataOrientation == 180) ? 270
-//						: 90)
-//						: 90);	
 			Bitmap rotated = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
 			thumbnailsArray[i] = rotated;
 		}
@@ -256,8 +241,6 @@ public class SequenceProcessingPlugin extends MultiShotProcessingPlugin implemen
 		LayoutParams lp = (LayoutParams) sequenceView.getLayoutParams();
 		lp.height = thumbnailsArray[0].getHeight();
 		sequenceView.setLayoutParams(lp);
-
-//		sequenceView.setRotation(mCameraMirrored? 180 : 0);
 
 		mHandler.sendEmptyMessage(MSG_END_OF_LOADING);
 	}

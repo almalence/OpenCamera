@@ -38,16 +38,16 @@ public class ObjectRemovalCore
 	private static int				mMinSize		= 1000;
 	private static String			mGhosting		= "2";
 
-	private static int				mAngle			= 0;
-
 	private static  AlmaCLRShot		mAlmaCLRShot;
 	
 	public static int				mDisplayWidth;
 	public static int				mDisplayHeight;
 	
 	
-	private ArrayList<Integer>			mYUVBufferList = null;	// List of input images.
-
+	private ArrayList<Integer>		mYUVBufferList = null;	// List of input images.
+	
+	private static Bitmap			mPreviewBitmap = null;
+	
 	public void setYUVBufferList(ArrayList<Integer> YUVBufferList)
 	{
 		this.mYUVBufferList = YUVBufferList;
@@ -89,6 +89,12 @@ public class ObjectRemovalCore
 	{
 		mDisplayWidth = displayWidth;
 		mDisplayHeight = displayHeight;
+		
+		if(mPreviewBitmap != null)
+		{
+			mPreviewBitmap.recycle();
+			mPreviewBitmap = null;
+		}
 	}
 	
 	public void onStartProcessing()
@@ -113,7 +119,7 @@ public class ObjectRemovalCore
 			// frames!!! should be taken from heap
 			mAlmaCLRShot.addInputFrame(mYUVBufferList, input);
 
-			mAlmaCLRShot.initialize(preview, mAngle,
+			mAlmaCLRShot.initialize(preview, 0,
 			/*
 			 * -1 : auto mode 0 ~ max number of input frame : manual mode
 			 */
@@ -145,7 +151,10 @@ public class ObjectRemovalCore
 	
 	public static Bitmap getPreviewBitmap()
 	{
-		return mAlmaCLRShot.getPreviewBitmap();
+		if(mPreviewBitmap == null)
+			mPreviewBitmap = mAlmaCLRShot.getPreviewBitmap();
+		
+		return Bitmap.createBitmap(mPreviewBitmap, 0, 0, mPreviewBitmap.getWidth(), mPreviewBitmap.getHeight(), null, false);
 	}
 	
 	public static int getTotalObjNum()
