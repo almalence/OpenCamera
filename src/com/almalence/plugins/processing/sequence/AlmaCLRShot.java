@@ -47,6 +47,8 @@ public class AlmaCLRShot
 
 	private int					IMAGE_TO_LAYOUT	= 8;
 	private static final int	MAX_INPUT_FRAME	= 8;
+	
+	private static final int    MPIX_5 			= 5000000;
 
 	private List<byte[]>		mJpegData;
 	private Size				mPreviewSize;
@@ -165,6 +167,11 @@ public class AlmaCLRShot
 		}
 
 		mCrop = new int[4];
+		
+		if(mInputFrameSize.getWidth() * mInputFrameSize.getHeight() > MPIX_5)
+			this.IMAGE_TO_LAYOUT = 16;
+		else
+			this.IMAGE_TO_LAYOUT = 8;
 
 		removeProcessing(sports_order);
 

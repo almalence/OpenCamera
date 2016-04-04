@@ -384,7 +384,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_almalence_plugins_processing_groupsho
 			layout, NULL,				// prescribed layout
 			baseFrame,							// base frame (from which to take background)
 			// Set it to non-zero to get very quick stitched result
-			2,					// quick method
+			1,					// quick method
 			&crop[0], &crop[1], &crop[2], &crop[3]);
 
 	env->ReleaseByteArrayElements(jlayout, (jbyte*)layout, JNI_ABORT);

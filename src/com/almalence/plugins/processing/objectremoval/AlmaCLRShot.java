@@ -53,6 +53,8 @@ public class AlmaCLRShot
 
 	private int						IMAGE_TO_LAYOUT	= 8;
 	private static final int		MAX_INPUT_FRAME	= 8;
+	
+	private static final int    	MPIX_5 			= 5000000;
 
 	private List<byte[]>			mJpegData;
 	private int						mBaseFrameIndex;
@@ -237,6 +239,11 @@ public class AlmaCLRShot
 		mMinSize = minSize;
 		mOnProcessingListener = listener;
 		mAngle = angle;
+		if(mInputFrameSize.getWidth() * mInputFrameSize.getHeight() > MPIX_5)
+			this.IMAGE_TO_LAYOUT = 16;
+		else
+			this.IMAGE_TO_LAYOUT = 8;
+
 		mLayoutSize = new Size(mInputFrameSize.getWidth() / IMAGE_TO_LAYOUT, mInputFrameSize.getHeight()
 				/ IMAGE_TO_LAYOUT);
 

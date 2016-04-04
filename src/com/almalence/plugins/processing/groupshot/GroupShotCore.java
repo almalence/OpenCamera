@@ -61,7 +61,7 @@ public class GroupShotCore
 	private static final float			FACE_CONFIDENCE_LEVEL		= 0.4f;
 	private static final int			IMAGE_TO_LAYOUT				= 8;
 	private static final int			MAX_INPUT_FRAME				= 8;
-	private static final int			MAX_WIDTH_FOR_FACEDETECTION	= 1280;
+	private static final int			MAX_WIDTH_FOR_FACEDETECTION	= 800;
 
 	private int							mNumOfFrame					= 0;
 	private int							mBaseFrame					= 0;
