@@ -24,8 +24,9 @@ import android.graphics.Bitmap;
 import android.graphics.Paint;
 
 import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.plugins.processing.objectremoval.AlmaCLRShot.ObjBorderInfo;
-import com.almalence.plugins.processing.objectremoval.AlmaCLRShot.ObjectInfo;
+import com.almalence.plugins.processing.multishot.AlmaCLRShot;
+import com.almalence.plugins.processing.multishot.AlmaCLRShot.ObjBorderInfo;
+import com.almalence.plugins.processing.multishot.AlmaCLRShot.ObjectInfo;
 import com.almalence.util.Size;
 
 public class ObjectRemovalCore
@@ -137,7 +138,7 @@ public class ObjectRemovalCore
 			 * ghosting parameter 0 : normal operation 1 : detect ghosted
 			 * objects but not remove them 2 : detect and remove all object
 			 */
-			Integer.parseInt(mGhosting), null);
+			Integer.parseInt(mGhosting), null, null);
 		} catch (Exception e)
 		{
 			e.printStackTrace();

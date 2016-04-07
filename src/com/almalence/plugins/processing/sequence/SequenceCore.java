@@ -50,6 +50,8 @@ import com.almalence.plugins.processing.groupshot.GroupShotCore;
 import com.almalence.util.ImageConversion;
 import com.almalence.util.Size;
 
+import com.almalence.plugins.processing.multishot.AlmaCLRShot;
+
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationScreen;
  +++ --> */
@@ -167,9 +169,11 @@ public class SequenceCore
 		try
 		{
 			// frames!!! should be taken from heap
-			mAlmaCLRShot.addYUVInputFrame(mYUVBufferList, input);
+			mAlmaCLRShot.addInputFrame(mYUVBufferList, input);
 	
 			mAlmaCLRShot.initialize(preview,
+					0, //Angle
+					0, //Base frame
 			/*
 			 * sensitivity for objection detection
 			 */
@@ -183,7 +187,7 @@ public class SequenceCore
 			 * ghosting parameter 0 : normal operation 1 : detect ghosted
 			 * objects but not remove them 2 : detect and remove all object
 			 */
-			Integer.parseInt(mGhosting), indexes);
+			Integer.parseInt(mGhosting), indexes, null);
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -233,6 +237,8 @@ public class SequenceCore
 				
 				
 				mAlmaCLRShot.initialize(preview,
+						0, //Angle
+						0, //Base frame
 				/*
 				 * sensitivity for objection detection
 				 */
@@ -246,7 +252,7 @@ public class SequenceCore
 				 * ghosting parameter 0 : normal operation 1 : detect ghosted
 				 * objects but not remove them 2 : detect and remove all object
 				 */
-				Integer.parseInt(mGhosting), idxInput);
+				Integer.parseInt(mGhosting), idxInput, null);
 			} catch (NumberFormatException e)
 			{
 				e.printStackTrace();

@@ -61,8 +61,8 @@ import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 import com.almalence.plugins.processing.multishot.MultiShotProcessingPlugin;
-import com.almalence.plugins.processing.objectremoval.AlmaCLRShot.ObjBorderInfo;
-import com.almalence.plugins.processing.objectremoval.AlmaCLRShot.ObjectInfo;
+import com.almalence.plugins.processing.multishot.AlmaCLRShot.ObjBorderInfo;
+import com.almalence.plugins.processing.multishot.AlmaCLRShot.ObjectInfo;
 
 /***
  * Implements night processing
