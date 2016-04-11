@@ -3670,10 +3670,9 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	 ****************************************************************************************/
 	private void addQuickSetting(SettingsType type, boolean isQuickControl)
 	{
-		//for unknown issue with ISo and meetering
+		//for unknown issue with ISo and metering. probably some new values added
 		try
 		{
-					
 			int icon_id = -1;
 			CharSequence icon_text = "";
 			boolean isEnabled = true;

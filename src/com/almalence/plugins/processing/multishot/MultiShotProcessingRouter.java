@@ -273,15 +273,20 @@ public class MultiShotProcessingRouter extends PluginProcessing implements OnTas
 				selectedProcessingPlugin = objectRemovalProcessingPlugin;
 				state = SELECTED_OBJECT_REMOVAL;
 			}
-			if (v == buttonGroupShot)
+			else if (v == buttonGroupShot)
 			{
 				selectedProcessingPlugin = groupShotProcessingPlugin;			
 				state = SELECTED_GROUP_SHOT;
 			}
-			if (v == buttonSequence)
+			else if (v == buttonSequence)
 			{
 				selectedProcessingPlugin = sequenceProcessingPlugin;
 				state = SELECTED_SEQUENCE;
+			}
+			else
+			{
+				state = PROCESSING_CANCELLED;
+				cancelProcessing();
 			}
 
 			mButtonsLayout.setVisibility(View.GONE);
@@ -316,17 +321,7 @@ public class MultiShotProcessingRouter extends PluginProcessing implements OnTas
 				return false;
 			}
 
-			ApplicationScreen.instance.findViewById(R.id.blockingText).setVisibility(View.VISIBLE);
-			mButtonsLayout.setVisibility(View.GONE);
-
-			mYUVBufferList.clear();
-
-			ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_POSTPROCESSING_FINISHED);
-			state = PROCESSING_CANCELLED;
-			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST,
-					ApplicationInterface.MSG_CONTROL_UNLOCKED);
-			ApplicationScreen.getGUIManager().lockControls = false;
-
+			cancelProcessing();
 			return true;
 		}
 
@@ -342,9 +337,26 @@ public class MultiShotProcessingRouter extends PluginProcessing implements OnTas
 	 * POST PROCESSING END
 	 ************************************************/
 
+	private void cancelProcessing()
+	{
+		ApplicationScreen.instance.findViewById(R.id.blockingText).setVisibility(View.VISIBLE);
+		if (mButtonsLayout != null)
+			mButtonsLayout.setVisibility(View.GONE);
+
+		mYUVBufferList.clear();
+
+		ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_POSTPROCESSING_FINISHED);
+		state = PROCESSING_CANCELLED;
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST,
+				ApplicationInterface.MSG_CONTROL_UNLOCKED);
+		ApplicationScreen.getGUIManager().lockControls = false;
+	}
+	
 	@Override
 	public void onPause()
 	{
+		cancelProcessing();
+		
 		if (mButtonsLayout != null)
 		{
 			ApplicationScreen.getGUIManager().removeViews(mButtonsLayout, R.id.specialPluginsLayout3);
