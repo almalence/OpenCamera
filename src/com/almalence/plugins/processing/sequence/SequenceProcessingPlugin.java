@@ -192,6 +192,9 @@ public class SequenceProcessingPlugin extends MultiShotProcessingPlugin implemen
 	private Bitmap						PreviewBmp			= null;
 //	public static int					mDisplayWidth;
 //	public static int					mDisplayHeight;
+	
+	private boolean						processingRunning = false;
+	private int[]						indexesToProcess  = null;
 
 	public void setYUVBufferList(ArrayList<Integer> mYUVBufferList)
 	{
@@ -241,6 +244,9 @@ public class SequenceProcessingPlugin extends MultiShotProcessingPlugin implemen
 		LayoutParams lp = (LayoutParams) sequenceView.getLayoutParams();
 		lp.height = thumbnailsArray[0].getHeight();
 		sequenceView.setLayoutParams(lp);
+
+		processingRunning = false;
+		indexesToProcess  = null;
 
 		mHandler.sendEmptyMessage(MSG_END_OF_LOADING);
 	}
@@ -300,6 +306,7 @@ public class SequenceProcessingPlugin extends MultiShotProcessingPlugin implemen
 		}
 	}
 
+	private Object syncObj = new Object();
 	@Override
 	public boolean handleMessage(Message msg)
 	{
@@ -321,11 +328,23 @@ public class SequenceProcessingPlugin extends MultiShotProcessingPlugin implemen
 			return false;
 
 		case MSG_REDRAW:
+			synchronized(syncObj)
+			{
+				processingRunning = false;
+				if(indexesToProcess != null)
+				{
+					processingRunning = true;
+					SequenceCore.getInstance().runProcessingTask(indexesToProcess);
+					indexesToProcess = null;
+					return true;
+				}
+			}
+			
 			if (PreviewBmp != null)
 				PreviewBmp.recycle();
 			if (finishing)
 				return true;
-			sequenceView.setEnabled(true);
+//			sequenceView.setEnabled(true);
 			PreviewBmp = SequenceCore.getInstance().getPreviewBitmap();
 			if (PreviewBmp != null)
 			{
@@ -368,9 +387,20 @@ public class SequenceProcessingPlugin extends MultiShotProcessingPlugin implemen
 	@Override
 	public void onSequenceChanged(final int[] idx)
 	{
-		sequenceView.setEnabled(false);
-
-		SequenceCore.getInstance().runProcessingTask(idx);
+		synchronized(syncObj)
+		{
+			if(!processingRunning)
+			{
+				processingRunning = true;
+				indexesToProcess = null;
+	//			sequenceView.setEnabled(false);
+				SequenceCore.getInstance().runProcessingTask(idx);
+			}
+			else
+			{
+				indexesToProcess = idx;
+			}
+		}
 	}
 	/************************************************
 	 * POST PROCESSING END

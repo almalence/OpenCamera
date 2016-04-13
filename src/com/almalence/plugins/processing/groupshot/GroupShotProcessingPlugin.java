@@ -180,9 +180,11 @@ public class GroupShotProcessingPlugin extends MultiShotProcessingPlugin impleme
 		boolean cameraMirrored = Boolean.valueOf(PluginManager.getInstance().getFromSharedMem(
 				"framemirrored1" + sessionID));
 
+		iMatrixRotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(imageDataOrientation, deviceOrientation, cameraMirrored);
+		
 		try
 		{
-			GroupShotCore.getInstance().initializeProcessingParameters(imageDataOrientation, deviceOrientation, cameraMirrored);
+			GroupShotCore.getInstance().initializeProcessingParameters(imageDataOrientation, deviceOrientation, cameraMirrored, iMatrixRotation);
 			GroupShotCore.getInstance().ProcessFaces();
 		} catch (Exception e)
 		{
@@ -222,8 +224,6 @@ public class GroupShotProcessingPlugin extends MultiShotProcessingPlugin impleme
 							/ imagesAmount, (int) (imageHeight * (((float)heightPixels / imagesAmount) / imageWidth)),
 							false));
 		}
-		
-		iMatrixRotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(imageDataOrientation, deviceOrientation, cameraMirrored);
 	}
 
 	/************************************************
