@@ -148,6 +148,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static boolean							isGalaxyS6		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g920") ||
 														  			  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g925");
+
+	public static boolean							isGalaxyS7		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g93");
 	
 	public static boolean							isGalaxyS5		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g900");
 	

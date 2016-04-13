@@ -2220,7 +2220,7 @@ public class Camera2Controller
 		// explicitly disable AWB for the duration of still/burst capture to get
 		// full burst with the same WB
 		// WB does not apply to RAW, so no need for this in rawRequestBuilder
-		if (!CameraController.isGalaxyS6)
+		if (!CameraController.isGalaxyS6 && !CameraController.isGalaxyS7)
 		{
 			stillRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_OFF);
 			precaptureRequestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CaptureRequest.CONTROL_AWB_MODE_OFF);
