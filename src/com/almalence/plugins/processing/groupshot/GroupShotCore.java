@@ -504,45 +504,46 @@ public class GroupShotCore
 			mPreviewBitmap.recycle();
 			mPreviewBitmap = null;
 		}
-//		mPreviewBitmap = ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(0), mImageWidth, mImageHeight);
-		mPreviewBitmap = ImageConversion.decodeYUVfromBuffer(AlmaShotGroupShot.getInputFrame(0), mImageWidthRotated, mImageHeightRotated);
+		
+		mPreviewBitmap = ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(0), mImageWidth, mImageHeight);
+//		mPreviewBitmap = ImageConversion.decodeYUVfromBuffer(AlmaShotGroupShot.getInputFrame(0), mImageWidthRotated, mImageHeightRotated);
 		mPreviewWidthOriginal = mPreviewBitmap.getWidth();
 		mPreviewHeightOriginal = mPreviewBitmap.getHeight();
 		
-		if(mMatrixRotation != 0)
-			mPreviewBitmap = Bitmap.createBitmap(mPreviewBitmap, 0, 0, mPreviewBitmap.getWidth(), mPreviewBitmap.getHeight(),
-					mDeviceRotationTransform, true);
-//		mPreviewWidthRotated = mPreviewWidthOriginal;
-//		mPreviewHeightRotated = mPreviewHeightOriginal;
+//		if(mMatrixRotation != 0)
+//			mPreviewBitmap = Bitmap.createBitmap(mPreviewBitmap, 0, 0, mPreviewBitmap.getWidth(), mPreviewBitmap.getHeight(),
+//					mDeviceRotationTransform, true);
 
 //		int rotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(mImageDataOrientation, mDeviceOrientation, mCameraMirrored);
-//		if (mMatrixRotation != 0)
-//		{
-//			Matrix rotateMatrix = new Matrix();
-//			rotateMatrix.postRotate(mMatrixRotation);
-//			Bitmap rotatedBitmap = Bitmap.createBitmap(mPreviewBitmap, 0, 0, mPreviewBitmap.getWidth(),
-//					mPreviewBitmap.getHeight(), rotateMatrix, true);
-//
-//			mPreviewBitmap = rotatedBitmap;
-////			if (rotatedBitmap != mPreviewBitmap)
-////			{
-////				mPreviewBitmap.recycle();
-////				mPreviewBitmap = rotatedBitmap;
-////			}
-//		}
+		if (mMatrixRotation != 0)
+		{
+			Matrix rotateMatrix = new Matrix();
+			rotateMatrix.postRotate(mMatrixRotation);
+			Bitmap rotatedBitmap = Bitmap.createBitmap(mPreviewBitmap, 0, 0, mPreviewBitmap.getWidth(),
+					mPreviewBitmap.getHeight(), rotateMatrix, true);
 
-//		int rotation = (mImageDataOrientation + (mCameraMirrored?(mImageDataOrientation == 90 || mImageDataOrientation == 270? 180 : 0) : 0))%360;
-		if(mImageDataOrientation == 0 && mImageDataOrientation == 180)
-//		if(rotation == 0 && rotation == 180)
-		{
-			mPreviewWidthRotated = mPreviewWidthOriginal;
-			mPreviewHeightRotated = mPreviewHeightOriginal;
+			if (rotatedBitmap != mPreviewBitmap)
+			{
+				mPreviewBitmap.recycle();
+				mPreviewBitmap = rotatedBitmap;
+			}
 		}
-		else
-		{
-			mPreviewWidthRotated = mPreviewHeightOriginal;
-			mPreviewHeightRotated = mPreviewWidthOriginal;
-		}
+		
+		mPreviewWidthRotated = mPreviewBitmap.getWidth();
+		mPreviewHeightRotated = mPreviewBitmap.getHeight();
+
+////		int rotation = (mImageDataOrientation + (mCameraMirrored?(mImageDataOrientation == 90 || mImageDataOrientation == 270? 180 : 0) : 0))%360;
+//		if(mImageDataOrientation == 0 && mImageDataOrientation == 180)
+////		if(rotation == 0 && rotation == 180)
+//		{
+//			mPreviewWidthRotated = mPreviewWidthOriginal;
+//			mPreviewHeightRotated = mPreviewHeightOriginal;
+//		}
+//		else
+//		{
+//			mPreviewWidthRotated = mPreviewHeightOriginal;
+//			mPreviewHeightRotated = mPreviewWidthOriginal;
+//		}
 		
 		
 
@@ -589,8 +590,10 @@ public class GroupShotCore
 				float ratioy;
 				if (mImageDataOrientation == 90 || mImageDataOrientation == 270)
 				{
-					ratiox = (float) this.mImageHeight / (float) this.mPreviewWidthOriginal;
-					ratioy = (float) this.mImageWidth / (float) this.mPreviewHeightOriginal;
+//					ratiox = (float) this.mImageHeight / (float) this.mPreviewWidthOriginal;
+//					ratioy = (float) this.mImageWidth / (float) this.mPreviewHeightOriginal;
+					ratiox = (float) this.mImageHeight / (float) this.mPreviewWidthRotated;
+					ratioy = (float) this.mImageWidth / (float) this.mPreviewHeightRotated;
 				} else
 				{
 					ratiox = (float) this.mImageWidth / (float) this.mPreviewWidthOriginal;
@@ -656,24 +659,27 @@ public class GroupShotCore
 		{
 			if (mBuffer == null || (mBuffer != null && mIsBaseFrameChanged))
 			{
-				mBuffer = ImageConversion.decodeYUVfromBuffer(AlmaShotGroupShot.getInputFrame(0), mImageWidthRotated, mImageHeightRotated);
+				mBuffer = ImageConversion.decodeYUVfromBuffer(this.mYUVBufferList.get(mBaseFrame), mImageWidth, mImageHeight);
+//				mBuffer = ImageConversion.decodeYUVfromBuffer(AlmaShotGroupShot.getInputFrame(mBaseFrame), mImageWidthRotated, mImageHeightRotated);
 //				Rect rect = new Rect(0, 0, mPreviewWidthOriginal, mPreviewHeightOriginal);
 //				mBuffer = Bitmap.createBitmap(
-//						AlmaShotGroupShot.NV21toARGB(AlmaShotGroupShot.getInputFrame(mBaseFrame), mPreviewWidthOriginal, mPreviewHeightOriginal, rect, mPreviewWidthOriginal, mPreviewHeightOriginal),
+//						AlmaShotGroupShot.NV21toARGB(this.mYUVBufferList.get(mBaseFrame), mPreviewWidthOriginal, mPreviewHeightOriginal, rect, mPreviewWidthOriginal, mPreviewHeightOriginal),
 //						mPreviewWidthOriginal, mPreviewHeightOriginal, Config.RGB_565);
-//				if(mMatrixRotation != 0)
-//				{
-//					Matrix rotateMatrix = new Matrix();
-//					rotateMatrix.postRotate(mMatrixRotation);
-//					Bitmap rotatedBitmap = Bitmap.createBitmap(mBuffer, 0, 0, mBuffer.getWidth(),
-//							mBuffer.getHeight(), rotateMatrix, true);
-//	
-//					if (rotatedBitmap != mBuffer)
-//					{
-//						mBuffer.recycle();
-//						mBuffer = rotatedBitmap;
-//					}
-//				}
+				
+				int rotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(mImageDataOrientation, 0, mCameraMirrored);
+				if(rotation != 0)
+				{
+					Matrix rotateMatrix = new Matrix();
+					rotateMatrix.postRotate(rotation);
+					Bitmap rotatedBitmap = Bitmap.createBitmap(mBuffer, 0, 0, mBuffer.getWidth(),
+							mBuffer.getHeight(), rotateMatrix, true);
+	
+					if (rotatedBitmap != mBuffer)
+					{
+						mBuffer.recycle();
+						mBuffer = rotatedBitmap;
+					}
+				}
 			}
 //			makePreview();
 			this.prepareLayout();
@@ -947,8 +953,18 @@ public class GroupShotCore
 
 		ArrayList<Rect> faceRect = mFacesList.get(mBaseFrame);
 
-		ratiox = (float) mImageWidthRotated / (float) mPreviewWidthOriginal;
-		ratioy = (float) mImageHeightRotated / (float) mPreviewHeightOriginal;
+//		ratiox = (float) mImageWidthRotated / (float) mPreviewWidthRotated;
+//		ratioy = (float) mImageHeightRotated / (float) mPreviewHeightRotated;
+		
+		if (mImageDataOrientation == 90 || mImageDataOrientation == 270)
+		{
+			ratiox = (float) this.mImageHeight / (float) this.mPreviewWidthRotated;
+			ratioy = (float) this.mImageWidth / (float) this.mPreviewHeightRotated;
+		} else
+		{
+			ratiox = (float) this.mImageWidth / (float) this.mPreviewWidthOriginal;
+			ratioy = (float) this.mImageHeight / (float) this.mPreviewHeightOriginal;
+		}
 		
 //		Log.e(TAG, "eventContainsFace. x = " + x + " y = " + y);
 //		Log.e(TAG, "eventContainsFace. image (w x h) = " + mImageWidthRotated + " x " + mImageHeightRotated);
