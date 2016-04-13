@@ -32,6 +32,8 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.Bitmap.Config;
+import android.graphics.RectF;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
@@ -42,6 +44,7 @@ import com.almalence.SwapHeap;
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.util.ImageConversion;
+import com.almalence.util.Util;
 
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationScreen;
@@ -61,7 +64,7 @@ public class GroupShotCore
 	private static final float			FACE_CONFIDENCE_LEVEL		= 0.4f;
 	private static final int			IMAGE_TO_LAYOUT				= 8;
 	private static final int			MAX_INPUT_FRAME				= 8;
-	private static final int			MAX_WIDTH_FOR_FACEDETECTION	= 800;
+	private static final int			MAX_WIDTH_FOR_FACEDETECTION	= 1280;
 
 	private int							mNumOfFrame					= 0;
 	private int							mBaseFrame					= 0;
@@ -79,6 +82,9 @@ public class GroupShotCore
 	// orientation.
 	private int							mPreviewWidthRotated;
 	private int							mPreviewHeightRotated;
+	
+	private int							mPreviewWidthOriginal;
+	private int							mPreviewHeightOriginal;
 
 	// Because of speed reasons image is down scaled to find faces. This is
 	// width and height of down scaled images.
@@ -104,11 +110,14 @@ public class GroupShotCore
 	// Transform for preview rotation. It's required to set proper orientation
 	// for preview image (as it was during capturing).
 	private Matrix						mDeviceRotationTransform	= new Matrix();
+	private int							mMatrixRotation				= 0;
 
-	private int[]						ARGBBuffer					= null;
-	private int							mOutNV21;
-	private int[]						mCrop;
-	private ArrayList<ArrayList<Rect>>	mFacesList					= null;
+	private int[]							ARGBBuffer					= null;
+	private int								mOutNV21;
+	private int[]							mCrop;
+	private ArrayList<ArrayList<Rect>>		mFacesList					= null;
+	private ArrayList<ArrayList<Bitmap>>	mFacesBitmapsList					= null;
+	private ArrayList<ArrayList<Rect>>		mFacesBitmapsRect					= null;
 
 	// Rotation of image data. If we rotate image on this angle, its orientation will become 0.
 	private int							mImageDataOrientation;
@@ -183,7 +192,7 @@ public class GroupShotCore
 	}
 
 	// Initialize parameters for processing.
-	public void initializeProcessingParameters(int imageDataOrientation, int deviceOrientation, boolean cameraMirrored)
+	public void initializeProcessingParameters(int imageDataOrientation, int deviceOrientation, boolean cameraMirrored, int rotationMatrix)
 	{
 		mImageDataOrientation = imageDataOrientation;
 		mDeviceOrientation = deviceOrientation;
@@ -192,6 +201,9 @@ public class GroupShotCore
 
 		initializeSizeParameters();
 		mIsBaseFrameChanged = true;
+		
+//		mDeviceRotationTransform.postRotate(rotationMatrix);
+		mMatrixRotation = rotationMatrix;
 		mDeviceRotationTransform.postRotate(-mDeviceOrientation);
 //		int defaultRotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(mImageDataOrientation, mDeviceOrientation, mCameraMirrored);
 //		int finalRotation = defaultRotation  - mDeviceOrientation;
@@ -221,6 +233,8 @@ public class GroupShotCore
 
 			createPreviewBitmap();
 			createLayoutData();
+			
+			createFacesBitmaps();
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -463,7 +477,7 @@ public class GroupShotCore
 		}
 
 		int error = 0;
-//		int rotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(mImageDataOrientation, mDeviceOrientation, mCameraMirrored);
+//		int rotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(mImageDataOrientation, 0, mCameraMirrored);
 		int rotation = (mImageDataOrientation + (mCameraMirrored?(mImageDataOrientation == 90 || mImageDataOrientation == 270? 180 : 0) : 0))%360;
 		error = AlmaShotGroupShot.DetectFacesFromYUVs(yuvPtrs, yuvSizes, mNumOfFrame, mImageWidth, mImageHeight,
 				mImageWidthFD, mImageHeightFD, false/*mCameraMirrored*/, rotation);
@@ -490,13 +504,21 @@ public class GroupShotCore
 			mPreviewBitmap.recycle();
 			mPreviewBitmap = null;
 		}
+		
 		mPreviewBitmap = ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(0), mImageWidth, mImageHeight);
+//		mPreviewBitmap = ImageConversion.decodeYUVfromBuffer(AlmaShotGroupShot.getInputFrame(0), mImageWidthRotated, mImageHeightRotated);
+		mPreviewWidthOriginal = mPreviewBitmap.getWidth();
+		mPreviewHeightOriginal = mPreviewBitmap.getHeight();
+		
+//		if(mMatrixRotation != 0)
+//			mPreviewBitmap = Bitmap.createBitmap(mPreviewBitmap, 0, 0, mPreviewBitmap.getWidth(), mPreviewBitmap.getHeight(),
+//					mDeviceRotationTransform, true);
 
-		int rotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(mImageDataOrientation, mDeviceOrientation, mCameraMirrored);
-		if (rotation != 0)
+//		int rotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(mImageDataOrientation, mDeviceOrientation, mCameraMirrored);
+		if (mMatrixRotation != 0)
 		{
 			Matrix rotateMatrix = new Matrix();
-			rotateMatrix.postRotate(rotation);
+			rotateMatrix.postRotate(mMatrixRotation);
 			Bitmap rotatedBitmap = Bitmap.createBitmap(mPreviewBitmap, 0, 0, mPreviewBitmap.getWidth(),
 					mPreviewBitmap.getHeight(), rotateMatrix, true);
 
@@ -506,18 +528,24 @@ public class GroupShotCore
 				mPreviewBitmap = rotatedBitmap;
 			}
 		}
-
 		
-		if(mImageDataOrientation != 0 && mImageDataOrientation != 180)
-		{
-			mPreviewWidthRotated = mPreviewBitmap.getWidth();
-			mPreviewHeightRotated = mPreviewBitmap.getHeight();
-		}
-		else
-		{
-			mPreviewWidthRotated = mPreviewBitmap.getHeight();
-			mPreviewHeightRotated = mPreviewBitmap.getWidth();
-		}
+		mPreviewWidthRotated = mPreviewBitmap.getWidth();
+		mPreviewHeightRotated = mPreviewBitmap.getHeight();
+
+////		int rotation = (mImageDataOrientation + (mCameraMirrored?(mImageDataOrientation == 90 || mImageDataOrientation == 270? 180 : 0) : 0))%360;
+//		if(mImageDataOrientation == 0 && mImageDataOrientation == 180)
+////		if(rotation == 0 && rotation == 180)
+//		{
+//			mPreviewWidthRotated = mPreviewWidthOriginal;
+//			mPreviewHeightRotated = mPreviewHeightOriginal;
+//		}
+//		else
+//		{
+//			mPreviewWidthRotated = mPreviewHeightOriginal;
+//			mPreviewHeightRotated = mPreviewWidthOriginal;
+//		}
+		
+		
 
 		ARGBBuffer = new int[mPreviewBitmap.getWidth() * mPreviewBitmap.getHeight() * 4];
 	}
@@ -539,6 +567,83 @@ public class GroupShotCore
 
 		return true;
 	}
+	
+	//Cut rectangles of faces from each frame and construct Bitmap for each face on each frame
+	//This bitmaps is using to fast drawing faces on base frame in preview to avoid
+	//long time Seamless processing each time when face changes.
+	public void createFacesBitmaps()
+	{
+		mFacesBitmapsList = new ArrayList<ArrayList<Bitmap>>(mNumOfFrame);
+		mFacesBitmapsRect = new ArrayList<ArrayList<Rect>>(mNumOfFrame);
+		
+		for (int i = 0; i < mNumOfFrame; i++)
+		{
+			int yuvBuffer = AlmaShotGroupShot.getInputFrame(i);
+			
+			ArrayList<Rect> faceRect = mFacesList.get(i);
+			ArrayList<Bitmap> bitmaps = new ArrayList<Bitmap>();
+			ArrayList<Rect> bitmapRects = new ArrayList<Rect>();
+
+			for (Rect rect : faceRect)
+			{
+				float ratiox;
+				float ratioy;
+				if (mImageDataOrientation == 90 || mImageDataOrientation == 270)
+				{
+//					ratiox = (float) this.mImageHeight / (float) this.mPreviewWidthOriginal;
+//					ratioy = (float) this.mImageWidth / (float) this.mPreviewHeightOriginal;
+					ratiox = (float) this.mImageHeight / (float) this.mPreviewWidthRotated;
+					ratioy = (float) this.mImageWidth / (float) this.mPreviewHeightRotated;
+				} else
+				{
+					ratiox = (float) this.mImageWidth / (float) this.mPreviewWidthOriginal;
+					ratioy = (float) this.mImageHeight / (float) this.mPreviewHeightOriginal;
+				}
+				
+				float scaleFactor = 1.5f;
+				float dh = rect.width() * (scaleFactor - 1f);
+				float dv = rect.height() * (scaleFactor - 1f);
+
+				float l = (float)rect.left - dh/2f;
+				float r = (float)rect.right + dh/2f;
+
+				float t = (float)rect.top - dv/2f;
+				float b = (float)rect.bottom + dv/2f;
+				
+				l = l < 0? 0 : l;
+				r = r > mImageWidthRotated? mImageWidthRotated : r;
+				t = t < 0? 0 : t;
+				b = b > mImageHeightRotated? mImageHeightRotated : b;
+				
+				RectF tmpRect = new RectF(l, t, r, b);
+				Rect coverRect = new Rect();
+				Util.rectFToRect(tmpRect, coverRect);
+				
+				Bitmap bitmap = Bitmap.createBitmap(
+						AlmaShotGroupShot.NV21toARGB(yuvBuffer, mImageWidthRotated, mImageHeightRotated, coverRect, (int)(coverRect.width()/ratiox), (int)(coverRect.height()/ratioy)),
+						(int)(coverRect.width()/ratiox), (int)(coverRect.height()/ratioy), Config.RGB_565);
+				
+//				if(mMatrixRotation != 0)
+//				{
+//					Matrix matrix = new Matrix();
+//					matrix.postRotate(mMatrixRotation);
+//					bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+//				}
+//				if(mDeviceOrientation != 0)
+//				{
+//					Matrix matrix = new Matrix();
+//					matrix.postRotate(-mDeviceOrientation);
+//					bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+//				}
+				bitmaps.add(bitmap);
+				bitmapRects.add(coverRect);
+			}
+			
+			
+			mFacesBitmapsList.add(bitmaps);
+			mFacesBitmapsRect.add(bitmapRects);
+		}
+	}
 
 	public Bitmap getPreviewBitmap()
 	{
@@ -552,33 +657,80 @@ public class GroupShotCore
 		// data.
 		if (mIsBaseFrameChanged || mIsFacesChanged)
 		{
-			makePreview();
+			if (mBuffer == null || (mBuffer != null && mIsBaseFrameChanged))
+			{
+				mBuffer = ImageConversion.decodeYUVfromBuffer(this.mYUVBufferList.get(mBaseFrame), mImageWidth, mImageHeight);
+//				mBuffer = ImageConversion.decodeYUVfromBuffer(AlmaShotGroupShot.getInputFrame(mBaseFrame), mImageWidthRotated, mImageHeightRotated);
+//				Rect rect = new Rect(0, 0, mPreviewWidthOriginal, mPreviewHeightOriginal);
+//				mBuffer = Bitmap.createBitmap(
+//						AlmaShotGroupShot.NV21toARGB(this.mYUVBufferList.get(mBaseFrame), mPreviewWidthOriginal, mPreviewHeightOriginal, rect, mPreviewWidthOriginal, mPreviewHeightOriginal),
+//						mPreviewWidthOriginal, mPreviewHeightOriginal, Config.RGB_565);
+				
+				int rotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(mImageDataOrientation, 0, mCameraMirrored);
+				if(rotation != 0)
+				{
+					Matrix rotateMatrix = new Matrix();
+					rotateMatrix.postRotate(rotation);
+					Bitmap rotatedBitmap = Bitmap.createBitmap(mBuffer, 0, 0, mBuffer.getWidth(),
+							mBuffer.getHeight(), rotateMatrix, true);
+	
+					if (rotatedBitmap != mBuffer)
+					{
+						mBuffer.recycle();
+						mBuffer = rotatedBitmap;
+					}
+				}
+			}
+//			makePreview();
+			this.prepareLayout();
 			mIsBaseFrameChanged = false;
 			mIsFacesChanged = false;
 		}
 
-		if (mBuffer == null)
-		{
-			// Create bitmap based on ARGBBuffer data. This bitmap is not
-			// mutable!
-			Bitmap tmpBitmap = Bitmap.createBitmap(ARGBBuffer, mPreviewWidthRotated, mPreviewHeightRotated,
-					Bitmap.Config.ARGB_8888);
+//		if (mBuffer == null)
+//		{
+//			// Create bitmap based on ARGBBuffer data. This bitmap is not
+//			// mutable!
+//			Bitmap tmpBitmap = Bitmap.createBitmap(ARGBBuffer, mPreviewWidthRotated, mPreviewHeightRotated,
+//					Bitmap.Config.ARGB_8888);
+//
+//			// Initialize mBuffer as copy of tmpBitmap and make it mutable.
+//			mBuffer = tmpBitmap.copy(tmpBitmap.getConfig(), true);
+//		} else
+//		{
+//			mBuffer.setPixels(ARGBBuffer, 0, mPreviewWidthRotated, 0, 0, mPreviewWidthRotated, mPreviewHeightRotated);
+//		}
 
-			// Initialize mBuffer as copy of tmpBitmap and make it mutable.
-			mBuffer = tmpBitmap.copy(tmpBitmap.getConfig(), true);
-		} else
-		{
-			mBuffer.setPixels(ARGBBuffer, 0, mPreviewWidthRotated, 0, 0, mPreviewWidthRotated, mPreviewHeightRotated);
-		}
-
-		// Image stored into mBuffer has 0 orientation, same as faces
-		// coordinates. Draw faces circles on image before rotation.
-		drawFaceAreasOnPreviewBitmap(mBuffer);
-
+		mPreviewBitmap = mBuffer.copy(mBuffer.getConfig(), true);
+//		// Image stored into mBuffer has 0 orientation, same as faces
+//		// coordinates. Draw faces circles on image before rotation.
+////		drawFaceAreasOnPreviewBitmap(mBuffer);
+//
+		drawFaceAreasOnPreviewBitmap(mPreviewBitmap);
+		drawFaceBitmapsOnPreviewBitmap(mPreviewBitmap);
+//		
+		if(mMatrixRotation != 0)
+			mPreviewBitmap = Bitmap.createBitmap(mPreviewBitmap, 0, 0, mPreviewBitmap.getWidth(), mPreviewBitmap.getHeight(),
+					mDeviceRotationTransform, true);
+		
 		// After preview completely prepared we need just rotate it.
-		mPreviewBitmap = Bitmap.createBitmap(mBuffer, 0, 0, mBuffer.getWidth(), mBuffer.getHeight(),
-				mDeviceRotationTransform, true);
+//		if(mMatrixRotation != 0)
+//		mPreviewBitmap = Bitmap.createBitmap(mBuffer, 0, 0, mBuffer.getWidth(), mBuffer.getHeight(),
+//				mDeviceRotationTransform, true);
+//		else
+//			mPreviewBitmap = mBuffer;
 	}
+	
+//	public synchronized void updateFacesOnBitmap()
+//	{
+//		// If some of faces were changed, then prepare new preview
+//		// data.
+//		if (mIsFacesChanged)
+//		{
+//			makePreview();
+//			mIsFacesChanged = false;
+//		}		
+//	}
 
 	private void prepareLayout()
 	{
@@ -741,11 +893,54 @@ public class GroupShotCore
 		paint.setPathEffect(new DashPathEffect(new float[] { 5, 5 }, 0));
 
 		Canvas c = new Canvas(bitmap);
-
+		
 		for (Rect rect : faceRect)
 		{
 			float radius = getRadius(rect);
 			c.drawCircle(rect.centerX() / ratiox, rect.centerY() / ratioy, radius / ((ratiox + ratioy) / 2), paint);
+		}
+	}
+	
+	
+	// Draw chosen detected face bitmaps.
+	private void drawFaceBitmapsOnPreviewBitmap(Bitmap bitmap)
+	{
+		ArrayList<Rect> faceRect = mFacesList.get(mBaseFrame);
+
+		float ratiox;
+		float ratioy;
+		float bWidth = bitmap.getWidth();
+		float bHeight = bitmap.getHeight();
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		if (mImageDataOrientation == 90 || mImageDataOrientation == 270)
+		{
+			ratiox = (float) imageSize.getHeight() / (float) bWidth;
+			ratioy = (float) imageSize.getWidth() / (float) bHeight;
+		} else
+		{
+			ratiox = (float) imageSize.getWidth() / (float) bWidth;
+			ratioy = (float) imageSize.getHeight() / (float) bHeight;
+		}
+
+		Paint paint = new Paint();
+		paint.setStyle(Paint.Style.STROKE);
+		paint.setColor(0xFF00AAEA);
+		paint.setStrokeWidth(5);
+		paint.setPathEffect(new DashPathEffect(new float[] { 5, 5 }, 0));
+
+		Canvas c = new Canvas(bitmap);
+		
+		
+		for (int i = 0; i < faceRect.size(); i++)
+		{
+			int frameIndex = mChosenFaces[mBaseFrame][i];
+			if(frameIndex != mBaseFrame)
+			{
+				Bitmap faceBitmap = mFacesBitmapsList.get(frameIndex).get(i);
+				
+				Rect bitmapRect = mFacesBitmapsRect.get(frameIndex).get(i);
+				c.drawBitmap(faceBitmap, bitmapRect.left/ratiox, bitmapRect.top/ratioy , null);
+			}
 		}
 	}
 
@@ -758,9 +953,25 @@ public class GroupShotCore
 
 		ArrayList<Rect> faceRect = mFacesList.get(mBaseFrame);
 
-		ratiox = (float) mImageWidthRotated / (float) mPreviewWidthRotated;
-		ratioy = (float) mImageHeightRotated / (float) mPreviewHeightRotated;
-
+//		ratiox = (float) mImageWidthRotated / (float) mPreviewWidthRotated;
+//		ratioy = (float) mImageHeightRotated / (float) mPreviewHeightRotated;
+		
+		if (mImageDataOrientation == 90 || mImageDataOrientation == 270)
+		{
+			ratiox = (float) this.mImageHeight / (float) this.mPreviewWidthRotated;
+			ratioy = (float) this.mImageWidth / (float) this.mPreviewHeightRotated;
+		} else
+		{
+			ratiox = (float) this.mImageWidth / (float) this.mPreviewWidthOriginal;
+			ratioy = (float) this.mImageHeight / (float) this.mPreviewHeightOriginal;
+		}
+		
+//		Log.e(TAG, "eventContainsFace. x = " + x + " y = " + y);
+//		Log.e(TAG, "eventContainsFace. image (w x h) = " + mImageWidthRotated + " x " + mImageHeightRotated);
+//		Log.e(TAG, "eventContainsFace. preview (w x h) = " + mPreviewWidthOriginal + " x " + mPreviewHeightOriginal);
+//		Log.e(TAG, "eventContainsFace. view (w x h) = " + v.getWidth() + " x " + v.getHeight());
+//		Log.e(TAG, "eventContainsFace. display (w x h) = " + mDisplayWidth + " x " + mDisplayHeight);
+		
 		// Transform coordinates of touch to align with coordinate system of
 		// preview image
 		// (and face coordinates).
@@ -785,18 +996,18 @@ public class GroupShotCore
 		// Have to correct touch coordinates because ImageView centered on the
 		// screen and it's coordinate system not aligned with screen coordinate
 		// system.
-		if ((mDisplayWidth > v.getHeight() || mDisplayHeight > v.getWidth()))
-		{
-			if (mDeviceOrientation == 90 || mDeviceOrientation == 270)
-			{
-				y = y - (mDisplayHeight - v.getWidth()) / 2;
-				x = x - (mDisplayWidth - v.getHeight()) / 2;
-			} else
-			{
-				x = x - (mDisplayHeight - v.getWidth()) / 2;
-				y = y - (mDisplayWidth - v.getHeight()) / 2;
-			}
-		}
+//		if ((mDisplayWidth > v.getHeight() || mDisplayHeight > v.getWidth()))
+//		{
+//			if (mDeviceOrientation == 90 || mDeviceOrientation == 270)
+//			{
+//				y = y - (mDisplayHeight - v.getWidth()) / 2;
+//				x = x - (mDisplayWidth - v.getHeight()) / 2;
+//			} else
+//			{
+//				x = x - (mDisplayHeight - v.getWidth()) / 2;
+//				y = y - (mDisplayWidth - v.getHeight()) / 2;
+//			}
+//		}
 
 		int i = 0;
 		for (Rect rect : faceRect)
@@ -849,6 +1060,8 @@ public class GroupShotCore
 
 		try
 		{
+			prepareLayout();
+			
 			mCrop = new int[5];
 			mOutNV21 = AlmaShotGroupShot.RealView(mImageWidthRotated, mImageHeightRotated, mCrop, mLayoutData);
 
