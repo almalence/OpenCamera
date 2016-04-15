@@ -820,13 +820,13 @@ public class Camera2Controller
 //		Log.e(TAG, "fillPictureSizeList. USE captureFormat.");
 		CameraCharacteristics camCharacter = Camera2Controller.getInstance().camCharacter;
 		StreamConfigurationMap configMap = camCharacter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-		Size[] cs = configMap.getOutputSizes(captureFormat);
+		Size[] cs = configMap.getOutputSizes(captureFormat == CameraController.YUV_RAW? CameraController.YUV : captureFormat);
 		
 		/*
 		 * In case when device supports capturing YUV less maximum size than JPEG
 		 * give users available JPEG sizes instead
 		 */
-		if(captureFormat == CameraController.YUV)
+		if(captureFormat == CameraController.YUV || captureFormat == CameraController.YUV_RAW)
 		{
 			allYUVSizes = cs;
 			allJpegSizes = configMap.getOutputSizes(CameraController.JPEG);
@@ -882,9 +882,10 @@ public class Camera2Controller
 	{
 		if(captureFormat == CameraController.YUV || captureFormat == CameraController.YUV_RAW)
 		{
-			if(!isSizeAvailable(imageSize, captureFormat) && isSizeAvailable(imageSize, CameraController.JPEG))
+			int format = CameraController.YUV;
+			if(!isSizeAvailable(imageSize, format) && isSizeAvailable(imageSize, CameraController.JPEG))
 			{
-				originalCaptureFormat = captureFormat;
+				originalCaptureFormat = format;
 				ApplicationScreen.setCaptureFormat(CameraController.JPEG);
 			}
 		}
@@ -3450,7 +3451,7 @@ public class Camera2Controller
 					frameData = new byte[frame_len];
 					jpeg.get(frameData,	0, frame_len);
 					
-					if(Camera2Controller.originalCaptureFormat == ImageFormat.YUV_420_888)
+					if(Camera2Controller.originalCaptureFormat == CameraController.YUV)
 					{
 						isYUV = true;
 						CameraController.Size imageSize = CameraController.getCameraImageSize();
