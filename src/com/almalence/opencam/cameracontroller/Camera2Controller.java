@@ -3313,8 +3313,8 @@ public class Camera2Controller
 				CaptureRequest request,
 				TotalCaptureResult result)
 		{
-			RggbChannelVector rggb = result.get(CaptureResult.COLOR_CORRECTION_GAINS);
-			ColorSpaceTransform transformMatrix = result.get(CaptureResult.COLOR_CORRECTION_TRANSFORM);
+//			RggbChannelVector rggb = result.get(CaptureResult.COLOR_CORRECTION_GAINS);
+//			ColorSpaceTransform transformMatrix = result.get(CaptureResult.COLOR_CORRECTION_TRANSFORM);
 //			Log.e(TAG, "RGGB = R: " + rggb.getRed() + " G_even: " + rggb.getGreenEven()+ " G_odd: " + rggb.getGreenOdd() + " B: " + rggb.getBlue());
 //			Log.e(TAG, "Transform Matrix: " + transformMatrix.toString());
 //			Log.e(TAG, "Exposure time = " + result.get(CaptureResult.SENSOR_EXPOSURE_TIME));

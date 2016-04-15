@@ -3670,262 +3670,254 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	 ****************************************************************************************/
 	private void addQuickSetting(SettingsType type, boolean isQuickControl)
 	{
-		//for unknown issue with ISo and metering. probably some new values added
-		try
+		int icon_id = -1;
+		CharSequence icon_text = "";
+		boolean isEnabled = true;
+
+		switch (type)
 		{
-			int icon_id = -1;
-			CharSequence icon_text = "";
-			boolean isEnabled = true;
-	
-			switch (type)
-			{
-			case SCENE:
-				icon_id = ICONS_SCENE.get(mSceneMode);
-				icon_text = ApplicationScreen.getAppResources().getString(R.string.settings_mode_scene);
-				isEnabled = isSceneEnabled;
-				break;
-			case WB:
-				if (mWB == CameraParameters.WB_MODE_OFF)
-					icon_id = R.drawable.gui_almalence_settings_wb_mwb;
-				else
-					icon_id = ICONS_WB.get(mWB);
-				icon_text = ApplicationScreen.getAppResources().getString(R.string.settings_mode_wb);
-				isEnabled = isWBEnabled;
-				break;
-			case FOCUS:
-				try
-				{
-					if (mFocusMode == CameraParameters.AF_MODE_LOCK)
-						icon_id = R.drawable.gui_almalence_settings_focus_aflock;
-					else if (mFocusMode == CameraParameters.MF_MODE)
-						icon_id = R.drawable.gui_almalence_settings_focus_manual;
-					else if (mFocusMode == -1)
-					{
-						isEnabled = false;
-						icon_id = ICONS_FOCUS.get(CameraParameters.AF_MODE_FIXED);
-					}
-					else
-						icon_id = ICONS_FOCUS.get(mFocusMode);
-					icon_text = ApplicationScreen.getAppResources().getString(R.string.settings_mode_focus);
-					isEnabled = isFocusEnabled;
-				} catch (Exception e)
-				{
-					e.printStackTrace();
-					Log.e("addQuickSetting", "icons_focus.get exception: " + e.getMessage());
-				}
-				break;
-			case FLASH:
-				icon_id = ICONS_FLASH.get(mFlashMode);
-				icon_text = ApplicationScreen.getAppResources().getString(R.string.settings_mode_flash);
-				isEnabled = isFlashEnabled;
-				break;
-			case ISO:
-				icon_id = ICONS_ISO.get(mISO);
-				icon_text = ApplicationScreen.getAppResources().getString(R.string.settings_mode_iso);
-				isEnabled = isIsoEnabled;
-				break;
-			case METERING:
-				icon_id = ICONS_METERING.get(mMeteringMode);
-				icon_text = ApplicationScreen.getAppResources().getString(R.string.settings_mode_metering);
-				isEnabled = isMeteringEnabled;
-				break;
-			case CAMERA:
-				icon_id = ICONS_CAMS.get(mCameraMode);
-				if (preferences.getInt(ApplicationScreen.sCameraModePref, 0) == 0)
-					icon_text = ApplicationScreen.getAppResources().getString(R.string.settings_mode_rear);
-				else
-					icon_text = ApplicationScreen.getAppResources().getString(R.string.settings_mode_front);
-	
-				isEnabled = isCameraChangeEnabled;
-				break;
-			case EV:
-				icon_id = ICON_EV;
-				icon_text = ApplicationScreen.getAppResources().getString(R.string.settings_mode_exposure);
-				isEnabled = isEVEnabled;
-				break;
-			case SELF_TIMER:
-				if (preferences.getBoolean(MainScreen.sShowDelayedCapturePref, false))
-					icon_id = ICON_QC_SELF_TIMER_ACTIVE;
-				else
-					icon_id = ICON_QC_SELF_TIMER_INACTIVE;
-				icon_text = MainScreen.getAppResources().getString(R.string.settings_mode_self_timer);
-				break;
-			case IMAGE_SIZE:
-				if (!PluginManager.getInstance().getActiveModeID().equals("video")
-						&& !(PluginManager.getInstance().getActiveModeID().equals("nightmode") && CameraController
-								.isUseCamera2()))
-				{
-					String selectedSize = "";
-					final String modeId = PluginManager.getInstance().getActiveModeID();
-					if (modeId.equals("panorama_augmented"))
-					{
-						PanoramaAugmentedCapturePlugin.onDefaultSelectResolutons();
-						int currentIdx = PanoramaAugmentedCapturePlugin.prefResolution;
-	
-						selectedSize = PanoramaAugmentedCapturePlugin.getResolutionsPictureNamesList().get(0);
-	
-						List<String> cs = PanoramaAugmentedCapturePlugin.getResolutionsPictureIndexesList();
-						int ii = 0;
-						for (String s : cs)
-						{
-							if (Integer.parseInt(PanoramaAugmentedCapturePlugin.getResolutionsPictureIndexesList().get(ii)) == currentIdx)
-							{
-								selectedSize = PanoramaAugmentedCapturePlugin.getResolutionsPictureNamesList().get(ii);
-								break;
-							}
-							ii++;
-						}
-	
-					} else if (modeId.equals("nightmode") || modeId.equals("multishot"))
-					{
-						int currentIdx = Integer.parseInt(CameraController.MultishotResolutionsIdxesList
-								.get(MainScreen.thiz.selectImageDimensionMultishot()));
-	
-						selectedSize = getSizeName(CameraController.getMultishotResolutionsNamesList(),
-								CameraController.getMultishotResolutionsSizeList(),
-								CameraController.getMultishotResolutionsIdxesList(), currentIdx);
-	
-					} else
-					{
-						int currentIdx = ApplicationScreen.instance.getImageSizeIndex();
-						if (currentIdx == -1)
-						{
-							currentIdx = 0;
-						}
-	
-						selectedSize = getSizeName(CameraController.getResolutionsNamesList(),
-								CameraController.getResolutionsSizeList(), CameraController.getResolutionsIdxesList(),
-								currentIdx);
-					}
-					icon_id = ICON_IMAGE_SIZE;
-					icon_text = selectedSize;
-				}
-				break;
-			case COLLOR_EFFECT:
-				icon_id = ICON_COLLOR_EFFECT;
-				icon_text = MainScreen.getAppResources().getString(R.string.settings_mode_color_effect);
-				break;
-			case MORE:
-				icon_id = ICON_SETTINGS;
-				icon_text = ApplicationScreen.getAppResources().getString(R.string.settings_mode_moresettings);
-				break;
-			default:
-				break;
-			}
-	
-			// Get required size of button
-			LayoutInflater inflator = ApplicationScreen.instance.getLayoutInflater();
-			View settingView = inflator.inflate(R.layout.gui_almalence_quick_control_grid_element, null, false);
-			ImageView iconView = (ImageView) settingView.findViewById(R.id.imageView);
-			
-			//for cases if some modes are not processed and aplication can fail. Fixed this case for flash, but no idea if other settings can be a problem
+		case SCENE:
+			icon_id = ICONS_SCENE.get(mSceneMode);
+			icon_text = ApplicationScreen.getAppResources().getString(R.string.settings_mode_scene);
+			isEnabled = isSceneEnabled;
+			break;
+		case WB:
+			if (mWB == CameraParameters.WB_MODE_OFF)
+				icon_id = R.drawable.gui_almalence_settings_wb_mwb;
+			else
+				icon_id = ICONS_WB.get(mWB);
+			icon_text = ApplicationScreen.getAppResources().getString(R.string.settings_mode_wb);
+			isEnabled = isWBEnabled;
+			break;
+		case FOCUS:
 			try
 			{
-				iconView.setImageDrawable(MainScreen.getAppResources().getDrawable(icon_id));
-			}
-			catch(Exception e)
+				if (mFocusMode == CameraParameters.AF_MODE_LOCK)
+					icon_id = R.drawable.gui_almalence_settings_focus_aflock;
+				else if (mFocusMode == CameraParameters.MF_MODE)
+					icon_id = R.drawable.gui_almalence_settings_focus_manual;
+				else if (mFocusMode == -1)
+				{
+					isEnabled = false;
+					icon_id = ICONS_FOCUS.get(CameraParameters.AF_MODE_FIXED);
+				}
+				else
+					icon_id = ICONS_FOCUS.get(mFocusMode);
+				icon_text = ApplicationScreen.getAppResources().getString(R.string.settings_mode_focus);
+				isEnabled = isFocusEnabled;
+			} catch (Exception e)
 			{
 				e.printStackTrace();
+				Log.e("addQuickSetting", "icons_focus.get exception: " + e.getMessage());
 			}
-			
-			TextView textView = (TextView) settingView.findViewById(R.id.textView);
-			textView.setText(icon_text);
-			
-			if (!isEnabled && !isQuickControl)
-			{
-				iconView.setColorFilter(ApplicationScreen.getMainContext().getResources().getColor(R.color.buttonDisabled),
-						PorterDuff.Mode.DST_IN);
-				textView.setTextColor(ApplicationScreen.getMainContext().getResources().getColor(R.color.textDisabled));
-			}
-	
-			// Create onClickListener of right type
-			switch (type)
-			{
-			case SCENE:
-				if (isQuickControl)
-					createQuickControlSceneOnClick(settingView);
-				else
-					createSettingSceneOnClick(settingView);
-				break;
-			case WB:
-				if (isQuickControl)
-					createQuickControlWBOnClick(settingView);
-				else
-					createSettingWBOnClick(settingView);
-				break;
-			case FOCUS:
-				if (isQuickControl)
-					createQuickControlFocusOnClick(settingView);
-				else
-					createSettingFocusOnClick(settingView);
-				break;
-			case FLASH:
-				if (isQuickControl)
-					createQuickControlFlashOnClick(settingView);
-				else
-					createSettingFlashOnClick(settingView);
-				break;
-			case ISO:
-				if (isQuickControl)
-					createQuickControlIsoOnClick(settingView);
-				else
-					createSettingIsoOnClick(settingView);
-				break;
-			case METERING:
-				if (isQuickControl)
-					createQuickControlMeteringOnClick(settingView);
-				else
-					createSettingMeteringOnClick(settingView);
-				break;
-			case CAMERA:
-				if (isQuickControl)
-					createQuickControlCameraChangeOnClick(settingView);
-				else
-					createSettingCameraOnClick(settingView);
-				break;
-			case EV:
-				if (isQuickControl)
-					createQuickControlEVOnClick(settingView);
-				else
-					createSettingEVOnClick(settingView);
-				break;
-			case SELF_TIMER:
-				if (isQuickControl)
-					createQuickControlSelfTimerOnClick(settingView);
-				else
-					createSettingSelfTimerOnClick(settingView);
-				break;
-			case IMAGE_SIZE:
-				if (isQuickControl)
-					createQuickControlImageSizeOnClick(settingView);
-				else
-					createImageSizeOnClick(settingView);
-				break;
-			case COLLOR_EFFECT:
-				if (isQuickControl)
-					createQuickControlCollorEffectOnClick(settingView);
-				else
-					createCollorEffectOnClick(settingView);
-				break;
-			case MORE:
-				if (isQuickControl)
-					return;
-				else
-					createSettingMoreOnClick(settingView);
-				break;
-			default:
-				break;
-			}
-	
-			if (isQuickControl)
-				quickControlChangeres.add(settingView);
+			break;
+		case FLASH:
+			icon_id = ICONS_FLASH.get(mFlashMode);
+			icon_text = ApplicationScreen.getAppResources().getString(R.string.settings_mode_flash);
+			isEnabled = isFlashEnabled;
+			break;
+		case ISO:
+			icon_id = ICONS_ISO.get(mISO);
+			icon_text = ApplicationScreen.getAppResources().getString(R.string.settings_mode_iso);
+			isEnabled = isIsoEnabled;
+			break;
+		case METERING:
+			icon_id = ICONS_METERING.get(mMeteringMode);
+			icon_text = ApplicationScreen.getAppResources().getString(R.string.settings_mode_metering);
+			isEnabled = isMeteringEnabled;
+			break;
+		case CAMERA:
+			icon_id = ICONS_CAMS.get(mCameraMode);
+			if (preferences.getInt(ApplicationScreen.sCameraModePref, 0) == 0)
+				icon_text = ApplicationScreen.getAppResources().getString(R.string.settings_mode_rear);
 			else
-				settingsViews.add(settingView);
+				icon_text = ApplicationScreen.getAppResources().getString(R.string.settings_mode_front);
+
+			isEnabled = isCameraChangeEnabled;
+			break;
+		case EV:
+			icon_id = ICON_EV;
+			icon_text = ApplicationScreen.getAppResources().getString(R.string.settings_mode_exposure);
+			isEnabled = isEVEnabled;
+			break;
+		case SELF_TIMER:
+			if (preferences.getBoolean(MainScreen.sShowDelayedCapturePref, false))
+				icon_id = ICON_QC_SELF_TIMER_ACTIVE;
+			else
+				icon_id = ICON_QC_SELF_TIMER_INACTIVE;
+			icon_text = MainScreen.getAppResources().getString(R.string.settings_mode_self_timer);
+			break;
+		case IMAGE_SIZE:
+			if (!PluginManager.getInstance().getActiveModeID().equals("video")
+					&& !(PluginManager.getInstance().getActiveModeID().equals("nightmode") && CameraController
+							.isUseCamera2()))
+			{
+				String selectedSize = "";
+				final String modeId = PluginManager.getInstance().getActiveModeID();
+				if (modeId.equals("panorama_augmented"))
+				{
+					PanoramaAugmentedCapturePlugin.onDefaultSelectResolutons();
+					int currentIdx = PanoramaAugmentedCapturePlugin.prefResolution;
+
+					selectedSize = PanoramaAugmentedCapturePlugin.getResolutionsPictureNamesList().get(0);
+
+					List<String> cs = PanoramaAugmentedCapturePlugin.getResolutionsPictureIndexesList();
+					int ii = 0;
+					for (String s : cs)
+					{
+						if (Integer.parseInt(PanoramaAugmentedCapturePlugin.getResolutionsPictureIndexesList().get(ii)) == currentIdx)
+						{
+							selectedSize = PanoramaAugmentedCapturePlugin.getResolutionsPictureNamesList().get(ii);
+							break;
+						}
+						ii++;
+					}
+
+				} else if (modeId.equals("nightmode") || modeId.equals("multishot"))
+				{
+					int currentIdx = Integer.parseInt(CameraController.MultishotResolutionsIdxesList
+							.get(MainScreen.thiz.selectImageDimensionMultishot()));
+
+					selectedSize = getSizeName(CameraController.getMultishotResolutionsNamesList(),
+							CameraController.getMultishotResolutionsSizeList(),
+							CameraController.getMultishotResolutionsIdxesList(), currentIdx);
+
+				} else
+				{
+					int currentIdx = ApplicationScreen.instance.getImageSizeIndex();
+					if (currentIdx == -1)
+					{
+						currentIdx = 0;
+					}
+
+					selectedSize = getSizeName(CameraController.getResolutionsNamesList(),
+							CameraController.getResolutionsSizeList(), CameraController.getResolutionsIdxesList(),
+							currentIdx);
+				}
+				icon_id = ICON_IMAGE_SIZE;
+				icon_text = selectedSize;
+			}
+			break;
+		case COLLOR_EFFECT:
+			icon_id = ICON_COLLOR_EFFECT;
+			icon_text = MainScreen.getAppResources().getString(R.string.settings_mode_color_effect);
+			break;
+		case MORE:
+			icon_id = ICON_SETTINGS;
+			icon_text = ApplicationScreen.getAppResources().getString(R.string.settings_mode_moresettings);
+			break;
+		default:
+			break;
+		}
+
+		// Get required size of button
+		LayoutInflater inflator = ApplicationScreen.instance.getLayoutInflater();
+		View settingView = inflator.inflate(R.layout.gui_almalence_quick_control_grid_element, null, false);
+		ImageView iconView = (ImageView) settingView.findViewById(R.id.imageView);
+		
+		//for cases if some modes are not processed and aplication can fail. Fixed this case for flash, but no idea if other settings can be a problem
+		try
+		{
+			iconView.setImageDrawable(MainScreen.getAppResources().getDrawable(icon_id));
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
+		
+		TextView textView = (TextView) settingView.findViewById(R.id.textView);
+		textView.setText(icon_text);
+		
+		if (!isEnabled && !isQuickControl)
+		{
+			iconView.setColorFilter(ApplicationScreen.getMainContext().getResources().getColor(R.color.buttonDisabled),
+					PorterDuff.Mode.DST_IN);
+			textView.setTextColor(ApplicationScreen.getMainContext().getResources().getColor(R.color.textDisabled));
+		}
+
+		// Create onClickListener of right type
+		switch (type)
+		{
+		case SCENE:
+			if (isQuickControl)
+				createQuickControlSceneOnClick(settingView);
+			else
+				createSettingSceneOnClick(settingView);
+			break;
+		case WB:
+			if (isQuickControl)
+				createQuickControlWBOnClick(settingView);
+			else
+				createSettingWBOnClick(settingView);
+			break;
+		case FOCUS:
+			if (isQuickControl)
+				createQuickControlFocusOnClick(settingView);
+			else
+				createSettingFocusOnClick(settingView);
+			break;
+		case FLASH:
+			if (isQuickControl)
+				createQuickControlFlashOnClick(settingView);
+			else
+				createSettingFlashOnClick(settingView);
+			break;
+		case ISO:
+			if (isQuickControl)
+				createQuickControlIsoOnClick(settingView);
+			else
+				createSettingIsoOnClick(settingView);
+			break;
+		case METERING:
+			if (isQuickControl)
+				createQuickControlMeteringOnClick(settingView);
+			else
+				createSettingMeteringOnClick(settingView);
+			break;
+		case CAMERA:
+			if (isQuickControl)
+				createQuickControlCameraChangeOnClick(settingView);
+			else
+				createSettingCameraOnClick(settingView);
+			break;
+		case EV:
+			if (isQuickControl)
+				createQuickControlEVOnClick(settingView);
+			else
+				createSettingEVOnClick(settingView);
+			break;
+		case SELF_TIMER:
+			if (isQuickControl)
+				createQuickControlSelfTimerOnClick(settingView);
+			else
+				createSettingSelfTimerOnClick(settingView);
+			break;
+		case IMAGE_SIZE:
+			if (isQuickControl)
+				createQuickControlImageSizeOnClick(settingView);
+			else
+				createImageSizeOnClick(settingView);
+			break;
+		case COLLOR_EFFECT:
+			if (isQuickControl)
+				createQuickControlCollorEffectOnClick(settingView);
+			else
+				createCollorEffectOnClick(settingView);
+			break;
+		case MORE:
+			if (isQuickControl)
+				return;
+			else
+				createSettingMoreOnClick(settingView);
+			break;
+		default:
+			break;
+		}
+
+		if (isQuickControl)
+			quickControlChangeres.add(settingView);
+		else
+			settingsViews.add(settingView);
 	}
 
 	private String getSizeName(List<String> listNames, List<CameraController.Size> listSizes, List<String> listIdxes,
@@ -6555,20 +6547,28 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		{
 		case MODE_SCENE:
 			mSceneModeSupported = isSupported;
+			break;
 		case MODE_WB:
 			mWBSupported = isSupported;
+			break;
 		case MODE_FLASH:
 			mFlashModeSupported = isSupported;
+			break;
 		case MODE_FOCUS:
 			mFocusModeSupported = isSupported;
+			break;
 		case MODE_ISO:
 			mISOSupported = isSupported;
+			break;
 		case MODE_MET:
 			mMeteringAreasSupported = isSupported;
+			break;
 		case MODE_COLLOR_EFFECT:
 			mCollorEffectsSupported = isSupported;
+			break;
 		case MODE_CAM:
 			mCameraChangeSupported = isSupported;
+			break;
 		default:
 			break;
 		}
