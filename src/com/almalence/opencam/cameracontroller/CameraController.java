@@ -336,6 +336,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static int								maxExpoCompensation				= 0;
 	private static float							expoCompensationStep			= 0;
 
+	protected static boolean						mOpticalStabilizationSupported	= false;
 	protected static boolean						mVideoStabilizationSupported	= false;
 	protected static boolean						mVideoSnapshotSupported	= false;
 
@@ -1220,10 +1221,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					}
 				}
 
-				if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-					cameraController.mVideoStabilizationSupported = getVideoStabilizationSupported();
+				mOpticalStabilizationSupported = false; //Is available only in camera2. Look at openCamera2 method in CameraController2
 				
-				cameraController.mVideoSnapshotSupported = getVideoSnapshotSupported();
+				if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+					mVideoStabilizationSupported = getVideoStabilizationSupported();
+				
+				mVideoSnapshotSupported = getVideoSnapshotSupported();
 
 				// screen rotation
 				if (!pluginManager.shouldPreviewToGPU())
@@ -2143,6 +2146,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	public static boolean isOpticalStabilizationSupported()
+	{
+		return mOpticalStabilizationSupported;
 	}
 
 	public static boolean isVideoStabilizationSupported()

@@ -31,8 +31,10 @@ import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.Bitmap.Config;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.RectF;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -623,6 +625,54 @@ public class GroupShotCore
 						AlmaShotGroupShot.NV21toARGB(yuvBuffer, mImageWidthRotated, mImageHeightRotated, coverRect, (int)(coverRect.width()/ratiox), (int)(coverRect.height()/ratioy)),
 						(int)(coverRect.width()/ratiox), (int)(coverRect.height()/ratioy), Config.RGB_565);
 				
+				int bitmapWidth = bitmap.getWidth();
+				int bitmapHeight = bitmap.getHeight();
+				final int sr = Math.min(bitmapWidth, bitmapHeight);
+
+	            Bitmap rounding_bitmap = Bitmap.createBitmap(sr, sr, Bitmap.Config.ARGB_8888);
+	            Canvas rounding_canvas = new Canvas(rounding_bitmap);
+	            Paint rounding_paint = new Paint();
+	            
+//	            Canvas srcCanvas = new Canvas(bitmap);
+//	            
+//	            final int w = srcCanvas.getWidth();
+//	            final int h = srcCanvas.getHeight();
+	            
+	            
+	            final Rect orect = new Rect(0, 0, rounding_bitmap.getWidth(), rounding_bitmap.getHeight());
+	            final int color = 0xff424242;
+	            final RectF rectF = new RectF(orect);
+
+//	            final int ss = Math.min(w, h);
+	            final float radius = getRadius(orect);
+//	            rounding_paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
+//	            rounding_canvas.drawRoundRect(new RectF(0, 0, ss, ss), radius, radius, rounding_paint);
+//	            rounding_paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+//
+//	            final int ddw = bitmap.getWidth();
+//	            final int ddh = bitmap.getHeight();
+//	            final int ds = Math.min(ddw, ddh);
+//	            final float ratio = (float)rounding_canvas.getWidth() / ds;
+//
+//	            rounding_canvas.save();
+//	            rounding_canvas.translate(0.5f  ratio  (ds - dw), 0.5f  ratio  (ds - dh));
+//	            rounding_canvas.scale(ratio, ratio, 0, 0);
+//	            rounding_canvas.drawBitmap(bitmap, 0, 0, rounding_paint);
+//	            rounding_canvas.restore();
+	            
+	            
+	            
+	            rounding_paint.setAntiAlias(true);
+	            rounding_canvas.drawARGB(0, 0, 0, 0);
+	            rounding_paint.setColor(color);
+	            rounding_canvas.drawRoundRect(rectF, radius, radius, rounding_paint);
+
+	            rounding_paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
+	            rounding_canvas.drawBitmap(bitmap, orect, orect, rounding_paint);
+
+
+
+				
 //				if(mMatrixRotation != 0)
 //				{
 //					Matrix matrix = new Matrix();
@@ -635,7 +685,7 @@ public class GroupShotCore
 //					matrix.postRotate(-mDeviceOrientation);
 //					bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 //				}
-				bitmaps.add(bitmap);
+				bitmaps.add(rounding_bitmap);
 				bitmapRects.add(coverRect);
 			}
 			
@@ -706,8 +756,8 @@ public class GroupShotCore
 //		// coordinates. Draw faces circles on image before rotation.
 ////		drawFaceAreasOnPreviewBitmap(mBuffer);
 //
-		drawFaceAreasOnPreviewBitmap(mPreviewBitmap);
 		drawFaceBitmapsOnPreviewBitmap(mPreviewBitmap);
+		drawFaceAreasOnPreviewBitmap(mPreviewBitmap);
 //		
 		if(mMatrixRotation != 0)
 			mPreviewBitmap = Bitmap.createBitmap(mPreviewBitmap, 0, 0, mPreviewBitmap.getWidth(), mPreviewBitmap.getHeight(),
@@ -931,15 +981,51 @@ public class GroupShotCore
 		Canvas c = new Canvas(bitmap);
 		
 		
+//		for (int i = 0; i < faceRect.size(); i++)
+//		{
+//			int frameIndex = mChosenFaces[mBaseFrame][i];
+//			if(frameIndex != mBaseFrame)
+//			{
+//				Bitmap faceBitmap = mFacesBitmapsList.get(frameIndex).get(i);
+//				
+//				Rect bitmapRect = mFacesBitmapsRect.get(frameIndex).get(i);
+//				c.drawBitmap(faceBitmap, bitmapRect.left/ratiox, bitmapRect.top/ratioy , null);
+//			}
+//		}
+		
 		for (int i = 0; i < faceRect.size(); i++)
 		{
 			int frameIndex = mChosenFaces[mBaseFrame][i];
 			if(frameIndex != mBaseFrame)
 			{
+				Rect rect = faceRect.get(i);
 				Bitmap faceBitmap = mFacesBitmapsList.get(frameIndex).get(i);
-				
 				Rect bitmapRect = mFacesBitmapsRect.get(frameIndex).get(i);
-				c.drawBitmap(faceBitmap, bitmapRect.left/ratiox, bitmapRect.top/ratioy , null);
+				float radius = getRadius(rect);
+				radius = radius / ((ratiox + ratioy) / 2);
+				
+				int faceWidth = bitmapRect.width()/2;
+				int faceHeight = bitmapRect.height()/2;
+				
+				float left, top, right, bottom;
+
+				left = rect.centerX()/ratiox - faceWidth/ratiox;
+				top = rect.centerY()/ratioy - faceHeight/ratioy;
+				right = rect.centerX()/ratioy + faceWidth/ratiox;
+				bottom = rect.centerY()/ratioy +  faceHeight/ratioy;
+
+				if (left < 0)
+					left = 0;
+				if (right > bWidth)
+					right = bWidth;
+				if (top < 0)
+					top = 0;
+				if (bottom > bHeight)
+					bottom = bHeight;
+				
+				RectF newRect = new RectF(left, top, right, bottom);
+//				c.drawBitmap(faceBitmap, rect.left/ratiox, rect.top/ratioy , null);
+				c.drawBitmap(faceBitmap, newRect.left, newRect.top , null);
 			}
 		}
 	}
@@ -1116,6 +1202,8 @@ public class GroupShotCore
 		ARGBBuffer = null;
 		mCrop = null;
 		mFacesList = null;
+		mFacesBitmapsList = null;
+		mFacesBitmapsRect = null;
 
 		mLayoutData = null;
 		mChosenFaces = null;

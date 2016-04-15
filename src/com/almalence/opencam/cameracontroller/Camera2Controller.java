@@ -421,6 +421,18 @@ public class Camera2Controller
 		//Back or front camera
 		CameraController.CameraMirrored = (Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT);
 
+		CameraController.mOpticalStabilizationSupported = false;
+		int[] oisModes = Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.LENS_INFO_AVAILABLE_OPTICAL_STABILIZATION);
+		// Nexus 5 reports wrong value.
+		if (oisModes != null && !CameraController.isNexus5) {
+			for (int mode : oisModes) {
+				if (mode == CameraMetadata.LENS_OPTICAL_STABILIZATION_MODE_ON) {
+					CameraController.mOpticalStabilizationSupported = true;
+					break;
+				}
+			}
+		}
+		
 		CameraController.mVideoStabilizationSupported = false;
 		int[] videoStabilizationModes = Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES);
 		if (videoStabilizationModes != null)
@@ -605,7 +617,7 @@ public class Camera2Controller
 		int minMPIX = CameraController.MIN_MPIX_SUPPORTED;
 		CameraCharacteristics params = getCameraCharacteristics();
 		StreamConfigurationMap configMap = params.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-		Size[] cs = configMap.getOutputSizes(captureFormat);
+		Size[] cs = configMap.getOutputSizes(captureFormat == CameraController.YUV_RAW? CameraController.YUV : captureFormat);
 		Size highestSize = findMaximumSize(cs);
 		/*
 		 * In case when device supports capturing YUV less maximum size than JPEG
@@ -868,7 +880,7 @@ public class Camera2Controller
 	//Check size chosen by application. Related to case when plugin wants to capture YUV but chosen size available only for JPEG capturing
 	public static void checkImageSize(CameraController.Size imageSize)
 	{
-		if(captureFormat == CameraController.YUV)
+		if(captureFormat == CameraController.YUV || captureFormat == CameraController.YUV_RAW)
 		{
 			if(!isSizeAvailable(imageSize, captureFormat) && isSizeAvailable(imageSize, CameraController.JPEG))
 			{
@@ -2044,10 +2056,13 @@ public class Camera2Controller
 		}
 
 		//Optical stabilization
-		stillRequestBuilder.set(CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE, CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE_ON);
-		precaptureRequestBuilder.set(CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE, CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE_ON);
-		if (isRAWCapture)
-			rawRequestBuilder.set(CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE, CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE_ON);
+		if(CameraController.isOpticalStabilizationSupported())
+		{
+			stillRequestBuilder.set(CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE, CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE_ON);
+			precaptureRequestBuilder.set(CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE, CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE_ON);
+			if (isRAWCapture)
+				rawRequestBuilder.set(CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE, CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE_ON);
+		}
 		
 		//Tonemap quality
 		stillRequestBuilder.set(CaptureRequest.TONEMAP_MODE, CaptureRequest.TONEMAP_MODE_HIGH_QUALITY);
@@ -2822,6 +2837,9 @@ public class Camera2Controller
 			previewRequestBuilder = camDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
 		}
 		
+		if(CameraController.isOpticalStabilizationSupported())
+			previewRequestBuilder.set(CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE, CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE_ON);
+		
 		if (ApplicationScreen.instance.useColorFilters())
 			previewRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE, colorEffect);
 		else
@@ -3259,25 +3277,29 @@ public class Camera2Controller
 			{
 				resetInProgress = true;
 				
-				Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
-						CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
-				try
+				if(!CameraController.isGalaxyS7)
 				{
-					Camera2Controller.getInstance().mCaptureSession.capture(Camera2Controller.previewRequestBuilder.build(), captureCallback, null);
-				} catch (CameraAccessException e)
-				{
-					e.printStackTrace();
-				}
+					Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
+							CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
+					try
+					{
+						Camera2Controller.getInstance().mCaptureSession.capture(Camera2Controller.previewRequestBuilder.build(), captureCallback, null);
+					} catch (CameraAccessException e)
+					{
+						e.printStackTrace();
+					}
 				
-				// Force set IDLE to prevent canceling all the time.
-				Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
-						CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE);
-				try
-				{
-					resetRequestId = Camera2Controller.getInstance().mCaptureSession.capture(Camera2Controller.previewRequestBuilder.build(), captureCallback, null);
-				} catch (CameraAccessException e)
-				{
-					e.printStackTrace();
+				
+					// Force set IDLE to prevent canceling all the time.
+					Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
+							CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE);
+					try
+					{
+						resetRequestId = Camera2Controller.getInstance().mCaptureSession.capture(Camera2Controller.previewRequestBuilder.build(), captureCallback, null);
+					} catch (CameraAccessException e)
+					{
+						e.printStackTrace();
+					}
 				}
 			}
 		}
@@ -3522,10 +3544,9 @@ public class Camera2Controller
 				}
 				else
 				{
-					ApplicationScreen.getPluginManager().onImageTaken(frame, frameData, frame_len, isYUV ? CameraController.YUV : CameraController.JPEG);
-					if (CameraController.getFocusMode() != CameraParameters.AF_MODE_CONTINUOUS_PICTURE) {
+					pluginManager.onImageTaken(frame, frameData, frame_len, isYUV ? CameraController.YUV : CameraController.JPEG);
+					if (CameraController.getFocusMode() != CameraParameters.AF_MODE_CONTINUOUS_PICTURE)
 						Camera2Controller.cancelAutoFocusCamera2();
-					}
 				}
 			}
 
