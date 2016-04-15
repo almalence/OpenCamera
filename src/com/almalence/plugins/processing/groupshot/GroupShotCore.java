@@ -114,12 +114,13 @@ public class GroupShotCore
 	private Matrix						mDeviceRotationTransform	= new Matrix();
 	private int							mMatrixRotation				= 0;
 
-	private int[]							ARGBBuffer					= null;
+	private int[]							ARGBBuffer				= null;
 	private int								mOutNV21;
 	private int[]							mCrop;
-	private ArrayList<ArrayList<Rect>>		mFacesList					= null;
-	private ArrayList<ArrayList<Bitmap>>	mFacesBitmapsList					= null;
-	private ArrayList<ArrayList<Rect>>		mFacesBitmapsRect					= null;
+	private ArrayList<ArrayList<Rect>>		mFacesList				= null;
+	private ArrayList<ArrayList<Bitmap>>	mFacesBitmapsList		= null;
+	private ArrayList<ArrayList<Rect>>		mFacesBitmapsRect		= null;
+	private ArrayList<Rect>					mFacesRadiusList		= null;
 
 	// Rotation of image data. If we rotate image on this angle, its orientation will become 0.
 	private int							mImageDataOrientation;
