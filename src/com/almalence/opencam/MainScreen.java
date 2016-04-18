@@ -581,8 +581,8 @@ public class MainScreen extends ApplicationScreen
 					Log.d("GL", "glView onResume");
 				}
 			} else if ((surfaceCreated && (!CameraController.isCameraCreated())) ||
-			// this is for change mode without camera restart!
-					(surfaceCreated && MainScreen.getInstance().getSwitchingMode()))
+					   // this is for change mode without camera restart!
+					   (surfaceCreated && MainScreen.getInstance().getSwitchingMode()))
 			{
 				CameraController.setupCamera(surfaceHolder, !switchingMode || openCamera);
 
