@@ -385,6 +385,7 @@ public class VideoCapturePlugin extends PluginCapture
 	{
 		ApplicationScreen.instance.checkMicrophonePermission();
 		getPrefs();
+		PluginManager.getInstance().setSwitchModeType(true);
 	}
 
 	@Override
