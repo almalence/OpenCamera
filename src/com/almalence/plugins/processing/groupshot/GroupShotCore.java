@@ -654,10 +654,10 @@ public class GroupShotCore
 				float t = centerY - faceRadius;
 				float b = centerY + faceRadius;
 				
-				l = l < 0? 0 : l;
-				r = r > mImageWidthRotated? mImageWidthRotated : r;
-				t = t < 0? 0 : t;
-				b = b > mImageHeightRotated? mImageHeightRotated : b;
+//				l = l < 0? 0 : l;
+//				r = r > mImageWidthRotated? mImageWidthRotated : r;
+//				t = t < 0? 0 : t;
+//				b = b > mImageHeightRotated? mImageHeightRotated : b;
 				
 				RectF tmpRect = new RectF(l, t, r, b);
 				Rect  coverRect = new Rect();
@@ -990,14 +990,14 @@ public class GroupShotCore
 				right = rect.centerX()/ratiox + faceWidth/averageRatio;
 				bottom = rect.centerY()/ratioy +  faceHeight/averageRatio;
 
-				if (left < 0)
-					left = 0;
-				if (right > bWidth)
-					right = bWidth;
-				if (top < 0)
-					top = 0;
-				if (bottom > bHeight)
-					bottom = bHeight;
+//				if (left < 0)
+//					left = 0;
+//				if (right > bWidth)
+//					right = bWidth;
+//				if (top < 0)
+//					top = 0;
+//				if (bottom > bHeight)
+//					bottom = bHeight;
 				
 				RectF newRect = new RectF(left, top, right, bottom);
 				c.drawBitmap(faceBitmap, newRect.left, newRect.top , null);
