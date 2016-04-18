@@ -1383,20 +1383,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 			if (!CameraController.isUseCamera2())
 			{
 				Camera.Parameters cp = CameraController.getCameraParameters();
-				try
-				{
-					// Nexus 5 is giving preview which is too dark without this
-					if (CameraController.isNexus5)
-					{
-						cp.setPreviewFpsRange(7000, 30000);
-						CameraController.setCameraParameters(cp);
-						cp = CameraController.getCameraParameters();
-					}
-				} catch (RuntimeException e)
-				{
-					Log.d("ApplicationScreen",
-							"ApplicationScreen.onCameraConfigured() unable to setParameters " + e.getMessage());
-				}
 
 				if (cp != null)
 				{

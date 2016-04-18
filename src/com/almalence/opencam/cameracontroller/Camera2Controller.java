@@ -3273,7 +3273,6 @@ public class Camera2Controller
 		
 		private void resetCaptureCallback()
 		{
-			Log.d(TAG, "resetCaptureCallback");
 			if(Camera2Controller.getInstance().mCaptureSession != null)
 			{
 				resetInProgress = true;
