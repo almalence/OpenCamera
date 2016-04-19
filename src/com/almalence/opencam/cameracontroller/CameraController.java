@@ -150,6 +150,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 														  			  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g925");
 
 	public static boolean							isGalaxyS7		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g93");
+	public static boolean 							isGalaxyS7Exynos = false;
+	public static boolean 							isGalaxyS7Qualcomm = false;
 	
 	public static boolean							isGalaxyS5		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g900");
 	
@@ -820,6 +822,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				put(iso10000_2, CameraParameters.ISO_10000);
 			}
 		};
+		
+		final String model = Build.MODEL.toLowerCase(Locale.US).replace(" ", "");
+		final String hardware = Build.HARDWARE.toLowerCase(Locale.US).replace(" ", "");
+		if (model.contains("sm-g93"))
+		{
+			if (hardware.replace("qual", "q").contains("qcom"))
+				isGalaxyS7Qualcomm = true;
+			else
+				isGalaxyS7Exynos = true;
+		}
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
 
@@ -4287,6 +4299,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			SonyRemoteCamera.cancelAutoFocusSonyRemote();
 		}
+	}
+	
+	
+	public static void setFocusIdle()
+	{
+		CameraController.setFocusState(CameraController.FOCUS_STATE_IDLE);
+		//Galaxy S7 has a very bad auto focus, we have to call cancel auto focus to prevent unfocused still images
+		if (CameraController.isCamera2 && CameraController.isGalaxyS7)
+			Camera2Controller.cancelAutoFocusCamera2();
 	}
 
 	// Callback always contains JPEG frame.

@@ -1230,7 +1230,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		resetTouchFocus();
 
 		mState = STATE_IDLE;
-		CameraController.setFocusState(CameraController.FOCUS_STATE_IDLE);
+		CameraController.setFocusIdle();
 
 		updateFocusUI();
 		mHandler.removeMessages(RESET_TOUCH_FOCUS);

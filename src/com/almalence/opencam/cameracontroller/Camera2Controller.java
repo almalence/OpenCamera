@@ -2739,6 +2739,22 @@ public class Camera2Controller
 	{
 		if (Camera2Controller.previewRequestBuilder != null && Camera2Controller.getInstance().camDevice != null && Camera2Controller.getInstance().mCaptureSession != null)
 		{
+			if (CameraController.isGalaxyS7Exynos)
+				Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_START);
+			
+			if (CameraController.isGalaxyS7Qualcomm)
+			{
+				Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_IDLE);
+			}
+			
+			try
+			{
+				Camera2Controller.getInstance().mCaptureSession.setRepeatingRequest(Camera2Controller.previewRequestBuilder.build(), captureCallback, null);
+			} catch (CameraAccessException e)
+			{
+				e.printStackTrace();
+			}			
+			
 			Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, af_regions);
 			
 			Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
@@ -2752,7 +2768,10 @@ public class Camera2Controller
 				return false;
 			}
 			
+			Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_IDLE);
+			
 			Camera2Controller.autoFocusTriggered = true;
+			
 			return true;
 		}
 		return false;
@@ -3545,7 +3564,7 @@ public class Camera2Controller
 				else
 				{
 					pluginManager.onImageTaken(frame, frameData, frame_len, isYUV ? CameraController.YUV : CameraController.JPEG);
-					if (CameraController.getFocusMode() != CameraParameters.AF_MODE_CONTINUOUS_PICTURE)
+					if (CameraController.getFocusMode() != CameraParameters.AF_MODE_CONTINUOUS_PICTURE && !CameraController.isGalaxyS7)
 						Camera2Controller.cancelAutoFocusCamera2();
 				}
 			}
