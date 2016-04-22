@@ -80,7 +80,6 @@ public class InfosetVFPlugin extends PluginViewfinder
 	private TextView					currentExposureTimeText		= null;
 
 	private static int					mDeviceOrientation;
-	private OrientationEventListener	orientListener;
 
 	private boolean						useBatteryMonitor;
 	private boolean						usePictureCount;
@@ -232,103 +231,10 @@ public class InfosetVFPlugin extends PluginViewfinder
 		}
 	}
 
-	//value to know current interval for orientation
-		//0 - unknown (need initial calculations), 1- [0 +-40], 2 [270 +-40], 3 - [180 +-40], 4 - [90 +-40]
-		private int orientationDisplayInterval=0;
-		
-		private void setOrientationInterval(int orientation)
-		{
-			if (orientation>=320 || orientation<40)
-				orientationDisplayInterval = 1;
-			else if (orientation>=230 && orientation<310)
-				orientationDisplayInterval = 2;
-			else if (orientation>=140 && orientation<220)
-				orientationDisplayInterval = 3;
-			else if (orientation>=50 && orientation<130)
-				orientationDisplayInterval = 4;
-		}
-		
-		private boolean checkOrientationInterval(int orientation)
-		{
-			//if 0 - set initial interval, if not - check if new value is in the same interval
-			switch (orientationDisplayInterval)
-			{
-				case 1:
-					if (orientation>=320 || orientation<40)
-						return true;
-					break;
-				case 2:
-					if (orientation>=230 && orientation<310)
-						return true;
-					break;
-				case 3:
-					if (orientation>=140 && orientation<220)
-						return true;
-					break;
-				case 4:
-					if (orientation>=50 && orientation<130)
-						return true;
-					break;
-				default:
-					break;
-			}
-			setOrientationInterval(orientation);
-			return false;
-		}
 		
 	@Override
 	public void onStart()
 	{
-		this.orientListener = new OrientationEventListener(ApplicationScreen.getMainContext())
-		{
-			@Override
-			public void onOrientationChanged(int orientation)
-			{
-				if (orientation == ORIENTATION_UNKNOWN)
-					return;
-				
-				final Display display = ((WindowManager) ApplicationScreen.instance.getSystemService(
-						Context.WINDOW_SERVICE)).getDefaultDisplay();
-				final int orientationProc = (display.getWidth() <= display.getHeight()) ? Configuration.ORIENTATION_PORTRAIT
-						: Configuration.ORIENTATION_LANDSCAPE;
-				final int rotation = display.getRotation();
-
-				boolean remapOrientation = (orientationProc == Configuration.ORIENTATION_LANDSCAPE && rotation == Surface.ROTATION_0)
-						|| (orientationProc == Configuration.ORIENTATION_LANDSCAPE && rotation == Surface.ROTATION_180)
-						|| (orientationProc == Configuration.ORIENTATION_PORTRAIT && rotation == Surface.ROTATION_90)
-						|| (orientationProc == Configuration.ORIENTATION_PORTRAIT && rotation == Surface.ROTATION_270);
-
-				if (remapOrientation)
-					orientation = (orientation - 90 + 360) % 360;
-
-				int newOrientation = Util.roundOrientation(orientation, mDeviceOrientation);
-				if (newOrientation == mDeviceOrientation)
-					return;
-				else
-					mDeviceOrientation = newOrientation;
-
-				if (batteryInfoImage != null)
-					batteryInfoImage.setOrientation(mDeviceOrientation);
-				if (sceneInfoImage != null)
-					sceneInfoImage.setOrientation(mDeviceOrientation);
-				if (wbInfoImage != null)
-					wbInfoImage.setOrientation(mDeviceOrientation);
-				if (focusInfoImage != null)
-					focusInfoImage.setOrientation(mDeviceOrientation);
-				if (flashInfoImage != null)
-					flashInfoImage.setOrientation(mDeviceOrientation);
-				if (isoInfoImage != null)
-					isoInfoImage.setOrientation(mDeviceOrientation);
-				if (memoryInfoText != null)
-					memoryInfoText.setRotation(-mDeviceOrientation);
-				if (evInfoText != null)
-					evInfoText.setRotation(-mDeviceOrientation);
-				if (currentSensitivityText != null)
-					currentSensitivityText.setRotation(-mDeviceOrientation);
-				if (currentExposureTimeText != null)
-					currentExposureTimeText.setRotation(-mDeviceOrientation);
-			}
-		};
 	}
 
 	@Override
@@ -338,8 +244,7 @@ public class InfosetVFPlugin extends PluginViewfinder
 
 		isFirstGpsFix = true;
 
-		mDeviceOrientation = ApplicationScreen.getGUIManager().getDisplayOrientation();
-		mDeviceOrientation = (mDeviceOrientation - 90 + 360) % 360;
+		mDeviceOrientation = ApplicationScreen.getGUIManager().getLayoutOrientation();
 
 		clearInfoViews();
 
@@ -457,7 +362,6 @@ public class InfosetVFPlugin extends PluginViewfinder
 	public void onResume()
 	{
 		getPrefs();
-		this.orientListener.enable();
 	}
 
 	@Override
@@ -478,8 +382,6 @@ public class InfosetVFPlugin extends PluginViewfinder
 
 		currentBatteryStatus = -1;
 		currentBatteryLevel = -1;
-
-		this.orientListener.disable();
 	}
 
 	@Override
@@ -820,5 +722,32 @@ public class InfosetVFPlugin extends PluginViewfinder
 				currentExposureTimeText.setVisibility(View.GONE);
 			}
 		}
+	}
+	
+	@Override
+	public void onOrientationChanged(int orientation)
+	{
+		mDeviceOrientation = ApplicationScreen.getGUIManager().getLayoutOrientation();
+
+		if (batteryInfoImage != null)
+			batteryInfoImage.setOrientation(mDeviceOrientation);
+		if (sceneInfoImage != null)
+			sceneInfoImage.setOrientation(mDeviceOrientation);
+		if (wbInfoImage != null)
+			wbInfoImage.setOrientation(mDeviceOrientation);
+		if (focusInfoImage != null)
+			focusInfoImage.setOrientation(mDeviceOrientation);
+		if (flashInfoImage != null)
+			flashInfoImage.setOrientation(mDeviceOrientation);
+		if (isoInfoImage != null)
+			isoInfoImage.setOrientation(mDeviceOrientation);
+		if (memoryInfoText != null)
+			memoryInfoText.setRotation(-mDeviceOrientation);
+		if (evInfoText != null)
+			evInfoText.setRotation(-mDeviceOrientation);
+		if (currentSensitivityText != null)
+			currentSensitivityText.setRotation(-mDeviceOrientation);
+		if (currentExposureTimeText != null)
+			currentExposureTimeText.setRotation(-mDeviceOrientation);		
 	}
 }

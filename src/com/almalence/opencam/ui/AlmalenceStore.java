@@ -257,7 +257,7 @@ public class AlmalenceStore
 			{
 			case 0:
 				// unlock all
-				icon.setImageResource(R.drawable.store_all);
+				icon.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.store_all));
 				description.setText(MainScreen.getAppResources()
 						.getString(R.string.Pref_Upgrde_All_Preference_Title));
 
@@ -277,28 +277,6 @@ public class AlmalenceStore
 					}
 				}
 				break;
-//			case 1:
-//				// subscription year
-//				icon.setImageResource(R.drawable.store_subscription);
-//				description.setText(MainScreen.getInstance().getResources()
-//						.getString(R.string.Pref_Upgrde_SubscriptionYear_Preference_Title));
-//				if (MainScreen.getInstance().isPurchasedUnlockAllSubscriptionYear() || MainScreen.getInstance().isPurchasedAll())
-//					price.setText(R.string.already_unlocked);
-//				else
-//					price.setText(MainScreen.getInstance().titleSubscriptionYear+"/"+MainScreen.getInstance().getResources()
-//							.getString(R.string.Pref_Upgrde_SubscriptionYear_Year));
-//				break;
-//			case 2:
-//				// subscription month
-//				icon.setImageResource(R.drawable.store_promo);
-//				description.setText(MainScreen.getAppResources()
-//						.getString(R.string.Pref_Upgrde_SubscriptionMonth_Preference_Title));
-//				if (MainScreen.getInstance().isPurchasedUnlockAllSubscriptionMonth() || MainScreen.getInstance().isPurchasedAll())
-//					price.setText(R.string.already_unlocked);
-//				else
-//					price.setText("");//MainScreen.getInstance().titleSubscriptionMonth);
-//				break;
-
 			default:
 				break;
 			}
@@ -346,7 +324,7 @@ public class AlmalenceStore
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		boolean bOnSale = prefs.getBoolean("bOnSale", false);
 		final RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
-		unlock.setImageResource(bOnSale ? R.drawable.unlock_sale : R.drawable.unlock);
+		unlock.setImageDrawable(MainScreen.getAppResources().getDrawable(bOnSale ? R.drawable.unlock_sale : R.drawable.unlock));
 		unlock.setAlpha(1.0f);
 		unlock.setVisibility(View.VISIBLE);
 
@@ -360,7 +338,7 @@ public class AlmalenceStore
 			public void onAnimationEnd(Animation animation)
 			{
 				unlock.clearAnimation();
-				unlock.setImageResource(R.drawable.unlock_gray);
+				unlock.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.unlock_gray));
 				unlock.setAlpha(0.4f);
 			}
 
@@ -383,7 +361,7 @@ public class AlmalenceStore
 		final RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
 		if (unlock.getVisibility() == View.VISIBLE)
 			return;
-		unlock.setImageResource(R.drawable.unlock_gray);
+		unlock.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.unlock_gray));
 		unlock.setAlpha(0.4f);
 		unlock.setVisibility(View.VISIBLE);
 	}

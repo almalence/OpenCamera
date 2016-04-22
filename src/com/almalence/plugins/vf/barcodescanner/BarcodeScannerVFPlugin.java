@@ -78,6 +78,9 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 	private BarcodeHistoryListDialog	barcodeHistoryDialog;
 	private BarcodeViewDialog			barcodeViewDialog;
 
+	//takes each X image, skipping other
+	private int							skipImgNum				= 10;
+		
 	public BarcodeScannerVFPlugin()
 	{
 		super("com.almalence.plugins.barcodescannervf", R.xml.preferences_vf_barcodescanner, 0,
@@ -337,7 +340,7 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 		if (mBarcodeScannerState == OFF)
 			return;
 		mFrameCounter++;
-		if (mFrameCounter != 10)
+		if (mFrameCounter != skipImgNum)
 		{
 			return;
 		}

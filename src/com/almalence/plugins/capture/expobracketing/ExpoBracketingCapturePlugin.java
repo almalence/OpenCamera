@@ -514,7 +514,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		default:
 			break;
 		}
-
+ 
 		// select proper min_ev, ev_inc
 		if (ev_step == 0)
 		{
@@ -655,10 +655,14 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 				exposure[0] = CameraController.getCameraExposureTime();
 				exposure[1] = CameraController.getCameraExposureTime() * 4;
 				exposure[2] = CameraController.getCameraExposureTime() / 4;
+				break;
 			default:
 				exposure = new long[3];
 				exposure[0] = CameraController.getCameraExposureTime();
-				exposure[1] = CameraController.getCameraExposureTime() * 4;
+				if (CameraController.isNexus5x)
+					exposure[1] = CameraController.getCameraExposureTime() * 3;
+				else
+					exposure[1] = CameraController.getCameraExposureTime() * 4;
 				exposure[2] = CameraController.getCameraExposureTime() / 4;
 				break;
 			}
