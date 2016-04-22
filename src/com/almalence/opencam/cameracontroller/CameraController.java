@@ -59,6 +59,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.Range;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.widget.Toast;
@@ -1134,7 +1135,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			// hard-code to enable these only, as we have no profiles for
 			// other models at the moment
 			if ((CameraController.isNexus5or6 || CameraController.isFlex2
-					|| CameraController.isOnePlusTwo)
+					|| CameraController.isOnePlusTwo || CameraController.isGalaxyS7)
 				/*|| CameraController.isGalaxyS6*/
 				/*|| CameraController.isG4*/)
 				SuperModeOk = true;
@@ -3153,6 +3154,30 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 		return isoNames;
 	}
+	
+	public static int getMinimumSensitivity()
+	{
+		if (CameraController.isCamera2)
+			return Camera2Controller.getCameraMinimumSensitivity();
+		else
+			return 0;
+	}
+
+	public static int getMaximumSensitivity()
+	{
+		if (CameraController.isCamera2)
+			return Camera2Controller.getCameraMaximumSensitivity();
+		else
+			return 0;
+	}
+	
+	public static Range<Integer> getCameraSensitivityRange()
+	{
+		if (CameraController.isCamera2)
+			return Camera2Controller.getCameraSensitivityRange();
+		else
+			return null;
+	}
 
 	/*
 	 * Manual sensor parameters: focus distance and exposure time + manual white
@@ -3208,6 +3233,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return Camera2Controller.getCameraMaximumExposureTime();
 		else
 			return 0;
+	}
+	
+	public static Range<Long> getCameraExposureRange()
+	{
+		if (CameraController.isCamera2)
+			return Camera2Controller.getCameraExposureRange();
+		else
+			return null;
 	}
 
 	public static int getMaxNumMeteringAreas()
