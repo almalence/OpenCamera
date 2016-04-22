@@ -47,7 +47,7 @@ public class RotateImageView extends ImageView
 	@SuppressWarnings("unused")
 	private static final String	TAG					= "RotateImageView";
 
-	private static final int	ANIMATION_SPEED		= 360;
+	private static final int	ANIMATION_SPEED		= 720;
 
 	private int					mCurrentDegree		= 0;
 	private int					mStartDegree		= 0;

@@ -2,7 +2,7 @@
     <ListPreference 
         android:title="@string/Pref_HDR_ColorViv_Title" 
         android:key="colorPrefHDR" 
-        android:defaultValue="2" 
+        android:defaultValue="1" 
         android:entries="@array/colorArrayHDR" 
         android:entryValues="@array/colorValuesHDR" />
     <ListPreference 
@@ -16,7 +16,7 @@
         android:title="@string/Pref_HDR_Microcontrast_Title" 
         android:summary="@string/Pref_HDR_Microcontrast_Summary" 
         android:key="mcontrastPrefHDR" 
-        android:defaultValue="1" 
+        android:defaultValue="2" 
         android:entries="@array/mcontrastArrayHDR" 
         android:entryValues="@array/mcontrastValuesHDR" />
     <ListPreference 

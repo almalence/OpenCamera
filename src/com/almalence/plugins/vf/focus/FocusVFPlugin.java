@@ -28,6 +28,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.Camera.Area;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -411,7 +412,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		mPreviewHeight = ApplicationScreen.getPreviewSurfaceLayoutHeight();
 
 		Matrix matrix = new Matrix();
-		Util.prepareMatrix(matrix, mirror, (CameraController.isNexus5x && !mirror)? 270 : 90 , mPreviewWidth, mPreviewHeight);
+		Util.prepareMatrix(matrix, mirror, CameraController.getSensorOrientation(mirror) , mPreviewWidth, mPreviewHeight);
 		// In face detection, the matrix converts the driver coordinates to UI
 		// coordinates. In tap focus, the inverted matrix converts the UI
 		// coordinates to driver coordinates.
@@ -785,11 +786,17 @@ public class FocusVFPlugin extends PluginViewfinder
 		xRaw = Util.clamp(xRaw - diffWidth, 0, previewWidth);
 		yRaw = Util.clamp(yRaw - diffHeight, 0, previewHeight);
 		
-		if (!CameraController.isNexus5x)
+		if (CameraController.getSensorOrientation(CameraController.isFrontCamera()) == 90)
 		{
 			int tmpX = xRaw;
 			xRaw = yRaw;
 			yRaw = previewWidth - tmpX - 1;
+		}
+		else //Sensor 270
+		{
+			int tmpX = xRaw;
+			xRaw = previewHeight - yRaw - 1;
+			yRaw = tmpX;
 		}
 		
 		CameraController.calculateTapArea(focusWidth, focusHeight, 1f, top, left,
@@ -883,11 +890,17 @@ public class FocusVFPlugin extends PluginViewfinder
 		xRaw = Util.clamp(xRaw - diffWidth, 0, previewWidth);
 		yRaw = Util.clamp(yRaw - diffHeight, 0, previewHeight);
 		
-		if (!CameraController.isNexus5x)
+		if (CameraController.getSensorOrientation(CameraController.isFrontCamera()) == 90)
 		{
 			int tmpX = xRaw;
 			xRaw = yRaw;
 			yRaw = previewWidth - tmpX - 1;
+		}
+		else //Sensor 270
+		{
+			int tmpX = xRaw;
+			xRaw = previewHeight - yRaw - 1;
+			yRaw = tmpX;
 		}
 		
 		CameraController.calculateTapArea(meteringWidth, meteringHeight, 1f, top, left,
@@ -907,7 +920,7 @@ public class FocusVFPlugin extends PluginViewfinder
 
 	public void onTouchFocusAndMeteringArea(MotionEvent e)
 	{
-		if (!mFocusAreaSupported)
+		if (!mFocusAreaSupported || e.getAction() != MotionEvent.ACTION_UP )
 			return;
 
 		int xRaw = (int) e.getRawX();
@@ -963,13 +976,13 @@ public class FocusVFPlugin extends PluginViewfinder
 		yRaw = Util.clamp(yRaw - diffHeight, 0, previewHeight);
 		
 		//TODO: Logic of coordinate's swapping must be based on sensor orientation not on device model!
-		if (!CameraController.isNexus5x)
+		if (CameraController.getSensorOrientation(CameraController.isFrontCamera()) == 90)
 		{
 			int tmpX = xRaw;
 			xRaw = yRaw;
 			yRaw = previewWidth - tmpX - 1;
 		}
-		else
+		else //Sensor 270
 		{
 			int tmpX = xRaw;
 			xRaw = previewHeight - yRaw - 1;
@@ -999,12 +1012,36 @@ public class FocusVFPlugin extends PluginViewfinder
 					|| preferenceFocusMode == CameraParameters.AF_MODE_CONTINUOUS_VIDEO)
 			{
 				CameraController.setCameraFocusMode(CameraParameters.AF_MODE_AUTO);
+				
+				//If call autoFocus right after set new focus mode
+				//auto focus routine may never been finished
+				//so we have to wait little time to perform autoFocus
+				new CountDownTimer(150,150)
+				{
+
+					@Override
+					public void onFinish()
+					{
+						setFocusParameters();
+						setMeteringParameters();
+						autoFocus();
+					}
+
+					@Override
+					public void onTick(long millisUntilFinished)
+					{
+						// TODO Auto-generated method stub
+						
+					}
+					
+				}.start();
 			}
-
-			setFocusParameters();
-			setMeteringParameters();
-			autoFocus();
-
+			else
+			{
+				setFocusParameters();
+				setMeteringParameters();
+				autoFocus();	
+			}
 		} else if (mMeteringArea != null && ApplicationScreen.getMeteringMode() != CameraParameters.meteringModeManual)
 		{
 			setMeteringParameters();
@@ -1193,7 +1230,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		resetTouchFocus();
 
 		mState = STATE_IDLE;
-		CameraController.setFocusState(CameraController.FOCUS_STATE_IDLE);
+		CameraController.setFocusIdle();
 
 		updateFocusUI();
 		mHandler.removeMessages(RESET_TOUCH_FOCUS);

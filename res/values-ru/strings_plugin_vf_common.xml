@@ -12,6 +12,9 @@
 	<string name="Pref_FastSwitchShutter">Быстрое переключение в видео</string>
 	<string name="Pref_FastSwitchShutter_Summary">Кнопка съемки с возможностью быстрого переключения в режим видео</string>
 	
+	<string name="Pref_SwipingEnabled">Листание экранов</string>
+	<string name="Pref_SwipingEnabled_Summary">Активировать листание экранов - смена информации и контролов на главном окне</string>
+	
 	<string name="Pref_Common_DismissKeyguard_Title">Игнорировать блокировку</string>
 	<string name="Pref_Common_DismissKeyguard_Summary">Обходить блокировку экрана слайдером при запуске.</string>
 	

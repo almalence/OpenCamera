@@ -20,14 +20,12 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:visibility="visible" />
-
-    <Gallery
-        android:id="@+id/groupshotGallery"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:visibility="invisible" 
-        android:spacing="3dp" />
+    
+	<com.almalence.plugins.processing.groupshot.HorizontalGalleryView
+         android:id="@+id/seqView"
+		 android:layout_width="fill_parent"
+		 android:layout_height="128dp"
+		 android:layout_alignParentBottom="true"/>    
 
     <TextView
         android:id="@+id/groupshotTextView"
@@ -35,5 +33,17 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/groupshotProgressBar"
         android:layout_centerHorizontal="true"/>
+    
+    <Button 
+        android:id="@+id/groupshotSaveButton"
+        android:layout_width="@dimen/postprocessing_savebutton_size"
+        android:layout_height="@dimen/postprocessing_savebutton_size"
+        android:background="@drawable/button_save_background"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true" />
 
 </RelativeLayout>

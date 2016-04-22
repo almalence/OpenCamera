@@ -388,55 +388,55 @@ public class SelfTimerAndPhotoTimeLapse
 		if (timeLapseButton == null)
 			return;
 		
-		timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer_control);
+		timeLapseButton.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.gui_almalence_mode_selftimer_control));
 		
 		if (swTimeLapseChecked)
-			timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer_controlcative);
+			timeLapseButton.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.gui_almalence_mode_selftimer_controlcative));
 		else if (swTimerChecked)
 		{					
 			switch (delayInterval)
 			{
 			case 0:
 				if (swTimerChecked)
-					timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer_controlcative);
+					timeLapseButton.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.gui_almalence_mode_selftimer_controlcative));
 				else
-					timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer_control);
+					timeLapseButton.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.gui_almalence_mode_selftimer_control));
 				break;
 			case 3:
 				if (swTimerChecked)
-					timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3_controlcative);
+					timeLapseButton.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.gui_almalence_mode_selftimer3_controlcative));
 				else
-					timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer3_control);
+					timeLapseButton.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.gui_almalence_mode_selftimer3_control));
 				break;
 			case 5:
 				if (swTimerChecked)
-					timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5_controlcative);
+					timeLapseButton.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.gui_almalence_mode_selftimer5_controlcative));
 				else
-					timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer5_control);
+					timeLapseButton.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.gui_almalence_mode_selftimer5_control));
 				break;
 			case 10:
 				if (swTimerChecked)
-					timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10_controlcative);
+					timeLapseButton.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.gui_almalence_mode_selftimer10_controlcative));
 				else
-					timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer10_control);
+					timeLapseButton.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.gui_almalence_mode_selftimer10_control));
 				break;
 			case 15:
 				if (swTimerChecked)
-					timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer15_controlcative);
+					timeLapseButton.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.gui_almalence_mode_selftimer15_controlcative));
 				else
-					timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer15_control);
+					timeLapseButton.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.gui_almalence_mode_selftimer15_control));
 				break;
 			case 30:
 				if (swTimerChecked)
-					timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer30_controlcative);
+					timeLapseButton.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.gui_almalence_mode_selftimer30_controlcative));
 				else
-					timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer30_control);
+					timeLapseButton.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.gui_almalence_mode_selftimer30_control));
 				break;
 			case 60:
 				if (swTimerChecked)
-					timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer60_controlcative);
+					timeLapseButton.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.gui_almalence_mode_selftimer60_controlcative));
 				else
-					timeLapseButton.setImageResource(R.drawable.gui_almalence_mode_selftimer60_control);
+					timeLapseButton.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.gui_almalence_mode_selftimer60_control));
 				break;
 			default:
 				break;

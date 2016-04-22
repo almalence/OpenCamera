@@ -53,6 +53,7 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.PowerManager;
 import android.os.StatFs;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -356,6 +357,8 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		mainContext = this.getBaseContext();
 		messageHandler = new Handler(this);
 		instance = this;
+		
+		surfaceCreated = false;
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		// ensure landscape orientation
@@ -1380,20 +1383,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 			if (!CameraController.isUseCamera2())
 			{
 				Camera.Parameters cp = CameraController.getCameraParameters();
-				try
-				{
-					// Nexus 5 is giving preview which is too dark without this
-					if (CameraController.isNexus5)
-					{
-						cp.setPreviewFpsRange(7000, 30000);
-						CameraController.setCameraParameters(cp);
-						cp = CameraController.getCameraParameters();
-					}
-				} catch (RuntimeException e)
-				{
-					Log.d("ApplicationScreen",
-							"ApplicationScreen.onCameraConfigured() unable to setParameters " + e.getMessage());
-				}
 
 				if (cp != null)
 				{
@@ -1492,8 +1481,13 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 				ApplicationScreen.getPluginManager().onCameraSetup();
 				guiManager.onCameraSetup();
-				ApplicationScreen.mApplicationStarted = true;
-
+				
+				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+				if(!pm.isScreenOn() && CameraController.isUseCamera2())
+					ApplicationScreen.mApplicationStarted = false;
+				else
+					ApplicationScreen.mApplicationStarted = true;
+				
 				if (ApplicationScreen.isForceClose)
 					ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_APPLICATION_STOP, 0);
 			}
@@ -2009,6 +2003,23 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	}
 
 	// Set/Get camera parameters preference
+	@Override
+	public int getCameraParameterPref(GUI.CameraParameter iParam)
+	{
+		switch (iParam)
+		{
+		case CAMERA_PARAMETER_SCENE:
+			return getSceneModePref();
+		case CAMERA_PARAMETER_WB:
+			return getWBModePref();
+		case CAMERA_PARAMETER_FOCUS:
+			return getFocusModePref(-1);
+		case CAMERA_PARAMETER_FLASH:
+			return getFlashModePref(-1);
+		default: //All other parameters is not configurable
+			return -1;
+		}
+	}
 
 	// EXPOSURE COMPENSATION PREFERENCE
 	@Override
@@ -2177,7 +2188,20 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 					: ApplicationScreen.sFrontColorEffectPref, ApplicationScreen.sDefaultColorEffectValue));
 		}
 	}
-
+	
+	@Override
+	public boolean useColorFilters()
+	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		boolean captureRAW = prefs.getBoolean(ApplicationScreen.sCaptureRAWPref, false);
+		return ((ApplicationScreen.getPluginManager().getActiveModeID().equals("single")||
+				  ApplicationScreen.getPluginManager().getActiveModeID().equals("burstmode")||
+				  ApplicationScreen.getPluginManager().getActiveModeID().equals("expobracketing")||
+				  ApplicationScreen.getPluginManager().getActiveModeID().equals("preshot"))
+				  &&//and if raw capture is enabled
+				  (!(captureRAW && CameraController.isRAWCaptureSupported())));
+	}
+	
 	@Override
 	public boolean getAELockPref()
 	{
