@@ -4654,8 +4654,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 							ApplicationScreen.getAppResources().getString(R.string.settings_not_available), true, false);
 					return;
 				}
-				int iMeteringAreasSupported = CameraController.getMaxNumMeteringAreas();
-				if (iMeteringAreasSupported > 0)
+				if(mMeteringAreasSupported)
 				{
 					if (iScreenType == 0)
 						((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);

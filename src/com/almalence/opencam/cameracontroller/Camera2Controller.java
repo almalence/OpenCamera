@@ -883,7 +883,8 @@ public class Camera2Controller
 		if(captureFormat == CameraController.YUV || captureFormat == CameraController.YUV_RAW)
 		{
 			int format = CameraController.YUV;
-			if(!isSizeAvailable(imageSize, format) && isSizeAvailable(imageSize, CameraController.JPEG))
+			if((!isSizeAvailable(imageSize, format) && isSizeAvailable(imageSize, CameraController.JPEG)))
+//					|| CameraController.isNexus5x))
 			{
 				originalCaptureFormat = format;
 				ApplicationScreen.setCaptureFormat(CameraController.JPEG);
@@ -2035,24 +2036,44 @@ public class Camera2Controller
 		{
 			stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_OFF);
 			stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE, CaptureRequest.NOISE_REDUCTION_MODE_OFF);
+			stillRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_ABERRATION_MODE, CaptureRequest.COLOR_CORRECTION_ABERRATION_MODE_OFF);
 			
 			precaptureRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_OFF);
 			precaptureRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE, CaptureRequest.NOISE_REDUCTION_MODE_OFF);
+			precaptureRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_ABERRATION_MODE, CaptureRequest.COLOR_CORRECTION_ABERRATION_MODE_OFF);
+			
+			
 		}
 		else 
 		{
 			stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
-			stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
-					CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
+			stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE, CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
+			stillRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_ABERRATION_MODE, CaptureRequest.COLOR_CORRECTION_ABERRATION_MODE_HIGH_QUALITY);
 			
 			precaptureRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_HIGH_QUALITY);
-			precaptureRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE,
-					CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
+			precaptureRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE, CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
+			precaptureRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_ABERRATION_MODE, CaptureRequest.COLOR_CORRECTION_ABERRATION_MODE_HIGH_QUALITY);
 			
 			if (isRAWCapture)
 			{
 				rawRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_OFF);
 				rawRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE, CaptureRequest.NOISE_REDUCTION_MODE_OFF);
+				rawRequestBuilder.set(CaptureRequest.COLOR_CORRECTION_ABERRATION_MODE, CaptureRequest.COLOR_CORRECTION_ABERRATION_MODE_OFF);
+			}
+		}
+		
+		if (CameraController.isGalaxyS7Exynos && format != CameraController.YUV_RAW)
+		{
+			stillRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_FAST);
+			precaptureRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_FAST);
+			
+			stillRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE, CaptureRequest.NOISE_REDUCTION_MODE_FAST);
+			precaptureRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE, CaptureRequest.NOISE_REDUCTION_MODE_FAST);
+			
+			if (isRAWCapture)
+			{
+				rawRequestBuilder.set(CaptureRequest.EDGE_MODE, CaptureRequest.EDGE_MODE_FAST);
+				rawRequestBuilder.set(CaptureRequest.NOISE_REDUCTION_MODE, CaptureRequest.NOISE_REDUCTION_MODE_FAST);
 			}
 		}
 
@@ -2198,8 +2219,11 @@ public class Camera2Controller
 				Camera2Controller.precaptureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
 				Camera2Controller.precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, flashMode);
 				
-				Camera2Controller.rawRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
-				Camera2Controller.rawRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, flashMode);
+				if (isRAWCapture)
+				{
+					Camera2Controller.rawRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+					Camera2Controller.rawRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, flashMode);
+				}
 			}
 			else if(flashMode == CameraParameters.FLASH_MODE_TORCH || flashMode == CameraParameters.FLASH_MODE_OFF)
 			{
@@ -2209,8 +2233,29 @@ public class Camera2Controller
 				Camera2Controller.precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
 				Camera2Controller.precaptureRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
 				
-				Camera2Controller.rawRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
-				Camera2Controller.rawRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
+				if (isRAWCapture)
+				{
+					Camera2Controller.rawRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
+					Camera2Controller.rawRequestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
+				}
+			}
+			
+			if (CameraController.isGalaxyS7Qualcomm &&  format != CameraController.YUV_RAW)
+			{
+				Camera2Controller.stillRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
+				Camera2Controller.stillRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, currentExposure);
+				Camera2Controller.stillRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, currentSensitivity);
+				
+				Camera2Controller.precaptureRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
+				Camera2Controller.precaptureRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, currentExposure);
+				Camera2Controller.precaptureRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, currentSensitivity);
+				
+				if (isRAWCapture)
+				{
+					Camera2Controller.rawRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
+					Camera2Controller.rawRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, currentExposure);
+					Camera2Controller.rawRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, currentSensitivity);
+				}
 			}
 		}
 		else //Manual exposure time
@@ -3253,6 +3298,12 @@ public class Camera2Controller
 			{
 			 	currentSensitivity = result.get(CaptureResult.SENSOR_SENSITIVITY);
 			 	ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_ISO_CHANGED);
+			}
+			
+			if (CameraController.isGalaxyS7Qualcomm)
+			{
+				currentExposure = currentExposure * 3 / 2;
+				currentSensitivity = currentSensitivity * 3 / 2;
 			}
 			 
 			
