@@ -1256,6 +1256,41 @@ public class Camera2Controller
 		return false;
 	}
 	
+	public static int getCameraMinimumSensitivity()
+	{
+		if (Camera2Controller.getInstance().camCharacter != null
+				&& Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE) != null)
+		{
+			Range<Integer> sensitivityRange = Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
+			return sensitivityRange.getLower();
+		}
+		
+		return 0;
+	}
+	
+	public static int getCameraMaximumSensitivity()
+	{
+		if (Camera2Controller.getInstance().camCharacter != null
+				&& Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE) != null)
+		{
+			Range<Integer> sensitivityRange = Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
+			return sensitivityRange.getUpper();
+		}
+		
+		return 0;
+	}
+	
+	public static Range<Integer> getCameraSensitivityRange()
+    {
+		if (Camera2Controller.getInstance().camCharacter != null
+				&& Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE) != null)
+		{
+			return Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
+		}
+		
+		return null;
+    }
+	
 	
 	public static boolean isManualFocusDistanceSupportedCamera2()
 	{
@@ -1304,6 +1339,18 @@ public class Camera2Controller
 		
 		return 0;
 	}
+	
+	public static Range<Long> getCameraExposureRange()
+    {
+		if (Camera2Controller.getInstance().camCharacter != null
+				&& Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE) != null)
+		{
+			Range<Long> exposureTimeRange = Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE);
+			return new Range<Long>(Math.max(1000L, exposureTimeRange.getLower()), exposureTimeRange.getUpper());
+		}
+		
+		return null;
+    }
 
 	public static int getMaxNumMeteringAreasCamera2()
 	{
