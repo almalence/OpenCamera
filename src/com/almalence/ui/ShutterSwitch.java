@@ -20,6 +20,7 @@ package com.almalence.ui;
 
 /* <!-- +++
  import com.almalence.opencam_plus.R;
+ import com.almalence.opencam_plus.MainScreen;
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.MainScreen;

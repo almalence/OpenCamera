@@ -42,22 +42,23 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.almalence.SwapHeap;
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
 import com.almalence.plugins.processing.groupshot.GroupShotCore;
 import com.almalence.util.ImageConversion;
 import com.almalence.util.Size;
 
-import com.almalence.plugins.processing.multishot.AlmaCLRShot;
-
 /* <!-- +++
- import com.almalence.opencam_plus.ApplicationScreen;
- +++ --> */
+import com.almalence.opencam_plus.cameracontroller.CameraController;
+import com.almalence.opencam_plus.ApplicationScreen;
+import com.almalence.opencam_plus.PluginManager;
++++ --> */
 //<!-- -+-
-
+import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam.ApplicationScreen;
+import com.almalence.opencam.PluginManager;
 //-+- -->
+
+import com.almalence.plugins.processing.multishot.AlmaCLRShot;
 
 public class SequenceCore
 {

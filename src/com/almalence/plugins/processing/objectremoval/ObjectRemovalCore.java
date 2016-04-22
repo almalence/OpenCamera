@@ -23,11 +23,17 @@ import java.util.ArrayList;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
 
-import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.plugins.processing.multishot.AlmaCLRShot;
 import com.almalence.plugins.processing.multishot.AlmaCLRShot.ObjBorderInfo;
 import com.almalence.plugins.processing.multishot.AlmaCLRShot.ObjectInfo;
 import com.almalence.util.Size;
+
+/* <!-- +++
+import com.almalence.opencam_plus.cameracontroller.CameraController;
++++ --> */
+//<!-- -+-
+import com.almalence.opencam.cameracontroller.CameraController;
+//-+- -->
 
 public class ObjectRemovalCore
 {

@@ -23,7 +23,13 @@ package com.almalence.opencam_plus;
 package com.almalence.opencam;
 //-+- -->
 
+/* <!-- +++
+import com.almalence.opencam_plus.ui.GUI;
++++ --> */
+//<!-- -+-
 import com.almalence.opencam.ui.GUI;
+//-+- -->
+
 import com.almalence.sony.cameraremote.SimpleStreamSurfaceView;
 
 import android.annotation.TargetApi;

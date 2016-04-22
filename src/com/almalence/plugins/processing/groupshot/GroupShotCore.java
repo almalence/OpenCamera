@@ -43,16 +43,16 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.almalence.SwapHeap;
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.util.ImageConversion;
 import com.almalence.util.Util;
 
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 //<!-- -+-
-
+ import com.almalence.opencam.ApplicationScreen;
+ import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 public class GroupShotCore

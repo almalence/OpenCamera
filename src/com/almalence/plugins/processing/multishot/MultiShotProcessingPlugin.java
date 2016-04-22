@@ -2,12 +2,17 @@ package com.almalence.plugins.processing.multishot;
 
 import java.util.ArrayList;
 
-import com.almalence.opencam.PluginProcessing;
-
 import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+
+/* <!-- +++
+import com.almalence.opencam_plus.PluginProcessing;
++++ --> */
+//<!-- -+-
+import com.almalence.opencam.PluginProcessing;
+//-+- -->
 
 public abstract class MultiShotProcessingPlugin extends PluginProcessing implements Handler.Callback, OnClickListener
 {
