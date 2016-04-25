@@ -132,7 +132,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 		ApplicationScreen.instance.muteShutter(false);
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		preferenceEVCompensationValue = ApplicationScreen.instance.getEVPref();
 		preferenceSceneMode = ApplicationScreen.instance.getSceneModePref();
 		preferenceFlashMode = ApplicationScreen.instance.getFlashModePref(ApplicationScreen.sDefaultFlashValue);
@@ -515,7 +514,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		default:
 			break;
 		}
-
+ 
 		// select proper min_ev, ev_inc
 		if (ev_step == 0)
 		{
@@ -636,7 +635,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		// then adjust it one or two stops slower than your original shutter speed 
 		// (i.e. if you were at 1/250 sec, then set it to 1/125 or 1/60 sec), and take another photo.
 		// Also if we use manual exposure settings, we should set ISO manually (get ISO and Exposure original values from preview).
-		if (CameraController.isNexus5x || CameraController.isNexus6p)
+		if (CameraController.isNexus5x || CameraController.isNexus6p || CameraController.isFlex2)
 		{
 			gain = new int[3];
 			gain[0] = CameraController.getCurrentSensitivity();
@@ -656,10 +655,14 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 				exposure[0] = CameraController.getCameraExposureTime();
 				exposure[1] = CameraController.getCameraExposureTime() * 4;
 				exposure[2] = CameraController.getCameraExposureTime() / 4;
+				break;
 			default:
 				exposure = new long[3];
 				exposure[0] = CameraController.getCameraExposureTime();
-				exposure[1] = CameraController.getCameraExposureTime() * 4;
+				if (CameraController.isNexus5x)
+					exposure[1] = CameraController.getCameraExposureTime() * 3;
+				else
+					exposure[1] = CameraController.getCameraExposureTime() * 4;
 				exposure[2] = CameraController.getCameraExposureTime() / 4;
 				break;
 			}

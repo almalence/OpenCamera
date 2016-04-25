@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.opencam_plus.cameracontroller.CameraController;
  import com.almalence.opencam_plus.ui.EglEncoder;
  +++ --> */
 //<!-- -+-
@@ -155,11 +156,29 @@ public class DROVideoEngine
 
 							try
 							{
+								int orientation = 0;
+								boolean cameraMirrored = CameraController.isFrontCamera();
+								int sensorOrientation = CameraController.getSensorOrientation(cameraMirrored);
+								
+								switch(sensorOrientation)
+								{
+									case 90:
+									{
+										if(cameraMirrored)
+											orientation = 180;
+									}
+										break;
+									case 270:
+									{
+										if(!cameraMirrored)
+											orientation = 180;
+									}
+										break;
+								}
 								DROVideoEngine.this.encoder = new EglEncoder(path, DROVideoEngine.this.previewWidth,
-										DROVideoEngine.this.previewHeight, 24, 20000000, CameraController.isNexus5x ? (ApplicationScreen
-												.getGUIManager().getImageDataOrientation() + 180) % 360 : ApplicationScreen
-												.getGUIManager().getImageDataOrientation(), EGL14
-												.eglGetCurrentContext());
+										DROVideoEngine.this.previewHeight, 24, 20000000,
+										(ApplicationScreen.getGUIManager().getImageDataOrientation() + orientation)%360,
+										EGL14.eglGetCurrentContext());
 							} catch (RuntimeException e)
 							{
 								e.printStackTrace();

@@ -196,17 +196,6 @@ void Filters_PostFilter
 	int sharpen
 );
 
-void Filters_OuterMirrorFill
-(
-	Uint8 *in,
-	int sx,
-	int sy,
-	int x0,
-	int y0,
-	int w,
-	int h
-);
-
 void Filters_FillFilterPressure
 (
 	Int32 Scale,
@@ -319,18 +308,6 @@ void Filters_ResidualQuarterCompute
 );
 
 void Filters_ResidualQuarterCompute16bit
-(
-	Uint8 *in,
-	Int16 *quarterIn,
-	Int16 *quarterOut,
-	int sx,
-	int sy,
-	int sxs,
-	int sys,
-	int pressure
-);
-
-void Filters_ResidualQuarterCompute16bit_neon
 (
 	Uint8 *in,
 	Int16 *quarterIn,

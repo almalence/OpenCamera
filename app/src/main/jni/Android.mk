@@ -95,11 +95,14 @@ include $(MY_CORE_PATH)/nightprocessing/Android.mk
 # HDR plugin
 include $(MY_CORE_PATH)/hdrprocessing/Android.mk
 
+# Object Removal and Sequence plugin
+include $(MY_CORE_PATH)/movingobjects/Android.mk
+
 # Object Removal plugin
-include $(MY_CORE_PATH)/objectremoval/Android.mk
+#include $(MY_CORE_PATH)/objectremoval/Android.mk
 
 # Sequence photo plugin
-include $(MY_CORE_PATH)/sequence/Android.mk
+#include $(MY_CORE_PATH)/sequence/Android.mk
 
 # Group shot plugin
 include $(MY_CORE_PATH)/groupshot/Android.mk

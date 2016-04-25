@@ -30,7 +30,6 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.view.Display;
@@ -38,7 +37,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -47,11 +45,12 @@ import android.widget.RelativeLayout.LayoutParams;
 
 import com.almalence.SwapHeap;
 /* <!-- +++
+ import com.almalence.opencam_plus.ApplicationInterface;
  import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.PluginManager;
  import com.almalence.opencam_plus.R;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
- import com.almalence.opencam_plus.ApplicationInterface;
+ 
  +++ --> */
 // <!-- -+-
 import com.almalence.opencam.ApplicationInterface;
@@ -61,37 +60,37 @@ import com.almalence.opencam.R;
 import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
-import com.almalence.util.Size;
-import com.almalence.plugins.processing.objectremoval.AlmaCLRShot.ObjBorderInfo;
-import com.almalence.plugins.processing.objectremoval.AlmaCLRShot.ObjectInfo;
-import com.almalence.plugins.processing.objectremoval.AlmaCLRShot.OnProcessingListener;
+import com.almalence.plugins.processing.multishot.MultiShotProcessingPlugin;
+import com.almalence.plugins.processing.multishot.AlmaCLRShot.ObjBorderInfo;
+import com.almalence.plugins.processing.multishot.AlmaCLRShot.ObjectInfo;
 
 /***
  * Implements night processing
  ***/
 
-public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickListener
+public class ObjectRemovalProcessingPlugin extends MultiShotProcessingPlugin
 {
 
 	private View			postProcessingView;
 
 	private long			sessionID		= 0;
-	private static int		mSensitivity	= 19;
-	private static int		mMinSize		= 1000;
-	private static String	mGhosting		= "2";
 
 	private static int		mAngle			= 0;
 
 	private boolean			released		= false;
-	private AlmaCLRShot		mAlmaCLRShot;
 
-	private static int		imgWidthOR;
-	private static int		imgHeightOR;
-	private int				mDisplayOrientation;
+	private int				mImageDataOrientation;
+	private int				mLayoutOrientation;
 	private boolean			mCameraMirrored;
+	private int				mSensorOrientation;
 
 	// indicates that no more user interaction needed
 	private boolean			finishing		= false;
+	
+	public ObjectRemovalProcessingPlugin()
+	{
+		super("com.almalence.plugins.objectremovalprocessing", "objectremoval", 0, 0, 0, null);
+	}
 
 	public View getPostProcessingView()
 	{
@@ -121,75 +120,35 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
 				PluginManager.getInstance().getActiveMode().modeSaveName);
 
-		mDisplayOrientation = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("frameorientation1" + sessionID));
+		mImageDataOrientation = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("frameorientation1" + sessionID));
 		mCameraMirrored = Boolean.valueOf(PluginManager.getInstance().getFromSharedMem("framemirrored1" + sessionID));
+		mSensorOrientation = CameraController.getSensorOrientation(mCameraMirrored);
+		
+		mLayoutOrientation = ApplicationScreen.getGUIManager().getLayoutOrientation();
 		
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
 		int iSaveImageWidth = imageSize.getWidth();
 		int iSaveImageHeight = imageSize.getHeight();
 
-		if (mDisplayOrientation == 0 || mDisplayOrientation == 180)
-		{
-			imgWidthOR = imageSize.getHeight();
-			imgHeightOR = imageSize.getWidth();
-		} else
-		{
-			imgWidthOR = imageSize.getWidth();
-			imgHeightOR = imageSize.getHeight();
-		}
-
-		mAlmaCLRShot = AlmaCLRShot.getInstance();
-
 		getPrefs();
+	
+		int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
+				"amountofcapturedframes" + sessionID));
+
+		if (imagesAmount == 0)
+			imagesAmount = 1;
+
+		PluginManager.getInstance()
+				.addToSharedMem("amountofresultframes" + sessionID, String.valueOf(imagesAmount));
+
+		PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(iSaveImageWidth));
+		PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(iSaveImageHeight));
 
 		try
 		{
-			Size input = new Size(imageSize.getWidth(), imageSize.getHeight());
-			int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
-					"amountofcapturedframes" + sessionID));
-			int minSize = 1000;
-			if (mMinSize == 0)
-			{
-				minSize = 0;
-			} else
-			{
-				minSize = input.getWidth() * input.getHeight() / mMinSize;
-			}
-
-			if (imagesAmount == 0)
-				imagesAmount = 1;
-
 			getDisplaySize();
-			Size preview = new Size(mDisplayWidth, mDisplayHeight);
-
-			PluginManager.getInstance()
-					.addToSharedMem("amountofresultframes" + sessionID, String.valueOf(imagesAmount));
-
-			PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(iSaveImageWidth));
-			PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(iSaveImageHeight));
-
-			// frames!!! should be taken from heap
-			mAlmaCLRShot.addInputFrame(mYUVBufferList, input);
-
-			mAlmaCLRShot.initialize(preview, mAngle,
-			/*
-			 * -1 : auto mode 0 ~ max number of input frame : manual mode
-			 */
-			-1,
-			/*
-			 * sensitivity for objection detection
-			 */
-			mSensitivity - 15,
-			/*
-			 * Minimum size of object to be able to detect -15 ~ 15 max -> easy
-			 * detection dull detection min ->
-			 */
-			minSize,
-			/*
-			 * ghosting parameter 0 : normal operation 1 : detect ghosted
-			 * objects but not remove them 2 : detect and remove all object
-			 */
-			Integer.parseInt(mGhosting), mOnProcessingListener);
+			ObjectRemovalCore.getInstance().initializeParameters(mDisplayWidth, mDisplayHeight);
+			ObjectRemovalCore.getInstance().onStartProcessing();
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -217,14 +176,15 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 	private final Handler			mHandler			= new Handler(this);
 	private boolean[]				mObjStatus;
 	private Bitmap					PreviewBmp			= null;
+	public static int				mPreviewWidth;
+	public static int				mPreviewHeight;
 	public static int				mDisplayWidth;
 	public static int				mDisplayHeight;
-
-	public static ArrayList<Integer>	mYUVBufferList;
-
-	public static void setYUVBufferList(ArrayList<Integer> YUVBufferList)
+	
+	@Override
+	public void setYUVBufferList(ArrayList<Integer> YUVBufferList)
 	{
-		ObjectRemovalProcessingPlugin.mYUVBufferList = YUVBufferList;
+		ObjectRemovalCore.getInstance().setYUVBufferList(YUVBufferList);
 	}
 
 	Paint								paint				= null;
@@ -242,7 +202,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 
 		mImgView = ((ImageView) postProcessingView.findViewById(R.id.objectremovalImageHolder));
 
-		mObjStatus = new boolean[mAlmaCLRShot.getTotalObjNum()];
+		mObjStatus = new boolean[ObjectRemovalCore.getTotalObjNum()];
 		Arrays.fill(mObjStatus, true);
 
 		if (PreviewBmp != null)
@@ -254,21 +214,26 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 		paint.setColor(0xFF00AAEA);
 		paint.setStrokeWidth(5);
 		paint.setPathEffect(new DashPathEffect(new float[] { 5, 5 }, 0));
-
-		PreviewBmp = mAlmaCLRShot.getPreviewBitmap();
-		drawObjectRectOnBitmap(PreviewBmp, mAlmaCLRShot.getObjectInfoList(), mAlmaCLRShot.getObjBorderBitmap(paint));
+		
+		PreviewBmp = ObjectRemovalCore.getPreviewBitmap();
+		mPreviewWidth = PreviewBmp.getWidth();
+		mPreviewHeight = PreviewBmp.getHeight();
+		drawObjectRectOnBitmap(PreviewBmp, ObjectRemovalCore.getObjectInfoList(), ObjectRemovalCore.getObjBorderBitmap(paint));
 
 		if (PreviewBmp != null)
 		{
-			Matrix matrix = new Matrix();
-			//Workaround for Nexus5x, image is flipped because of sensor orientation
-			matrix.postRotate(CameraController.isNexus5x? (mCameraMirrored ? 90 : -90) : 90);
-			Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
-					matrix, true);
-			mImgView.setImageBitmap(rotated);
-			mImgView.setRotation(CameraController.isFrontCamera() ? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 0
-					: 180)
-					: 0);
+			int rotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(mImageDataOrientation, mLayoutOrientation, mCameraMirrored);
+			
+			if(rotation != 0)
+			{
+				Matrix matrix = new Matrix();
+				matrix.postRotate(rotation);
+				Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
+						matrix, true);
+				mImgView.setImageBitmap(rotated);
+			}
+			else
+				mImgView.setImageBitmap(PreviewBmp);
 		}
 
 		mHandler.sendEmptyMessage(MSG_END_OF_LOADING);
@@ -308,23 +273,32 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 				{
 					if (finishing)
 						return true;
-					float x = 0;
-					float y = 0;
-					//Workaround for Nexus5x, image is flipped horizontally & vertically because of sensor orientation
-					if(CameraController.isNexus5x && !mCameraMirrored)
+					float x = event.getX();
+					float y = event.getY();
+					
+					//Image data has different orientation according to device's sensor orientation
+					//Object removal operate with data as is, it means that seeing preview is differ by orientation from processing data.
+					//So we have to calculate new touch coordinates for real data
+					if(mSensorOrientation == 270)
 					{
 						x = mDisplayWidth - event.getY();
-						y = event.getX();	
+						y = event.getX();
 					}
-					else
+					else if(mSensorOrientation == 90)
 					{
 						x = event.getY();
 						y = mDisplayHeight - 1 - event.getX();
 					}
+					else if(mSensorOrientation == 180)
+					{
+						x = mDisplayHeight - 1 - event.getX();
+						y = mDisplayWidth - 1 - event.getY();
+					}
+					
 					int objIndex = 0;
 					try
 					{
-						objIndex = mAlmaCLRShot.getOccupiedObject(x, y);
+						objIndex = ObjectRemovalCore.getOccupiedObject(x, y);
 					} catch (Exception e)
 					{
 						e.printStackTrace();
@@ -384,16 +358,14 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 
 	public void savePicture(Context context)
 	{
-		byte[] result = mAlmaCLRShot.processingSaveData();
+		byte[] result = ObjectRemovalCore.processingSaveData();
 		int frame_len = result.length;
 		int frame = SwapHeap.SwapToHeap(result);
 		PluginManager.getInstance().addToSharedMem("resultframeformat1" + sessionID, "jpeg");
 		PluginManager.getInstance().addToSharedMem("resultframe1" + sessionID, String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem("resultframelen1" + sessionID, String.valueOf(frame_len));
 
-		//Nexus 6 has a original front camera sensor orientation, we have to manage it
-		PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID,
-				String.valueOf((CameraController.isNexus6 && mCameraMirrored)? (mDisplayOrientation + 180) % 360 : mDisplayOrientation));
+		PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID,String.valueOf(mImageDataOrientation));
 		PluginManager.getInstance().addToSharedMem("resultframemirrored1" + sessionID, String.valueOf(mCameraMirrored));
 
 		PluginManager.getInstance().addToSharedMem("amountofresultframes" + sessionID, String.valueOf(1));
@@ -414,7 +386,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 		case MSG_SAVE:
 			try
 			{
-				mAlmaCLRShot.setObjectList(mObjStatus);
+				ObjectRemovalCore.setObjectList(mObjStatus);
 			} catch (Exception e)
 			{
 				e.printStackTrace();
@@ -427,7 +399,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 				return false;
 			ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_POSTPROCESSING_FINISHED);
 			
-			mYUVBufferList.clear();
+			ObjectRemovalCore.getInstance().clear();
 
 			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, 
 					ApplicationInterface.MSG_CONTROL_UNLOCKED);
@@ -436,7 +408,7 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 
 			postProcessingRun = false;
 
-			mAlmaCLRShot.release();
+			ObjectRemovalCore.release();
 			released = true;
 			break;
 
@@ -445,19 +417,23 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 				PreviewBmp.recycle();
 			if (finishing)
 				return true;
-			PreviewBmp = mAlmaCLRShot.getPreviewBitmap();
-			drawObjectRectOnBitmap(PreviewBmp, mAlmaCLRShot.getObjectInfoList(), mAlmaCLRShot.getObjBorderBitmap(paint));
+			PreviewBmp = ObjectRemovalCore.getPreviewBitmap();
+			mPreviewWidth = PreviewBmp.getWidth();
+			mPreviewHeight = PreviewBmp.getHeight();
+			drawObjectRectOnBitmap(PreviewBmp, ObjectRemovalCore.getObjectInfoList(), ObjectRemovalCore.getObjBorderBitmap(paint));
 			if (PreviewBmp != null)
 			{
-				Matrix matrix = new Matrix();
-				//Workaround for Nexus5x, image is flipped because of sensor orientation
-				matrix.postRotate(CameraController.isNexus5x? (mCameraMirrored ? 90 : -90) : 90);
-				Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
-						matrix, true);
-				mImgView.setImageBitmap(rotated);
-				mImgView.setRotation(CameraController.isFrontCamera() ? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 0
-						: 180)
-						: 0);
+				int rotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(mImageDataOrientation, mLayoutOrientation, mCameraMirrored);
+				if(rotation != 0)
+				{
+					Matrix matrix = new Matrix();
+					matrix.postRotate(rotation);
+					Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
+							matrix, true);
+					mImgView.setImageBitmap(rotated);
+				}
+				else
+					mImgView.setImageBitmap(PreviewBmp);	
 			}
 			break;
 		default:
@@ -560,22 +536,6 @@ public class ObjectRemovalProcessingPlugin implements Handler.Callback, OnClickL
 	/************************************************
 	 * POST PROCESSING END
 	 ************************************************/
-
-	private OnProcessingListener	mOnProcessingListener	= new OnProcessingListener()
-															{
-
-																@Override
-																public void onObjectCreated(ObjectInfo objInfo)
-																{
-																}
-
-																@Override
-																public void onProcessingComplete(
-																		ObjectInfo[] objInfoList)
-																{
-																}
-
-															};
 
 	private void getPrefs()
 	{

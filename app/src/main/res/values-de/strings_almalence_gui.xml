@@ -74,7 +74,7 @@
 	<string name="Pref_Saving_Preference_Summary">Dateinamen, Formate, Geotagging, Exif und andere Parameter</string>
 	<string name="Pref_Advanced_Preference_Title">Erweitert</string>
 	<string name="Pref_Advanced_Preference_Summary">Einstellungen für Profis</string>
-	<string name="Pref_Unlock_Preference_Title">Freischalten</string>
+	<string name="Pref_Unlock_Preference_Title">Freischalten/Hilfe</string>
 	<string name="Pref_Unlock_Preference_Summary">Premium-Funktionen freischalten</string>
 	
 	<string name="layout_hint_bottom">Kameramodus auswählen</string>

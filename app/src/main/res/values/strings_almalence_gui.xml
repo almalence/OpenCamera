@@ -18,6 +18,8 @@
     <string name="Pref_Common_ShotOnTap_Title">Touch to shoot</string>
     <string name="Pref_Common_Antibanding_Title">Antibanding</string>
     <string name="Pref_Common_ShotOnTap_Summary">Focus and shoot by tap</string>
+    <string name="Pref_Common_ShotOnRelease_Title">Release shutter to shoot</string>
+    <string name="Pref_Common_ShotOnRelease_Summary">Enable shoot on release.</string>
     <string name="Pref_Common_UseCamera2_Title">Use Сamera2 interface</string>
     <string name="Pref_Common_UseCamera2_Summary">Experimental mode. Will work on limited number of devices with Android 5</string>    
     <string name="Pref_Common_MediaRescan_Title">Media rescan on exit</string>
@@ -313,7 +315,7 @@
 	<string name="Pref_Saving_Preference_Summary">Filenames, formats, geotagging, exif and other parameters</string>
 	<string name="Pref_Advanced_Preference_Title">Advanced</string>
 	<string name="Pref_Advanced_Preference_Summary">Settings for expert users</string>
-	<string name="Pref_Unlock_Preference_Title">Unlock</string>
+	<string name="Pref_Unlock_Preference_Title">Unlock/Help</string>
 	<string name="Pref_Unlock_Preference_Summary">Unlock premium features</string>
 	<string name="Pref_Help_Preference_Title">Help</string>
 	<string name="Pref_Help_Preference_Summary">Short help and description</string>

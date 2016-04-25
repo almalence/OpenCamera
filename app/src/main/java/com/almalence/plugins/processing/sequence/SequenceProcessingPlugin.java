@@ -24,11 +24,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
-import android.graphics.DashPathEffect;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.Point;
-import android.os.Build;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.view.Display;
@@ -39,6 +37,7 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
@@ -61,38 +60,39 @@ import com.almalence.opencam.ApplicationInterface;
 
 import com.almalence.util.ImageConversion;
 import com.almalence.util.Size;
+import com.almalence.plugins.processing.multishot.MultiShotProcessingPlugin;
 import com.almalence.plugins.processing.sequence.OrderControl.SequenceListener;
 
 /***
  * Implements night processing
  ***/
 
-public class SequenceProcessingPlugin implements Handler.Callback, OnClickListener, SequenceListener
+public class SequenceProcessingPlugin extends MultiShotProcessingPlugin implements SequenceListener
 {
 
 	private View						postProcessingView;
 
 	private long						sessionID		= 0;
-	private static int					mSensitivity	= 22;
-	private static int					mMinSize		= 1000;
-	private static String				mGhosting		= "0";
-
-	private static int					mAngle			= 0;
-
-	private AlmaCLRShot					mAlmaCLRShot;
 
 	public static int					imgWidthOR;
 	public static int					imgHeightOR;
-	private int							mDisplayOrientation;
+	private int							mImageDataOrientation;
 	private boolean						mCameraMirrored;
 
-	private int[]						indexes;
+	private static ProgressBar 			progressBar;
+	
+//	private int[]						indexes;
 
 	private OrderControl				sequenceView;
 	private static ArrayList<Bitmap>	thumbnails		= new ArrayList<Bitmap>();
 
 	// indicates that no more user interaction needed
 	private boolean						finishing		= false;
+	
+	public SequenceProcessingPlugin()
+	{
+		super("com.almalence.plugins.sequenceprocessing", "sequence", 0, 0, 0, null);
+	}
 
 	public View getPostProcessingView()
 	{
@@ -101,7 +101,6 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 
 	public void onStart()
 	{
-		getPrefs();
 	}
 
 	public void onStartProcessing(long SessionID)
@@ -121,14 +120,14 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
 				PluginManager.getInstance().getActiveMode().modeSaveName);
 
-		mDisplayOrientation = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("frameorientation1" + sessionID));
-		int orientation = ApplicationScreen.getGUIManager().getLayoutOrientation();
-		mLayoutOrientationCurrent = (orientation == 0 || orientation == 180) ? orientation : (orientation + 180) % 360;
+		mImageDataOrientation = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("frameorientation1" + sessionID));
+		mLayoutOrientation = ApplicationScreen.getGUIManager().getLayoutOrientation();
+		mLayoutOrientationCurrent = (mLayoutOrientation == 0 || mLayoutOrientation == 180) ? mLayoutOrientation : (mLayoutOrientation + 180) % 360;
 		
 		mCameraMirrored = Boolean.valueOf(PluginManager.getInstance().getFromSharedMem("framemirrored1" + sessionID));
 		
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
-		if (mDisplayOrientation == 0 || mDisplayOrientation == 180)
+		if (mImageDataOrientation == 0 || mImageDataOrientation == 180)
 		{
 			imgWidthOR = imageSize.getHeight();
 			imgHeightOR = imageSize.getWidth();
@@ -138,23 +137,10 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 			imgHeightOR = imageSize.getHeight();
 		}
 
-		mAlmaCLRShot = AlmaCLRShot.getInstance();
-
-		getPrefs();
-
 		try
 		{
-			Size input = new Size(imageSize.getWidth(), imageSize.getHeight());
 			int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
 					"amountofcapturedframes" + sessionID));
-			int minSize = 1000;
-			if (mMinSize == 0)
-			{
-				minSize = 0;
-			} else
-			{
-				minSize = input.getWidth() * input.getHeight() / mMinSize;
-			}
 
 			if (imagesAmount == 0)
 				imagesAmount = 1;
@@ -168,61 +154,18 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 			{
 				thumbnails
 						.add(Bitmap.createScaledBitmap(ImageConversion.decodeYUVfromBuffer(
-								mYUVBufferList.get(i - 1), iImageWidth, iImageHeight), heightPixels
+								SequenceCore.getInstance().getYUVBufferList().get(i - 1), iImageWidth, iImageHeight), heightPixels
 								/ imagesAmount, (int) (iImageHeight * (((float)heightPixels / imagesAmount) / iImageWidth)),
 								false));
 			}
-
-			Display display = ((WindowManager) ApplicationScreen.instance.getSystemService(Context.WINDOW_SERVICE))
-					.getDefaultDisplay();
-			Point dis = new Point();
-			display.getSize(dis);
-
-			float imageRatio = (float) iImageWidth / (float) iImageHeight;
-			float displayRatio = (float) dis.y / (float) dis.x;
-
-			if (imageRatio > displayRatio)
-			{
-				mDisplayWidth = dis.y;
-				mDisplayHeight = (int) ((float) dis.y / (float) imageRatio);
-			} else
-			{
-				mDisplayWidth = (int) ((float) dis.x * (float) imageRatio);
-				mDisplayHeight = dis.x;
-			}
-
-			Size preview = new Size(mDisplayWidth, mDisplayHeight);
-
-			PluginManager.getInstance()
-					.addToSharedMem("amountofresultframes" + sessionID, String.valueOf(imagesAmount));
-
+			
+			PluginManager.getInstance().addToSharedMem("amountofresultframes" + sessionID, String.valueOf(imagesAmount));
 			PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(imgWidthOR));
 			PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(imgHeightOR));
 
-			this.indexes = new int[imagesAmount];
-			for (int i = 0; i < imagesAmount; i++)
-			{
-				this.indexes[i] = i;
-			}
-
-			// frames!!! should be taken from heap
-			mAlmaCLRShot.addYUVInputFrame(mYUVBufferList, input);
-
-			mAlmaCLRShot.initialize(preview, mAngle,
-			/*
-			 * sensitivity for objection detection
-			 */
-			mSensitivity - 15,
-			/*
-			 * Minimum size of object to be able to detect -15 ~ 15 max -> easy
-			 * detection dull detection min ->
-			 */
-			minSize,
-			/*
-			 * ghosting parameter 0 : normal operation 1 : detect ghosted
-			 * objects but not remove them 2 : detect and remove all object
-			 */
-			Integer.parseInt(mGhosting), indexes);
+			SequenceCore.getInstance().initializeParameters(imagesAmount, mCameraMirrored, mImageDataOrientation, mHandler);
+			SequenceCore.getInstance().onStartProcessing();
+			
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -239,25 +182,26 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 
 	private ImageView					mImgView;
 	private Button						mSaveButton;
-	private static final int			MSG_REDRAW			= 1;
+	public static final int				MSG_REDRAW			= 1;
 	private static final int			MSG_LEAVING			= 3;
 	private static final int			MSG_END_OF_LOADING	= 4;
 	private final Handler				mHandler			= new Handler(this);
+	private int							mLayoutOrientation;
 	private int							mLayoutOrientationCurrent;
 	private int							mDisplayOrientationCurrent;
 	private Bitmap						PreviewBmp			= null;
-	public static int					mDisplayWidth;
-	public static int					mDisplayHeight;
+//	public static int					mDisplayWidth;
+//	public static int					mDisplayHeight;
+	
+	private boolean						processingRunning = false;
+	private int[]						indexesToProcess  = null;
 
-	private static ArrayList<Integer>	mYUVBufferList;
-
-	public static void setmYUVBufferList(ArrayList<Integer> mYUVBufferList)
+	public void setYUVBufferList(ArrayList<Integer> mYUVBufferList)
 	{
-		SequenceProcessingPlugin.mYUVBufferList = mYUVBufferList;
+		SequenceCore.getInstance().setYUVBufferList(mYUVBufferList);
 	}
 
 	public static ArrayList<Bitmap>	mInputBitmapList	= new ArrayList<Bitmap>();
-	Paint							paint				= null;
 
 	private boolean					postProcessingRun	= false;
 
@@ -273,24 +217,16 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 			PreviewBmp.recycle();
 		}
 
-		paint = new Paint();
-		paint.setColor(0xFF00AAEA);
-		paint.setStrokeWidth(5);
-		paint.setPathEffect(new DashPathEffect(new float[] { 5, 5 }, 0));
-
-		PreviewBmp = mAlmaCLRShot.getPreviewBitmap();
+		PreviewBmp = SequenceCore.getInstance().getPreviewBitmap();
 
 		if (PreviewBmp != null)
 		{
 			Matrix matrix = new Matrix();
-			//Workaround for Nexus5x, image is flipped because of sensor orientation
-			matrix.postRotate(CameraController.isNexus5x? (mCameraMirrored ? 90 : -90) : 90);
+			int rotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(mImageDataOrientation, mLayoutOrientation, mCameraMirrored);
+			matrix.postRotate(rotation);
 			Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
 					matrix, true);
 			mImgView.setImageBitmap(rotated);
-			mImgView.setRotation(mCameraMirrored ? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 0
-					: 180)
-					: 0);
 		}
 
 		sequenceView = ((OrderControl) postProcessingView.findViewById(R.id.seqView));
@@ -299,15 +235,8 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 		{
 			Bitmap bmp = thumbnails.get(i);
 			Matrix matrix = new Matrix();
-			//Workaround for Nexus5x, image is flipped because of sensor orientation
-			if(CameraController.isNexus5x)
-				matrix.postRotate(mCameraMirrored ? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 270
-						: 90)
-						: 270);
-			else
-				matrix.postRotate(mCameraMirrored ? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 270
-						: 90)
-						: 90);	
+			int rotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(mImageDataOrientation, mLayoutOrientation, mCameraMirrored);
+			matrix.postRotate(rotation);
 			Bitmap rotated = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
 			thumbnailsArray[i] = rotated;
 		}
@@ -316,35 +245,19 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 		lp.height = thumbnailsArray[0].getHeight();
 		sequenceView.setLayoutParams(lp);
 
-		sequenceView.setRotation(mCameraMirrored? 180 : 0);
+		processingRunning = false;
+		indexesToProcess  = null;
 
 		mHandler.sendEmptyMessage(MSG_END_OF_LOADING);
 	}
 
-	public void getDisplaySize(byte[] data)
+	
+	public static void setProgressBarVisibility(boolean visible)
 	{
-		Display display = ((WindowManager) ApplicationScreen.instance.getSystemService(Context.WINDOW_SERVICE))
-				.getDefaultDisplay();
-		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inPreferredConfig = Config.ARGB_8888;
-		options.inJustDecodeBounds = true;
-		BitmapFactory.decodeByteArray(data, 0, data.length, options);
-		Point dis = new Point();
-		display.getSize(dis);
-
-		float imageRatio = (float) options.outWidth / (float) options.outHeight;
-		float displayRatio = (float) dis.y / (float) dis.x;
-
-		if (imageRatio > displayRatio)
+		if(progressBar != null)
 		{
-			mDisplayWidth = dis.y;
-			mDisplayHeight = (int) ((float) dis.y / (float) imageRatio);
-		} else
-		{
-			mDisplayWidth = (int) ((float) dis.x * (float) imageRatio);
-			mDisplayHeight = dis.x;
+			progressBar.setVisibility(visible? View.VISIBLE : View.GONE);
 		}
-		return;
 	}
 
 	public void setupSaveButton()
@@ -362,6 +275,10 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 		saveLayoutParams.setMargins((int) (density * 8), (int) (density * 8), 0, 0);
 		((RelativeLayout) postProcessingView.findViewById(R.id.sequenceLayout)).addView(mSaveButton, saveLayoutParams);
 		mSaveButton.setRotation(mLayoutOrientationCurrent);
+		
+		//add progress control
+		progressBar = (ProgressBar) postProcessingView.findViewById(R.id.progressBarProcessing);
+		progressBar.setVisibility(View.GONE);
 	}
 
 	public void onOrientationChanged(int orientation)
@@ -383,33 +300,13 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 			if (finishing)
 				return;
 			finishing = true;
-			savePicture(ApplicationScreen.getMainContext());
+			SequenceCore.getInstance().processAndSaveData(sessionID);
 
 			mHandler.sendEmptyMessage(MSG_LEAVING);
 		}
 	}
 
-	public void savePicture(Context context)
-	{
-		byte[] result = mAlmaCLRShot.processingSaveData();
-		int frame_len = result.length;
-		int frame = SwapHeap.SwapToHeap(result);
-
-		PluginManager.getInstance().addToSharedMem("resultframeformat1" + sessionID, "jpeg");
-		PluginManager.getInstance().addToSharedMem("resultframe1" + sessionID, String.valueOf(frame));
-		PluginManager.getInstance().addToSharedMem("resultframelen1" + sessionID, String.valueOf(frame_len));
-
-		//Nexus 6 has a original front camera sensor orientation, we have to manage it
-		PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID,
-				String.valueOf((CameraController.isNexus6 && mCameraMirrored)? (mDisplayOrientation + 180) % 360 : mDisplayOrientation));
-		PluginManager.getInstance().addToSharedMem("resultframemirrored1" + sessionID, String.valueOf(mCameraMirrored));
-
-		PluginManager.getInstance().addToSharedMem("amountofresultframes" + sessionID, String.valueOf(1));
-
-		PluginManager.getInstance().addToSharedMem("sessionID", String.valueOf(sessionID));
-		mAlmaCLRShot.release();
-	}
-
+	private Object syncObj = new Object();
 	@Override
 	public boolean handleMessage(Message msg)
 	{
@@ -431,25 +328,39 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 			return false;
 
 		case MSG_REDRAW:
+			synchronized(syncObj)
+			{
+				processingRunning = false;
+				if(indexesToProcess != null)
+				{
+					processingRunning = true;
+					SequenceCore.getInstance().runProcessingTask(indexesToProcess);
+					indexesToProcess = null;
+					return true;
+				}
+			}
+			
 			if (PreviewBmp != null)
 				PreviewBmp.recycle();
 			if (finishing)
 				return true;
-			PreviewBmp = mAlmaCLRShot.getPreviewBitmap();
+//			sequenceView.setEnabled(true);
+			PreviewBmp = SequenceCore.getInstance().getPreviewBitmap();
 			if (PreviewBmp != null)
 			{
 				Matrix matrix = new Matrix();
 				//Workaround for Nexus5x, image is flipped because of sensor orientation
-				matrix.postRotate(CameraController.isNexus5x? (mCameraMirrored ? 90 : -90) : 90);
+//				matrix.postRotate(CameraController.isNexus5x? (mCameraMirrored ? 90 : -90) : 90);
+				int rotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(mImageDataOrientation, mLayoutOrientation, mCameraMirrored);
+				matrix.postRotate(rotation);
 				Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
 						matrix, true);
 				mImgView.setImageBitmap(rotated);
-				mImgView.setRotation(CameraController.isFrontCamera() ? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 0
-						: 180)
-						: 0);
+//				mImgView.setRotation(CameraController.isFrontCamera() ? ((mImageDataOrientation == 0 || mImageDataOrientation == 180) ? 0
+//						: 180)
+//						: 0);
 			}
 
-			sequenceView.setEnabled(true);
 			break;
 		default:
 			break;
@@ -466,70 +377,30 @@ public class SequenceProcessingPlugin implements Handler.Callback, OnClickListen
 				return true;
 			finishing = true;
 			mHandler.sendEmptyMessage(MSG_LEAVING);
-			mAlmaCLRShot.release();
+			SequenceCore.getInstance().release();
 			return true;
 		}
 
 		return false;
 	}
 
+	@Override
 	public void onSequenceChanged(final int[] idx)
 	{
-		sequenceView.setEnabled(false);
-
-		CameraController.Size imageSize = CameraController.getCameraImageSize();
-		Size input = new Size(imageSize.getWidth(), imageSize.getHeight());
-		int minSize = 1000;
-		if (mMinSize == 0)
+		synchronized(syncObj)
 		{
-			minSize = 0;
-		} else
-		{
-			minSize = input.getWidth() * input.getHeight() / mMinSize;
+			if(!processingRunning)
+			{
+				processingRunning = true;
+				indexesToProcess = null;
+	//			sequenceView.setEnabled(false);
+				SequenceCore.getInstance().runProcessingTask(idx);
+			}
+			else
+			{
+				indexesToProcess = idx;
+			}
 		}
-
-		Size preview = new Size(mDisplayWidth, mDisplayHeight);
-		try
-		{
-			mAlmaCLRShot.initialize(preview, mAngle,
-			/*
-			 * sensitivity for objection detection
-			 */
-			mSensitivity - 15,
-			/*
-			 * Minimum size of object to be able to detect -15 ~ 15 max -> easy
-			 * detection dull detection min ->
-			 */
-			minSize,
-			/*
-			 * ghosting parameter 0 : normal operation 1 : detect ghosted
-			 * objects but not remove them 2 : detect and remove all object
-			 */
-			Integer.parseInt(mGhosting), idx);
-		} catch (NumberFormatException e)
-		{
-			e.printStackTrace();
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-
-		mHandler.sendEmptyMessage(MSG_REDRAW);
-	}
-
-	private void getPrefs()
-	{
-		/*
-		 Code commented out because there are no correspondent controls exposed to the user
-		 ToDo: either delete (more likely), or add these controls as advanced
-		 
-		// Get the xml/preferences.xml preferences
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.instance
-				.getBaseContext());
-		mSensitivity = prefs.getInt("Sensitivity", 22); // 19);
-		mMinSize = prefs.getInt("MinSize", 1000);
-		mGhosting = prefs.getString("Ghosting", "0");
-		*/
 	}
 	/************************************************
 	 * POST PROCESSING END

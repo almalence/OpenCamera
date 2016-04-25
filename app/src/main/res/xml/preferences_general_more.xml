@@ -47,6 +47,12 @@
         android:title="@string/Pref_Common_ShotOnTap_Title" />
     <ListPreference
         android:defaultValue="0"
+        android:entries="@array/shotOnReleaseArrayCommon"
+        android:entryValues="@array/shotOnReleaseValuesCommon"
+        android:key="@string/Preference_ShotOnReleaseValue"
+        android:title="@string/Pref_Common_ShotOnRelease_Title" />
+    <ListPreference
+        android:defaultValue="0"
         android:entries="@array/dimsArrayCommon"
         android:entryValues="@array/dimsValuesCommon"
         android:key="@string/Preference_FrontColorEffectValue"

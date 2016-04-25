@@ -45,7 +45,7 @@ public class FocusIndicatorView extends View implements FocusIndicator
 	{
 		setBackgroundDrawable(getResources().getDrawable(resid));
 	}
-
+	
 	@Override
 	public void showStart()
 	{

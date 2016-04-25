@@ -134,6 +134,10 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 			cameraIndex = 103;
 		else if (CameraController.isFlex2)
 			cameraIndex = 507;
+		else if (CameraController.isOnePlusTwo)
+			cameraIndex = 2000;
+		else if (CameraController.isGalaxyS7Exynos || CameraController.isGalaxyS7Qualcomm)
+			cameraIndex = 1006;
 //		if (CameraController.isG4)
 //			cameraIndex = 506;
 
@@ -181,14 +185,6 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 		boolean isSuperMode = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem(
 				"isSuperMode" + sessionID));
 		int sensorGain = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("burstGain" + sessionID));
-
-		if (CameraController.isNexus6 && CameraController.isFrontCamera())
-		{
-			if (mDisplayOrientation == 0 || mDisplayOrientation == 90)
-				mDisplayOrientation += 180;
-			else if (mDisplayOrientation == 180 || mDisplayOrientation == 270)
-				mDisplayOrientation -= 180;
-		}
 
 		yuv = AlmaShotNight.Process(mImageWidth, mImageHeight, mOutImageWidth, mOutImageHeight, sensorGain,
 				Integer.parseInt(NoisePreference), Integer.parseInt(GhostPreference), 9, SaturatedColors ? 9 : 0,

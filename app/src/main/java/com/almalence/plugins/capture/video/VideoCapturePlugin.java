@@ -150,8 +150,8 @@ public class VideoCapturePlugin extends PluginCapture
 	private static ParcelFileDescriptor			documentFileSavedFd				= null;
 	private ArrayList<DocumentFile>				documentFilesList				= new ArrayList<DocumentFile>();
 
-	private int									preferenceFocusMode;
-	private int									preferenceVideoFocusMode;
+	private int									preferenceFocusMode				= CameraParameters.AF_MODE_AUTO;
+	private int									preferenceVideoFocusMode		= CameraParameters.AF_MODE_CONTINUOUS_VIDEO;
 
 	private RotateImageView						timeLapseButton;
 	private RotateImageView						pauseVideoButton;
@@ -169,13 +169,14 @@ public class VideoCapturePlugin extends PluginCapture
 
 	public static final int						QUALITY_4K					= 9;
 
-	private ImageView							rotateToLandscapeNotifier;
 	private boolean								showLandscapeNotification	= true;
 	private View								rotatorLayout;
 	private TimeLapseDialog						timeLapseDialog;
 
 	private boolean								displayTakePicture;
 	private ContentValues						values;
+	
+	private int 								videoOrientation			= 0;
 
 	private static final String					DEFAULT_VIDEO_QUALITY			= String.valueOf(CamcorderProfile.QUALITY_1080P);
 	
@@ -317,7 +318,7 @@ public class VideoCapturePlugin extends PluginCapture
 						ApplicationScreen.instance.hideOpenGLLayer();
 						if (!CameraController.isUseCamera2())
 						{
-							CameraController.setupCamera(ApplicationScreen.instance.getPreviewSurfaceHolder(), true);
+							CameraController.setupCamera(ApplicationScreen.getPreviewSurfaceHolder(), true);
 						}
 						CameraController.startCameraPreview();
 					}
@@ -384,6 +385,7 @@ public class VideoCapturePlugin extends PluginCapture
 	{
 		ApplicationScreen.instance.checkMicrophonePermission();
 		getPrefs();
+		PluginManager.getInstance().setSwitchModeType(true);
 	}
 
 	@Override
@@ -435,7 +437,6 @@ public class VideoCapturePlugin extends PluginCapture
 					this.modeSwitcher, params);
 
 			this.modeSwitcher.setLayoutParams(params);
-			// this.modeSwitcher.requestLayout();
 		}
 
 		// Calculate right sizes for plugin's controls
@@ -532,10 +533,6 @@ public class VideoCapturePlugin extends PluginCapture
 				this.buttonsLayout, params);
 
 		this.buttonsLayout.setLayoutParams(params);
-		// this.buttonsLayout.requestLayout();
-		//
-		// ((RelativeLayout)
-		// ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout2)).requestLayout();
 
 		if (snapshotSupported)
 		{
@@ -550,8 +547,6 @@ public class VideoCapturePlugin extends PluginCapture
 		}
 
 		timeLapseButton.setOrientation(ApplicationScreen.getGUIManager().getLayoutOrientation());
-		// timeLapseButton.invalidate();
-		// timeLapseButton.requestLayout();
 
 		if (this.modeDRO() || CameraController.isRemoteCamera())
 		{
@@ -590,8 +585,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 		rotatorLayout = inflator.inflate(R.layout.plugin_capture_video_lanscaperotate_layout, null, false);
 		rotatorLayout.setVisibility(View.VISIBLE);
-
-		rotateToLandscapeNotifier = (ImageView) rotatorLayout.findViewById(R.id.rotatorImageView);
+		initRotateNotification(videoOrientation);
 
 		List<View> specialViewRotator = new ArrayList<View>();
 		RelativeLayout specialLayoutRotator = (RelativeLayout) ApplicationScreen.instance
@@ -621,12 +615,6 @@ public class VideoCapturePlugin extends PluginCapture
 
 		((RelativeLayout) ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout)).addView(
 				this.rotatorLayout, paramsRotator);
-
-		// rotatorLayout.setLayoutParams(paramsRotator);
-		// rotatorLayout.requestLayout();
-
-		// ((RelativeLayout)
-		// ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout)).requestLayout();
 	}
 
 	@Override
@@ -675,86 +663,69 @@ public class VideoCapturePlugin extends PluginCapture
 		if (snapshotSupported)
 		{
 			if (takePictureButton != null)
-			{
 				takePictureButton.setOrientation(ApplicationScreen.getGUIManager().getLayoutOrientation());
-				// takePictureButton.invalidate();
-				// takePictureButton.requestLayout();
-			}
 		}
 		if (timeLapseButton != null)
-		{
 			timeLapseButton.setOrientation(ApplicationScreen.getGUIManager().getLayoutOrientation());
-			// timeLapseButton.invalidate();
-			// timeLapseButton.requestLayout();
-		}
 
+		initRotateNotification(orientation);
+		
+		if (timeLapseDialog != null)
+			timeLapseDialog.setRotate(ApplicationScreen.getGUIManager().getLayoutOrientation());
+	}
+
+	private void initRotateNotification(int orientation)
+	{
 		if (rotatorLayout != null && showLandscapeNotification)
 		{
 			if (!isRecording && (orientation == 90 || orientation == 270))
 			{
-				startRotateAnimation();
-				rotatorLayout.findViewById(R.id.rotatorImageView).setVisibility(View.VISIBLE);
-				rotatorLayout.findViewById(R.id.rotatorInnerImageView).setVisibility(View.VISIBLE);
+				try
+				{
+					int height = (int) ApplicationScreen.getAppResources().getDimension(R.dimen.gui_element_2size);
+					Animation rotation = new RotateAnimation(0, -180, height / 2, height / 2);
+					rotation.setDuration(2000);
+					rotation.setRepeatCount(1000);
+					rotation.setInterpolator(new DecelerateInterpolator());
+
+					rotatorLayout.findViewById(R.id.rotatorImageView).startAnimation(rotation);
+					rotatorLayout.findViewById(R.id.rotatorImageView).setVisibility(View.VISIBLE);
+					rotatorLayout.findViewById(R.id.rotatorInnerImageView).setVisibility(View.VISIBLE);
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+				}
 			} else
 			{
 				rotatorLayout.findViewById(R.id.rotatorInnerImageView).setVisibility(View.GONE);
 				rotatorLayout.findViewById(R.id.rotatorImageView).setVisibility(View.GONE);
-				if (rotateToLandscapeNotifier != null)
-				{
-					rotateToLandscapeNotifier.clearAnimation();
-				}
+				rotatorLayout.findViewById(R.id.rotatorImageView).clearAnimation();
 			}
 		}
-
-		if (timeLapseDialog != null)
-		{
-			timeLapseDialog.setRotate(ApplicationScreen.getGUIManager().getLayoutOrientation());
-		}
+		else
+			//if we started video but orientation change already fired. Save and set orientation on rotator layout creation
+			videoOrientation = orientation;
 	}
-
+	
 	@Override
 	public boolean muteSound()
 	{
 		return true;
 	}
 
-	private void startRotateAnimation()
-	{
-		try
-		{
-			if (rotateToLandscapeNotifier != null && rotateToLandscapeNotifier.getVisibility() == View.VISIBLE)
-				return;
-
-			int height = (int) ApplicationScreen.getAppResources().getDimension(R.dimen.gui_element_2size);
-			Animation rotation = new RotateAnimation(0, -180, height / 2, height / 2);
-			rotation.setDuration(2000);
-			rotation.setRepeatCount(1000);
-			rotation.setInterpolator(new DecelerateInterpolator());
-
-			rotateToLandscapeNotifier.startAnimation(rotation);
-		} catch (Exception e)
-		{
-		}
-	}
-	
 	private void stopRotateAnimation()
 	{
 		try
 		{
-			if (rotateToLandscapeNotifier != null && rotateToLandscapeNotifier.getVisibility() == View.VISIBLE)
-				return;
-
 			if (rotatorLayout != null && showLandscapeNotification)
 			{
 				rotatorLayout.findViewById(R.id.rotatorInnerImageView).setVisibility(View.GONE);
 				rotatorLayout.findViewById(R.id.rotatorImageView).setVisibility(View.GONE);
-				if (rotateToLandscapeNotifier != null)
-				{
-					rotateToLandscapeNotifier.clearAnimation();
-				}
+				rotatorLayout.findViewById(R.id.rotatorImageView).clearAnimation();
 			}
 		} catch (Exception e)
 		{
+			e.printStackTrace();
 		}
 	}
 
@@ -777,11 +748,11 @@ public class VideoCapturePlugin extends PluginCapture
 	@TargetApi(19)
 	private static DocumentFile getOutputMediaDocumentFile()
 	{
-		DocumentFile saveDir = PluginManager.getInstance().getSaveDirNew(false);
+		DocumentFile saveDir = PluginManager.getSaveDirNew(false);
 
 		if (saveDir == null || !saveDir.exists() || !saveDir.canWrite())
 		{
-			saveDir = PluginManager.getInstance().getSaveDirNew(true);
+			saveDir = PluginManager.getSaveDirNew(true);
 		}
 
 		Calendar d = Calendar.getInstance();
@@ -797,13 +768,6 @@ public class VideoCapturePlugin extends PluginCapture
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		preferenceVideoMuteMode = prefs.getBoolean("preferenceVideoMuteMode", false);
-//		if (preferenceVideoMuteMode)
-//		{
-////			AudioManager audioMgr = (AudioManager) ApplicationScreen.instance.getSystemService(Context.AUDIO_SERVICE);
-////			soundVolume = audioMgr.getStreamVolume(AudioManager.STREAM_RING);
-////			audioMgr.setStreamVolume(AudioManager.STREAM_RING, 0, 0);
-//			muteAllSounds();
-//		}
 
 		preferenceFocusMode = prefs.getInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
 				: ApplicationScreen.sFrontFocusModePref, CameraParameters.AF_MODE_AUTO);
@@ -974,7 +938,32 @@ public class VideoCapturePlugin extends PluginCapture
 					sz = new CameraController.Size(1920, 1080);
 					break;
 				case CamcorderProfile.QUALITY_2160P:
-					sz = new CameraController.Size(3840, 2160);
+					{
+						if (CamcorderProfile.hasProfile(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_2160P))
+							sz = new CameraController.Size(3840, 2160);
+						else
+						{
+							CamcorderProfile prof = CamcorderProfile.get(CameraController.getCameraIndex(), CamcorderProfile.QUALITY_HIGH);
+							prof.videoFrameWidth = 3840;
+							prof.videoFrameHeight = 2160;
+							prof.videoBitRate = (int)(prof.videoBitRate*2.8); // need a higher bitrate for the better quality - this is roughly based on the bitrate used by an S5's native camera app at 4K (47.6 Mbps, compared to 16.9 Mbps which is what's returned by the QUALITY_HIGH profile)
+							if (ApplicationScreen.isMicrophonePermissionGranted())
+							{
+								mMediaRecorder.setProfile(prof);
+							} else
+							{
+								mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+								mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
+								mMediaRecorder.setVideoSize(prof.videoFrameWidth, prof.videoFrameHeight);
+								mMediaRecorder.setVideoFrameRate(30);
+								mMediaRecorder.setVideoEncodingBitRate((int)(prof.videoBitRate * 2.8)); // need a higher bitrate for the better quality
+							}
+							lastCamcorderProfile = prof;
+							useProf = true;
+							lastUseProf = useProf;
+						}
+						
+					}
 					break;
 				case QUALITY_4K:
 					{
@@ -1027,6 +1016,8 @@ public class VideoCapturePlugin extends PluginCapture
 
 					lastSz = sz;
 				}
+				else
+					lastUseProfile = true;
 			}
 
 			if (swChecked)
@@ -1084,18 +1075,10 @@ public class VideoCapturePlugin extends PluginCapture
 			mMediaRecorder.setPreviewDisplay(ApplicationScreen.getPreviewSurfaceHolder().getSurface());
 		}
 
-		if (CameraController.isNexus6 && CameraController.isFrontCamera())
-		{
-			mMediaRecorder.setOrientationHint(ApplicationScreen.getWantLandscapePhoto() ? (ApplicationScreen
-					.getGUIManager().getImageDataOrientation() + 180) % 360 : (ApplicationScreen.getGUIManager()
-					.getImageDataOrientation()) % 360);
-		} else
-		{
-			mMediaRecorder.setOrientationHint(CameraController.isFrontCamera() ? (ApplicationScreen
-					.getWantLandscapePhoto() ? ApplicationScreen.getGUIManager().getImageDataOrientation()
-					: (ApplicationScreen.getGUIManager().getImageDataOrientation() + 180) % 360) : ApplicationScreen
-					.getGUIManager().getImageDataOrientation());
-		}
+		mMediaRecorder.setOrientationHint(CameraController.isFrontCamera() ? (ApplicationScreen
+				.getWantLandscapePhoto() ? ApplicationScreen.getGUIManager().getImageDataOrientation()
+				: (ApplicationScreen.getGUIManager().getImageDataOrientation() + 180) % 360) : ApplicationScreen
+				.getGUIManager().getImageDataOrientation());
 
 		// Step 6: Prepare configured MediaRecorder
 		try
@@ -1118,6 +1101,7 @@ public class VideoCapturePlugin extends PluginCapture
 		prefs.edit()
 				.putInt(CameraController.isFrontCamera() ? ApplicationScreen.sRearFocusModePref
 						: ApplicationScreen.sFrontFocusModePref, preferenceFocusMode).commit();
+		ApplicationScreen.instance.setFocusModePref(preferenceVideoFocusMode);
 
 		if (!CameraController.isRemoteCamera())
 		{
@@ -1891,7 +1875,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 		// change shutter icon
 		pauseVideoButton.setVisibility(View.VISIBLE);
-		pauseVideoButton.setImageResource(R.drawable.plugin_capture_video_pause);
+		pauseVideoButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_pause));
 
 		ApplicationScreen.instance.setKeepScreenOn(true);
 	}
@@ -2118,7 +2102,7 @@ public class VideoCapturePlugin extends PluginCapture
 			if (!onPause)
 			{
 				mRecordingTimeView.setText("");
-				pauseVideoButton.setImageResource(R.drawable.plugin_capture_video_pause);
+				pauseVideoButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_pause));
 				pauseBlink = true;
 			}
 			mRecordingTimeView.setVisibility(View.VISIBLE);
@@ -2150,11 +2134,11 @@ public class VideoCapturePlugin extends PluginCapture
 
 		if (pauseBlink)
 		{
-			pauseVideoButton.setImageResource(R.drawable.plugin_capture_video_pause_transparent);
+			pauseVideoButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_pause_transparent));
 			pauseBlink = false;
 		} else
 		{
-			pauseVideoButton.setImageResource(R.drawable.plugin_capture_video_pause);
+			pauseVideoButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_pause));
 			pauseBlink = true;
 		}
 	}
@@ -2227,11 +2211,11 @@ public class VideoCapturePlugin extends PluginCapture
 		// show recording shutter
 		if (showRecording)
 		{
-			stopVideoButton.setImageResource(R.drawable.plugin_capture_video_stop_square);
+			stopVideoButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_stop_square));
 			showRecording = false;
 		} else
 		{
-			stopVideoButton.setImageResource(R.drawable.plugin_capture_video_stop_square_red);
+			stopVideoButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_stop_square_red));
 			showRecording = true;
 		}
 	}
@@ -2383,12 +2367,12 @@ public class VideoCapturePlugin extends PluginCapture
 			onPause = false;
 			showRecordingUI(isRecording);
 
-			pauseVideoButton.setImageResource(R.drawable.plugin_capture_video_pause);
+			pauseVideoButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_pause));
 		} else
 		{
 			onPause = true;
-			stopVideoButton.setImageResource(R.drawable.plugin_capture_video_stop_square);
-			pauseVideoButton.setImageResource(R.drawable.plugin_capture_video_pause_transparent);
+			stopVideoButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_stop_square));
+			pauseVideoButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_pause_transparent));
 			Toast.makeText(ApplicationScreen.instance, ApplicationScreen.instance.getString(R.string.video_paused),
 					Toast.LENGTH_SHORT).show();
 		}
@@ -2482,8 +2466,8 @@ public class VideoCapturePlugin extends PluginCapture
 
 			lockPauseButton = false;
 
-			stopVideoButton.setImageResource(R.drawable.plugin_capture_video_stop_square);
-			pauseVideoButton.setImageResource(R.drawable.plugin_capture_video_pause_transparent);
+			stopVideoButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_stop_square));
+			pauseVideoButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_pause_transparent));
 		} catch (RuntimeException e)
 		{
 			// Note that a RuntimeException is intentionally thrown to the
@@ -2733,12 +2717,12 @@ public class VideoCapturePlugin extends PluginCapture
 					editor.putString("timelapseInterval", String.valueOf(interval));
 					editor.commit();
 
-					timeLapseButton.setImageResource(R.drawable.plugin_capture_video_timelapse_active);
+					timeLapseButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_timelapse_active));
 
 					ApplicationScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START);
 				} else
 				{
-					timeLapseButton.setImageResource(R.drawable.plugin_capture_video_timelapse_inactive);
+					timeLapseButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_timelapse_inactive));
 					ApplicationScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START);
 				}
 

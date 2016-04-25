@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.onepf.oms.OpenIabHelper;
@@ -48,7 +47,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -57,16 +55,11 @@ import android.graphics.Point;
 import android.hardware.Camera;
 import android.media.AudioManager;
 import android.media.CamcorderProfile;
-import android.media.ImageReader;
 import android.media.MediaPlayer;
-import android.media.MediaRecorder;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
-import android.os.Build;
-import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Debug;
-import android.os.Environment;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -199,6 +192,8 @@ public class MainScreen extends ApplicationScreen
 	public static String		sPhotoTimeLapseIsRunningPref;
 	public static String		sPhotoTimeLapseCount;
 
+	public static String		sSwipingEnabledPref;
+	
 	private static String		sShutterPref;
 	private static String		sShotOnTapPref;
 	private static String		sVolumeButtonPref;
@@ -285,6 +280,8 @@ public class MainScreen extends ApplicationScreen
 		sPhotoTimeLapseIsRunningPref = getResources().getString(R.string.Preference_PhotoTimeLapseIsRunning);
 		sPhotoTimeLapseCount = getResources().getString(R.string.Preference_PhotoTimeLapseCount);
 
+		sSwipingEnabledPref = getResources().getString(R.string.Preference_SwipingEnabledChecked);
+		
 		sShutterPref = getResources().getString(R.string.Preference_ShutterCommonValue);
 		sSonyCamerasPref = getResources().getString(R.string.Preference_ConnectToSonyCameras);
 		sShotOnTapPref = getResources().getString(R.string.Preference_ShotOnTapValue);
@@ -429,7 +426,8 @@ public class MainScreen extends ApplicationScreen
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 
 		boolean isCamera2 = prefs.getBoolean(getResources().getString(R.string.Preference_UseCamera2Key),
-				(CameraController.isNexus5or6 || CameraController.isFlex2 || CameraController.isAndroidOne || CameraController.isGalaxyS6 /*|| CameraController.isG4*/) ? true : false);
+				CameraController.checkHardwareLevel());
+//						(CameraController.isMotoXPure || CameraController.isNexus5or6 || CameraController.isFlex2 || CameraController.isAndroidOne || CameraController.isGalaxyS6 || CameraController.isOnePlusTwo/*|| CameraController.isG4*/) ? true : false);
 		CameraController.setUseCamera2(isCamera2);
 		prefs.edit()
 				.putBoolean(getResources().getString(R.string.Preference_UseCamera2Key), CameraController.isUseCamera2())
@@ -450,20 +448,27 @@ public class MainScreen extends ApplicationScreen
 	protected void onApplicationResume()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        
 // <!-- -+-
         //check appturbo app of the month conditions
-        if (!unlockAllPurchased)
-        {
-        	if (isAppturboUnlockable(this))
-        	{
-        		unlockAllPurchased = true;
-    			Editor prefsEditor = prefs.edit();
-    			prefsEditor.putBoolean("unlock_all_forever", true).commit();
-        		Toast.makeText(MainScreen.getMainContext(), this.getResources().getString(R.string.string_appoftheday), Toast.LENGTH_LONG).show();
-        	}
-        }
+//        if (!unlockAllPurchased)
+//        {
+//        	if (isAppturboUnlockable(this))
+//        	{
+//        		unlockAllPurchased = true;
+//    			Editor prefsEditor = prefs.edit();
+//    			prefsEditor.putBoolean("unlock_all_forever", true).commit();
+//        		Toast.makeText(MainScreen.getMainContext(), this.getResources().getString(R.string.string_appoftheday), Toast.LENGTH_LONG).show();
+//        	}
+//        }
+
+ 		if (isABCUnlockedInstalled(this))
+ 		{
+ 			unlockAllPurchased = true;
+ 			prefs.edit().putBoolean("unlock_all_forever", true).commit();
+ 		}
 // -+- -->
-        
+ 		
 		isCameraConfiguring = false;
 
 		mWifiHandler.register();
@@ -519,16 +524,8 @@ public class MainScreen extends ApplicationScreen
 							WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
 									| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 		}
-
-		// <!-- -+-
-		if (isABCUnlockedInstalled(this))
-		{
-			unlockAllPurchased = true;
-			prefs.edit().putBoolean("unlock_all_forever", true).commit();
-		}
-		// -+- -->
 	}
-	
+
 	protected void onResumeCamera()
 	{
 		SharedPreferences prefs = PreferenceManager
@@ -584,8 +581,8 @@ public class MainScreen extends ApplicationScreen
 					Log.d("GL", "glView onResume");
 				}
 			} else if ((surfaceCreated && (!CameraController.isCameraCreated())) ||
-			// this is for change mode without camera restart!
-					(surfaceCreated && MainScreen.getInstance().getSwitchingMode()))
+					   // this is for change mode without camera restart!
+					   (surfaceCreated && MainScreen.getInstance().getSwitchingMode()))
 			{
 				CameraController.setupCamera(surfaceHolder, !switchingMode || openCamera);
 
@@ -800,8 +797,6 @@ public class MainScreen extends ApplicationScreen
 								CameraController.setupCamera(holder, !switchingMode);
 							} else
 							{
-								Log.e("MainScreen",
-										"surfaceChanged: sendEmptyMessage(ApplicationInterface.MSG_SURFACE_READY)");
 								messageHandler.sendEmptyMessage(ApplicationInterface.MSG_SURFACE_READY);
 							}
 						}
@@ -1418,7 +1413,7 @@ public class MainScreen extends ApplicationScreen
 			onCameraConfigured();
 		}
 
-		Log.e("MainScreen", "createGUI is " + createGUI);
+//		Log.e("MainScreen", "createGUI is " + createGUI);
 		if (createGUI)
 		{
 			MainScreen.getGUIManager().onGUICreate();
@@ -1429,7 +1424,7 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	public void surfaceCreated(SurfaceHolder holder)
 	{
-		Log.e("MainScreen", "SURFACE CREATED");
+//		Log.e("MainScreen", "SURFACE CREATED");
 		// ----- Find 'normal' orientation of the device
 
 		Display display = ((WindowManager) this.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
@@ -1544,19 +1539,6 @@ public class MainScreen extends ApplicationScreen
 	//
 	// all events translated to PluginManager
 	// Description<<
-
-	@Override
-	public void setAutoFocusLock(boolean locked)
-	{
-		mAFLocked = locked;
-	}
-
-	@Override
-	public boolean getAutoFocusLock()
-	{
-		return mAFLocked;
-	}
-
 	@Override
 	public boolean onKeyUpEvent(int keyCode, KeyEvent event)
 	{
@@ -2601,22 +2583,22 @@ public class MainScreen extends ApplicationScreen
 
 				// /////////////////////////////////////////////////////
 				// juliusapp promotion
-				if (promo.equalsIgnoreCase("promo2015"))
-				{
-					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-					panoramaPurchased = true;
-					objectRemovalBurstPurchased = true;
-
-					Editor prefsEditor = prefs.edit();
-					prefsEditor.putBoolean("plugin_almalence_panorama", true);
-					prefsEditor.putBoolean("plugin_almalence_moving_burst", true);
-					prefsEditor.commit();
-					dialog.dismiss();
-					guiManager.hideStore();
-					showPromoRedeemedJulius = true;
-					guiManager.showStore();
-					return;
-				}
+//				if (promo.equalsIgnoreCase("promo2015"))
+//				{
+//					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+//					panoramaPurchased = true;
+//					objectRemovalBurstPurchased = true;
+//
+//					Editor prefsEditor = prefs.edit();
+//					prefsEditor.putBoolean("plugin_almalence_panorama", true);
+//					prefsEditor.putBoolean("plugin_almalence_moving_burst", true);
+//					prefsEditor.commit();
+//					dialog.dismiss();
+//					guiManager.hideStore();
+//					showPromoRedeemedJulius = true;
+//					guiManager.showStore();
+//					return;
+//				}
 				// /////////////////////////////////////////////////////
 
 				for (int i = 0; i < sep.length; i++)
@@ -2730,6 +2712,7 @@ public class MainScreen extends ApplicationScreen
 		if (mode.SKU.isEmpty())
 		{
 			int launchesLeft = MainScreen.getLeftLaunches(mode.modeID);
+//			launchesLeft = 100; //Using for testing free version
 
 			if ((1 == launchesLeft) || (3 == launchesLeft))
 			{
@@ -2754,7 +2737,7 @@ public class MainScreen extends ApplicationScreen
 		{
 			if (hdrPurchased)
 				return true;
-		} else if (mode.SKU.equals("plugin_almalence_panorama_augmented"))
+		} else if (mode.SKU.equals("plugin_almalence_panorama"))
 		{
 			if (panoramaPurchased)
 				return true;
@@ -2769,6 +2752,7 @@ public class MainScreen extends ApplicationScreen
 		}
 
 		int launchesLeft = MainScreen.getLeftLaunches(mode.modeID);
+//		launchesLeft = 100; //Using for testing free version
 		int id = MainScreen.getAppResources().getIdentifier(
 				(CameraController.isUseCamera2() ? mode.modeNameHAL : mode.modeName), "string",
 				MainScreen.thiz.getPackageName());
@@ -2824,7 +2808,7 @@ public class MainScreen extends ApplicationScreen
 		ll.setPadding((int) (10 * density), (int) (10 * density), (int) (10 * density), (int) (10 * density));
 
 		ImageView img = new ImageView(thiz);
-		img.setImageResource(R.drawable.store_subscription);
+		img.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.store_subscription));
 		img.setAdjustViewBounds(true);
 		ll.addView(img);
 

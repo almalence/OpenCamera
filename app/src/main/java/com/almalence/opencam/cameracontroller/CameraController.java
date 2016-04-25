@@ -36,9 +36,13 @@ import java.util.Set;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
+import android.graphics.Matrix;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.hardware.Camera.AutoFocusCallback;
@@ -55,6 +59,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.Range;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.widget.Toast;
@@ -64,6 +69,7 @@ import com.almalence.sony.cameraremote.PictureCallbackSonyRemote;
 import com.almalence.sony.cameraremote.ServerDevice;
 import com.almalence.sony.cameraremote.ZoomCallbackSonyRemote;
 import com.almalence.util.ImageConversion;
+import com.almalence.util.Util;
 //<!-- -+-
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.ApplicationScreen;
@@ -143,6 +149,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	public static boolean							isGalaxyS6		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g920") ||
 														  			  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g925");
+
+	public static boolean							isGalaxyS7		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g93");
+	
+	public static boolean 							isGalaxyS7Exynos = false;
+	public static boolean 							isGalaxyS7Qualcomm = false;
 	
 	public static boolean							isGalaxyS5		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g900");
 	
@@ -155,6 +166,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public static boolean							isGalaxyNote4	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-n910");
 	
+	public static boolean							isGalaxyNote5	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-n920");
+	
 	public static boolean							isHTCOne		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("htcone");
 	public static boolean							isHTCOneX		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("htconex");
 	
@@ -163,6 +176,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean							isHuawei		= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("huawei");
 	
 	public static boolean							isGionee		= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("gionee");
+	
+	public static boolean							isOnePlusTwo 	= Build.MANUFACTURER.toLowerCase().replace(" ", "").contains("oneplus")
+																		&& (Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("two") || 
+																			Build.MODEL.contains("2"));
+	
+	public static boolean							isMotoXPure 	 = Build.MODEL.toLowerCase().replace(" ", "").contains("xt1575");
 	
 	
 
@@ -321,6 +340,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	private static int								maxExpoCompensation				= 0;
 	private static float							expoCompensationStep			= 0;
 
+	protected static boolean						mOpticalStabilizationSupported	= false;
 	protected static boolean						mVideoStabilizationSupported	= false;
 	protected static boolean						mVideoSnapshotSupported	= false;
 
@@ -804,6 +824,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				put(iso10000_2, CameraParameters.ISO_10000);
 			}
 		};
+		
+		final String model = Build.MODEL.toLowerCase(Locale.US).replace(" ", "");
+		final String hardware = Build.HARDWARE.toLowerCase(Locale.US).replace(" ", "");
+		if (model.contains("sm-g93"))
+		{
+			if (hardware.replace("qual", "q").contains("qcom"))
+				isGalaxyS7Qualcomm = true;
+			else
+				isGalaxyS7Exynos = true;
+		}
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
 
@@ -816,12 +846,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		{
 			//General support of camera2 interface. OpenCamera allows to use camera2 not on all devices which implements camera2
 			if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService(Context.CAMERA_SERVICE) != null)
+			{
 				isCamera2Supported = true;
+				Camera2Controller.onCreateCamera2(mainContext, appInterface, pluginManager, messageHandler);
+			}
 			
-			//Now only LG Flex2, G4, Nexus 5\6 and Andoid One devices support camera2 without critical problems
-			//We have to test Samsung Galaxy S6 to include in this list of allowed devices
-			if (!(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && mainContext.getSystemService(Context.CAMERA_SERVICE) != null)
-					|| (!isFlex2 && !isNexus5or6 && !isAndroidOne  /*&& !isGalaxyS6 &&*/ /* && !isG4*/))
+			//Samsung Galaxy S6 and Note5 was reported as not worked in camera2 mode
+			//Always not focused preview and blinking on every try of focusing
+			if (!isCamera2Supported || !checkHardwareLevel() || isGalaxyS6 || isGalaxyNote5)
+//					|| (!isMotoXPure && !isFlex2 && !isNexus5or6 && !isAndroidOne  && !isOnePlusTwo/*&& !isGalaxyS6 &&*/ /* && !isG4*/))
 			{
 				isCamera2 = false;
 				isCamera2Allowed = false;
@@ -837,19 +870,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			isCamera2Supported = false;
 			prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera2Key), false)
 					.commit();
-		}
-
-		if (CameraController.isCamera2Supported)
-		{
-			Camera2Controller.onCreateCamera2(mainContext, appInterface, pluginManager, messageHandler);
-			//We supports only devices with hardware level FULL and LIMITED
-			if (!Camera2Controller.checkHardwareLevel())
-			{
-				isCamera2 = false;
-				isCamera2Allowed = false;
-				prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera2Key), false)
-						.commit();
-			}
 		}
 
 		SonyRemoteCamera.onCreateSonyRemoteCamera(mainContext, appInterface, pluginManager, messageHandler);
@@ -968,7 +988,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static void onDestroy()
 	{
 	}
-
+	
+	public static boolean checkHardwareLevel()
+	{
+		if (CameraController.isCamera2Supported)
+			return Camera2Controller.checkHardwareLevel();
+		else
+			return false;
+	}
 
 	/* Get different list and maps of camera parameters */
 	public static List<Integer> getIsoValuesList()
@@ -1107,7 +1134,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			// hard-code to enable these only, as we have no profiles for
 			// other models at the moment
-			if ((CameraController.isNexus5or6 || CameraController.isFlex2)
+			if ((CameraController.isNexus5or6 || CameraController.isFlex2
+					|| CameraController.isOnePlusTwo || CameraController.isGalaxyS7)
 				/*|| CameraController.isGalaxyS6*/
 				/*|| CameraController.isG4*/)
 				SuperModeOk = true;
@@ -1207,10 +1235,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					}
 				}
 
-				if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-					cameraController.mVideoStabilizationSupported = getVideoStabilizationSupported();
+				mOpticalStabilizationSupported = false; //Is available only in camera2. Look at openCamera2 method in CameraController2
 				
-				cameraController.mVideoSnapshotSupported = getVideoSnapshotSupported();
+				if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+					mVideoStabilizationSupported = getVideoStabilizationSupported();
+				
+				mVideoSnapshotSupported = getVideoSnapshotSupported();
 
 				// screen rotation
 				if (!pluginManager.shouldPreviewToGPU())
@@ -1807,6 +1837,19 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		} else
 			Camera2Controller.fillVideoSizeList(videoSizes);
 
+		// hack to rule out phones unlikely to have 4K video, so no point even offering the option!
+		// both S5 and Note 3 have 128MB standard and 512MB large heap (tested via Samsung RTL), as does Galaxy K Zoom
+		// also added the check for having 128MB standard heap, to support modded LG G2, which has 128MB standard, 256MB large - see https://sourceforge.net/p/opencamera/tickets/9/
+		// 4K video now only supported in camera1 mode and on main back camera.
+		ActivityManager activityManager = (ActivityManager) mainContext.getSystemService(Context.ACTIVITY_SERVICE);
+		if( (activityManager.getMemoryClass() >= 128 || activityManager.getLargeMemoryClass() >= 512)
+			 && !CameraController.isCamera2 && CameraController.CameraIndex == 0
+			 && ((CameraController.isGalaxyNote4 || CameraController.isGalaxyS5 || CameraController.isGalaxyS6) //Add 4K resolution only for tested devices! For example, Nexus 5 can't record 4K video
+			 && !videoSizes.contains(new CameraController.Size(3840, 2160))))  //If device already supports 4K resolution skip adding
+		{
+			videoSizes.add(new CameraController.Size(3840, 2160));
+		}
+		
 		SupportedVideoSizesList = new ArrayList<CameraController.Size>(videoSizes);
 		return videoSizes;
 	}
@@ -2117,6 +2160,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	public static boolean isOpticalStabilizationSupported()
+	{
+		return mOpticalStabilizationSupported;
 	}
 
 	public static boolean isVideoStabilizationSupported()
@@ -3106,6 +3154,30 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 		return isoNames;
 	}
+	
+	public static int getMinimumSensitivity()
+	{
+		if (CameraController.isCamera2)
+			return Camera2Controller.getCameraMinimumSensitivity();
+		else
+			return 0;
+	}
+
+	public static int getMaximumSensitivity()
+	{
+		if (CameraController.isCamera2)
+			return Camera2Controller.getCameraMaximumSensitivity();
+		else
+			return 0;
+	}
+	
+	public static Range<Integer> getCameraSensitivityRange()
+	{
+		if (CameraController.isCamera2)
+			return Camera2Controller.getCameraSensitivityRange();
+		else
+			return null;
+	}
 
 	/*
 	 * Manual sensor parameters: focus distance and exposure time + manual white
@@ -3161,6 +3233,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return Camera2Controller.getCameraMaximumExposureTime();
 		else
 			return 0;
+	}
+	
+	public static Range<Long> getCameraExposureRange()
+	{
+		if (CameraController.isCamera2)
+			return Camera2Controller.getCameraExposureRange();
+		else
+			return null;
 	}
 
 	public static int getMaxNumMeteringAreas()
@@ -3465,7 +3545,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 	}
 
-	public static void setCameraWhiteBalance(int mode)
+	public static void setCameraWhiteBalanceMode(int mode)
 	{
 		if (!isRemoteCamera())
 		{
@@ -3789,6 +3869,89 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				Camera2Controller.setCameraMeteringAreasCamera2(meteringAreas);
 		}
 	}
+	
+	//Based on user's tap on screen information calculate appropriate drivers's coordinate for focusing or exposure metering
+	public static void calculateTapArea(int focusWidth, int focusHeight, float areaMultiple, int top, int left,
+			int previewWidth, int previewHeight, int xRaw, int yRaw, Matrix mMatrix, Rect rect)
+	{
+		if (!CameraController.isRemoteCamera())
+		{
+			if (!CameraController.isCamera2)
+			{
+				int areaWidth = (int) (focusWidth * areaMultiple);
+				int areaHeight = (int) (focusHeight * areaMultiple);
+
+				int right = Util.clamp(left + areaWidth, areaWidth, previewWidth);
+				int bottom = Util.clamp(top + areaHeight, areaHeight, previewHeight);
+
+				RectF rectF = new RectF(left, top, right, bottom);
+				mMatrix.mapRect(rectF);
+				Util.rectFToRect(rectF, rect);
+
+				if (rect.left < -1000)
+					rect.left = -1000;
+				if (rect.left > 1000)
+					rect.left = 1000;
+
+				if (rect.right < -1000)
+					rect.right = -1000;
+				if (rect.right > 1000)
+					rect.right = 1000;
+
+				if (rect.top < -1000)
+					rect.top = -1000;
+				if (rect.top > 1000)
+					rect.top = 1000;
+
+				if (rect.bottom < -1000)
+					rect.bottom = -1000;
+				if (rect.bottom > 1000)
+					rect.bottom = 1000;
+			} else
+				Camera2Controller.calculateTapArea(focusWidth, focusHeight, areaMultiple, top, left,
+						previewWidth, previewHeight, xRaw, yRaw, rect);
+		}		
+	}
+	
+	//Based on user's tap on screen information calculate appropriate drivers's coordinate for focusing or exposure metering
+	public static Rect getSensorCoordinates(Rect rect)
+	{
+		if (!CameraController.isRemoteCamera())
+		{
+			if (!CameraController.isCamera2)
+			{
+				RectF rectF = new RectF(rect.left, rect.top, rect.right, rect.bottom);
+				Matrix meteringMatrix = Util.getMeteringMatrix();
+				meteringMatrix.mapRect(rectF);
+				Util.rectFToRect(rectF, rect);
+
+				if (rect.left < -1000)
+					rect.left = -1000;
+				if (rect.left > 1000)
+					rect.left = 1000;
+
+				if (rect.right < -1000)
+					rect.right = -1000;
+				if (rect.right > 1000)
+					rect.right = 1000;
+
+				if (rect.top < -1000)
+					rect.top = -1000;
+				if (rect.top > 1000)
+					rect.top = 1000;
+
+				if (rect.bottom < -1000)
+					rect.bottom = -1000;
+				if (rect.bottom > 1000)
+					rect.bottom = 1000;
+
+				return rect;
+			} else
+				return Camera2Controller.getSensorCoordinates(rect);
+		}
+		else
+			return null;
+	}
 
 	public static void setFocusState(int state)
 	{
@@ -3983,7 +4146,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			return -1;
 		}
 	}
-
+	
+	public static int getSensorOrientation(boolean cameraMirrored)
+	{
+		return getSensorOrientation(cameraMirrored? 1 : 0);
+	}
+	
 	// CAMERA PARAMETERS AND CAPABILITIES
 	// SECTION---------------------------------------------
 
@@ -4166,6 +4334,15 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			SonyRemoteCamera.cancelAutoFocusSonyRemote();
 		}
 	}
+	
+	
+	public static void setFocusIdle()
+	{
+		CameraController.setFocusState(CameraController.FOCUS_STATE_IDLE);
+		//Galaxy S7 has a very bad auto focus, we have to call cancel auto focus to prevent unfocused still images
+		if (CameraController.isCamera2 && CameraController.isGalaxyS7)
+			Camera2Controller.cancelAutoFocusCamera2();
+	}
 
 	// Callback always contains JPEG frame.
 	// So, we have to convert JPEG to YUV if capture plugin has requested YUV
@@ -4173,8 +4350,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	@Override
 	public void onPictureTakenSonyRemote(byte[] paramArrayOfByte, boolean fromRequest)
 	{
-		Log.d(TAG, "onPictureTaken Sony remote");
-
 		if (fromRequest)
 		{
 			pluginManager.collectExifData(paramArrayOfByte);
@@ -4217,7 +4392,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	@Override
 	public void onPictureTaken(byte[] paramArrayOfByte, Camera paramCamera)
 	{
-		Log.d(TAG, "onPictureTaken");
 		CameraController.setPreviewCallbackWithBuffer();
 
 		pluginManager.collectExifData(paramArrayOfByte);
@@ -4483,7 +4657,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	private static void takeImage()
 	{
-		Log.e(TAG, "takeImage called");
 		synchronized (SYNC_OBJECT)
 		{
 			if (imageSize == null)
@@ -4530,7 +4703,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 	private static void nextFrame()
 	{
-		Log.d(TAG, "MSG_NEXT_FRAME");
 		if (++frame_num < total_frames)
 		{
 			if (pauseBetweenShots == null || Array.getLength(pauseBetweenShots) < frame_num)

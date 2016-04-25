@@ -75,7 +75,7 @@
 	<string name="Pref_Saving_Preference_Summary">Název souborů, formát, poloha a další doplňující parametry</string>
 	<string name="Pref_Advanced_Preference_Title">Pokročilé</string>
 	<string name="Pref_Advanced_Preference_Summary">Nastavení pro pokročilé uživatele</string>
-	<string name="Pref_Unlock_Preference_Title">Odemknout</string>
+	<string name="Pref_Unlock_Preference_Title">Odemknout/Pomoc</string>
 	<string name="Pref_Unlock_Preference_Summary">Odemknout prémiové doplňky</string>
 	
 	<string name="layout_hint_bottom">Vyberte režim focení</string>

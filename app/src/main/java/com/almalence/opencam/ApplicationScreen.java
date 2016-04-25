@@ -45,8 +45,6 @@ import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.media.AudioManager;
-import android.media.ImageReader;
-import android.media.MediaRecorder;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
@@ -55,6 +53,7 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.PowerManager;
 import android.os.StatFs;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -79,14 +78,12 @@ import android.widget.Toast;
 
 /* <!-- +++
  import com.almalence.opencam_plus.cameracontroller.CameraController;
- import com.almalence.opencam_plus.cameracontroller.Camera2Controller;
  import com.almalence.opencam_plus.ui.GLLayer;
  import com.almalence.opencam_plus.ui.GUI;
  import com.almalence.opencam_plus.R;
  +++ --> */
 //<!-- -+-
 import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.cameracontroller.Camera2Controller;
 import com.almalence.opencam.ui.GLLayer;
 import com.almalence.opencam.ui.GUI;
 import com.almalence.opencam.R;
@@ -360,6 +357,8 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		mainContext = this.getBaseContext();
 		messageHandler = new Handler(this);
 		instance = this;
+		
+		surfaceCreated = false;
 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		// ensure landscape orientation
@@ -695,6 +694,10 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	        case ApplicationScreen.MICROPHONE_PERMISSION_CODE:
 	        {
     			microphonePermissionGranted = permissionResult;
+    			//restart camera if granted. on Nexus 5 camera hangs without restart.
+    			if (microphonePermissionGranted)
+    				relaunchCamera();
+    			
 	        	return;
 	        }
 	        case ApplicationScreen.STORAGE_PERMISSION_CODE:
@@ -1380,20 +1383,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 			if (!CameraController.isUseCamera2())
 			{
 				Camera.Parameters cp = CameraController.getCameraParameters();
-				try
-				{
-					// Nexus 5 is giving preview which is too dark without this
-					if (CameraController.isNexus5)
-					{
-						cp.setPreviewFpsRange(7000, 30000);
-						CameraController.setCameraParameters(cp);
-						cp = CameraController.getCameraParameters();
-					}
-				} catch (RuntimeException e)
-				{
-					Log.d("ApplicationScreen",
-							"ApplicationScreen.onCameraConfigured() unable to setParameters " + e.getMessage());
-				}
 
 				if (cp != null)
 				{
@@ -1492,8 +1481,13 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 				ApplicationScreen.getPluginManager().onCameraSetup();
 				guiManager.onCameraSetup();
-				ApplicationScreen.mApplicationStarted = true;
-
+				
+				PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+				if(!pm.isScreenOn() && CameraController.isUseCamera2())
+					ApplicationScreen.mApplicationStarted = false;
+				else
+					ApplicationScreen.mApplicationStarted = true;
+				
 				if (ApplicationScreen.isForceClose)
 					ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_APPLICATION_STOP, 0);
 			}
@@ -1522,16 +1516,16 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	protected void prepareMeteringAreas()
 	{
-		Rect centerRect = Util.convertToDriverCoordinates(new Rect(previewWidth / 4, previewHeight / 4, previewWidth
+		Rect centerRect = CameraController.getSensorCoordinates(new Rect(previewWidth / 4, previewHeight / 4, previewWidth
 				- previewWidth / 4, previewHeight - previewHeight / 4));
-		Rect topLeftRect = Util.convertToDriverCoordinates(new Rect(0, 0, previewWidth / 2, previewHeight / 2));
-		Rect topRightRect = Util.convertToDriverCoordinates(new Rect(previewWidth / 2, 0, previewWidth,
+		Rect topLeftRect = CameraController.getSensorCoordinates(new Rect(0, 0, previewWidth / 2, previewHeight / 2));
+		Rect topRightRect = CameraController.getSensorCoordinates(new Rect(previewWidth / 2, 0, previewWidth,
 				previewHeight / 2));
-		Rect bottomRightRect = Util.convertToDriverCoordinates(new Rect(previewWidth / 2, previewHeight / 2,
+		Rect bottomRightRect = CameraController.getSensorCoordinates(new Rect(previewWidth / 2, previewHeight / 2,
 				previewWidth, previewHeight));
-		Rect bottomLeftRect = Util.convertToDriverCoordinates(new Rect(0, previewHeight / 2, previewWidth / 2,
+		Rect bottomLeftRect = CameraController.getSensorCoordinates(new Rect(0, previewHeight / 2, previewWidth / 2,
 				previewHeight));
-		Rect spotRect = Util.convertToDriverCoordinates(new Rect(previewWidth / 2 - 10, previewHeight / 2 - 10,
+		Rect spotRect = CameraController.getSensorCoordinates(new Rect(previewWidth / 2 - 10, previewHeight / 2 - 10,
 				previewWidth / 2 + 10, previewHeight / 2 + 10));
 
 		mMeteringAreaMatrix5.clear();
@@ -1799,9 +1793,12 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 					// if (surfaceCreated && (Camera2.getCamera2() != null))
 					if (surfaceCreated)
 					{
-						configureCamera(!CameraController.isUseCamera2() || modeName.contains("video")
+						configureCamera(
+								   !CameraController.isUseCamera2() 
+								//|| modeName.contains("video")
 								|| (CameraController.isNexus6 && modeName.contains("preshot"))
-								|| (CameraController.isFlex2 && (modeName.contains("hdrmode") || modeName.contains("expobracketing"))));
+								|| (CameraController.isFlex2 && (modeName.contains("hdrmode") || modeName.contains("expobracketing")))
+								);
 						mCameraStarted = true;
 					}
 				} else
@@ -2006,6 +2003,23 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	}
 
 	// Set/Get camera parameters preference
+	@Override
+	public int getCameraParameterPref(GUI.CameraParameter iParam)
+	{
+		switch (iParam)
+		{
+		case CAMERA_PARAMETER_SCENE:
+			return getSceneModePref();
+		case CAMERA_PARAMETER_WB:
+			return getWBModePref();
+		case CAMERA_PARAMETER_FOCUS:
+			return getFocusModePref(-1);
+		case CAMERA_PARAMETER_FLASH:
+			return getFlashModePref(-1);
+		default: //All other parameters is not configurable
+			return -1;
+		}
+	}
 
 	// EXPOSURE COMPENSATION PREFERENCE
 	@Override
@@ -2174,7 +2188,20 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 					: ApplicationScreen.sFrontColorEffectPref, ApplicationScreen.sDefaultColorEffectValue));
 		}
 	}
-
+	
+	@Override
+	public boolean useColorFilters()
+	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		boolean captureRAW = prefs.getBoolean(ApplicationScreen.sCaptureRAWPref, false);
+		return ((ApplicationScreen.getPluginManager().getActiveModeID().equals("single")||
+				  ApplicationScreen.getPluginManager().getActiveModeID().equals("burstmode")||
+				  ApplicationScreen.getPluginManager().getActiveModeID().equals("expobracketing")||
+				  ApplicationScreen.getPluginManager().getActiveModeID().equals("preshot"))
+				  &&//and if raw capture is enabled
+				  (!(captureRAW && CameraController.isRAWCaptureSupported())));
+	}
+	
 	@Override
 	public boolean getAELockPref()
 	{

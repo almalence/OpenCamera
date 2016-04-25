@@ -149,10 +149,6 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	protected static Map<Integer, Integer>		exifOrientationMap;
 
 	protected int								saveOption;
-	private boolean								useGeoTaggingPrefExport;
-	private boolean								enableExifTagOrientation;
-	private int									additionalRotation;
-	private int									additionalRotationValue	= 0;
 
 	// plugin manager ctor. plugins initialization and filling plugin list
 	protected PluginManagerBase()
@@ -305,9 +301,11 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		}
 	}
 
+	//shows if camera has to be restarted on mode change
 	protected boolean	isRestart					= false;
 	protected boolean	switchToOldCameraInterface	= false;
 
+	//indicate is restart of camera needed on mode switch
 	public void setSwitchModeType(boolean restart)
 	{
 		isRestart = restart;
@@ -326,8 +324,9 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	public void switchMode(final Mode mode)
 	{
 		String modeName = mode.modeID;
-		if ((CameraController.isNexus6 && (modeName.equals("panorama_augmented") || modeName.equals("preshot")))
-			|| (CameraController.isFlex2 && (modeName.equals("hdrmode") || modeName.equals("expobracketing"))))
+		if (CameraController.isNexus6 && (modeName.equals("panorama_augmented") || modeName.equals("preshot")))
+			//commented. should work on flex2 too
+			//|| (CameraController.isFlex2 && (modeName.equals("hdrmode") || modeName.equals("expobracketing"))))
 			switchToOldCameraInterface = true;
 		else
 			switchToOldCameraInterface = false;
@@ -345,9 +344,6 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			activeVF.add(mode.VF.get(i));
 		activeCapture = mode.Capture;
 		activeProcessing = mode.Processing;
-		// activeFilter.clear();
-		// for (int i = 0; i < mode.Filter.size(); i++)
-		// activeFilter.add(mode.Filter.get(i));
 		activeExport = mode.Export;
 
 		// set mode as default for future starts
