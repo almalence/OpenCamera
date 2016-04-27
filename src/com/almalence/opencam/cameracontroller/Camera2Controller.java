@@ -884,7 +884,6 @@ public class Camera2Controller
 		{
 			int format = CameraController.YUV;
 			if((!isSizeAvailable(imageSize, format) && isSizeAvailable(imageSize, CameraController.JPEG)))
-//					|| CameraController.isNexus5x))
 			{
 				originalCaptureFormat = format;
 				ApplicationScreen.setCaptureFormat(CameraController.JPEG);
@@ -1878,7 +1877,9 @@ public class Camera2Controller
 		viewFinderSurface = appInterface.getCameraSurface();
 		if (viewFinderSurface != null)
 		{
-			surfaceList.add(viewFinderSurface);
+			//On Nexus 5x we have to add first viewfinder surface and only after rest ImageReaders
+			//Otherwise preview will be overexposed - it's crazy nexus's bug.
+			surfaceList.add(0, viewFinderSurface);
 			createCaptureSession(surfaceList);	
 		}
 		else
@@ -1892,7 +1893,7 @@ public class Camera2Controller
 					if (viewFinderSurface!= null)
 					{
 						this.cancel();
-						surfaceList.add(viewFinderSurface);
+						surfaceList.add(0, viewFinderSurface);
 						createCaptureSession(surfaceList);	
 					}
 				}
