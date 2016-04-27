@@ -352,16 +352,6 @@
         android:layout_toLeftOf="@+id/infoLayout"
         android:visibility="visible" >
 
-        <com.almalence.ui.RotateImageView
-            android:id="@+id/expandManualControls"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:background="@android:color/transparent"
-            android:src="@drawable/gui_almalence_manual_expand"
-            android:visibility="gone" />
-
         <RelativeLayout
             android:id="@+id/manualControlsLayout"
             android:layout_width="@dimen/manualControlsWidth"
@@ -369,7 +359,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="40dp"
             android:layout_above="@+id/expandManualControls"
-            android:layout_alignParentBottom="true"
+            
             android:background="@drawable/ev_background"
             android:orientation="vertical"
             android:visibility="visible" >
@@ -584,6 +574,15 @@
                 </LinearLayout>
             </LinearLayout>
         </RelativeLayout>
+        <com.almalence.ui.RotateImageView
+            android:id="@+id/expandManualControls"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:background="@android:color/transparent"
+            android:src="@drawable/gui_almalence_manual_expand"
+            android:visibility="gone" />
     </RelativeLayout>
 
     <!-- Top menu for main camera parameters: Scene mode, WB, Flash mode, Focus mode and Preferences button -->

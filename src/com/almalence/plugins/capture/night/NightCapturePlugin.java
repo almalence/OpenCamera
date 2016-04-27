@@ -30,7 +30,6 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
-import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CaptureResult;
 import android.opengl.GLES10;
 import android.opengl.GLU;
@@ -41,6 +40,7 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.Range;
 import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -157,9 +157,8 @@ public class NightCapturePlugin extends PluginCapture
 		
 		if (usingSuperMode)
 		{
-			CameraCharacteristics camCharacter = CameraController.getCameraCharacteristics();
-			minExposure = camCharacter.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE).getLower();
-			minSensitivity = camCharacter.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE).getLower();
+			minExposure = CameraController.getMinimumExposureTime();
+			minSensitivity = CameraController.getMinimumSensitivity();
 			if (minExposure < 1000) minExposure = 1000; // not expecting minimum exposure to be below 1usec
 			if (minSensitivity < 25) minSensitivity = 25; // not expecting minimum sensitivity to be below ISO25
 		}
@@ -580,8 +579,10 @@ public class NightCapturePlugin extends PluginCapture
 		// free memory allocated for the frame
 		SwapHeap.FreeFromHeap(frameForExposure);
 		
-		burstGain = Math.max(sensorGain, minSensitivity);
-		long burstExposure = exposureTime;
+		int currentSensitivity = CameraController.getCurrentSensitivity();
+		long currentExposure = CameraController.getCameraExposureTime();
+		burstGain = Math.max(currentSensitivity, minSensitivity);
+		long burstExposure = currentExposure;
 
 		if (clipped)
 		{
@@ -591,24 +592,24 @@ public class NightCapturePlugin extends PluginCapture
 			float fUnclip = -0.7f;
 			float UnclipLinear = (float)Math.pow(2, -fUnclip);
 			// first - attempt to reduce sensor ISO, but only if exposure time is short (<50msec)
-			if ((sensorGain > minSensitivity) && (exposureTime <= 50000000))
+			if ((currentSensitivity > minSensitivity) && (currentExposure <= 50000000))
 			{
-				if (sensorGain / UnclipLinear < minSensitivity)
+				if (currentSensitivity / UnclipLinear < minSensitivity)
 				{
 					burstGain = minSensitivity;
-					UnclipLinear /= sensorGain / minSensitivity;
+					UnclipLinear /= currentSensitivity / minSensitivity;
 				}
 				else
 				{
-					burstGain = (int)(sensorGain / UnclipLinear);
+					burstGain = (int)(currentSensitivity / UnclipLinear);
 					UnclipLinear = 1.0f;
 				}
 			}
 			
 			// if ISO reduction is not enough - decrease exposure time
-			if (minExposure < exposureTime / UnclipLinear)
+			if (minExposure < currentExposure / UnclipLinear)
 			{
-				burstExposure = (long)(exposureTime / UnclipLinear);
+				burstExposure = (long)(currentExposure / UnclipLinear);
 			}
 			else
 				burstExposure = minExposure;
@@ -626,14 +627,42 @@ public class NightCapturePlugin extends PluginCapture
 		}
 		else
 		{
+			long[] burstExposureArray = null;
+			//Samsung Galaxy S7 on Qualcomm chipset has special exposure compensation logic
+			if (CameraController.isGalaxyS7Qualcomm)
+			{
+				burstExposure = calculateExposureCompensation(currentExposure, -1);
+				burstExposureArray = new long[total_frames];
+				Arrays.fill(burstExposureArray, burstExposure);
+			}
 			resultCompleted = 0; //Reset to get right capture result indexes in burst capturing.
 			createRequestIDList(total_frames);
 			// capture the burst
 			CameraController.captureImagesWithParams(
-					total_frames, CameraController.YUV_RAW, null, null, null, null, true, true, true);
+					total_frames, CameraController.YUV_RAW, null, null, null, burstExposureArray, true, true, true);
 		}
 	}
 	
+	
+	//Helper function for super mode on Samsung Galaxy S7 taken from SuperSensor Demo code.
+	@TargetApi(21)
+	protected long calculateExposureCompensation(final long exposure, final float compensation)
+    {
+        final Range<Long> range = CameraController.getCameraExposureRange();
+
+        return range.clamp(exposureSec2Nanosec(exposureNanosec2Sec(exposure) / Math.pow(2.0d, -compensation)));
+    }
+
+    protected static long exposureSec2Nanosec(final double t)
+    {
+        return (long)(t * 1000000000);
+    }
+
+    protected static double exposureNanosec2Sec(final long t)
+    {
+        return t / 1000000000.0d;
+    }
+
 	
 	final Object syncObject = new Object();
 	@Override
@@ -801,32 +830,44 @@ public class NightCapturePlugin extends PluginCapture
 					int imageHeight = ApplicationScreen.getPreviewHeight();
 					
 					ImageConversion.sumByteArraysNV21(data1, data2, dataS, imageWidth, imageHeight);
-					if (CameraController.isFrontCamera())
+					
+					boolean cameraMirrored = CameraController.isFrontCamera();
+					int sensorOrientation = CameraController.getSensorOrientation(cameraMirrored);
+					int flipLR = 0;
+					int flipUD = 0;
+					
+					//Values of flipLR and flipUD was get from tests of devices with different sensor orientation
+					//Right now it doesn't based on some sort of calculation.
+					switch(sensorOrientation)
+					{
+						case 90:
+						{
+							if(cameraMirrored)
+								flipUD = 1;
+						}
+							break;
+						case 270:
+						{
+							if(cameraMirrored)
+								flipLR = 1;
+							else
+							{
+								flipLR = 1;
+								flipUD = 1;
+							}
+						}
+							break;
+					}
+					
+					if(flipLR == 1 || flipUD == 1) //If any transform is need
 					{
 						dataRotated = new byte[dataS.length];
-						
-						////////////REMOVE THIS TO NORMAL CODE!!!!! SM 29.12.14
-						if (CameraController.isFlippedSensorDevice())
-							ImageConversion.TransformNV21(dataS, dataRotated, imageWidth, imageHeight, 0, 1, 0);
-						else
-						////////////REMOVE THIS TO NORMAL CODE!!!!! SM 29.12.14
-							ImageConversion.TransformNV21(dataS, dataRotated, imageWidth, imageHeight, 1, 0, 0);
-	
+						ImageConversion.TransformNV21(dataS, dataRotated, imageWidth, imageHeight, flipLR, flipUD, 0);
 						yuvData = dataRotated;
 					}
 					else
-					{
-						//Workaround for Nexus5x, image is flipped because of sensor orientation
-						if(CameraController.isNexus5x)
-						{
-							dataRotated = new byte[dataS.length];
-							ImageConversion.TransformNV21(dataS, dataRotated, imageWidth, imageHeight, 1, 1, 0);
-							yuvData = dataRotated;
-						}
-						else
-							yuvData = dataS;
-					}
-									
+						yuvData = dataS;
+					
 					data1 = data2;
 					data2 = null;
 				}

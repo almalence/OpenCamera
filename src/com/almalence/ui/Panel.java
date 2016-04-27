@@ -94,7 +94,7 @@ public class Panel extends LinearLayout
 	private static final int	TOP				= 0;
 	private static final int	BOTTOM			= 1;
 	private static final int	LEFT			= 2;
-	private static final int	RIGHT			= 3;
+//	private static final int	RIGHT			= 3;
 
 	private enum State
 	{

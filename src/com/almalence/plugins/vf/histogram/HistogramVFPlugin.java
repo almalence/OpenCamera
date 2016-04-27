@@ -82,6 +82,9 @@ public class HistogramVFPlugin extends PluginViewfinder
 
 	private static int			histogramType	= NONE;
 
+	//takes each X image, skipping other
+	private int					skipImgNum		= 6;
+	
 	public HistogramVFPlugin()
 	{
 		super("com.almalence.plugins.histogramvf", R.xml.preferences_vf_histogram, 0,
@@ -257,37 +260,10 @@ public class HistogramVFPlugin extends PluginViewfinder
 	}
 
 	public static int					mDeviceOrientation;
-	private OrientationEventListener	orientListener;
 
 	@Override
 	public void onStart()
 	{
-		this.orientListener = new OrientationEventListener(ApplicationScreen.getMainContext())
-		{
-			@Override
-			public void onOrientationChanged(int orientation)
-			{
-				if (orientation == ORIENTATION_UNKNOWN)
-					return;
-
-				final Display display = ((WindowManager) ApplicationScreen.instance.getSystemService(
-						Context.WINDOW_SERVICE)).getDefaultDisplay();
-				final int orientationProc = (display.getWidth() <= display.getHeight()) ? Configuration.ORIENTATION_PORTRAIT
-						: Configuration.ORIENTATION_LANDSCAPE;
-				final int rotation = display.getRotation();
-
-				boolean remapOrientation = (orientationProc == Configuration.ORIENTATION_LANDSCAPE && rotation == Surface.ROTATION_0)
-						|| (orientationProc == Configuration.ORIENTATION_LANDSCAPE && rotation == Surface.ROTATION_180)
-						|| (orientationProc == Configuration.ORIENTATION_PORTRAIT && rotation == Surface.ROTATION_90)
-						|| (orientationProc == Configuration.ORIENTATION_PORTRAIT && rotation == Surface.ROTATION_270);
-
-				if (remapOrientation)
-					orientation = (orientation - 90 + 360) % 360;
-
-				HistogramVFPlugin.mDeviceOrientation = Util.roundOrientation(orientation,
-						HistogramVFPlugin.mDeviceOrientation);
-			}
-		};
 	}
 
 	@Override
@@ -315,7 +291,6 @@ public class HistogramVFPlugin extends PluginViewfinder
 				}
 			}.start();
 		}
-		orientListener.enable();
 	}
 
 	private void showHisto()
@@ -354,7 +329,6 @@ public class HistogramVFPlugin extends PluginViewfinder
 	@Override
 	public void onPause()
 	{
-		orientListener.disable();
 	}
 
 	@Override
@@ -394,7 +368,7 @@ public class HistogramVFPlugin extends PluginViewfinder
 		if (histogramType == NONE)
 			return;
 		frameCounter++;
-		if (frameCounter != 4)
+		if (frameCounter != skipImgNum)
 		{
 			return;
 		}
@@ -441,6 +415,12 @@ public class HistogramVFPlugin extends PluginViewfinder
 
 		}
 		frameCounter = 0;
+	}
+	
+	@Override
+	public void onOrientationChanged(int orientation)
+	{
+		mDeviceOrientation = ApplicationScreen.getGUIManager().getLayoutOrientation();
 	}
 }
 

@@ -161,6 +161,7 @@ public class CapturePlugin extends PluginCapture
 		ModePreference = prefs.getString("modeStandardPref", "1");
 		
 		captureRAW = prefs.getBoolean(ApplicationScreen.sCaptureRAWPref, false);
+		PluginManager.getInstance().setSwitchModeType(true);
 	}
 
 	@Override

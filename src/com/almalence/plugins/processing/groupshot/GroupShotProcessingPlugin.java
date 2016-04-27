@@ -67,99 +67,79 @@ import com.almalence.util.Size;
  +++ --> */
 // <!-- -+-
 //-+- -->
+import com.almalence.plugins.processing.groupshot.HorizontalGalleryView.SequenceListener;
+import com.almalence.plugins.processing.multishot.MultiShotProcessingPlugin;
 
 /***
  * Implements group shot processing
  ***/
 @SuppressWarnings("deprecation")
-public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListener
+public class GroupShotProcessingPlugin extends MultiShotProcessingPlugin implements SequenceListener
 {
-	private View						postProcessingView;
+	private View				postProcessingView;
 
-	private long						sessionID					= 0;
+	private long				sessionID					= 0;
 
-	private static final int			MSG_PROGRESS_BAR_INVISIBLE	= 1;
-	private static final int			MSG_PROGRESS_BAR_VISIBLE	= 2;
-	private static final int			MSG_LEAVING					= 3;
-	private static final int			MSG_END_OF_LOADING			= 4;
-	private static final int			MSG_SELECTOR_VISIBLE		= 5;
-	private static final int			MSG_SELECTOR_INVISIBLE		= 6;
+	private static final int	MSG_PROGRESS_BAR_INVISIBLE	= 1;
+	private static final int	MSG_PROGRESS_BAR_VISIBLE	= 2;
+	private static final int	MSG_LEAVING					= 3;
+	private static final int	MSG_END_OF_LOADING			= 4;
+	private static final int	MSG_SELECTOR_VISIBLE		= 5;
+	private static final int	MSG_SELECTOR_INVISIBLE		= 6;
 
-	static final int					img2lay						= 8; // 16 image-to-layout subsampling factor
+	static final int			img2lay						= 8;					// 16
+																					// image-to-layout
+																					// subsampling
+																					// factor
 
-	private static int					nFrames;						 // number of input images
-	private static int					imgWidthFD;
-	private static int					imgHeightFD;
+	private int					mDisplayOrientation;
 
-	private static int					previewBmpRealWidth;
-	private static int					previewBmpRealHeight;
+	static int					OutNV21						= 0;
 
-	static Bitmap						PreviewBmpInitial;
-	static Bitmap						PreviewBmp;
-	private int							mDisplayWidth;
-	private int							mDisplayHeight;
+	static int[]				mPixelsforPreview			= null;
 
-	private int							mLayoutOrientationCurrent;
-	private int							mDisplayOrientationCurrent;
-	private int							mDisplayOrientationOnStartProcessing;
-	private boolean						mCameraMirrored;
+	static int					mBaseFrame					= 0;					// temporary
 
-	static long							SaveTimeSt, SaveTimeEn;
-	static long							JpegTimeSt, JpegTimeEn;
-	static long							Prev1TimeSt, Prev1TimeEn;
-	static long							Prev2TimeSt, Prev2TimeEn;
-	static long							ProcTimeSt, ProcTimeEn;
+	static int[]				crop						= new int[5];			// crop
+																					// parameters
+																					// and
+																					// base
+																					// image
+																					// are
+																					// stored
+																					// here
 
-	static int							OutNV21						= 0;
+	private ImageView			mResultImageView;
+	private Button				mSaveButton;
 
-	static int[]						mPixelsforPreview			= null;
+	private final Handler		mHandler					= new Handler(this);
 
-	static int							mBaseFrame					= 0;					// temporary
+	private ProgressBar			mProgressBar;
+//	private Gallery				mGallery;
+	private TextView			mInfoTextVeiw;
 
-	static int[]						crop						= new int[5];			// crop parameters and base image are stored here
+	private HorizontalGalleryView	    sequenceView;
+	private static ArrayList<Bitmap>	thumbnails		= new ArrayList<Bitmap>();
+	private ImageAdapter		mImageAdapter;
+	private int					iMatrixRotation			= 0;
 
-	private ImageView					mImgView;
-	private Button						mSaveButton;
-
-	private int[][]						mChosenFace;
-
-	private final Handler				mHandler					= new Handler(this);
-
-	private ProgressBar					mProgressBar;
-	private Gallery						mGallery;
-	private TextView					textVeiw;
-
-	private Seamless					mSeamless;
-
-	private ImageAdapter				mImageAdapter;
-
-	/*
-	 * Group shot testing start
-	 */
-	private static ArrayList<Integer>	mYUVBufferList;
-
-	public static void setmYUVBufferList(ArrayList<Integer> mYUVBufferList)
+	@Override
+	public void setYUVBufferList(ArrayList<Integer> YUVBufferList)
 	{
-		GroupShotProcessingPlugin.mYUVBufferList = mYUVBufferList;
+		GroupShotCore.getInstance().setYUVBufferList(YUVBufferList);
 	}
 
-	ArrayList<ArrayList<Rect>>	mFaceList;
+	private final Object	syncObject			= new Object();
 
-	private static int			mFrameCount				= 0;
-
-	private static final int	MAX_FACE_DETECTED		= 20;
-	private static final float	FACE_CONFIDENCE_LEVEL	= 0.4f;
-
-	private final Object		syncObject				= new Object();
-
-	private boolean				postProcessingRun		= false;
+	private boolean			postProcessingRun	= false;
 
 	// indicates that no more user interaction needed
-	private boolean				finishing				= false;
-	private boolean				changingFace			= false;
+	private boolean			mFinishing			= false;
+	private boolean			mChangingFace		= false;
 
 	public GroupShotProcessingPlugin()
 	{
+		super("com.almalence.plugins.groupshotprocessing", "groupshot", 0, 0, 0, null);
 	}
 
 	public View getPostProcessingView()
@@ -173,13 +153,13 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 
 	public void onStartProcessing(long SessionID)
 	{
-		finishing = false;
-		changingFace = false;
+		mFinishing = false;
+		mChangingFace = false;
 		Message msg = new Message();
 		msg.what = ApplicationInterface.MSG_PROCESSING_BLOCK_UI;
 		ApplicationScreen.getMessageHandler().sendMessage(msg);
 
-		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, 
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST,
 				ApplicationInterface.MSG_CONTROL_LOCKED);
 
 		ApplicationScreen.getGUIManager().lockControls = true;
@@ -189,102 +169,19 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		PluginManager.getInstance().addToSharedMem("modeSaveName" + sessionID,
 				PluginManager.getInstance().getActiveMode().modeSaveName);
 
-		Display display = ((WindowManager) ApplicationScreen.instance.getSystemService(Context.WINDOW_SERVICE))
-				.getDefaultDisplay();
-		mDisplayWidth = display.getHeight();
-		mDisplayHeight = display.getWidth();
+		int imageDataOrientation = Integer.valueOf(PluginManager.getInstance().getFromSharedMem(
+				"frameorientation1" + sessionID));
+		int deviceOrientation = Integer.valueOf(PluginManager.getInstance().getFromSharedMem(
+				"deviceorientation1" + sessionID));
+		boolean cameraMirrored = Boolean.valueOf(PluginManager.getInstance().getFromSharedMem(
+				"framemirrored1" + sessionID));
 
-		mDisplayOrientationOnStartProcessing = Integer.valueOf(PluginManager.getInstance().getFromSharedMem("frameorientation1" + sessionID));
-		mDisplayOrientationCurrent = ApplicationScreen.getGUIManager().getDisplayOrientation();
-		int orientation = ApplicationScreen.getGUIManager().getLayoutOrientation();
-		mLayoutOrientationCurrent = (orientation == 0 || orientation == 180) ? orientation : (orientation + 180) % 360;
-		mCameraMirrored = Boolean.valueOf(PluginManager.getInstance().getFromSharedMem("framemirrored1" + sessionID));
+		iMatrixRotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(imageDataOrientation, deviceOrientation, cameraMirrored);
 		
-		CameraController.Size imageSize = CameraController.getCameraImageSize();
-
-		int iImageWidth = imageSize.getWidth();
-		int iImageHeight = imageSize.getHeight();
-
-		if (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
-		{
-			imgWidthFD = Seamless.getInstance().getWidthForFaceDetection(iImageHeight,
-					iImageWidth);
-			imgHeightFD = Seamless.getInstance().getHeightForFaceDetection(iImageHeight,
-					iImageWidth);
-		} else
-		{
-			imgWidthFD = Seamless.getInstance().getWidthForFaceDetection(iImageWidth,
-					iImageHeight);
-			imgHeightFD = Seamless.getInstance().getHeightForFaceDetection(iImageWidth,
-					iImageHeight);
-		}
-
 		try
 		{
-			int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
-					"amountofcapturedframes" + sessionID));
-
-			if (imagesAmount == 0)
-				imagesAmount = 1;
-
-			nFrames = imagesAmount;
-
-			mFrameCount = mYUVBufferList.size();
-			if(PreviewBmp != null)
-			{
-				PreviewBmp.recycle();
-				PreviewBmp = null;
-			}
-			PreviewBmp = ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(0), iImageWidth, iImageHeight);
-
-			if (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
-			{
-				Matrix matrix = new Matrix();
-				matrix.postRotate(mCameraMirrored ? (mDisplayOrientationOnStartProcessing + 180) % 360
-						: mDisplayOrientationOnStartProcessing);
-				Bitmap rotatedBitmap = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
-						matrix, true);
-				
-				if (rotatedBitmap != PreviewBmp) {
-					PreviewBmp.recycle();
-					PreviewBmp= rotatedBitmap;
-				}
-			}
-
-			if ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180)
-					&& mCameraMirrored)
-			{
-				Matrix matrix = new Matrix();
-				matrix.postRotate((mDisplayOrientationOnStartProcessing + 180) % 360);
-				PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
-						matrix, true);
-				
-				Bitmap rotatedBitmap = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
-						matrix, true);
-				if (rotatedBitmap != PreviewBmp) {
-					PreviewBmp.recycle();
-					PreviewBmp= rotatedBitmap;
-				}
-			}
-
-			previewBmpRealWidth = PreviewBmp.getWidth();
-			previewBmpRealHeight = PreviewBmp.getHeight();
-
-			loadingSeamless();
-
-			int max = 0;
-			for (int i = 0; i < mFaceList.size(); i++)
-			{
-				if (max < mFaceList.get(i).size())
-				{
-					max = mFaceList.get(i).size();
-				}
-			}
-			mChosenFace = new int[mFaceList.size()][max];
-			for (int i = 0; i < mFaceList.size(); i++)
-			{
-				Arrays.fill(mChosenFace[i], i);
-			}
+			GroupShotCore.getInstance().initializeProcessingParameters(imageDataOrientation, deviceOrientation, cameraMirrored, iMatrixRotation);
+			GroupShotCore.getInstance().ProcessFaces();
 		} catch (Exception e)
 		{
 			// make notifier in main thread
@@ -294,243 +191,35 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		PluginManager.getInstance().addToSharedMem("resultfromshared" + sessionID, "false");
 		PluginManager.getInstance().addToSharedMem("amountofresultframes" + sessionID, "1");
 
-		PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(iImageWidth));
-		PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(iImageHeight));
-		
-		PreviewBmp.recycle();
-		PreviewBmp = null;
-	}
-
-	private void getFaceRects()
-	{
-		mFaceList = new ArrayList<ArrayList<Rect>>(mFrameCount);
-
-		Face[] mFaces = new Face[MAX_FACE_DETECTED];
-		for (int i = 0; i < MAX_FACE_DETECTED; ++i)
-			mFaces[i] = new Face();
-
-		for (int index = 0; index < mFrameCount; index++)
-		{
-			int numberOfFacesDetected = AlmaShotSeamless.GetFaces(index, mFaces);
-
-			int Scale;
-			if (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
-				Scale = CameraController.getCameraImageSize().getHeight() / imgWidthFD;
-			else
-				Scale = CameraController.getCameraImageSize().getWidth() / imgWidthFD;
-
-			ArrayList<Rect> rect = new ArrayList<Rect>();
-			for (int i = 0; i < numberOfFacesDetected; i++)
-			{
-				Face face = mFaces[i];
-				PointF myMidPoint = new PointF();
-				face.getMidPoint(myMidPoint);
-				float myEyesDistance = face.eyesDistance();
-				if (face.confidence() > FACE_CONFIDENCE_LEVEL)
-				{
-					Rect faceRect = new Rect((int) (myMidPoint.x - myEyesDistance) * Scale,
-							(int) (myMidPoint.y - myEyesDistance) * Scale, (int) (myMidPoint.x + myEyesDistance)
-									* Scale, (int) (myMidPoint.y + myEyesDistance) * Scale);
-					rect.add(faceRect);
-				}
-			}
-
-			mFaceList.add(rect);
-		}
-	}
-
-	private void loadingSeamless()
-	{
-		mSeamless = Seamless.getInstance();
-		Size preview = new Size(PreviewBmp.getWidth(), PreviewBmp.getHeight());
-		// correctness of w/h here depends on orientation while taking image,
-		// only product of inputSize is used later - this is why code still
-		// works
 		CameraController.Size imageSize = CameraController.getCameraImageSize();
-		Size inputSize = new Size(imageSize.getWidth(), imageSize.getHeight());
-		Size fdSize = new Size(imgWidthFD, imgHeightFD);
-
-		try
+		int imageWidth = imageSize.getWidth();
+		int imageHeight = imageSize.getHeight();
+		PluginManager.getInstance().addToSharedMem("saveImageWidth" + sessionID, String.valueOf(imageWidth));
+		PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID, String.valueOf(imageHeight));
+		
+		int orientation = ApplicationScreen.getGUIManager().getLayoutOrientation();
+		mDisplayOrientation = orientation == 0 || orientation == 180 ? orientation : (orientation + 180) % 360;
+		mImageAdapter = new ImageAdapter(ApplicationScreen.getMainContext(), GroupShotCore.getInstance().getYUVBufferList(), imageDataOrientation, cameraMirrored);
+		
+		
+		
+		
+		int imagesAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(
+				"amountofcapturedframes" + sessionID));
+		if(imagesAmount == 0)
+			imagesAmount = 1;
+		
+		ArrayList<Integer>	mYUVBufferList = GroupShotCore.getInstance().getYUVBufferList();
+		thumbnails.clear();
+		int heightPixels = ApplicationScreen.getAppResources().getDisplayMetrics().heightPixels;
+		for (int i = 1; i <= imagesAmount; i++)
 		{
-			boolean needRotation = mDisplayOrientationOnStartProcessing != 0;
-			// Note: DecodeJpegs doing free() to jpeg data!
-			int rotation = mCameraMirrored
-					&& (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270) ? (mDisplayOrientationOnStartProcessing + 180) % 360
-					: mDisplayOrientationOnStartProcessing;
-			mSeamless.addYUVInputFrames(mYUVBufferList, inputSize, fdSize, needRotation, false, rotation);
-			getFaceRects();
-
-			sortFaceList();
-
-			mSeamless.initialize(mBaseFrame, mFaceList, preview);
-		} catch (Exception e)
-		{
-			e.printStackTrace();
+			thumbnails
+					.add(Bitmap.createScaledBitmap(ImageConversion.decodeYUVfromBuffer(
+							mYUVBufferList.get(i - 1), imageWidth, imageHeight), heightPixels
+							/ imagesAmount, (int) (imageHeight * (((float)heightPixels / imagesAmount) / imageWidth)),
+							false));
 		}
-		return;
-	}
-
-	private void sortFaceList()
-	{
-		ArrayList<ArrayList<Rect>> newFaceList = new ArrayList<ArrayList<Rect>>(mFrameCount);
-		for (int i = 0; i < mFrameCount; i++)
-		{
-			newFaceList.add(new ArrayList<Rect>());
-		}
-
-		while (isAnyFaceInList())
-		{
-			ArrayList<Integer> bestCandidateList = populateBestCandidate();
-
-			if (bestCandidateList.size() != 0)
-				for (int frameIndex = 0; frameIndex < newFaceList.size(); frameIndex++)
-				{
-					int bestFaceIndex = bestCandidateList.get(frameIndex);
-					if (bestFaceIndex == -1)
-						continue;
-
-					newFaceList.get(frameIndex).add(mFaceList.get(frameIndex).remove(bestFaceIndex));
-				}
-		}
-
-		mFaceList.clear();
-		for (ArrayList<Rect> faces : newFaceList)
-			mFaceList.add(faces);
-	}
-
-	private boolean isAnyFaceInList()
-	{
-		for (ArrayList<Rect> faceList : mFaceList)
-		{
-			if (faceList.size() > 0)
-				return true;
-		}
-
-		return false;
-	}
-
-	private ArrayList<Integer> populateBestCandidate()
-	{
-		int baseFaceX, baseFaceY, baseIndex, presenceNumber;
-		float allowedDistance, distance, maxDistance, minDistance;
-
-		int bestPresenceNumber = 0;
-		float bestMaxDistance = -1;
-
-		int candidateIndex, currIndex;
-		ArrayList<Integer> candidateList = new ArrayList<Integer>(mFrameCount);
-		ArrayList<Integer> bestCandidateList = new ArrayList<Integer>(mFrameCount);
-
-		int i = 0;
-		for (ArrayList<Rect> faceFrame : mFaceList)
-		{
-			baseIndex = 0;
-			if (faceFrame.size() > 0)
-				for (Rect baseFace : faceFrame)
-				{
-					candidateList.clear();
-					baseFaceX = baseFace.centerX();
-					baseFaceY = baseFace.centerY();
-					allowedDistance = getRadius(baseFace) * 0.75f;
-					presenceNumber = mFaceList.size();
-
-					maxDistance = -1;
-					for (int j = 0; j < mFaceList.size(); j++)
-					{
-						candidateIndex = -1;
-						minDistance = -1;
-
-						if (j == i || mFaceList.get(j).size() == 0)
-						{
-							if (j == i)
-								candidateIndex = baseIndex;
-
-							candidateList.add(candidateIndex);
-							presenceNumber--;
-							continue;
-						}
-
-						currIndex = 0;
-						for (Rect candidateFace : mFaceList.get(j))
-						{
-							distance = getDistance(baseFaceX, baseFaceY, candidateFace.centerX(),
-									candidateFace.centerY());
-							if (distance < allowedDistance && (distance < minDistance || minDistance == -1))
-							{
-								minDistance = distance;
-								candidateIndex = currIndex;
-							}
-							currIndex++;
-						}
-
-						if (minDistance == -1)
-							presenceNumber--;
-
-						if (minDistance > maxDistance)
-							maxDistance = minDistance;
-
-						candidateList.add(candidateIndex);
-					}
-
-					if (presenceNumber > bestPresenceNumber)
-					{
-						bestPresenceNumber = presenceNumber;
-						bestMaxDistance = maxDistance;
-
-						bestCandidateList.clear();
-						for (Integer index : candidateList)
-							bestCandidateList.add(index);
-					} else if (presenceNumber == bestPresenceNumber
-							&& (maxDistance < bestMaxDistance || bestMaxDistance == -1))
-					{
-						bestMaxDistance = maxDistance;
-
-						bestCandidateList.clear();
-						for (Integer index : candidateList)
-							bestCandidateList.add(index);
-					}
-
-					baseIndex++;
-				}
-			i++;
-		}
-
-		return bestCandidateList;
-	}
-
-	private boolean checkDistance(float radius, float x, float y, int centerX, int centerY)
-	{
-		float distance = getSquareOfDistance((int) x, (int) y, centerX, centerY);
-		if (distance < (radius * radius))
-		{
-			return true;
-		}
-		return false;
-	}
-
-	private boolean checkFaceDistance(float radius, float x, float y, int centerX, int centerY)
-	{
-		float distance = getDistance((int) x, (int) y, centerX, centerY);
-		if (distance < (radius * 0.75f))
-		{
-			return true;
-		}
-		return false;
-	}
-
-	private float getRadius(Rect rect)
-	{
-		return (rect.width() + rect.height()) / 2;
-	}
-
-	private int getSquareOfDistance(int x, int y, int x0, int y0)
-	{
-		return (x - x0) * (x - x0) + (y - y0) * (y - y0);
-	}
-
-	private int getDistance(int x, int y, int x0, int y0)
-	{
-		return (int) Math.round(Math.sqrt((x - x0) * (x - x0) + (y - y0) * (y - y0)));
 	}
 
 	/************************************************
@@ -546,305 +235,171 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		LayoutInflater inflator = ApplicationScreen.instance.getLayoutInflater();
 		postProcessingView = inflator.inflate(R.layout.plugin_processing_groupshot_postprocessing, null, false);
 
-		mImgView = ((ImageView) postProcessingView.findViewById(R.id.groupshotImageHolder));
-		if(PreviewBmp != null)
-		{
-			PreviewBmp.recycle();
-			PreviewBmp = null;
-		}
-		
-		CameraController.Size imageSize = CameraController.getCameraImageSize();
-		PreviewBmp = ImageConversion.decodeYUVfromBuffer(mYUVBufferList.get(0), imageSize.getWidth(),
-				imageSize.getHeight());
-		if (PreviewBmp != null)
-		{
-			Matrix matrix = new Matrix();
-			matrix.postRotate(90);
+		mResultImageView = ((ImageView) postProcessingView.findViewById(R.id.groupshotImageHolder));
 
-			Bitmap rotated = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(),
-					matrix, true);
-			PreviewBmpInitial = Bitmap.createBitmap(rotated);
-			
-			if (PreviewBmpInitial != rotated) {
-				rotated.recycle();
-			}
-		}
+		mResultImageView.setImageBitmap(GroupShotCore.getInstance().getPreviewBitmap());
 
-		mImgView.setImageBitmap(PreviewBmpInitial);
-		//Workaround for Nexus5x, image is flipped because of sensor orientation
-		if(CameraController.isNexus5x)
-			mImgView.setRotation(mCameraMirrored ? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0
-					: 180)
-					: 180);
-		else
-			mImgView.setRotation(mCameraMirrored ? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0
-					: 180)
-					: 0);
-
-		textVeiw = ((TextView) postProcessingView.findViewById(R.id.groupshotTextView));
-		textVeiw.setText("Loading image ...");
+		mInfoTextVeiw = ((TextView) postProcessingView.findViewById(R.id.groupshotTextView));
+		mInfoTextVeiw.setText("Loading image ...");
 
 		mHandler.sendEmptyMessage(MSG_END_OF_LOADING);
-
 	}
 
 	private void setupImageSelector()
 	{
-		mImageAdapter = new ImageAdapter(ApplicationScreen.getMainContext(), mYUVBufferList,
-				mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180,
-				mCameraMirrored, true);
-		mGallery = (Gallery) postProcessingView.findViewById(R.id.groupshotGallery);
-		mGallery.setAdapter(mImageAdapter);
-		mGallery.setOnItemClickListener(new AdapterView.OnItemClickListener()
+		sequenceView = ((HorizontalGalleryView) postProcessingView.findViewById(R.id.seqView));
+		final Bitmap[] thumbnailsArray = new Bitmap[thumbnails.size()];
+		for (int i = 0; i < thumbnailsArray.length; i++)
 		{
-			public void onItemClick(AdapterView<?> parent, View v, int position, long id)
+			Bitmap bmp = thumbnails.get(i);
+			Matrix matrix = new Matrix();
+			if(iMatrixRotation != 0)
+				matrix.postRotate(iMatrixRotation);
+			//Workaround for Nexus5x, image is flipped because of sensor orientation
+//			if(CameraController.isNexus5x)
+//				matrix.postRotate(mCameraMirrored ? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 270
+//						: 90)
+//						: 270);
+//			else
+//				matrix.postRotate(mCameraMirrored ? ((mDisplayOrientation == 0 || mDisplayOrientation == 180) ? 270
+//						: 90)
+//						: 90);	
+			Bitmap rotated = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
+			thumbnailsArray[i] = rotated;
+		}
+		sequenceView.setContent(thumbnailsArray, this);
+		LayoutParams lp = (LayoutParams) sequenceView.getLayoutParams();
+		lp.height = thumbnailsArray[0].getHeight();
+		sequenceView.setLayoutParams(lp);
+//		mGallery = (Gallery) postProcessingView.findViewById(R.id.groupshotGallery);
+//		mGallery.setAdapter(mImageAdapter);
+//		mGallery.setOnItemClickListener(new AdapterView.OnItemClickListener()
+//		{
+//			public void onItemClick(AdapterView<?> parent, View v, int position, long id)
+//			{
+//				mImageAdapter.setCurrentSeleted(position);
+//				mImageAdapter.notifyDataSetChanged();
+//				mGallery.setVisibility(Gallery.INVISIBLE);
+//				mBaseFrame = position;
+//				GroupShotCore.getInstance().setBaseFrame(mBaseFrame);
+//				new Thread(new Runnable()
+//				{
+//					public void run()
+//					{
+//						mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_VISIBLE);
+//						GroupShotCore.getInstance().updateBitmap();
+//						mHandler.post(new Runnable()
+//						{
+//							public void run()
+//							{
+//								if (GroupShotCore.getInstance().getPreviewBitmap() != null)
+//								{
+//									mResultImageView.setImageBitmap(GroupShotCore.getInstance().getPreviewBitmap());
+//								}
+//							}
+//						});
+//
+//						mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_INVISIBLE);
+//					}
+//				}).start();
+//			}
+//		});
+//
+//		mGallery.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+//		{
+//			@Override
+//			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)
+//			{
+//			}
+//
+//			@Override
+//			public void onNothingSelected(AdapterView<?> arg0)
+//			{
+//			}
+//		});
+		return;
+	}
+	
+	@Override
+	public void onSequenceChanged(int position)
+	{
+		mBaseFrame = position;
+		GroupShotCore.getInstance().setBaseFrame(mBaseFrame);
+		new Thread(new Runnable()
+		{
+			public void run()
 			{
-				mImageAdapter.setCurrentSeleted(position);
-				mImageAdapter.notifyDataSetChanged();
-				mGallery.setVisibility(Gallery.INVISIBLE);
-				mBaseFrame = position;
-				mSeamless.setBaseFrame(mBaseFrame);
-				new Thread(new Runnable()
+				mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_VISIBLE);
+				GroupShotCore.getInstance().updateBitmap();
+				mHandler.post(new Runnable()
 				{
 					public void run()
 					{
-						mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_VISIBLE);
-						updateBitmap();
-						mHandler.post(new Runnable()
+						if (GroupShotCore.getInstance().getPreviewBitmap() != null)
 						{
-							public void run()
-							{
-								if (PreviewBmp != null)
-								{
-									mImgView.setImageBitmap(PreviewBmp);
-								}
-							}
-						});
-
-						// Probably this should be called from mSeamless ?
-						mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_INVISIBLE);
+							mResultImageView.setImageBitmap(GroupShotCore.getInstance().getPreviewBitmap());
+						}
 					}
-				}).start();
+				});
+
+				mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_INVISIBLE);
 			}
-		});
-
-		mGallery.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-		{
-			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)
-			{
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0)
-			{
-			}
-		});
-		return;
-	}
-
-	public Bitmap decodeFullJPEGfromBuffer(byte[] data)
-	{
-		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inPreferredConfig = Config.ARGB_8888;
-		options.inJustDecodeBounds = false;
-		options.inSampleSize = 1;
-		return BitmapFactory.decodeByteArray(data, 0, data.length, options);
-	}
-
-	private void drawFaceRectOnBitmap(Bitmap bitmap, ArrayList<Rect> faceRect)
-	{
-		float ratiox;
-		float ratioy;
-		float bWidth = bitmap.getWidth();
-		float bHeight = bitmap.getHeight();
-		CameraController.Size imageSize = CameraController.getCameraImageSize();
-		if (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
-		{
-			ratiox = (float) imageSize.getHeight() / (float) bWidth;
-			ratioy = (float) imageSize.getWidth() / (float) bHeight;
-		} else
-		{
-			ratiox = (float) imageSize.getWidth() / (float) bWidth;
-			ratioy = (float) imageSize.getHeight() / (float) bHeight;
-		}
-
-		Paint paint = new Paint();
-		paint.setStyle(Paint.Style.STROKE);
-		paint.setColor(0xFF00AAEA);
-		paint.setStrokeWidth(5);
-		paint.setPathEffect(new DashPathEffect(new float[] { 5, 5 }, 0));
-
-		Canvas c = new Canvas(bitmap);
-
-		for (Rect rect : faceRect)
-		{
-			float radius = getRadius(rect);
-			c.drawCircle(rect.centerX() / ratiox, rect.centerY() / ratioy, radius / ((ratiox + ratioy) / 2), paint);
-		}
-
-		return;
-	}
-
-	private boolean eventContainsFace(float x, float y, ArrayList<Rect> faceRect, View v)
-	{
-		float ratiox;
-		float ratioy;
-
-		CameraController.Size imageSize = CameraController.getCameraImageSize();
-		if (mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270)
-		{
-			ratiox = (float) imageSize.getHeight() / (float) previewBmpRealWidth;
-			ratioy = (float) imageSize.getWidth() / (float) previewBmpRealHeight;
-		} else
-		{
-			ratiox = (float) imageSize.getWidth() / (float) previewBmpRealWidth;
-			ratioy = (float) imageSize.getHeight() / (float) previewBmpRealHeight;
-		}
-
-		if (mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180)
-		{
-			float x_tmp = x;
-			float y_tmp = y;
-			x = mDisplayOrientationOnStartProcessing == 180 ? mDisplayWidth - 1 - y_tmp : y_tmp;
-			y = mDisplayOrientationOnStartProcessing == 180 ? x_tmp : mDisplayHeight - 1 - x_tmp;
-		} else if (!mCameraMirrored && mDisplayOrientationOnStartProcessing == 270)
-		{
-			x = mDisplayHeight - x;
-			y = mDisplayWidth - y;
-		} else if (mCameraMirrored && mDisplayOrientationOnStartProcessing == 90)
-		{
-			x = mDisplayHeight - x;
-			y = mDisplayWidth - y;
-		}
-		// Have to correct touch coordinates coz ImageView centered on the
-		// screen
-		// and it's coordinate system not aligned with screen coordinate system.
-		if ((mDisplayWidth > v.getHeight() || mDisplayHeight > v.getWidth()))
-		{
-			x = x
-					- (((mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270) ? mDisplayHeight
-							: mDisplayWidth) - previewBmpRealWidth) / 2;
-			if (mCameraMirrored)
-			{
-				y = y
-						- (((mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270) ? mDisplayWidth
-								: mDisplayHeight) - previewBmpRealHeight);
-			} else
-			{
-				y = y
-						- (((mDisplayOrientationOnStartProcessing == 90 || mDisplayOrientationOnStartProcessing == 270) ? mDisplayWidth
-								: mDisplayHeight) - previewBmpRealHeight) / 2;
-			}
-		}
-
-		int i = 0;
-		for (Rect rect : faceRect)
-		{
-			Rect newRect = new Rect((int) (rect.left / ratiox), (int) (rect.top / ratioy), (int) (rect.right / ratiox),
-					(int) (rect.bottom / ratioy));
-			float radius = getRadius(newRect);
-			if (checkDistance(radius, x, y, newRect.centerX(), newRect.centerY()))
-			{
-				int newFrameIndex = mChosenFace[mBaseFrame][i] + 1;
-				while (!checkFaceIsSuitable(newFrameIndex, i, radius, ratiox, ratioy, newRect))
-					newFrameIndex++;
-
-				changingFace = true;
-				mChosenFace[mBaseFrame][i] = newFrameIndex;
-				mSeamless.changeFace(i, mChosenFace[mBaseFrame][i] % nFrames);
-				changingFace = false;
-				return true;
-			}
-			i++;
-		}
-		return false;
-	}
-
-	private boolean checkFaceIsSuitable(int frameIndex, int faceIndex, float faceRadius, float ratioX, float ratioY,
-			Rect currFace)
-	{
-		if (mFaceList.get(frameIndex % nFrames).size() <= faceIndex)
-			return false;
-		else
-		{
-			Rect candidateRect = mFaceList.get(frameIndex % nFrames).get(faceIndex);
-			Rect newRect = new Rect((int) (candidateRect.left / ratioX), (int) (candidateRect.top / ratioY),
-					(int) (candidateRect.right / ratioX), (int) (candidateRect.bottom / ratioY));
-			return checkFaceDistance(faceRadius, newRect.centerX(), newRect.centerY(), currFace.centerX(),
-					currFace.centerY());
-		}
+		}).start();
+//		sequenceView.setEnabled(false);
+//
+//		ProcessingTask task = new ProcessingTask();
+//		task.idxInput = idx;
+//		task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);		
 	}
 
 	private void setupImageView()
 	{
-		if (PreviewBmp != null)
+		GroupShotCore.getInstance().updateBitmap();
+		Bitmap mPreviewBitmap = GroupShotCore.getInstance().getPreviewBitmap();
+		if (mPreviewBitmap != null)
 		{
-			updateBitmap();
-			mImgView.setImageBitmap(PreviewBmp);
-			//Workaround for Nexus5x, image is flipped because of sensor orientation
-			if(CameraController.isNexus5x)
-				mImgView.setRotation(mCameraMirrored ? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0
-						: 180)
-						: 180);
-			else
-				mImgView.setRotation(mCameraMirrored ? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0
-						: 180)
-						: 0);
+			mResultImageView.setImageBitmap(mPreviewBitmap);
 		}
 
-		mImgView.setOnTouchListener(new View.OnTouchListener()
+		mResultImageView.setOnTouchListener(new View.OnTouchListener()
 		{
 			@Override
 			public boolean onTouch(final View v, final MotionEvent event)
 			{
 				if (event.getAction() == MotionEvent.ACTION_DOWN)
 				{
-					if (finishing)
+					if (mFinishing || mChangingFace)
 						return true;
-					if (mGallery.getVisibility() == Gallery.VISIBLE)
+					if (GroupShotCore.getInstance().eventContainsFace(event.getX(), event.getY(), v))
 					{
-						mGallery.setVisibility(Gallery.INVISIBLE);
-						return false;
-					}
-					mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_VISIBLE);
-					new Thread(new Runnable()
-					{
-						public void run()
+						mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_VISIBLE);
+						new Thread(new Runnable()
 						{
-							synchronized (syncObject)
+							public void run()
 							{
-								if (eventContainsFace(event.getX(), event.getY(), mFaceList.get(mBaseFrame), v))
+								synchronized (syncObject)
 								{
-									updateBitmap();
+									mChangingFace = true;
+									GroupShotCore.getInstance().updateBitmap();
+
 									// Update screen
 									mHandler.post(new Runnable()
 									{
 										public void run()
 										{
-											if (PreviewBmp != null)
+											if (GroupShotCore.getInstance().getPreviewBitmap() != null)
 											{
-												mImgView.setImageBitmap(PreviewBmp);
-												//Workaround for Nexus5x, image is flipped because of sensor orientation
-												if(CameraController.isNexus5x)
-													mImgView.setRotation(mCameraMirrored ? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0
-															: 180)
-															: 180);
-												else
-													mImgView.setRotation(mCameraMirrored ? ((mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180) ? 0
-															: 180)
-															: 0);
+												mResultImageView.setImageBitmap(GroupShotCore.getInstance()
+														.getPreviewBitmap());
 											}
 										}
 									});
-								} else
-								{
-									mHandler.sendEmptyMessage(MSG_SELECTOR_VISIBLE);
+									mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_INVISIBLE);
+									mChangingFace = false;
 								}
-								mHandler.sendEmptyMessage(MSG_PROGRESS_BAR_INVISIBLE);
 							}
-						}
-					}).start();
+						}).start();
+					}
 				}
 				return false;
 			}
@@ -855,25 +410,13 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 	{
 		mProgressBar = (ProgressBar) postProcessingView.findViewById(R.id.groupshotProgressBar);
 		mProgressBar.setVisibility(View.INVISIBLE);
-		return;
 	}
 
 	public void setupSaveButton()
 	{
-		// put save button on screen
-		mSaveButton = new Button(ApplicationScreen.instance);
-		mSaveButton.setBackgroundResource(R.drawable.button_save_background);
+		mSaveButton = (Button) postProcessingView.findViewById(R.id.groupshotSaveButton);
 		mSaveButton.setOnClickListener(this);
-		LayoutParams saveLayoutParams = new LayoutParams(
-				(int) (ApplicationScreen.getMainContext().getResources().getDimension(R.dimen.postprocessing_savebutton_size)),
-				(int) (ApplicationScreen.getMainContext().getResources().getDimension(R.dimen.postprocessing_savebutton_size)));
-		saveLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-		saveLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-		
-		float density = ApplicationScreen.getAppResources().getDisplayMetrics().density;
-		saveLayoutParams.setMargins((int) (density * 8), (int) (density * 8), 0, 0);
-		((RelativeLayout) postProcessingView.findViewById(R.id.groupshotLayout)).addView(mSaveButton, saveLayoutParams);
-		mSaveButton.setRotation(mLayoutOrientationCurrent);
+		mSaveButton.setRotation(mDisplayOrientation);
 	}
 
 	@Override
@@ -886,7 +429,7 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 			setupImageSelector();
 			setupSaveButton();
 			setupProgress();
-			textVeiw.setVisibility(TextView.INVISIBLE);
+			mInfoTextVeiw.setVisibility(TextView.INVISIBLE);
 			postProcessingRun = true;
 			break;
 		case MSG_PROGRESS_BAR_INVISIBLE:
@@ -895,23 +438,17 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		case MSG_PROGRESS_BAR_VISIBLE:
 			mProgressBar.setVisibility(View.VISIBLE);
 			break;
-		case MSG_SELECTOR_VISIBLE:
-			mGallery.setVisibility(View.VISIBLE);
-			break;
-		case MSG_SELECTOR_INVISIBLE:
-			mGallery.setVisibility(View.GONE);
-			break;
+//		case MSG_SELECTOR_VISIBLE:
+//			mGallery.setVisibility(View.VISIBLE);
+//			break;
+//		case MSG_SELECTOR_INVISIBLE:
+//			mGallery.setVisibility(View.GONE);
+//			break;
 		case MSG_LEAVING:
 			ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_POSTPROCESSING_FINISHED);
-			if (mSeamless != null)
-				mSeamless.release();
-			for(int yuv: mYUVBufferList)
-			{
-				SwapHeap.FreeFromHeap(yuv);
-			}
-			mYUVBufferList.clear();
+			GroupShotCore.getInstance().release();
 
-			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, 
+			PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST,
 					ApplicationInterface.MSG_CONTROL_UNLOCKED);
 
 			ApplicationScreen.getGUIManager().lockControls = false;
@@ -929,9 +466,9 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		if (keyCode == KeyEvent.KEYCODE_BACK
 				&& ApplicationScreen.instance.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
 		{
-			if (finishing || changingFace)
+			if (mFinishing || mChangingFace)
 				return true;
-			finishing = true;
+			mFinishing = true;
 			mHandler.sendEmptyMessage(MSG_LEAVING);
 			return true;
 		}
@@ -944,55 +481,29 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 	{
 		if (v == mSaveButton)
 		{
-			if (finishing || changingFace)
+			if (mFinishing || mChangingFace)
 				return;
-			finishing = true;
+			mFinishing = true;
 			savePicture(ApplicationScreen.getMainContext());
 
 			mHandler.sendEmptyMessage(MSG_LEAVING);
 		}
 	}
 
+	@Override
 	public void onOrientationChanged(int orientation)
 	{
-		if (orientation != mDisplayOrientationCurrent)
+		if (orientation != mDisplayOrientation)
 		{
-			mLayoutOrientationCurrent = (orientation == 0 || orientation == 180) ? orientation + 90 : orientation - 90;
-			mDisplayOrientationCurrent = orientation;
+			mDisplayOrientation = (orientation == 0 || orientation == 180) ? orientation + 90 : orientation - 90;
 			if (postProcessingRun)
-				mSaveButton.setRotation(mLayoutOrientationCurrent);
+				mSaveButton.setRotation(mDisplayOrientation);
 		}
-	}
-
-	public synchronized void updateBitmap()
-	{
-		PreviewBmp = mSeamless.getPreviewBitmap();
-		drawFaceRectOnBitmap(PreviewBmp, mFaceList.get(mBaseFrame));
-		if (mDisplayOrientationOnStartProcessing == 0 || mDisplayOrientationOnStartProcessing == 180)
-		{
-			Matrix matrix = new Matrix();
-			matrix.postRotate(((mDisplayOrientationOnStartProcessing + 90) % 360));
-			PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(), matrix,
-					true);
-		} else if (!mCameraMirrored && mDisplayOrientationOnStartProcessing == 270)
-		{
-			Matrix matrix = new Matrix();
-			matrix.postRotate(180);
-			PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(), matrix,
-					true);
-		} else if (mCameraMirrored && mDisplayOrientationOnStartProcessing == 90)
-		{
-			Matrix matrix = new Matrix();
-			matrix.postRotate(180);
-			PreviewBmp = Bitmap.createBitmap(PreviewBmp, 0, 0, PreviewBmp.getWidth(), PreviewBmp.getHeight(), matrix,
-					true);
-		}
-		return;
 	}
 
 	public void savePicture(Context context)
 	{
-		byte[] result = mSeamless.processingSaveData();
+		byte[] result = GroupShotCore.getInstance().processingSaveData();
 		if (result == null)
 		{
 			Log.e("GroupShot", "Exception occured in processingSaveData. Picture not saved.");
@@ -1005,10 +516,11 @@ public class GroupShotProcessingPlugin implements Handler.Callback, OnClickListe
 		PluginManager.getInstance().addToSharedMem("resultframe1" + sessionID, String.valueOf(frame));
 		PluginManager.getInstance().addToSharedMem("resultframelen1" + sessionID, String.valueOf(frame_len));
 
-		//Nexus 6 has a original front camera sensor orientation, we have to manage it
-		PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID,
-				String.valueOf(((CameraController.isFlippedSensorDevice() && mCameraMirrored)? 180 : 0)));
-		PluginManager.getInstance().addToSharedMem("resultframemirrored1" + sessionID, String.valueOf(mCameraMirrored));
+		// Nexus 6 has a original front camera sensor orientation, we have to
+		// manage it
+		//PluginManager.getInstance().addToSharedMem("resultframeorientation1" + sessionID,
+		//		String.valueOf(((CameraController.isFlippedSensorDevice() && mCameraMirrored) ? 180 : 0)));
+		//PluginManager.getInstance().addToSharedMem("resultframemirrored1" + sessionID, String.valueOf(mCameraMirrored));
 
 		PluginManager.getInstance().addToSharedMem("amountofresultframes" + sessionID, String.valueOf(1));
 		PluginManager.getInstance().addToSharedMem("sessionID", String.valueOf(sessionID));

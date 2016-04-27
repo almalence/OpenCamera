@@ -18,6 +18,8 @@
     <string name="Pref_Common_ShotOnTap_Title">Touch to shoot</string>
     <string name="Pref_Common_Antibanding_Title">Antibanding</string>
     <string name="Pref_Common_ShotOnTap_Summary">Focus and shoot by tap</string>
+    <string name="Pref_Common_ShotOnRelease_Title">Release shutter to shoot</string>
+    <string name="Pref_Common_ShotOnRelease_Summary">Enable shoot on release.</string>
     <string name="Pref_Common_UseCamera2_Title">Use Сamera2 interface</string>
     <string name="Pref_Common_UseCamera2_Summary">Experimental mode. Will work on limited number of devices with Android 5</string>    
     <string name="Pref_Common_MediaRescan_Title">Media rescan on exit</string>

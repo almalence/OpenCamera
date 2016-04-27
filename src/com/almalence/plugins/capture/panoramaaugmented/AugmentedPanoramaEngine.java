@@ -1312,34 +1312,43 @@ public class AugmentedPanoramaEngine implements Renderer, AugmentedRotationRecei
 								final int in_width = AugmentedPanoramaEngine.this.height;
 								final int in_height = AugmentedPanoramaEngine.this.width;
 								
-								if (CameraController.isFrontCamera())
+								boolean cameraMirrored = CameraController.isFrontCamera();
+								int sensorOrientation = CameraController.getSensorOrientation(cameraMirrored);
+								int flipLR = 0;
+								int flipUD = 0;
+								
+								//Values of flipLR and flipUD was get from tests of devices with different sensor orientation
+								//Right now it doesn't based on some sort of calculation.
+								switch(sensorOrientation)
 								{
-									if (CameraController.isFlippedSensorDevice())
-										ImageConversion.TransformNV21N(yuv_address,
-												yuv_address,
-												AugmentedPanoramaEngine.this.height,
-												AugmentedPanoramaEngine.this.width,
-												0, 1, 0);
-									else
-										ImageConversion.TransformNV21N(yuv_address,
-												yuv_address,
-												AugmentedPanoramaEngine.this.height,
-												AugmentedPanoramaEngine.this.width,
-												1, 0, 0);
-								}
-								else
-								{
-									//Workaround for Nexus5x, image is flipped because of sensor orientation
-									if(CameraController.isNexus5x)
+									case 90:
 									{
-										ImageConversion.TransformNV21N(yuv_address,
-												yuv_address,
-												AugmentedPanoramaEngine.this.height,
-												AugmentedPanoramaEngine.this.width,
-												1, 1, 0);
+										if(cameraMirrored)
+											flipUD = 1;
 									}
+										break;
+									case 270:
+									{
+										if(cameraMirrored)
+											flipLR = 1;
+										else
+										{
+											flipLR = 1;
+											flipUD = 1;
+										}
+									}
+										break;
 								}
-
+								
+								if(flipLR == 1 || flipUD == 1) //If any transform is need
+								{
+									ImageConversion.TransformNV21N(yuv_address,
+											yuv_address,
+											AugmentedPanoramaEngine.this.height,
+											AugmentedPanoramaEngine.this.width,
+											flipLR, flipUD, 0);
+								}
+								
 								ImageConversion.convertNV21toGLN(yuv_address,
 										AugmentedFrameTaken.this.rgba_buffer.array(),
 										in_width,

@@ -26,6 +26,12 @@
 	        android:defaultValue="true"
             android:key="@string/Preference_ShowFastSwitchShutterValue" />
 	    
+	    <CheckBoxPreference
+	        android:title="@string/Pref_SwipingEnabled"
+	        android:summary="@string/Pref_SwipingEnabled_Summary"
+	        android:defaultValue="true"
+            android:key="@string/Preference_SwipingEnabledChecked" />
+	    
 	    <PreferenceScreen 
             android:fragment="com.almalence.opencamunderground.Fragment" 
             android:title="@string/moreText" 

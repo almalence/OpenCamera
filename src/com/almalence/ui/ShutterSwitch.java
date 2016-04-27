@@ -20,14 +20,17 @@ package com.almalence.ui;
 
 /* <!-- +++
  import com.almalence.opencam_plus.R;
+ import com.almalence.opencam_plus.MainScreen;
  +++ --> */
 // <!-- -+-
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -47,6 +50,9 @@ public class ShutterSwitch extends View
 	public static final int				STATE_PHOTO_ACTIVE	= 0;
 	public static final int				STATE_VIDEO_ACTIVE	= 1;
 
+	//allows to shoot on shutter release
+	private int							INTERVAL_TO_SHOOT_ON_SHUTTER_RELEASE = 1000;
+	
 	private int							state				= STATE_VIDEO_ACTIVE;
 
 	private Drawable					mThumbDrawable;
@@ -149,6 +155,24 @@ public class ShutterSwitch extends View
 		refreshDrawableState();
 		
 		setState(STATE_PHOTO_ACTIVE);
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+		int interval = Integer.parseInt(prefs.getString(getResources().getString(R.string.Preference_ShotOnReleaseValue), "0"));
+		switch (interval)
+		{
+			case 1:
+				INTERVAL_TO_SHOOT_ON_SHUTTER_RELEASE = 999999;
+				break;
+			case 2:
+				INTERVAL_TO_SHOOT_ON_SHUTTER_RELEASE = 5000;
+				break;
+			case 3:
+				INTERVAL_TO_SHOOT_ON_SHUTTER_RELEASE = 15000;
+				break;
+			default:
+				INTERVAL_TO_SHOOT_ON_SHUTTER_RELEASE = 1000;
+		}
+		 
 	}
 
 	public void setState(int newState)
@@ -470,7 +494,7 @@ public class ShutterSwitch extends View
 				{
 					stopDrag(ev);
 					return true;
-				} else if (onShutterClickListener != null && !mThumbMoved && System.currentTimeMillis() - mTouchTimeStart < 1000)
+				} else if (onShutterClickListener != null && !mThumbMoved && System.currentTimeMillis() - mTouchTimeStart < INTERVAL_TO_SHOOT_ON_SHUTTER_RELEASE)
 				{
 					// if thumb not moved, and it wasn't longClick, the notify listener about onShutterClick().
 					onShutterClickListener.onShutterClick();
@@ -541,7 +565,7 @@ public class ShutterSwitch extends View
 			{
 				// else notify onClick listener if it wasn't longClick.
 				if (onShutterClickListener != null && !mThumbMoved
-						&& System.currentTimeMillis() - mTouchTimeStart < 1000)
+						&& System.currentTimeMillis() - mTouchTimeStart < INTERVAL_TO_SHOOT_ON_SHUTTER_RELEASE)
 				{
 					onShutterClickListener.onShutterClick();
 				}

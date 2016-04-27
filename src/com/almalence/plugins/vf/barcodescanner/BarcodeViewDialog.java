@@ -85,7 +85,7 @@ public class BarcodeViewDialog extends RotateDialog
 			barcodeImageView.setImageBitmap(myBitmap);
 		} else
 		{
-			barcodeImageView.setImageResource(R.drawable.gui_almalence_settings_scene_barcode_on);
+			barcodeImageView.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.gui_almalence_settings_scene_barcode_on));
 		}
 
 		int buttonCount = resultHandler.getButtonCount();

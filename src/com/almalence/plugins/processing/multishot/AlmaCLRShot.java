@@ -16,7 +16,7 @@ Portions created by Initial Developer are Copyright (C) 2013
 by Almalence Inc. All Rights Reserved.
  */
 
-package com.almalence.plugins.processing.objectremoval;
+package com.almalence.plugins.processing.multishot;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -37,12 +37,14 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.almalence.SwapHeap;
-import com.almalence.opencamunderground.ApplicationScreen;
 import com.almalence.util.Size;
+
 /* <!-- +++
 import com.almalence.opencam_plus.ApplicationScreen;
 +++ --> */
 //<!-- -+-
+import com.almalence.opencam.ApplicationScreen;
+//-+- -->
 
 public class AlmaCLRShot
 {
@@ -51,6 +53,9 @@ public class AlmaCLRShot
 
 	private int						IMAGE_TO_LAYOUT	= 8;
 	private static final int		MAX_INPUT_FRAME	= 8;
+	private static final int		MIN_INPUT_FRAME	= 1;
+	
+	private static final int    	MPIX_8 			= 7680000;
 
 	private List<byte[]>			mJpegData;
 	private int						mBaseFrameIndex;
@@ -167,7 +172,7 @@ public class AlmaCLRShot
 		mNumOfFrame = inputFrame.size();
 		mInputFrameSize = size;
 
-		if (mNumOfFrame > MAX_INPUT_FRAME)
+		if (mNumOfFrame < MIN_INPUT_FRAME && mNumOfFrame > MAX_INPUT_FRAME)
 		{
 			Log.d(TAG, "Number of Input Frame = " + mNumOfFrame);
 			throw new Exception("Too Many Input Frame");
@@ -181,7 +186,7 @@ public class AlmaCLRShot
 
 		long pixels = mInputFrameSize.getWidth() * mInputFrameSize.getHeight();
 
-		if (pixels >= 7680000)
+		if (pixels >= MPIX_8)
 		{
 			IMAGE_TO_LAYOUT = 16;
 		} else
@@ -217,14 +222,14 @@ public class AlmaCLRShot
 				throw new Exception("Out Of Memory");
 			} else if (error < mNumOfFrame)
 			{
-				Log.d(TAG, "JPEG buffer is wrong in " + error + " frame");
+				Log.d(TAG, "YUV data is wrong in " + error + " frame");
 				throw new Exception("Out Of Memory");
 			}
 		}
 		return;
 	}
 
-	public boolean initialize(Size previewSize, int angle, int baseFrame, int sensitivity, int minSize, int ghosting,
+	public boolean initialize(Size previewSize, int angle, int baseFrame, int sensitivity, int minSize, int ghosting, int[] sports_order, 
 			OnProcessingListener listener) throws Exception
 	{
 //		Log.d(TAG, "initialize() -- start");
@@ -235,6 +240,7 @@ public class AlmaCLRShot
 		mMinSize = minSize;
 		mOnProcessingListener = listener;
 		mAngle = angle;
+
 		mLayoutSize = new Size(mInputFrameSize.getWidth() / IMAGE_TO_LAYOUT, mInputFrameSize.getHeight()
 				/ IMAGE_TO_LAYOUT);
 
@@ -275,7 +281,7 @@ public class AlmaCLRShot
 
 		mAutoLayout[0] = -1;
 
-		removeProcessing(mAutoLayout);
+		removeProcessing(mAutoLayout, sports_order);
 		updateLayout();
 
 //		Log.d(TAG, "initialize() -- end");
@@ -405,8 +411,6 @@ public class AlmaCLRShot
 
 	public Bitmap getPreviewBitmap()
 	{
-//		Log.d(TAG, "getPreviewBitmap() -- start");
-
 		Bitmap bitmap = Bitmap.createBitmap(mPreviewSize.getWidth(), mPreviewSize.getHeight(), Config.ARGB_8888);
 
 		Rect rect = new Rect(0, 0, mInputFrameSize.getWidth(), mInputFrameSize.getHeight());
@@ -415,8 +419,10 @@ public class AlmaCLRShot
 				mPreviewSize.getHeight());
 		ARGBBuffer = null;
 
-//		Log.d(TAG, "getPreviewBitmap() -- end");
-		return rotateBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), mAngle);
+		if(mAngle == 0)
+			return bitmap;
+		else
+			return rotateBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), mAngle);
 	}
 
 	public int getTotalObjNum()
@@ -946,7 +952,7 @@ public class AlmaCLRShot
 			obj++;
 		}
 
-		removeProcessing(mManualLayout);
+		removeProcessing(mManualLayout, null);
 
 //		Log.d(TAG, "setObjectList() elapsed time = " + (System.currentTimeMillis() - start));
 //		Log.d(TAG, "setObjectList() -- end");
@@ -985,7 +991,7 @@ public class AlmaCLRShot
 			}
 		}
 
-		removeProcessing(mManualLayout);
+		removeProcessing(mManualLayout, null);
 
 //		Log.d(TAG, "setObject() elapsed time = " + (System.currentTimeMillis() - start));
 //		Log.d(TAG, "setObject() -- end");
@@ -1022,7 +1028,7 @@ public class AlmaCLRShot
 				}
 			}
 		}
-		removeProcessing(mManualLayout);
+		removeProcessing(mManualLayout, null);
 		return;
 	}
 
@@ -1096,7 +1102,7 @@ public class AlmaCLRShot
 
 		mAutoLayout[0] = -1;
 
-		removeProcessing(mAutoLayout);
+		removeProcessing(mAutoLayout, null);
 		updateLayout();
 
 		mObjInfo = null;
@@ -1158,7 +1164,6 @@ public class AlmaCLRShot
 
 	public void release()
 	{
-//		Log.d(TAG, "release() start");
 		synchronized (syncObject)
 		{
 			Release(mNumOfFrame);
@@ -1195,11 +1200,10 @@ public class AlmaCLRShot
 				e.printStackTrace();
 			}
 		}
-//		Log.d(TAG, "release() end");
 		return;
 	}
 
-	private synchronized void removeProcessing(byte[] layout)
+	private synchronized void removeProcessing(byte[] layout, int[] sports_order)
 	{
 		if (mOutNV21 != 0)
 		{
@@ -1207,12 +1211,8 @@ public class AlmaCLRShot
 			mOutNV21 = 0;
 		}
 
-		long start = System.currentTimeMillis();
 		mOutNV21 = MovObjProcess(mNumOfFrame, mInputFrameSize, mSensitivity, mMinSize, mBaseArea, mCrop, layout,
-				mGhosting, IMAGE_TO_LAYOUT);
-//		Log.d(TAG, "MovObjProcess() elapsed time = " + (System.currentTimeMillis() - start));
-//		Log.d(TAG, "mCrop[0] = " + mCrop[0] + " mCrop[1] = " + mCrop[1] + " mCrop[2] = " + mCrop[2] + " mCrop[3] = "
-//				+ mCrop[3]);
+				mGhosting, IMAGE_TO_LAYOUT, sports_order);
 
 		mBaseFrameIndex = mCrop[4];
 		return;
@@ -1300,8 +1300,10 @@ public class AlmaCLRShot
 
 	private static native int getInputFrame(int index);
 
-	private static native int MovObjProcess(int nFrames, Size size, int sensitivity, int minSize, int[] base_area,
-			int[] crop, byte[] layout, int ghosting, int ratio);
+//	private static native int MovObjProcess(int nFrames, Size size, int sensitivity, int minSize, int[] base_area,
+//			int[] crop, byte[] layout, int ghosting, int ratio);
+	private static native int MovObjProcess(int nFrames, Size size, int sensitivity, int minSize, int[] base_area, int[] crop, byte[] layout,
+			int ghosting, int ratio, int[] sports_order);
 
 	private static native int MovObjEnumerate(int nFrames, Size size, byte[] layout, byte[] enumObjects, int baseFrame);
 
@@ -1311,6 +1313,6 @@ public class AlmaCLRShot
 	{
 		System.loadLibrary("utils-image");
 		System.loadLibrary("almalib");
-		System.loadLibrary("almashot-clr");
+		System.loadLibrary("almashot-moving");
 	}
 }
