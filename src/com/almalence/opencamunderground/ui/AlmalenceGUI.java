@@ -1249,26 +1249,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			}
 		});
 
-		// <!-- -+-
-		RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
-		unlock.setOnClickListener(new OnClickListener()
-		{
-			public void onClick(View v)
-			{
-				if (guiView.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
-					return;
-
-				if (MainScreen.titleUnlockAll == null || MainScreen.titleUnlockAll.endsWith("check for sale"))
-				{
-					Toast.makeText(MainScreen.getMainContext(),
-							"Error connecting to Google Play. Check internet connection.", Toast.LENGTH_LONG).show();
-					return;
-				}
-				// start store
-				showStore();
-			}
-		});
-		// -+- -->
 	}
 
 	
@@ -1555,10 +1535,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		else
 			guiView.findViewById(R.id.hintLayout).setVisibility(View.VISIBLE);
 
-		// <!-- -+-
-		manageUnlockControl();
-		// -+- -->
-
 		// Create select mode button with appropriate icon
 		createMergedSelectModeButton();
 		
@@ -1666,29 +1642,12 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		collorEffectQuickSetting = new ColorEffectQuickSetting(MainScreen.getInstance());
 
 		store = new AlmalenceStore(guiView);
-		// <!-- -+-
-		manageUnlockControl();
-		// -+- -->
 
 		// Sony remote camera
 		sonyCameraDeviceExplorer = new SonyCameraDeviceExplorer(guiView);
 		// -- Sony remote camera
 	}
 
-	// <!-- -+-
-	private void manageUnlockControl()
-	{
-		// manage unlock control
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		if (prefs.getBoolean("unlock_all_forever", false))
-			store.HideUnlockControl();
-		else
-		{
-			store.ShowUnlockControl();
-		}
-	}
-
-	// -+- -->
 
 	private Map<Integer, View> initCameraParameterModeButtons(Map<Integer, Integer> icons_map,
 			Map<Integer, String> names_map, Map<Integer, View> paramMap, final int mode)
@@ -6858,11 +6817,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			MainScreen.getInstance().setLastPhotoModePref(mode.modeID);
 			lastPhotoModeView = v;
 		}
-
-		// <!-- -+-
-		if (!MainScreen.checkLaunches(tmpActiveMode))
-			return false;
-		// -+- -->
 
 		new CountDownTimer(100, 100)
 		{
