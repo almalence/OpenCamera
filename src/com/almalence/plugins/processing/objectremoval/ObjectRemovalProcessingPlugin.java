@@ -49,9 +49,6 @@ import com.almalence.opencamunderground.ApplicationScreen;
 import com.almalence.opencamunderground.PluginManager;
 import com.almalence.opencamunderground.R;
 import com.almalence.opencamunderground.cameracontroller.CameraController;
-import com.almalence.plugins.processing.objectremoval.AlmaCLRShot.ObjBorderInfo;
-import com.almalence.plugins.processing.objectremoval.AlmaCLRShot.ObjectInfo;
-import com.almalence.plugins.processing.objectremoval.AlmaCLRShot.OnProcessingListener;
 import com.almalence.util.Size;
 /* <!-- +++
  import com.almalence.opencam_plus.ApplicationInterface;
@@ -63,8 +60,10 @@ import com.almalence.util.Size;
  +++ --> */
 // <!-- -+-
 //-+- -->
-import com.almalence.plugins.processing.multishot.MultiShotProcessingPlugin;
 
+import com.almalence.plugins.processing.multishot.MultiShotProcessingPlugin;
+import com.almalence.plugins.processing.multishot.AlmaCLRShot.ObjBorderInfo;
+import com.almalence.plugins.processing.multishot.AlmaCLRShot.ObjectInfo;
 /***
  * Implements night processing
  ***/

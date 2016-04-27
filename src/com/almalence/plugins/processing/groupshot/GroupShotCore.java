@@ -51,9 +51,8 @@ import com.almalence.util.Util;
  import com.almalence.opencam_plus.cameracontroller.CameraController;
  +++ --> */
 //<!-- -+-
- import com.almalence.opencam.ApplicationScreen;
- import com.almalence.opencam.cameracontroller.CameraController;
-//-+- -->
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.cameracontroller.CameraController;
 
 public class GroupShotCore
 {

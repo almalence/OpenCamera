@@ -50,12 +50,12 @@ import com.almalence.util.ImageConversion;
  import com.almalence.opencam_plus.ApplicationInterface;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationInterface;
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginProcessing;
-import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.R;
+import com.almalence.opencamunderground.ApplicationInterface;
+import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.PluginManager;
+import com.almalence.opencamunderground.PluginProcessing;
+import com.almalence.opencamunderground.cameracontroller.CameraController;
+import com.almalence.opencamunderground.R;
 
 //-+- -->
 

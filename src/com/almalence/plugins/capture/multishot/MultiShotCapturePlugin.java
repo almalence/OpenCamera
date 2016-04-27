@@ -29,6 +29,7 @@ import android.widget.TextView;
 
 import com.almalence.opencamunderground.ApplicationInterface;
 import com.almalence.opencamunderground.ApplicationScreen;
+import com.almalence.opencamunderground.CameraParameters;
 import com.almalence.opencamunderground.PluginCapture;
 import com.almalence.opencamunderground.PluginManager;
 import com.almalence.opencamunderground.R;
@@ -43,6 +44,7 @@ import com.almalence.opencam_plus.ui.GUI.CameraParameter;
 import com.almalence.opencam_plus.CameraParameters;
 import com.almalence.opencam_plus.R;
 +++ --> */
+import com.almalence.opencamunderground.ui.GUI.CameraParameter;
 
 /***
  * Implements group shot capture plugin - captures predefined number of images
