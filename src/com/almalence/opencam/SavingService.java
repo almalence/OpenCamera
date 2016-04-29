@@ -372,8 +372,8 @@ public class SavingService extends NotificationService
 //				sensorOrientation = (360 + sensorOrientation + (cameraMirrored ? -displayOrientation
 //						: displayOrientation)) % 360;
 
-				if (CameraController.isFlippedSensorDevice() && cameraMirrored)
-					orientation = (orientation + 180) % 360;
+//				if (CameraController.isFlippedSensorDevice() && cameraMirrored)
+//					orientation = (orientation + 180) % 360;
 
 				switch (orientation)
 				{
@@ -731,9 +731,6 @@ public class SavingService extends NotificationService
 //				// the image upright relative to the device orientation
 //				orientation = (sensorOrientation + displayOrientation + 360) % 360;
 				
-				if (CameraController.isFlippedSensorDevice() && cameraMirrored)
-					orientation = (orientation + 180) % 360;
-
 				switch (orientation)
 				{
 				default:
@@ -761,15 +758,13 @@ public class SavingService extends NotificationService
 						exif_orientation = ExifInterface.ORIENTATION_NORMAL;
 						break;
 					case 90:
-						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
-								: ExifInterface.ORIENTATION_ROTATE_90;
+						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
 						break;
 					case 180:
 						exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
 						break;
 					case 270:
-						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
-								: ExifInterface.ORIENTATION_ROTATE_270;
+						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90	: ExifInterface.ORIENTATION_ROTATE_270;
 						break;
 					}
 				} else
@@ -781,15 +776,13 @@ public class SavingService extends NotificationService
 						exif_orientation = ExifInterface.ORIENTATION_NORMAL;
 						break;
 					case 90:
-						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270
-								: ExifInterface.ORIENTATION_ROTATE_90;
+						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_270 : ExifInterface.ORIENTATION_ROTATE_90;
 						break;
 					case 180:
 						exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
 						break;
 					case 270:
-						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90
-								: ExifInterface.ORIENTATION_ROTATE_270;
+						exif_orientation = cameraMirrored ? ExifInterface.ORIENTATION_ROTATE_90 : ExifInterface.ORIENTATION_ROTATE_270;
 						break;
 					}
 				}

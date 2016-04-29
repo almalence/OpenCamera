@@ -423,7 +423,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 				mSaveButton.invalidate();
 				mSaveAllButton.setRotation(mLayoutOrientationCurrent);
 				mSaveAllButton.invalidate();
-				Show(false);
 			}
 		}
 	}
@@ -442,29 +441,6 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 		Bitmap photo = mini_frames[idx];
 		if (photo != null)
 		{
-			if (initial)
-			{
-				if (mDisplayOrientationCurrent == 0 || mDisplayOrientationCurrent == 180) // Device
-																							// in
-																							// landscape
-				{
-					Matrix matrix = new Matrix();
-
-					matrix.postRotate(90);
-					photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
-				}
-			} else
-			{
-				boolean isGuffyOrientation = mDisplayOrientationOnStartProcessing == 180
-						|| mDisplayOrientationOnStartProcessing == 270;
-
-				Matrix matrix = new Matrix();
-
-				matrix.postRotate(isGuffyOrientation ? (mLayoutOrientationCurrent + 180) % 360
-						: mLayoutOrientationCurrent);
-				photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
-			}
-
 			((ImageView) postProcessingView.findViewById(R.id.imageHolder)).setImageBitmap(photo);
 			String txt = idx + 1 + " of " + imgCnt;
 			((TextView) postProcessingView.findViewById(R.id.preshot_image_counter)).setText(txt);
@@ -547,7 +523,7 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 	{
 		if (!isSlowMode)
 		{
-			int[] data = PreShot.GetFromBufferRGBA(index, false, false);
+			int[] data = PreShot.GetFromBufferRGBA(index, true, false);
 
 			if (data.length == 0)
 			{
@@ -555,31 +531,18 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 			}
 
 			int H = ApplicationScreen.getPreviewHeight(), W = ApplicationScreen.getPreviewWidth();
-			int or = PreShot.getOrientation(index);
-			if (90 == PreShot.getOrientation(index) || 270 == PreShot.getOrientation(index))
-			{
-				H = ApplicationScreen.getPreviewWidth();
-				W = ApplicationScreen.getPreviewHeight();
-			}
 
 			Bitmap bitmap;
 			bitmap = Bitmap.createBitmap(W, H, Bitmap.Config.ARGB_8888);
 			bitmap.setPixels(data, 0, W, 0, 0, W, H);
 			bitmap = Bitmap.createScaledBitmap(bitmap, W / 2, H / 2, false);
 
-			if (mCameraMirrored && (90 == PreShot.getOrientation(index) || 270 == PreShot.getOrientation(index)))
-			{
-				Matrix matrix = new Matrix();
-				matrix.postRotate(180);
-				bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-			}
-
-			if ((CameraController.isFlippedSensorDevice() && mCameraMirrored) || (CameraController.isNexus5x && !mCameraMirrored))
-			{	
-				Matrix matrix = new Matrix();
-				matrix.postRotate(180);
-				bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-			}
+			int orient = PreShot.getOrientation(index);
+			int layoutOrient = ApplicationScreen.getGUIManager().getLayoutOrientation();
+			int rotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(orient, layoutOrient, mCameraMirrored);
+			Matrix matrix = new Matrix();
+			matrix.postRotate(rotation);
+			bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 			
 			return bitmap;
 		} else
@@ -598,19 +561,12 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 			photo = BitmapFactory.decodeByteArray(data, 0, data.length);
 			photo = Bitmap.createScaledBitmap(photo, W, H, false);
 
-			if (90 == PreShot.getOrientation(index) || 270 == PreShot.getOrientation(index))
-			{
-				Matrix matrix = new Matrix();
-				matrix.postRotate(mCameraMirrored ? 270 : 90);
-				photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
-			}
-
-			if ((CameraController.isFlippedSensorDevice() && mCameraMirrored) || (CameraController.isNexus5x && !mCameraMirrored))
-			{	
-				Matrix matrix = new Matrix();
-				matrix.postRotate(180);
-				photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
-			}
+			int orient = PreShot.getOrientation(index);
+			int layoutOrient = ApplicationScreen.getGUIManager().getLayoutOrientation();
+			int rotation = ApplicationScreen.getGUIManager().getMatrixRotationForBitmap(orient, layoutOrient, mCameraMirrored);
+			Matrix matrix = new Matrix();
+			matrix.postRotate(rotation);
+			photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
 			return photo;
 		}
 	}
@@ -820,26 +776,13 @@ public class PreshotProcessingPlugin extends PluginProcessing implements OnTouch
 					int new_idx = isGuffyOrientation ? idx - 1 : idx + 1;
 					photo = mini_frames[new_idx];
 					if (photo != null)
-					{
-						Matrix matrix = new Matrix();
-						matrix.postRotate(isGuffyOrientation ? (mLayoutOrientationCurrent + 180) % 360
-								: mLayoutOrientationCurrent);
-						photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
 						((ImageView) postProcessingView.findViewById(R.id.imageListed)).setImageBitmap(photo);
-					}
 				} else if (difX > X && Xprev <= X)
 				{
 					int new_idx = isGuffyOrientation ? idx + 1 : idx - 1;
 					photo = mini_frames[new_idx];
 					if (photo != null)
-					{
-						Matrix matrix = new Matrix();
-
-						matrix.postRotate(isGuffyOrientation ? (mLayoutOrientationCurrent + 180) % 360
-								: mLayoutOrientationCurrent);
-						photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
 						((ImageView) postProcessingView.findViewById(R.id.imageListed)).setImageBitmap(photo);
-					}
 				}
 
 				if ((toLeft && difX < X) || (!toLeft && difX > X))

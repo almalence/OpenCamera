@@ -240,7 +240,7 @@ public class AlmalenceStore
 			{
 			case 0:
 				// unlock all
-				icon.setImageResource(R.drawable.store_all);
+				icon.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.store_all));
 				description.setText(MainScreen.getAppResources()
 						.getString(R.string.Pref_Upgrde_All_Preference_Title));
 
@@ -297,7 +297,7 @@ public class AlmalenceStore
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
 		boolean bOnSale = prefs.getBoolean("bOnSale", false);
 		final RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
-		unlock.setImageResource(bOnSale ? R.drawable.unlock_sale : R.drawable.unlock);
+		unlock.setImageDrawable(MainScreen.getAppResources().getDrawable(bOnSale ? R.drawable.unlock_sale : R.drawable.unlock));
 		unlock.setAlpha(1.0f);
 		unlock.setVisibility(View.VISIBLE);
 
@@ -311,7 +311,7 @@ public class AlmalenceStore
 			public void onAnimationEnd(Animation animation)
 			{
 				unlock.clearAnimation();
-				unlock.setImageResource(R.drawable.unlock_gray);
+				unlock.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.unlock_gray));
 				unlock.setAlpha(0.4f);
 			}
 
@@ -334,7 +334,7 @@ public class AlmalenceStore
 		final RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
 		if (unlock.getVisibility() == View.VISIBLE)
 			return;
-		unlock.setImageResource(R.drawable.unlock_gray);
+		unlock.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.unlock_gray));
 		unlock.setAlpha(0.4f);
 		unlock.setVisibility(View.VISIBLE);
 	}

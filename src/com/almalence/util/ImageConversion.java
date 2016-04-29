@@ -129,6 +129,7 @@ public class ImageConversion
 		return bitmap;
 	}
 
+	// Convert YUV to Bitmap. Width and height of bitmap are as close as possible to screen size.
 	public static Bitmap decodeYUVfromBuffer(int yuv, int width, int height)
 	{
 		Size mInputFrameSize = new Size(width, height);

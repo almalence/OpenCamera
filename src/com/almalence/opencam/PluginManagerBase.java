@@ -305,6 +305,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 	protected boolean	isRestart					= false;
 	protected boolean	switchToOldCameraInterface	= false;
 
+	//indicate is restart of camera needed on mode switch
 	public void setSwitchModeType(boolean restart)
 	{
 		isRestart = restart;
@@ -343,9 +344,6 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			activeVF.add(mode.VF.get(i));
 		activeCapture = mode.Capture;
 		activeProcessing = mode.Processing;
-		// activeFilter.clear();
-		// for (int i = 0; i < mode.Filter.size(); i++)
-		// activeFilter.add(mode.Filter.get(i));
 		activeExport = mode.Export;
 
 		// set mode as default for future starts

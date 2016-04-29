@@ -189,6 +189,8 @@ public class MainScreen extends ApplicationScreen
 	public static String		sPhotoTimeLapseIsRunningPref;
 	public static String		sPhotoTimeLapseCount;
 
+	public static String		sSwipingEnabledPref;
+	
 	private static String		sShutterPref;
 	private static String		sShotOnTapPref;
 	private static String		sVolumeButtonPref;
@@ -277,6 +279,8 @@ public class MainScreen extends ApplicationScreen
 		sPhotoTimeLapseIsRunningPref = getResources().getString(R.string.Preference_PhotoTimeLapseIsRunning);
 		sPhotoTimeLapseCount = getResources().getString(R.string.Preference_PhotoTimeLapseCount);
 
+		sSwipingEnabledPref = getResources().getString(R.string.Preference_SwipingEnabledChecked);
+		
 		sShutterPref = getResources().getString(R.string.Preference_ShutterCommonValue);
 		sSonyCamerasPref = getResources().getString(R.string.Preference_ConnectToSonyCameras);
 		sShotOnTapPref = getResources().getString(R.string.Preference_ShotOnTapValue);
@@ -424,6 +428,12 @@ public class MainScreen extends ApplicationScreen
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         
+ 		if (isABCUnlockedInstalled(this))
+ 		{
+ 			unlockAllPurchased = true;
+ 			prefs.edit().putBoolean("unlock_all_forever", true).commit();
+ 		}
+ 		
 		isCameraConfiguring = false;
 
 		mWifiHandler.register();
@@ -479,16 +489,8 @@ public class MainScreen extends ApplicationScreen
 							WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
 									| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 		}
-
-		// <!-- -+-
-		if (isABCUnlockedInstalled(this))
-		{
-			unlockAllPurchased = true;
-			prefs.edit().putBoolean("unlock_all_forever", true).commit();
-		}
-		// -+- -->
 	}
-	
+
 	protected void onResumeCamera()
 	{
 		SharedPreferences prefs = PreferenceManager
@@ -544,8 +546,8 @@ public class MainScreen extends ApplicationScreen
 					Log.d("GL", "glView onResume");
 				}
 			} else if ((surfaceCreated && (!CameraController.isCameraCreated())) ||
-			// this is for change mode without camera restart!
-					(surfaceCreated && MainScreen.getInstance().getSwitchingMode()))
+					   // this is for change mode without camera restart!
+					   (surfaceCreated && MainScreen.getInstance().getSwitchingMode()))
 			{
 				CameraController.setupCamera(surfaceHolder, !switchingMode || openCamera);
 
@@ -752,8 +754,6 @@ public class MainScreen extends ApplicationScreen
 								CameraController.setupCamera(holder, !switchingMode);
 							} else
 							{
-								Log.e("MainScreen",
-										"surfaceChanged: sendEmptyMessage(ApplicationInterface.MSG_SURFACE_READY)");
 								messageHandler.sendEmptyMessage(ApplicationInterface.MSG_SURFACE_READY);
 							}
 						}
@@ -1370,7 +1370,7 @@ public class MainScreen extends ApplicationScreen
 			onCameraConfigured();
 		}
 
-		Log.e("MainScreen", "createGUI is " + createGUI);
+//		Log.e("MainScreen", "createGUI is " + createGUI);
 		if (createGUI)
 		{
 			MainScreen.getGUIManager().onGUICreate();
@@ -1381,7 +1381,7 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	public void surfaceCreated(SurfaceHolder holder)
 	{
-		Log.e("MainScreen", "SURFACE CREATED");
+//		Log.e("MainScreen", "SURFACE CREATED");
 		// ----- Find 'normal' orientation of the device
 
 		Display display = ((WindowManager) this.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
@@ -1914,6 +1914,7 @@ public class MainScreen extends ApplicationScreen
 		if (mode.SKU.isEmpty())
 		{
 			int launchesLeft = MainScreen.getLeftLaunches(mode.modeID);
+//			launchesLeft = 100; //Using for testing free version
 
 			if ((1 == launchesLeft) || (3 == launchesLeft))
 			{
@@ -1926,6 +1927,7 @@ public class MainScreen extends ApplicationScreen
 
 
 		int launchesLeft = MainScreen.getLeftLaunches(mode.modeID);
+//		launchesLeft = 100; //Using for testing free version
 		int id = MainScreen.getAppResources().getIdentifier(
 				(CameraController.isUseCamera2() ? mode.modeNameHAL : mode.modeName), "string",
 				MainScreen.thiz.getPackageName());
@@ -1956,7 +1958,7 @@ public class MainScreen extends ApplicationScreen
 		}
 		return true;
 	}
-	
+
 	// -+- -->
 
 	/************************ Billing ************************/

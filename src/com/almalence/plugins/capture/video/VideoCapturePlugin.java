@@ -385,6 +385,7 @@ public class VideoCapturePlugin extends PluginCapture
 	{
 		ApplicationScreen.instance.checkMicrophonePermission();
 		getPrefs();
+		PluginManager.getInstance().setSwitchModeType(true);
 	}
 
 	@Override
@@ -1074,18 +1075,10 @@ public class VideoCapturePlugin extends PluginCapture
 			mMediaRecorder.setPreviewDisplay(ApplicationScreen.getPreviewSurfaceHolder().getSurface());
 		}
 
-		if (CameraController.isFlippedSensorDevice() && CameraController.isFrontCamera())
-		{
-			mMediaRecorder.setOrientationHint(ApplicationScreen.getWantLandscapePhoto() ? (ApplicationScreen
-					.getGUIManager().getImageDataOrientation() + 180) % 360 : (ApplicationScreen.getGUIManager()
-					.getImageDataOrientation()) % 360);
-		} else
-		{
-			mMediaRecorder.setOrientationHint(CameraController.isFrontCamera() ? (ApplicationScreen
-					.getWantLandscapePhoto() ? ApplicationScreen.getGUIManager().getImageDataOrientation()
-					: (ApplicationScreen.getGUIManager().getImageDataOrientation() + 180) % 360) : ApplicationScreen
-					.getGUIManager().getImageDataOrientation());
-		}
+		mMediaRecorder.setOrientationHint(CameraController.isFrontCamera() ? (ApplicationScreen
+				.getWantLandscapePhoto() ? ApplicationScreen.getGUIManager().getImageDataOrientation()
+				: (ApplicationScreen.getGUIManager().getImageDataOrientation() + 180) % 360) : ApplicationScreen
+				.getGUIManager().getImageDataOrientation());
 
 		// Step 6: Prepare configured MediaRecorder
 		try
@@ -1882,7 +1875,7 @@ public class VideoCapturePlugin extends PluginCapture
 
 		// change shutter icon
 		pauseVideoButton.setVisibility(View.VISIBLE);
-		pauseVideoButton.setImageResource(R.drawable.plugin_capture_video_pause);
+		pauseVideoButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_pause));
 
 		ApplicationScreen.instance.setKeepScreenOn(true);
 	}
@@ -2109,7 +2102,7 @@ public class VideoCapturePlugin extends PluginCapture
 			if (!onPause)
 			{
 				mRecordingTimeView.setText("");
-				pauseVideoButton.setImageResource(R.drawable.plugin_capture_video_pause);
+				pauseVideoButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_pause));
 				pauseBlink = true;
 			}
 			mRecordingTimeView.setVisibility(View.VISIBLE);
@@ -2141,11 +2134,11 @@ public class VideoCapturePlugin extends PluginCapture
 
 		if (pauseBlink)
 		{
-			pauseVideoButton.setImageResource(R.drawable.plugin_capture_video_pause_transparent);
+			pauseVideoButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_pause_transparent));
 			pauseBlink = false;
 		} else
 		{
-			pauseVideoButton.setImageResource(R.drawable.plugin_capture_video_pause);
+			pauseVideoButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_pause));
 			pauseBlink = true;
 		}
 	}
@@ -2218,11 +2211,11 @@ public class VideoCapturePlugin extends PluginCapture
 		// show recording shutter
 		if (showRecording)
 		{
-			stopVideoButton.setImageResource(R.drawable.plugin_capture_video_stop_square);
+			stopVideoButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_stop_square));
 			showRecording = false;
 		} else
 		{
-			stopVideoButton.setImageResource(R.drawable.plugin_capture_video_stop_square_red);
+			stopVideoButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_stop_square_red));
 			showRecording = true;
 		}
 	}
@@ -2374,12 +2367,12 @@ public class VideoCapturePlugin extends PluginCapture
 			onPause = false;
 			showRecordingUI(isRecording);
 
-			pauseVideoButton.setImageResource(R.drawable.plugin_capture_video_pause);
+			pauseVideoButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_pause));
 		} else
 		{
 			onPause = true;
-			stopVideoButton.setImageResource(R.drawable.plugin_capture_video_stop_square);
-			pauseVideoButton.setImageResource(R.drawable.plugin_capture_video_pause_transparent);
+			stopVideoButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_stop_square));
+			pauseVideoButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_pause_transparent));
 			Toast.makeText(ApplicationScreen.instance, ApplicationScreen.instance.getString(R.string.video_paused),
 					Toast.LENGTH_SHORT).show();
 		}
@@ -2473,8 +2466,8 @@ public class VideoCapturePlugin extends PluginCapture
 
 			lockPauseButton = false;
 
-			stopVideoButton.setImageResource(R.drawable.plugin_capture_video_stop_square);
-			pauseVideoButton.setImageResource(R.drawable.plugin_capture_video_pause_transparent);
+			stopVideoButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_stop_square));
+			pauseVideoButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_pause_transparent));
 		} catch (RuntimeException e)
 		{
 			// Note that a RuntimeException is intentionally thrown to the
@@ -2724,12 +2717,12 @@ public class VideoCapturePlugin extends PluginCapture
 					editor.putString("timelapseInterval", String.valueOf(interval));
 					editor.commit();
 
-					timeLapseButton.setImageResource(R.drawable.plugin_capture_video_timelapse_active);
+					timeLapseButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_timelapse_active));
 
 					ApplicationScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START);
 				} else
 				{
-					timeLapseButton.setImageResource(R.drawable.plugin_capture_video_timelapse_inactive);
+					timeLapseButton.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.plugin_capture_video_timelapse_inactive));
 					ApplicationScreen.getGUIManager().setShutterIcon(ShutterButton.RECORDER_START);
 				}
 

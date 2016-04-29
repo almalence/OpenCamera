@@ -54,67 +54,6 @@ static int almashot_inited = 0;
 static Uint8 *OutPic = NULL;
 
 
-#define CSC_Y(R,G,B)		((77*(R)+150*(G)+29*(B)) >> 8 )
-#define CSC_U(R,G,B)		(((-43*(R)-85*(G)+128*(B)) >> 8) +128)
-#define CSC_V(R,G,B)		(((128*(R)-107*(G)-21*(B)) >> 8) +128)
-
-#define BMP_R(p)	((p) & 0xFF)
-#define BMP_G(p)	(((p)>>8) & 0xFF)
-#define BMP_B(p)	(((p)>>16)& 0xFF)
-
-#define CLIP(x) (((x) < 0) ? 0 : (((x) > 255) ? 255 : (x)))
-
-void NV21toARGB(
-		unsigned char *pY,
-		int width,
-		int height,
-		int x0,
-		int y0,
-		int wCrop,
-		int hCrop,
-		int outWidth,
-		int outHeight,
-		unsigned char *buffer)
-{
-    unsigned char *pUV = pY + width * height + (x0&~1) + (y0/2)*width;
-    pY += x0+y0*width;
-
-    int i, j, is, js;
-    unsigned char *out = buffer;
-    int offset = 0;
-    const float scaleWidth = wCrop / outWidth;
-    const float scaleHeight = hCrop / outHeight;
-
-    int R, G, B;
-    int Y, U, V;
-
-    for (i = 0; i < outHeight; i++)
-    {
-    	offset = i * outWidth * 4;
-
-        is = i * hCrop / outHeight;
-
-        for (j = 0; j < outWidth; j++)
-        {
-            js = j * wCrop / outWidth;
-
-            Y = *(pY + is * width + js);
-            U = *(pUV + (is / 2) * width + 2*(js / 2));
-            V = *(pUV + (is / 2) * width + 2*(js / 2) + 1);
-
-            R = CLIP((128*(Y)+176*((V)-128)) >> 7 );
-			B = CLIP((128*(Y)+222*((U)-128)) >> 7 );
-			G = CLIP((128*(Y)-89*((V)-128)-43*((U)-128)) >> 7 );
-
-            out[offset++] = (unsigned char) R;
-            out[offset++] = (unsigned char) G;
-            out[offset++] = (unsigned char) B;
-            out[offset++] = 255;
-        }
-    }
-}
-
-
 extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_sequence_AlmaCLRShot_Initialize
 (
 	JNIEnv* env,
@@ -175,47 +114,10 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_sequence
 	jint sy
 )
 {
-	int i;
 	int *jpeg_length;
 	unsigned char * *jpeg;
-	char status[1024];
-	int isFoundinInput = MAX_MOV_FRAMES;
+	int isFoundinInput;
 
-	int x, y;
-	int x0_out, y0_out, w_out, h_out;
-/*
-	// pre-allocate uncompressed yuv buffers
-	for (i=0; i<nFrames; ++i)
-	{
-		inputFrame[i] = (unsigned char*)malloc(sx*sy+2*((sx+1)/2)*((sy+1)/2));
-		if (inputFrame[i]==NULL)
-		{
-			for (;i>=0;--i)
-			{
-				free(inputFrame[i]);
-				inputFrame[i] = NULL;
-			}
-			LOGD("not enough memory");
-			return -1;
-		}
-	}
-
-	jpeg = (unsigned char**)env->GetIntArrayElements(in, NULL);
-	jpeg_length = (int*)env->GetIntArrayElements(in_len, NULL);
-
-	#pragma omp parallel for num_threads(10)
-	for (i=0; i<nFrames; ++i)
-	{
-		// decode from jpeg
-		if(decodeFromJpeg(jpeg[i], jpeg_length[i], i, sx, sy) == 0)
-		{
-			isFoundinInput = i;
-			LOGD("JPEG buffer error found in %d frame\n", (int)i);
-		}
-		// release compressed memory
-		free (jpeg[i]);
-	}
-*/
 	jpeg = (unsigned char**)env->GetIntArrayElements(in, NULL);
 	jpeg_length = (int*)env->GetIntArrayElements(in_len, NULL);
 
@@ -228,7 +130,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_sequence
 }
 
 
-extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_sequence_AlmaCLRShot_addYUVFrames
+extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_sequence_AlmaCLRShot_addYUVInputFrames
 (
 	JNIEnv* env,
 	jobject thiz,
@@ -240,43 +142,16 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_sequence
 )
 {
 	int i;
-//	int *yuv_length;
 	unsigned char * *yuv;
 	char status[1024];
 	int isFoundinInput = 255;
 
-//	int x, y;
-//	int x0_out, y0_out, w_out, h_out;
-
 	yuv = (unsigned char**)env->GetIntArrayElements(in, NULL);
-//	yuv_length = (int*)env->GetIntArrayElements(in_len, NULL);
-
-	// pre-allocate uncompressed yuv buffers
-//	for (i=0; i<nFrames; ++i)
-//	{
-//		inputFrame[i] = (unsigned char*)malloc(sx*sy+2*((sx+1)/2)*((sy+1)/2));
-//
-//		if (inputFrame[i]==NULL)
-//		{
-//			isFoundinInput = i;
-//			i--;
-//			for (;i>=0;--i)
-//			{
-//				free(inputFrame[i]);
-//				inputFrame[i] = NULL;
-//			}
-//			break;
-//		}
-//
-//		memcpy(inputFrame[i], yuv[i], yuv_length[i]);
-//	}
 
 	for (i=0; i<nFrames; ++i)
 		inputFrame[i] = yuv[i];
 
-
 	env->ReleaseIntArrayElements(in, (jint*)yuv, JNI_ABORT);
-//	env->ReleaseIntArrayElements(in_len, (jint*)yuv_length, JNI_ABORT);
 
 	LOGD("frames total: %d\n", (int)nFrames);
 	return isFoundinInput;
@@ -293,7 +168,7 @@ extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_plugins_processing_seq
 	jobject dstSize
 )
 {
-	LOGD("NV21toARGB - start");
+	LOGE("NV21toARGB - start");
 
 	Uint32 * pixels;
 	jintArray jpixels = NULL;
@@ -328,13 +203,23 @@ extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_plugins_processing_seq
 	LOGD("Memory alloc size = %d * %d", dstW, dstH);
 	pixels = (Uint32 *)env->GetIntArrayElements(jpixels, NULL);
 
-	NV21toARGB((Uint8 *)inptr, srcW, srcH, left, top, right - left, bottom - top, dstW, dstH, (Uint8 *)pixels);
+	NV21_to_RGB_scaled((Uint8 *)inptr, srcW, srcH, left, top, right - left, bottom - top, dstW, dstH, 4, (Uint8 *)pixels);
 
 	env->ReleaseIntArrayElements(jpixels, (jint*)pixels, 0);
 
-	LOGD("NV21toARGB - end");
+	LOGE("NV21toARGB - end");
 
 	return jpixels;
+}
+
+extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_objectremoval_AlmaCLRShot_getInputFrame
+(
+	JNIEnv* env,
+	jobject thiz,
+	jint index
+)
+{
+	return (jint)inputFrame[index];
 }
 
 
@@ -346,20 +231,22 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_sequence
 	jobject size,
 	jint sensitivity,
 	jint minSize,
+	jintArray jbase_area,
 	jintArray jcrop,
+	jbyteArray jlayout,
 	jint ghosting,
 	jint ratio,
 	jintArray jsports_order
 )
 {
 	Uint8 *layout;
+	int *base_area;
 	int *crop;
 	int x,y;
 	int tmp;
 	int *sports_mode_order;
-	int base_area[4];
 
-	LOGD("MovObjProcess - start");
+	LOGE("MovObjProcess - start");
 
 	jclass src_size = env->GetObjectClass(size);
 	jfieldID id_srcW = env->GetFieldID(src_size, "width", "I");
@@ -370,30 +257,141 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_sequence
 	OutPic = (Uint8 *)malloc(sx*sy+2*((sx+1)/2)*((sy+1)/2));
 
 	crop = (int*)env->GetIntArrayElements(jcrop, NULL);
-	sports_mode_order = (int*)env->GetIntArrayElements(jsports_order, NULL);
 
 	int use_sports_mode = 1;
 	int fastmode = 0;
+	if(jsports_order != NULL)
+		sports_mode_order = (int*)env->GetIntArrayElements(jsports_order, NULL);
+	else
+	{
+		sports_mode_order = NULL;
+		use_sports_mode = 0;
+	}
 
-	layout = (Uint8 *) malloc ((sx/ratio)*(sy/ratio)*sizeof(Uint8));
-	memset (layout, -1, (sx/ratio)*(sy/ratio)*sizeof(Uint8));
 
-	MovObj_Process(&instance, inputFrame, OutPic, layout, NULL, 256, sx, sy, nFrames,
-			sensitivity, minSize,	// sensitivity and min size of moving object
-			5, ghosting,//ghosting,
-			0, // 1, // extraBorder
-			use_sports_mode, sports_mode_order,
-			0, 0, 2,	// 2 = keep aspect ratio in output
-			&base_area[0], &base_area[1], &base_area[2], &base_area[3],
-			&crop[0], &crop[1], &crop[2], &crop[3],
-			0, ratio == 16 ? 1:0, 0);
+	if(jlayout != NULL)
+		layout = (Uint8 *)env->GetByteArrayElements(jlayout, NULL);
+	else
+	{
+		layout = (Uint8 *) malloc ((sx/ratio)*(sy/ratio)*sizeof(Uint8));
+		memset (layout, -1, (sx/ratio)*(sy/ratio)*sizeof(Uint8));
+	}
 
-	free(layout);
+	if(jbase_area != NULL)
+		base_area = (int*)env->GetIntArrayElements(jbase_area, NULL);
+	else
+	{
+		base_area = (int *) malloc(4*sizeof(int));
+		memset(base_area, 0, 4*sizeof(int));
+	}
 
-	env->ReleaseIntArrayElements(jcrop, (jint*)crop, 0);
-	env->ReleaseIntArrayElements(jsports_order, (jint*)sports_mode_order, JNI_ABORT);
+	MovObj_Process(&instance, inputFrame, OutPic,
+					layout, NULL, // used in manual removal mode
+					256, // gain (sensor specific, might need adjustment)
+					sx, sy, nFrames,
+					sensitivity, // sensitivity
+					minSize,	// smallest detectable object size
+					5, // do not detect weak objects (with little movement or low contrast)
+					ghosting,// prevent ghosting
+					0, // no extra border around detected object
+					use_sports_mode, sports_mode_order, // sports-mode parameters
+					0, // default maximum displacement between input frames
+					0, // do not use post-filter
+					2,	// re-scale output (2 = keep aspect ratio)
+					&base_area[0], &base_area[1], &base_area[2], &base_area[3], // area covered in base frame by Layout
+					&crop[0], &crop[1], &crop[2], &crop[3], &crop[4],
+					ratio == 16 ? 1:0, // use fast mode (recommended for sensors >= 8Mpix)
+					0);
 
-	LOGD("MovObjProcess - end");
+	if(jlayout != NULL)
+	{
+		env->ReleaseByteArrayElements(jlayout, (jbyte*)layout, JNI_COMMIT);
+	}
+	else
+		free(layout);
+
+	if(jbase_area != NULL)
+		env->ReleaseIntArrayElements(jbase_area, (jint*)base_area, JNI_COMMIT);
+	else
+		free(base_area);
+
+	env->ReleaseIntArrayElements(jcrop, (jint*)crop, JNI_COMMIT);
+
+	if(jsports_order != NULL)
+		env->ReleaseIntArrayElements(jsports_order, (jint*)sports_mode_order, JNI_ABORT);
+
+	LOGE("MovObjProcess - end");
 
 	return (jint)OutPic;
 }
+
+extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_sequence_AlmaCLRShot_MovObjFixHoles
+(
+	JNIEnv* env,
+	jobject thiz,
+	jobject size,
+	jbyteArray jenumer,
+	jint baseFrame
+)
+{
+	Uint8 *layout, *enumer;
+	int totalObj = 0;
+
+	LOGD("MovObjFixHoles - start");
+
+	jclass src_size = env->GetObjectClass(size);
+	jfieldID id_w = env->GetFieldID(src_size, "width", "I");
+	jint sx = env->GetIntField(size,id_w);
+	jfieldID id_h = env->GetFieldID(src_size, "height", "I");
+	jint sy = env->GetIntField(size,id_h);
+
+	LOGD("sx = %d sy = %d", sx, sy);
+
+	enumer = (Uint8 *)env->GetByteArrayElements(jenumer, NULL);
+
+	MovObj_FixHoles(enumer, sx, sy, baseFrame);
+
+	env->ReleaseByteArrayElements(jenumer, (jbyte*)enumer, JNI_COMMIT);
+
+	LOGD("MovObjFixHoles - end");
+
+	return 0;
+}
+
+extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_sequence_AlmaCLRShot_MovObjEnumerate
+(
+	JNIEnv* env,
+	jobject thiz,
+	jint nFrames,
+	jobject size,
+	jbyteArray jlayout,
+	jbyteArray jenumer,
+	jint baseFrame
+)
+{
+	Uint8 *layout, *enumer;
+	int totalObj = 0;
+
+	LOGD("MovObjEnumerate - start");
+
+	jclass src_size = env->GetObjectClass(size);
+	jfieldID id_w = env->GetFieldID(src_size, "width", "I");
+	jint sx = env->GetIntField(size,id_w);
+	jfieldID id_h = env->GetFieldID(src_size, "height", "I");
+	jint sy = env->GetIntField(size,id_h);
+
+	LOGD("nFremes = %d sx = %d sy = %d", nFrames, sx, sy);
+
+	layout = (Uint8 *)env->GetByteArrayElements(jlayout, NULL);
+	enumer = (Uint8 *)env->GetByteArrayElements(jenumer, NULL);
+
+	totalObj = MovObj_Enumerate(layout, enumer, sx, sy, baseFrame, nFrames);
+
+	env->ReleaseByteArrayElements(jenumer, (jbyte*)enumer, JNI_COMMIT);
+	env->ReleaseByteArrayElements(jlayout, (jbyte*)layout, JNI_ABORT);
+
+	LOGD("MovObjEnumerate - end, objects detected: %d", totalObj);
+
+	return (jint) totalObj;
+}
+
