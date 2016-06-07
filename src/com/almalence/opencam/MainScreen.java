@@ -244,6 +244,14 @@ public class MainScreen extends ApplicationScreen
 	{
 		try
 		{
+			//reading params passed from widget
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+			String mode = intent.getStringExtra(EXTRA_ITEM);
+			if (null != mode)
+				prefs.edit().putString("defaultModeName", mode).commit();
+			launchTorch = intent.getBooleanExtra(EXTRA_TORCH, false);
+			launchBarcode = intent.getBooleanExtra(EXTRA_BARCODE, false);
+			
 			Pair<String, String> cameraWifiSettings = NFCHandler.parseIntent(intent);
 			mWifiHandler.createIfNeededThenConnectToWifi(cameraWifiSettings.first, cameraWifiSettings.second);
 		} catch (Exception e)
