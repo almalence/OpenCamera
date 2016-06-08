@@ -356,15 +356,15 @@ public class MainScreen extends ApplicationScreen
 		}
 		if (true == prefs.contains("plugin_almalence_moving_burst"))
 		{
-			objectRemovalBurstPurchased = prefs.getBoolean("plugin_almalence_moving_burst", false);
-		}
-		if (true == prefs.contains("plugin_almalence_groupshot"))
-		{
-			groupShotPurchased = prefs.getBoolean("plugin_almalence_groupshot", false);
+			multishotsPurchased = prefs.getBoolean("plugin_almalence_moving_burst", false);
 		}
 		if (true == prefs.contains("subscription_unlock_all_year"))
 		{
 			unlockAllSubscriptionYear = prefs.getBoolean("subscription_unlock_all_year", false);
+		}
+		if (true == prefs.contains("plugin_almalence_super"))
+		{
+			superPurchased = prefs.getBoolean("plugin_almalence_super", false);
 		}
 
 		if (!unlockAllPurchased)
@@ -1826,7 +1826,7 @@ public class MainScreen extends ApplicationScreen
 	private static boolean			superPurchased				= false;
 	private static boolean			hdrPurchased				= false;
 	private static boolean			panoramaPurchased			= false;
-	private static boolean			objectRemovalBurstPurchased	= false;
+	private static boolean			multishotsPurchased			= false;
 	private static boolean			groupShotPurchased			= false;
 
 	private static boolean			unlockAllSubscriptionMonth	= false;
@@ -2118,7 +2118,7 @@ public class MainScreen extends ApplicationScreen
 					if (inventory
 							.hasPurchase(SKU_MOVING_SEQ))
 					{
-						objectRemovalBurstPurchased = true;
+						multishotsPurchased = true;
 						prefsEditor
 								.putBoolean(
 										"plugin_almalence_moving_burst",
@@ -2127,7 +2127,7 @@ public class MainScreen extends ApplicationScreen
 					if (inventory
 							.hasPurchase(SKU_GROUPSHOT))
 					{
-						groupShotPurchased = true;
+						multishotsPurchased = true;
 						prefsEditor
 								.putBoolean(
 										"plugin_almalence_moving_burst",
@@ -2265,9 +2265,9 @@ public class MainScreen extends ApplicationScreen
 		return panoramaPurchased;
 	}
 
-	public static boolean isPurchasedMoving()
+	public static boolean isPurchasedMultishots()
 	{
-		return objectRemovalBurstPurchased;
+		return multishotsPurchased;
 	}
 
 	public static boolean isPurchasedGroupshot()
@@ -2363,7 +2363,7 @@ public class MainScreen extends ApplicationScreen
 
 	public void purchaseMultishot()
 	{
-		if (isPurchasedMoving() || isPurchasedAll())
+		if (isPurchasedMultishots() || isPurchasedAll())
 			return;
 		String payload = "";
 		try
@@ -2465,7 +2465,7 @@ public class MainScreen extends ApplicationScreen
 		if (purchase.getSku().equals(SKU_MOVING_SEQ))
 		{
 			Log.v("Main billing", "Purchase plugin_almalence_moving_burst.");
-			objectRemovalBurstPurchased = true;
+			multishotsPurchased = true;
 
 			Editor prefsEditor = prefs.edit();
 			prefsEditor.putBoolean("plugin_almalence_moving_burst", true).commit();
@@ -2473,7 +2473,7 @@ public class MainScreen extends ApplicationScreen
 		if (purchase.getSku().equals(SKU_GROUPSHOT))
 		{
 			Log.v("Main billing", "Purchase plugin_almalence_moving_burst.");
-			objectRemovalBurstPurchased = true;
+			multishotsPurchased = true;
 
 			Editor prefsEditor = prefs.edit();
 			prefsEditor.putBoolean("plugin_almalence_moving_burst", true).commit();
@@ -2751,7 +2751,7 @@ public class MainScreen extends ApplicationScreen
 				return true;
 		} else if (mode.SKU.equals("plugin_almalence_moving_burst"))
 		{
-			if (objectRemovalBurstPurchased)
+			if (multishotsPurchased)
 				return true;
 		} else if (mode.SKU.equals("plugin_almalence_groupshot"))
 		{
