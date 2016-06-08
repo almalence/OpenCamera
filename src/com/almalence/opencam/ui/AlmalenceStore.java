@@ -318,7 +318,7 @@ public class AlmalenceStore
 				icon.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.store_moving));
 				description.setText(MainScreen.getAppResources()
 						.getString(R.string.Pref_Upgrde_Moving_Preference_Title));
-				if (MainScreen.getInstance().isPurchasedMoving() || MainScreen.getInstance().isPurchasedAll())
+				if (MainScreen.getInstance().isPurchasedMultishots() || MainScreen.getInstance().isPurchasedAll())
 					price.setText(R.string.already_unlocked);
 				else
 					price.setText(MainScreen.getInstance().titleUnlockMoving);
