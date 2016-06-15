@@ -155,6 +155,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean 							isGalaxyS7Exynos = false;
 	public static boolean 							isGalaxyS7Qualcomm = false;
 	
+	public static boolean							isLGG5			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h830");
+	
 	public static boolean							isGalaxyS5		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g900");
 	
 	public static boolean							isGalaxyS4		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("gt-i95");
@@ -1105,6 +1107,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return useCamera2OnRelaunch;
 	}
 
+	// function showing if Super mode supported by our profile or not.
 	public static boolean isSuperModePossible()
 	{
 		boolean SuperModeOk = false;

@@ -635,7 +635,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		// then adjust it one or two stops slower than your original shutter speed 
 		// (i.e. if you were at 1/250 sec, then set it to 1/125 or 1/60 sec), and take another photo.
 		// Also if we use manual exposure settings, we should set ISO manually (get ISO and Exposure original values from preview).
-		if (CameraController.isNexus5x || CameraController.isNexus6p || CameraController.isFlex2 || CameraController.isGalaxyS7)
+		if (CameraController.isNexus5x || CameraController.isNexus6p || CameraController.isFlex2 || CameraController.isGalaxyS7 || CameraController.isLGG5)
 		{
 			gain = new int[3];
 			gain[0] = CameraController.getCurrentSensitivity();
@@ -659,9 +659,17 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			default:
 				exposure = new long[3];
 				exposure[0] = CameraController.getCameraExposureTime();
-				//reduced, as in most cases it's overexposured
-				exposure[1] = CameraController.getCameraExposureTime() * 2;
-				exposure[2] = CameraController.getCameraExposureTime() / 4;
+				
+				if (CameraController.isGalaxyS7)
+				{
+					exposure[1] = CameraController.getCameraExposureTime() * 2;
+					exposure[2] = CameraController.getCameraExposureTime() / 4;
+				}
+				else
+				{
+					exposure[1] = CameraController.getCameraExposureTime() * 4;
+					exposure[2] = CameraController.getCameraExposureTime() / 2;
+				}
 				break;
 			}
 		}
