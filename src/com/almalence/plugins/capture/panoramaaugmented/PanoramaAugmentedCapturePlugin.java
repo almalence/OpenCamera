@@ -306,7 +306,12 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 						}
 					}
 				}
-
+				
+				//workaround for G5
+				if (CameraController.isG5)
+					if (idx>1)
+						idx-=1;
+				
 				prefs.edit().putString(sizeKey, ResolutionsPictureIdxesList.get(idx)).commit();
 			}
 		}

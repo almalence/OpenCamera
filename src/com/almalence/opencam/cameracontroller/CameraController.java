@@ -126,6 +126,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-us995")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-ls996");
 
+	public static boolean							isG5			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h830");
+	
 	public static boolean							isG4			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h818")  ||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h815")  ||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h812")  ||
@@ -154,8 +156,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public static boolean 							isGalaxyS7Exynos = false;
 	public static boolean 							isGalaxyS7Qualcomm = false;
-	
-	public static boolean							isLGG5			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h830");
 	
 	public static boolean							isGalaxyS5		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g900");
 	
@@ -4675,8 +4675,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			appInterface.showCaptureIndication(indicateCapturing);
 
 			lastCaptureStarted = SystemClock.uptimeMillis();
-			if (imageWidth == iPreviewWidth && imageHeight == iPreviewHeight
-					&& ((frameFormat == CameraController.YUV) || (frameFormat == CameraController.YUV_RAW)))
+			if (imageWidth == iPreviewWidth 
+				&& imageHeight == iPreviewHeight 
+				&& ((frameFormat == CameraController.YUV) || (frameFormat == CameraController.YUV_RAW))
+			   )
 				takePreviewFrame = true; // Temporary make capture by
 											// preview frames only for YUV
 											// requests to avoid slow YUV to
