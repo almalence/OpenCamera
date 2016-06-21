@@ -1022,6 +1022,7 @@ public class Camera2Controller
 			zoomLevel = 1f;
 			return;
 		}
+		
 		zoomLevel = newZoom;
 		//Zoom area is calculated relative to sensor area (activeRect)
 		zoomCropPreview = getZoomRect(zoomLevel, activeRect.width(), activeRect.height());
@@ -1048,7 +1049,7 @@ public class Camera2Controller
 		// crop area for standard frame
 		int cropWidthStd = cropWidth - 2 * 64;
 		int cropHeightStd = cropHeight - 2 * 64;
-
+		
 		return new Rect((imgWidth - cropWidthStd) / 2, (imgHeight - cropHeightStd) / 2, (imgWidth + cropWidthStd) / 2,
 				(imgHeight + cropHeightStd) / 2);
 	}
