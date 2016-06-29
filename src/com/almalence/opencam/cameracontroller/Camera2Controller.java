@@ -35,6 +35,7 @@ import android.content.Context;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -630,7 +631,6 @@ public class Camera2Controller
 			if(highestJPEGSize.getWidth() > highestSize.getWidth())
 				cs = jpegSize;
 		}
-		
 
 		int iHighestIndex = 0;
 		Size sHighest = cs[iHighestIndex];
@@ -656,7 +656,7 @@ public class Camera2Controller
 
 			ii++;
 		}
-
+		
 		if (CameraController.ResolutionsNamesList.isEmpty())
 		{
 			Size s = cs[iHighestIndex];
