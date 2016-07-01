@@ -252,6 +252,16 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 				filter = 300;
 			if (!zoomAbove15x) filter = 192;// slightly less filtering at low zooms (somehow sr processing is creating less sharp images here)
 			break;
+		case 1006:// Galaxy S7
+			deGhostGain = (100 - (int)(iso * 0.0004167f)) * 256 / 100;
+			sensorGain = (int)(1.05f * 256 * powf(((float)iso) / 100, 0.5f));
+
+			sharpen = 1;
+			// do not use fine edge enhancement (looks too plastic on S6)
+			//if (zoomAbove30x) sharpen = 0x80;// fine edge enhancement instead of primitive sharpen at high zoom levels
+			filter = 256;
+			//if (!zoomAbove15x) filter = 320;// slightly more filtering at low zooms
+			break;
 		case 2000:// OnePlus 2
 			deGhostGain = (256 * (50 - 0.01f * iso) / 100);
 			if (deGhostGain < 54) deGhostGain = 54;

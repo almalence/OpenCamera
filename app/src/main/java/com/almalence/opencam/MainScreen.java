@@ -244,6 +244,14 @@ public class MainScreen extends ApplicationScreen
 	{
 		try
 		{
+			//reading params passed from widget
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+			String mode = intent.getStringExtra(EXTRA_ITEM);
+			if (null != mode)
+				prefs.edit().putString("defaultModeName", mode).commit();
+			launchTorch = intent.getBooleanExtra(EXTRA_TORCH, false);
+			launchBarcode = intent.getBooleanExtra(EXTRA_BARCODE, false);
+			
 			Pair<String, String> cameraWifiSettings = NFCHandler.parseIntent(intent);
 			mWifiHandler.createIfNeededThenConnectToWifi(cameraWifiSettings.first, cameraWifiSettings.second);
 		} catch (Exception e)
@@ -348,15 +356,15 @@ public class MainScreen extends ApplicationScreen
 		}
 		if (true == prefs.contains("plugin_almalence_moving_burst"))
 		{
-			objectRemovalBurstPurchased = prefs.getBoolean("plugin_almalence_moving_burst", false);
-		}
-		if (true == prefs.contains("plugin_almalence_groupshot"))
-		{
-			groupShotPurchased = prefs.getBoolean("plugin_almalence_groupshot", false);
+			multishotsPurchased = prefs.getBoolean("plugin_almalence_moving_burst", false);
 		}
 		if (true == prefs.contains("subscription_unlock_all_year"))
 		{
 			unlockAllSubscriptionYear = prefs.getBoolean("subscription_unlock_all_year", false);
+		}
+		if (true == prefs.contains("plugin_almalence_super"))
+		{
+			superPurchased = prefs.getBoolean("plugin_almalence_super", false);
 		}
 
 		if (!unlockAllPurchased)
@@ -1818,7 +1826,7 @@ public class MainScreen extends ApplicationScreen
 	private static boolean			superPurchased				= false;
 	private static boolean			hdrPurchased				= false;
 	private static boolean			panoramaPurchased			= false;
-	private static boolean			objectRemovalBurstPurchased	= false;
+	private static boolean			multishotsPurchased			= false;
 	private static boolean			groupShotPurchased			= false;
 
 	private static boolean			unlockAllSubscriptionMonth	= false;
@@ -1949,6 +1957,18 @@ public class MainScreen extends ApplicationScreen
 				Editor prefsEditor = prefs.edit();
 				prefsEditor.putBoolean("plugin_almalence_panorama", true).commit();
 			}
+			
+			
+			//>>>Yandex patch!!!
+//			{
+//				hdrPurchased = true;
+//				multishotsPurchased = true;
+//				Editor prefsEditor = prefs.edit();
+//				prefsEditor.putBoolean("plugin_almalence_hdr", true).commit();
+//				prefsEditor.putBoolean("plugin_almalence_moving_burst", true).commit();
+//			}
+			//<<<Yandex patch!!!
+			
 
 			String base64EncodedPublicKeyGoogle = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnztuXLNughHjGW55Zlgicr9r5bFP/K5DBc3jYhnOOo1GKX8M2grd7+SWeUHWwQk9lgQKat/ITESoNPE7ma0ZS1Qb/VfoY87uj9PhsRdkq3fg+31Q/tv5jUibSFrJqTf3Vmk1l/5K0ljnzX4bXI0p1gUoGd/DbQ0RJ3p4Dihl1p9pJWgfI9zUzYfvk2H+OQYe5GAKBYQuLORrVBbrF/iunmPkOFN8OcNjrTpLwWWAcxV5k0l5zFPrPVtkMZzKavTVWZhmzKNhCvs1d8NRwMM7XMejzDpI9A7T9egl6FAN4rRNWqlcZuGIMVizJJhvOfpCLtY971kQkYNXyilD40fefwIDAQAB";
 			String base64EncodedPublicKeyYandex = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6KzaraKmv48Y+Oay2ZpWu4BHtSKYZidyCxbaYZmmOH4zlRNic/PDze7OA4a1buwdrBg3AAHwfVbHFzd9o91yinnHIWYQqyPg7L1Swh5W70xguL4jlF2N/xI9VoL4vMRv3Bf/79VfQ11utcPLHEXPR8nPEp9PT0wN2Hqp4yCWFbfvhVVmy7sQjywnfLqcWTcFCT6N/Xdxs1quq0hTE345MiCgkbh1xVULmkmZrL0rWDVCaxfK4iZWSRgQJUywJ6GMtUh+FU6/7nXDenC/vPHqnDR0R6BRi+QsES0ZnEfQLqNJoL+rqJDr/sDIlBQQDMQDxVOx0rBihy/FlHY34UF+bwIDAQAB";
@@ -2110,7 +2130,7 @@ public class MainScreen extends ApplicationScreen
 					if (inventory
 							.hasPurchase(SKU_MOVING_SEQ))
 					{
-						objectRemovalBurstPurchased = true;
+						multishotsPurchased = true;
 						prefsEditor
 								.putBoolean(
 										"plugin_almalence_moving_burst",
@@ -2119,7 +2139,7 @@ public class MainScreen extends ApplicationScreen
 					if (inventory
 							.hasPurchase(SKU_GROUPSHOT))
 					{
-						groupShotPurchased = true;
+						multishotsPurchased = true;
 						prefsEditor
 								.putBoolean(
 										"plugin_almalence_moving_burst",
@@ -2257,9 +2277,9 @@ public class MainScreen extends ApplicationScreen
 		return panoramaPurchased;
 	}
 
-	public static boolean isPurchasedMoving()
+	public static boolean isPurchasedMultishots()
 	{
-		return objectRemovalBurstPurchased;
+		return multishotsPurchased;
 	}
 
 	public static boolean isPurchasedGroupshot()
@@ -2355,7 +2375,7 @@ public class MainScreen extends ApplicationScreen
 
 	public void purchaseMultishot()
 	{
-		if (isPurchasedMoving() || isPurchasedAll())
+		if (isPurchasedMultishots() || isPurchasedAll())
 			return;
 		String payload = "";
 		try
@@ -2457,7 +2477,7 @@ public class MainScreen extends ApplicationScreen
 		if (purchase.getSku().equals(SKU_MOVING_SEQ))
 		{
 			Log.v("Main billing", "Purchase plugin_almalence_moving_burst.");
-			objectRemovalBurstPurchased = true;
+			multishotsPurchased = true;
 
 			Editor prefsEditor = prefs.edit();
 			prefsEditor.putBoolean("plugin_almalence_moving_burst", true).commit();
@@ -2465,7 +2485,7 @@ public class MainScreen extends ApplicationScreen
 		if (purchase.getSku().equals(SKU_GROUPSHOT))
 		{
 			Log.v("Main billing", "Purchase plugin_almalence_moving_burst.");
-			objectRemovalBurstPurchased = true;
+			multishotsPurchased = true;
 
 			Editor prefsEditor = prefs.edit();
 			prefsEditor.putBoolean("plugin_almalence_moving_burst", true).commit();
@@ -2743,7 +2763,7 @@ public class MainScreen extends ApplicationScreen
 				return true;
 		} else if (mode.SKU.equals("plugin_almalence_moving_burst"))
 		{
-			if (objectRemovalBurstPurchased)
+			if (multishotsPurchased)
 				return true;
 		} else if (mode.SKU.equals("plugin_almalence_groupshot"))
 		{

@@ -971,6 +971,8 @@ public class FocusVFPlugin extends PluginViewfinder
 		int[] mrules = mp.getRules();
 		mrules[RelativeLayout.CENTER_IN_PARENT] = 0;
 		mMeteringIndicatorRotateLayout.setLayoutParams(mp);
+		if(!mMeteringAreaSupported)
+			mMeteringIndicatorRotateLayout.setVisibility(View.GONE);
 		
 		xRaw = Util.clamp(xRaw - diffWidth, 0, previewWidth);
 		yRaw = Util.clamp(yRaw - diffHeight, 0, previewHeight);
@@ -1301,7 +1303,7 @@ public class FocusVFPlugin extends PluginViewfinder
 		{
 			if (mFocusArea == null) {
 				focusIndicator.clear();
-				if (mMeteringArea == null)
+				if (mMeteringArea == null || !mMeteringAreaSupported)
 				{
 					mMeteringIndicatorRotateLayout.setVisibility(View.GONE);
 				}

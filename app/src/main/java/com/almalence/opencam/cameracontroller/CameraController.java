@@ -26,6 +26,7 @@ package com.almalence.opencam.cameracontroller;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,6 +75,7 @@ import com.almalence.util.Util;
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.CameraParameters;
+import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManagerInterface;
 import com.almalence.opencam.R;
 
@@ -82,6 +84,7 @@ import com.almalence.opencam.R;
  import com.almalence.opencam_plus.ApplicationInterface;
  import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.CameraParameters;
+ import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginManagerInterface;
  import com.almalence.opencam_plus.R;
  +++ --> */
@@ -126,6 +129,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-us995")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-ls996");
 
+	public static boolean							isG5			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h830");
+	
 	public static boolean							isG4			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h818")  ||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h815")  ||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h812")  ||
@@ -173,6 +178,24 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public static boolean							isSony			= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("sony");
 	
+	public static boolean							isSonyZ5		= Build.MANUFACTURER.toLowerCase().replace(" ", "").contains("sony") &&
+																	  (
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("E5823")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e6603")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e6633")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e6653")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e6683")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("so-01h")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sov32")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("501so")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e5803")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("so-02h")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e6833")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e6853")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e6883")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("so-03h")
+																	  );
+	
 	public static boolean							isHuawei		= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("huawei");
 	
 	public static boolean							isGionee		= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("gionee");
@@ -182,7 +205,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																			Build.MODEL.contains("2"));
 	
 	public static boolean							isMotoXPure 	 = Build.MODEL.toLowerCase().replace(" ", "").contains("xt1575");
-	
 	
 
 	// Android camera parameters constants
@@ -853,7 +875,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			
 			//Samsung Galaxy S6 and Note5 was reported as not worked in camera2 mode
 			//Always not focused preview and blinking on every try of focusing
-			if (!isCamera2Supported || !checkHardwareLevel() || isGalaxyS6 || isGalaxyNote5)
+			if (!isCamera2Supported || !checkHardwareLevel() || isGalaxyS6 || isGalaxyNote5 || isSonyZ5)
 //					|| (!isMotoXPure && !isFlex2 && !isNexus5or6 && !isAndroidOne  && !isOnePlusTwo/*&& !isGalaxyS6 &&*/ /* && !isG4*/))
 			{
 				isCamera2 = false;
@@ -1105,6 +1127,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		return useCamera2OnRelaunch;
 	}
 
+	// function showing if Super mode supported by our profile or not.
 	public static boolean isSuperModePossible()
 	{
 		boolean SuperModeOk = false;
@@ -1207,10 +1230,26 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					{
 						if (openCamera)
 						{
-							if (Camera.getNumberOfCameras() > 0)
-								camera = Camera.open(CameraIndex);
+							if (isSonyZ5)//workaround for Sony Z5 maximum resolution 
+							{
+								try
+								{
+									Method method = Camera.class.getMethod("openLegacy", new Class[] { Integer.TYPE, Integer.TYPE });
+									camera = (Camera)method.invoke(null, new Object[] { Integer.valueOf(CameraIndex), Integer.valueOf(256) });
+								}
+								catch(Exception e)
+								{
+									e.printStackTrace();
+									camera = Camera.open(CameraIndex);
+								}
+							}
 							else
-								camera = Camera.open();
+							{
+								if (Camera.getNumberOfCameras() > 0)
+									camera = Camera.open(CameraIndex);
+								else
+									camera = Camera.open();
+							}
 						}
 
 						Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
@@ -1458,7 +1497,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				cs.add(additional);
 			}
 		}
-
+		
 		int iHighestIndex = 0;
 		Camera.Size sHighest = cs.get(0);
 
@@ -4672,8 +4711,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			appInterface.showCaptureIndication(indicateCapturing);
 
 			lastCaptureStarted = SystemClock.uptimeMillis();
-			if (imageWidth == iPreviewWidth && imageHeight == iPreviewHeight
-					&& ((frameFormat == CameraController.YUV) || (frameFormat == CameraController.YUV_RAW)))
+			if (imageWidth == iPreviewWidth 
+				&& imageHeight == iPreviewHeight 
+				&& ((frameFormat == CameraController.YUV) || (frameFormat == CameraController.YUV_RAW))
+			   )
 				takePreviewFrame = true; // Temporary make capture by
 											// preview frames only for YUV
 											// requests to avoid slow YUV to
