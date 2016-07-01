@@ -75,7 +75,6 @@ import com.almalence.util.Util;
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.CameraParameters;
-import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManagerInterface;
 import com.almalence.opencam.R;
 
@@ -84,7 +83,6 @@ import com.almalence.opencam.R;
  import com.almalence.opencam_plus.ApplicationInterface;
  import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.CameraParameters;
- import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginManagerInterface;
  import com.almalence.opencam_plus.R;
  +++ --> */
@@ -178,9 +176,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public static boolean							isSony			= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("sony");
 	
-	public static boolean							isSonyZ5		= Build.MANUFACTURER.toLowerCase().replace(" ", "").contains("sony") &&
-																	  (
-																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("E5823")||
+	public static boolean							isSonyZ5		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e5823")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e6603")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e6633")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e6653")||
@@ -193,8 +189,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e6833")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e6853")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e6883")||
-																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("so-03h")
-																	  );
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("so-03h");
 	
 	public static boolean							isHuawei		= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("huawei");
 	
