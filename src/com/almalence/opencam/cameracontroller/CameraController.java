@@ -2269,7 +2269,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				if (!CameraController.isCamera2)
 				{
-					if (camera == null || (camera != null && camera.getParameters() == null))
+					if (camera == null || (camera != null && camera.getParameters() == null) || CameraController.isG5)//G5 works incorrectly with exposure lock
 						return false;
 
 					Camera.Parameters params = camera.getParameters();
