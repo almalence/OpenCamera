@@ -192,6 +192,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("so-03h");
 	
 	public static boolean							isHuawei		= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("huawei");
+	public static boolean							isHuaweiP9		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("eva-l19");
 	
 	public static boolean							isGionee		= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("gionee");
 	
@@ -199,7 +200,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																		&& (Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("two") || 
 																			Build.MODEL.contains("2"));
 	
-	public static boolean							isMotoXPure 	 = Build.MODEL.toLowerCase().replace(" ", "").contains("xt1575");
+	public static boolean							isMotoXPure 	= Build.MODEL.toLowerCase().replace(" ", "").contains("xt1575");
+	public static boolean							isHTCM10 	 	= Build.MODEL.toLowerCase().replace(" ", "").contains("htc_m10h");
 	
 
 	// Android camera parameters constants

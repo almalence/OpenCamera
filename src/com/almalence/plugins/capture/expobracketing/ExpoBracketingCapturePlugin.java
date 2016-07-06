@@ -168,7 +168,6 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), camera2Preference).commit();
 	}
 	
-	
 	@Override
 	public void onStop()
 	{
@@ -639,7 +638,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			CameraController.isNexus6p || 
 			CameraController.isFlex2 || 
 			CameraController.isGalaxyS7 || 
-			CameraController.isG5)
+			CameraController.isG5||
+			CameraController.isHTCM10)
 		{
 			gain = new int[3];
 			gain[0] = CameraController.getCurrentSensitivity();
