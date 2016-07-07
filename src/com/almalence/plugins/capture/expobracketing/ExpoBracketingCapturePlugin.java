@@ -111,14 +111,14 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		camera2Preference = prefs.getBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false);
 		
-		if(CameraController.isFlex2 && camera2Preference)
-		{
-			prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false).commit();
-			CameraController.setUseCamera2(false);
-			
-			CameraController.isOldCameraOneModeLaunched = true;
-			PluginManager.getInstance().setSwitchModeType(true);
-		}
+//		if(CameraController.isFlex2 && camera2Preference)
+//		{
+//			prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false).commit();
+//			CameraController.setUseCamera2(false);
+//			
+//			CameraController.isOldCameraOneModeLaunched = true;
+//			PluginManager.getInstance().setSwitchModeType(true);
+//		}
 	}
 
 	@Override
@@ -171,11 +171,11 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	@Override
 	public void onStop()
 	{
-		if(CameraController.isFlex2 && camera2Preference)
-		{
-			CameraController.useCamera2OnRelaunch(true);
-			CameraController.setUseCamera2(camera2Preference);
-		}
+//		if(CameraController.isFlex2 && camera2Preference)
+//		{
+//			CameraController.useCamera2OnRelaunch(true);
+//			CameraController.setUseCamera2(camera2Preference);
+//		}
 	}
 
 	@Override
