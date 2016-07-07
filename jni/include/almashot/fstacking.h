@@ -55,6 +55,8 @@ int FStacking_Align
 (
 	void **instance,
 	Uint8 **in,
+	Uint8 *restrict layout,
+	Uint8 *restrict debug,
 	int   SensorGain,
 	int   sx,
 	int   sy,
