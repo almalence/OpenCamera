@@ -1797,7 +1797,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 								   !CameraController.isUseCamera2() 
 								//|| modeName.contains("video")
 								|| (CameraController.isNexus6 && modeName.contains("preshot"))
-								|| (CameraController.isFlex2 && (modeName.contains("hdrmode") || modeName.contains("expobracketing")))
+								//|| (CameraController.isFlex2 && (modeName.contains("hdrmode") || modeName.contains("expobracketing")))
 								);
 						mCameraStarted = true;
 					}

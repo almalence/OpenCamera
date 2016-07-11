@@ -180,7 +180,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_simple_A
 
 	if (result_yuv)
 	{
-		Dro_GetHistogramNV21(yuv, hist, local_mapping ? hist_loc:NULL, sx, sy, 1.0f);
+		Dro_GetHistogramNV21(yuv, hist, local_mapping ? hist_loc:NULL, sx, sy, sx, 1.0f);
 
 		for (y=0; y<(local_mapping ? 3:1); ++y)
 			for (x=0; x<(local_mapping ? 3:1); ++x)

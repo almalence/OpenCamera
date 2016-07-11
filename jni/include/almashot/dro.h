@@ -70,6 +70,7 @@ void Dro_GetHistogramNV21
 	Uint32 hist_loc[3][3][256],
 	int sx,
 	int sy,
+	int stride,
 	float mix_factor
 );
 

@@ -277,28 +277,6 @@ public class AlmalenceStore
 					}
 				}
 				break;
-//			case 1:
-//				// subscription year
-//				icon.setImageResource(R.drawable.store_subscription);
-//				description.setText(MainScreen.getInstance().getResources()
-//						.getString(R.string.Pref_Upgrde_SubscriptionYear_Preference_Title));
-//				if (MainScreen.getInstance().isPurchasedUnlockAllSubscriptionYear() || MainScreen.getInstance().isPurchasedAll())
-//					price.setText(R.string.already_unlocked);
-//				else
-//					price.setText(MainScreen.getInstance().titleSubscriptionYear+"/"+MainScreen.getInstance().getResources()
-//							.getString(R.string.Pref_Upgrde_SubscriptionYear_Year));
-//				break;
-//			case 2:
-//				// subscription month
-//				icon.setImageResource(R.drawable.store_promo);
-//				description.setText(MainScreen.getAppResources()
-//						.getString(R.string.Pref_Upgrde_SubscriptionMonth_Preference_Title));
-//				if (MainScreen.getInstance().isPurchasedUnlockAllSubscriptionMonth() || MainScreen.getInstance().isPurchasedAll())
-//					price.setText(R.string.already_unlocked);
-//				else
-//					price.setText("");//MainScreen.getInstance().titleSubscriptionMonth);
-//				break;
-
 			default:
 				break;
 			}
