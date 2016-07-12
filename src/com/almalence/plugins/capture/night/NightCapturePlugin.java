@@ -674,7 +674,7 @@ public class NightCapturePlugin extends PluginCapture
 		{
 			frameForExposure = frame;
 
-			Log.i("NightCapturePlugin", "frameForExposure arrived");
+//			Log.i("NightCapturePlugin", "frameForExposure arrived");
 			
 			if (sensorGain>0 || exposureTime>0)
 				AdjustExposureCaptureBurst();			
@@ -749,7 +749,7 @@ public class NightCapturePlugin extends PluginCapture
 		int requestID = requestIDArray[resultCompleted];
 		resultCompleted++;
 		
-		Log.i("NightCapturePlugin", "onCaptureCompleted gain: "+sensorGain+" expoTime: "+exposureTime+"ns");
+//		Log.i("NightCapturePlugin", "onCaptureCompleted gain: "+sensorGain+" expoTime: "+exposureTime+"ns");
 
 		if (takingImageForExposure && (frameForExposure != 0))
 			AdjustExposureCaptureBurst();			

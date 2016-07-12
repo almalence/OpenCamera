@@ -1330,8 +1330,8 @@ public class PluginManager extends PluginManagerBase
 	{
 		String modeID = getActiveModeID();
 
-		if ((CameraController.isNexus6 && (modeID.equals("preshot") || modeID.equals("panorama_augmented")))
-				|| ((CameraController.isFlex2 /*|| CameraController.isG4*/) && (modeID.equals("hdrmode") || modeID.equals("expobracketing"))))
+		if (CameraController.isNexus6 && (modeID.equals("preshot") || modeID.equals("panorama_augmented")))
+				//|| ((CameraController.isFlex2 /*|| CameraController.isG4*/) && (modeID.equals("hdrmode") || modeID.equals("expobracketing"))))
 			return false;
 		else
 			return true;

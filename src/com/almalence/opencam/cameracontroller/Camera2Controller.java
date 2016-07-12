@@ -35,6 +35,7 @@ import android.content.Context;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.hardware.Camera;
 import android.hardware.Camera.Area;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -630,7 +631,6 @@ public class Camera2Controller
 			if(highestJPEGSize.getWidth() > highestSize.getWidth())
 				cs = jpegSize;
 		}
-		
 
 		int iHighestIndex = 0;
 		Size sHighest = cs[iHighestIndex];
@@ -656,7 +656,7 @@ public class Camera2Controller
 
 			ii++;
 		}
-
+		
 		if (CameraController.ResolutionsNamesList.isEmpty())
 		{
 			Size s = cs[iHighestIndex];
@@ -884,7 +884,6 @@ public class Camera2Controller
 		{
 			int format = CameraController.YUV;
 			if((!isSizeAvailable(imageSize, format) && isSizeAvailable(imageSize, CameraController.JPEG)))
-//					|| CameraController.isNexus5x))
 			{
 				originalCaptureFormat = format;
 				ApplicationScreen.setCaptureFormat(CameraController.JPEG);
@@ -1023,6 +1022,7 @@ public class Camera2Controller
 			zoomLevel = 1f;
 			return;
 		}
+		
 		zoomLevel = newZoom;
 		//Zoom area is calculated relative to sensor area (activeRect)
 		zoomCropPreview = getZoomRect(zoomLevel, activeRect.width(), activeRect.height());
@@ -1049,7 +1049,7 @@ public class Camera2Controller
 		// crop area for standard frame
 		int cropWidthStd = cropWidth - 2 * 64;
 		int cropHeightStd = cropHeight - 2 * 64;
-
+		
 		return new Rect((imgWidth - cropWidthStd) / 2, (imgHeight - cropHeightStd) / 2, (imgWidth + cropWidthStd) / 2,
 				(imgHeight + cropHeightStd) / 2);
 	}
@@ -1878,7 +1878,9 @@ public class Camera2Controller
 		viewFinderSurface = appInterface.getCameraSurface();
 		if (viewFinderSurface != null)
 		{
-			surfaceList.add(viewFinderSurface);
+			//On Nexus 5x we have to add first viewfinder surface and only after rest ImageReaders
+			//Otherwise preview will be overexposed - it's crazy nexus's bug.
+			surfaceList.add(0, viewFinderSurface);
 			createCaptureSession(surfaceList);	
 		}
 		else
@@ -1892,7 +1894,7 @@ public class Camera2Controller
 					if (viewFinderSurface!= null)
 					{
 						this.cancel();
-						surfaceList.add(viewFinderSurface);
+						surfaceList.add(0, viewFinderSurface);
 						createCaptureSession(surfaceList);	
 					}
 				}

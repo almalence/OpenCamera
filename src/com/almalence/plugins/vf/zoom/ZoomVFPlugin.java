@@ -26,6 +26,7 @@ import android.graphics.PointF;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -254,6 +255,7 @@ public class ZoomVFPlugin extends PluginViewfinder
 					{
 						// Calculate scaleFactor from seekBar progress.
 						zoomCurrent = (float)progress / 10.f + 1.f;
+						Log.e("!!!!!!!", "zoom current caculated = " + zoomCurrent);
 					}
 					
 					if (zoomCurrent > CameraController.getMaxZoom())
@@ -261,6 +263,12 @@ public class ZoomVFPlugin extends PluginViewfinder
 						zoomCurrent = CameraController.getMaxZoom();
 					}
 
+					//workaround for S7 issue with zooming.
+					if (CameraController.isGalaxyS7 && zoomCurrent>1.2)
+					{
+						zoomCurrent+=0.001f;
+					}
+					
 					CameraController.setZoom(zoomCurrent);
 				}
 			}
@@ -536,8 +544,12 @@ public class ZoomVFPlugin extends PluginViewfinder
 					zoomCurrent = CameraController.getMaxZoom();
 				}
 
+				//workaround for S7 issue with zooming.
+				if (CameraController.isGalaxyS7 && zoomCurrent>1.2)
+				{
+					zoomCurrent+=0.001f;
+				}
 				CameraController.setZoom(zoomCurrent);
-				
 				zoomBar.setProgressAndThumb((int) (CameraController.isUseCamera2() ? zoomCurrent * 10.f - 10 : zoomCurrent));
 			} catch (Exception e)
 			{

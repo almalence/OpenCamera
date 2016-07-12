@@ -107,7 +107,7 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		if (nightPreference != null)
 		{
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-			if (prefs.getBoolean("useCamera2Pref", false))
+			if (prefs.getBoolean("useCamera2Pref", false) && CameraController.isSuperModePossible())
 			{
 				getPreferenceScreen().removePreference(nightPreference);
 			} else

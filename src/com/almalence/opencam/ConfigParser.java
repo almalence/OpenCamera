@@ -177,7 +177,8 @@ public class ConfigParser
 		//set super mode by default on these devices
 		if (CameraController.isNexus5or6 ||
 		    CameraController.isFlex2 ||
-		    CameraController.isOnePlusTwo)
+		    CameraController.isOnePlusTwo||
+		    CameraController.isGalaxyS7)
 		{
 			Iterator<Mode> it = modes.iterator();
 			while(it.hasNext())

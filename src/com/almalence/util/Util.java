@@ -929,9 +929,10 @@ public final class Util
 		sd = System.getenv("SECONDARY_STORAGE");
 		if (sd == null)
 		{
-			sd = System.getenv("EXTERNAL_STORAGE");
+//			sd = System.getenv("EXTERNAL_STORAGE");
+			String documentPath = "/storage" + "/" + docId.replace(":", "/");
+			return documentPath;
 		}
-
 		if (sd != null)
 		{
 			// On some devices SECONDARY_STORAGE has several paths
