@@ -241,6 +241,14 @@ public class MainScreen extends ApplicationScreen
 	{
 		try
 		{
+			//reading params passed from widget
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
+			String mode = intent.getStringExtra(EXTRA_ITEM);
+			if (null != mode)
+				prefs.edit().putString("defaultModeName", mode).commit();
+			launchTorch = intent.getBooleanExtra(EXTRA_TORCH, false);
+			launchBarcode = intent.getBooleanExtra(EXTRA_BARCODE, false);
+			
 			Pair<String, String> cameraWifiSettings = NFCHandler.parseIntent(intent);
 			mWifiHandler.createIfNeededThenConnectToWifi(cameraWifiSettings.first, cameraWifiSettings.second);
 		} catch (Exception e)
@@ -339,6 +347,7 @@ public class MainScreen extends ApplicationScreen
 		{
 			unlockAllPurchased = prefs.getBoolean("unlock_all_forever", false);
 		}
+
 		// -+- -->
 
 		try
@@ -428,11 +437,13 @@ public class MainScreen extends ApplicationScreen
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         
+		// <!-- -+-
  		if (isABCUnlockedInstalled(this))
  		{
  			unlockAllPurchased = true;
  			prefs.edit().putBoolean("unlock_all_forever", true).commit();
  		}
+ 		//-+- -->
  		
 		isCameraConfiguring = false;
 
@@ -1779,6 +1790,7 @@ public class MainScreen extends ApplicationScreen
 	}
 
 
+
 	public static void purchaseAll()
 	{
 		if (isPurchasedAll())
@@ -1923,8 +1935,6 @@ public class MainScreen extends ApplicationScreen
 			}
 			return true;
 		}
-
-
 
 		int launchesLeft = MainScreen.getLeftLaunches(mode.modeID);
 //		launchesLeft = 100; //Using for testing free version

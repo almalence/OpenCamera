@@ -111,14 +111,14 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		camera2Preference = prefs.getBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false);
 		
-		if(CameraController.isFlex2 && camera2Preference)
-		{
-			prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false).commit();
-			CameraController.setUseCamera2(false);
-			
-			CameraController.isOldCameraOneModeLaunched = true;
-			PluginManager.getInstance().setSwitchModeType(true);
-		}
+//		if(CameraController.isFlex2 && camera2Preference)
+//		{
+//			prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false).commit();
+//			CameraController.setUseCamera2(false);
+//			
+//			CameraController.isOldCameraOneModeLaunched = true;
+//			PluginManager.getInstance().setSwitchModeType(true);
+//		}
 	}
 
 	@Override
@@ -168,15 +168,14 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), camera2Preference).commit();
 	}
 	
-	
 	@Override
 	public void onStop()
 	{
-		if(CameraController.isFlex2 && camera2Preference)
-		{
-			CameraController.useCamera2OnRelaunch(true);
-			CameraController.setUseCamera2(camera2Preference);
-		}
+//		if(CameraController.isFlex2 && camera2Preference)
+//		{
+//			CameraController.useCamera2OnRelaunch(true);
+//			CameraController.setUseCamera2(camera2Preference);
+//		}
 	}
 
 	@Override
@@ -635,7 +634,12 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		// then adjust it one or two stops slower than your original shutter speed 
 		// (i.e. if you were at 1/250 sec, then set it to 1/125 or 1/60 sec), and take another photo.
 		// Also if we use manual exposure settings, we should set ISO manually (get ISO and Exposure original values from preview).
-		if (CameraController.isNexus5x || CameraController.isNexus6p || CameraController.isFlex2)
+		if (CameraController.isNexus5x || 
+			CameraController.isNexus6p || 
+			CameraController.isFlex2 || 
+			CameraController.isGalaxyS7 || 
+			CameraController.isG5||
+			CameraController.isHTCM10)
 		{
 			gain = new int[3];
 			gain[0] = CameraController.getCurrentSensitivity();
@@ -659,8 +663,17 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			default:
 				exposure = new long[3];
 				exposure[0] = CameraController.getCameraExposureTime();
-				exposure[1] = CameraController.getCameraExposureTime() * 4;
-				exposure[2] = CameraController.getCameraExposureTime() / 4;
+				
+				if (CameraController.isGalaxyS7)
+				{
+					exposure[1] = CameraController.getCameraExposureTime() * 2;
+					exposure[2] = CameraController.getCameraExposureTime() / 4;
+				}
+				else
+				{
+					exposure[1] = CameraController.getCameraExposureTime() * 4;
+					exposure[2] = CameraController.getCameraExposureTime() / 2;
+				}
 				break;
 			}
 		}

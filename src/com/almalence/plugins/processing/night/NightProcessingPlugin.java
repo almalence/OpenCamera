@@ -185,7 +185,7 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 		boolean isSuperMode = Boolean.parseBoolean(PluginManager.getInstance().getFromSharedMem(
 				"isSuperMode" + sessionID));
 		int sensorGain = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("burstGain" + sessionID));
-
+		
 		yuv = AlmaShotNight.Process(mImageWidth, mImageHeight, mOutImageWidth, mOutImageHeight, sensorGain,
 				Integer.parseInt(NoisePreference), Integer.parseInt(GhostPreference), 9, SaturatedColors ? 9 : 0,
 				fGamma, imagesAmount, NightProcessingPlugin.crop, mDisplayOrientation, mCameraMirrored, zoom,
