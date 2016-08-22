@@ -263,9 +263,11 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 			//if (!zoomAbove15x) filter = 320;// slightly more filtering at low zooms
 			break;
 		case 2000:// OnePlus 2
-			deGhostGain = (256 * (50 - 0.01f * iso) / 100);
-			if (deGhostGain < 54) deGhostGain = 54;
-			sensorGain = (int)(1.4f * 256 * powf(((float)iso) / 100, 0.45f));
+//			deGhostGain = (256 * (50 - 0.01f * iso) / 100);
+//			if (deGhostGain < 54) deGhostGain = 54;
+//			sensorGain = (int)(1.4f * 256 * powf(((float)iso) / 100, 0.45f));
+			deGhostGain = 512;
+			sensorGain = 0;
 
 			sharpen = 1;
 			if (zoomAbove30x) sharpen = 0x80;// fine edge enhancement instead of primitive sharpen at high zoom levels
