@@ -1164,7 +1164,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			if ((CameraController.isNexus5or6 || 
 				 CameraController.isFlex2 || 
 				 CameraController.isOnePlusTwo || 
-				 CameraController.isGalaxyS7
+				 CameraController.isGalaxyS7 ||
+				 CameraController.isHTCM10
 				 //CameraController.isG5
 				 )
 				/*|| CameraController.isGalaxyS6*/
