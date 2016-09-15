@@ -116,11 +116,12 @@ LOCAL_C_INCLUDES += \
 	$(LOCAL_PATH)/FaceRecEm/common/src/b_FDSDK/
 
 LOCAL_SHARED_LIBRARIES := \
-	libandroid_runtime \
 	libnativehelper \
 	libutils \
 	libskia \
 	libcutils
+	
+#	libandroid_runtime \
 
 LOCAL_MODULE:= libFFTEm
 

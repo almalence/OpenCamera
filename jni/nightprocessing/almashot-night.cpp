@@ -196,7 +196,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 		{
 			// iso 100 = +0.1
 			// iso 800 = -0.05
-			fgamma += 0.09f - (log2f(iso) - 6.644f) * 0.165f/3.0f;
+			fgamma += 0.09f - (logf(iso) * 3.321928095f - 6.644f) * 0.165f/3.0f;//log2f replaced with logf(iso) * 3.321928095f for android <4.3
 		}
 
 		if (fgamma != 0.0f)

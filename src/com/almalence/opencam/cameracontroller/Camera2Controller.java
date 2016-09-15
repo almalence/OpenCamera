@@ -226,7 +226,9 @@ public class Camera2Controller
 				Camera2Controller.getInstance().camCharacter = Camera2Controller.getInstance().manager
 				.getCameraCharacteristics(CameraController.cameraIdList[0]);
 			int level = Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL);
-			return (level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED || level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL);
+			return (level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED || 
+					level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL || 
+					level == 3);//CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_3);
 //					|| level == CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY);
 		} catch (Exception e)
 		{
