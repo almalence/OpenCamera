@@ -65,13 +65,12 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
 /* <!-- +++
- import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.focuscam_plus.ApplicationScreen;
+ import com.almalence.focuscam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.cameracontroller.CameraController;
-//-+- -->
+import com.almalence.focuscam.ApplicationScreen;
+import com.almalence.focuscam.cameracontroller.CameraController;
 
 /**
  * Collection of utility functions used in this package.

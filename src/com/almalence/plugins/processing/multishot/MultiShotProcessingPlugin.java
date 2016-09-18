@@ -8,11 +8,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 /* <!-- +++
-import com.almalence.opencam_plus.PluginProcessing;
+import com.almalence.focuscam_plus.PluginProcessing;
 +++ --> */
 //<!-- -+-
-import com.almalence.opencam.PluginProcessing;
-//-+- -->
+import com.almalence.focuscam.PluginProcessing;
 
 public abstract class MultiShotProcessingPlugin extends PluginProcessing implements Handler.Callback, OnClickListener
 {

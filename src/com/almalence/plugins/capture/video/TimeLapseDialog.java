@@ -4,10 +4,10 @@ import android.content.Context;
 import android.view.Window;
 
 /* <!-- +++
-  import com.almalence.opencam_plus.R;
+  import com.almalence.focuscam_plus.R;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.R;
+import com.almalence.focuscam.R;
 //-+- -->
 import com.almalence.ui.RotateDialog;
 import com.almalence.ui.RotateLayout;

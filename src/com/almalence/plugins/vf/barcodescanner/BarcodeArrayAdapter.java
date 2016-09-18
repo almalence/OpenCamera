@@ -10,10 +10,10 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 /* <!-- +++
- import com.almalence.opencam_plus.R;
+ import com.almalence.focuscam_plus.R;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.R;
+import com.almalence.focuscam.R;
 
 //-+- -->
 public class BarcodeArrayAdapter extends ArrayAdapter<Barcode>

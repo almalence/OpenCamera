@@ -38,9 +38,9 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.R;
+import com.almalence.focuscam.ApplicationScreen;
+import com.almalence.focuscam.MainScreen;
+import com.almalence.focuscam.R;
 
 public class AppRater
 {

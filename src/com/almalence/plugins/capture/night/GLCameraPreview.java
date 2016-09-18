@@ -30,10 +30,10 @@ import android.content.Context;
 import android.util.Log;
 
 /* <!-- +++
-import com.almalence.opencam_plus.ApplicationScreen;
+import com.almalence.focuscam_plus.ApplicationScreen;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationScreen;
+import com.almalence.focuscam.ApplicationScreen;
 //-+- -->
 
 import com.almalence.util.ImageConversion;

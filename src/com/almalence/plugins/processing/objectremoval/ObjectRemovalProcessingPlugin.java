@@ -45,19 +45,19 @@ import android.widget.RelativeLayout.LayoutParams;
 
 import com.almalence.SwapHeap;
 /* <!-- +++
- import com.almalence.opencam_plus.ApplicationInterface;
- import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.PluginManager;
- import com.almalence.opencam_plus.R;
- import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.focuscam_plus.ApplicationInterface;
+ import com.almalence.focuscam_plus.ApplicationScreen;
+ import com.almalence.focuscam_plus.PluginManager;
+ import com.almalence.focuscam_plus.R;
+ import com.almalence.focuscam_plus.cameracontroller.CameraController;
  
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationInterface;
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.R;
-import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.focuscam.ApplicationInterface;
+import com.almalence.focuscam.ApplicationScreen;
+import com.almalence.focuscam.PluginManager;
+import com.almalence.focuscam.cameracontroller.CameraController;
+import com.almalence.focuscam.R;
 //-+- -->
 
 import com.almalence.plugins.processing.multishot.MultiShotProcessingPlugin;

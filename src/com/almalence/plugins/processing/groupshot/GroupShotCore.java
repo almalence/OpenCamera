@@ -47,13 +47,12 @@ import com.almalence.util.ImageConversion;
 import com.almalence.util.Util;
 
 /* <!-- +++
- import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.focuscam_plus.ApplicationScreen;
+ import com.almalence.focuscam_plus.cameracontroller.CameraController;
  +++ --> */
 //<!-- -+-
- import com.almalence.opencam.ApplicationScreen;
- import com.almalence.opencam.cameracontroller.CameraController;
-//-+- -->
+import com.almalence.focuscam.ApplicationScreen;
+import com.almalence.focuscam.cameracontroller.CameraController;
 
 public class GroupShotCore
 {

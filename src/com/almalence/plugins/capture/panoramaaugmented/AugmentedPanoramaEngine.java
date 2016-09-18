@@ -34,12 +34,12 @@ import com.almalence.SwapHeap;
 import com.almalence.YuvImage;
 
 /* <!-- +++
- import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.focuscam_plus.ApplicationScreen;
+ import com.almalence.focuscam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.focuscam.ApplicationScreen;
+import com.almalence.focuscam.cameracontroller.CameraController;
 //-+- -->
 
 import com.almalence.util.ImageConversion;

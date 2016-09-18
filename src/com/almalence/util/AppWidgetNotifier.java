@@ -31,15 +31,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 //<!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.R;
+import com.almalence.focuscam.ApplicationScreen;
+import com.almalence.focuscam.MainScreen;
+import com.almalence.focuscam.R;
 
 //-+- -->
 /* <!-- +++
- import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.MainScreen;
- import com.almalence.opencam_plus.R;
+ import com.almalence.focuscam_plus.ApplicationScreen;
+ import com.almalence.focuscam_plus.MainScreen;
+ import com.almalence.focuscam_plus.R;
  +++ --> */
 
 public class AppWidgetNotifier
@@ -76,7 +76,7 @@ public class AppWidgetNotifier
 	{
 		try
 		{
-			activity.getPackageManager().getInstallerPackageName("com.almalence.opencamwidget");
+			activity.getPackageManager().getInstallerPackageName("com.almalence.focuscamwidget");
 		} catch (IllegalArgumentException e)
 		{
 			return false;
@@ -157,7 +157,7 @@ public class AppWidgetNotifier
 		{
 			public void onClick(View v)
 			{
-				MainScreen.callStoreInstall(mContext, "com.almalence.opencamwidget");
+				MainScreen.callStoreInstall(mContext, "com.almalence.focuscamwidget");
 
 				if (prefs != null)
 				{

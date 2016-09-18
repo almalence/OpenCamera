@@ -18,12 +18,12 @@ import android.widget.TextView;
 
 
 /* <!-- +++
- import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.R;
+ import com.almalence.focuscam_plus.ApplicationScreen;
+ import com.almalence.focuscam_plus.R;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.R;
+import com.almalence.focuscam.ApplicationScreen;
+import com.almalence.focuscam.R;
 //-+- -->
 import com.almalence.ui.RotateLayout;
 import com.almalence.ui.RotateDialog;

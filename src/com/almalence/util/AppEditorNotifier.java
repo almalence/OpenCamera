@@ -31,15 +31,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 //<!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.R;
+import com.almalence.focuscam.ApplicationScreen;
+import com.almalence.focuscam.MainScreen;
+import com.almalence.focuscam.R;
 
 //-+- -->
 /* <!-- +++
- import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.MainScreen;
- import com.almalence.opencam_plus.R;
+ import com.almalence.focuscam_plus.ApplicationScreen;
+ import com.almalence.focuscam_plus.MainScreen;
+ import com.almalence.focuscam_plus.R;
  +++ --> */
 
 public class AppEditorNotifier
@@ -54,7 +54,7 @@ public class AppEditorNotifier
 	{
 		try
 		{
-			activity.getPackageManager().getInstallerPackageName("com.almalence.opencameditor");
+			activity.getPackageManager().getInstallerPackageName("com.almalence.focuscameditor");
 		} catch (IllegalArgumentException e)
 		{
 			return false;
@@ -134,7 +134,7 @@ public class AppEditorNotifier
 		{
 			public void onClick(View v)
 			{
-				MainScreen.callStoreInstall(mContext, "com.almalence.opencameditor");
+				MainScreen.callStoreInstall(mContext, "com.almalence.focuscameditor");
 				prefs.edit().putInt("days_until_prompt", 999).commit();
 				dialog.dismiss();
 			}

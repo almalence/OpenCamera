@@ -19,10 +19,10 @@ package com.almalence.plugins.vf.barcodescanner.result;
 import android.app.Activity;
 
 /* <!-- +++
- import com.almalence.opencam_plus.R;
+ import com.almalence.focuscam_plus.R;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.R;
+import com.almalence.focuscam.R;
 //-+- -->
 import com.google.zxing.Result;
 import com.google.zxing.client.result.ParsedResult;

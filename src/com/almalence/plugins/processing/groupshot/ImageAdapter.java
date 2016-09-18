@@ -36,14 +36,14 @@ import android.widget.BaseAdapter;
 import android.widget.Gallery;
 import android.widget.ImageView;
 
+import com.almalence.focuscam.cameracontroller.CameraController;
 /* <!-- +++
- import com.almalence.opencam_plus.R;
- import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.focuscam_plus.R;
+ import com.almalence.focuscam_plus.cameracontroller.CameraController;
 
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.R;
-import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.focuscam.R;
 //-+- -->
 import com.almalence.util.MemoryImageCache;
 import com.almalence.util.Size;

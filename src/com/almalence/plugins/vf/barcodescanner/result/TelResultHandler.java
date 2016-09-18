@@ -20,10 +20,10 @@ import android.app.Activity;
 import android.telephony.PhoneNumberUtils;
 
 /* <!-- +++
- import com.almalence.opencam_plus.R;
+ import com.almalence.focuscam_plus.R;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.R;
+import com.almalence.focuscam.R;
 //-+- -->
 import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.TelParsedResult;

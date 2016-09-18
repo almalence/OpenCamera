@@ -17,10 +17,10 @@
 package com.almalence.plugins.vf.focus;
 
 /* <!-- +++
- import com.almalence.opencam_plus.R;
+ import com.almalence.focuscam_plus.R;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.R;
+import com.almalence.focuscam.R;
 //-+- -->
 
 import android.content.Context;

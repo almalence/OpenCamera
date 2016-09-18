@@ -55,10 +55,10 @@ import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 
 /* <!-- +++
- import com.almalence.opencam_plus.PluginManagerBase;
+ import com.almalence.focuscam_plus.PluginManagerBase;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.PluginManagerBase;
+import com.almalence.focuscam.PluginManagerBase;
 //-+- -->
 
 import com.almalence.util.Util;

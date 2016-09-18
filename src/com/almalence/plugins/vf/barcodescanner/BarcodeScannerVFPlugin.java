@@ -40,24 +40,23 @@ import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 /* <!-- +++
- import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.MainScreen;
- import com.almalence.opencam_plus.PluginManager;
- import com.almalence.opencam_plus.PluginViewfinder;
- import com.almalence.opencam_plus.R;
- import com.almalence.opencam_plus.SoundPlayer;
- import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.focuscam_plus.ApplicationScreen;
+ import com.almalence.focuscam_plus.MainScreen;
+ import com.almalence.focuscam_plus.PluginManager;
+ import com.almalence.focuscam_plus.PluginViewfinder;
+ import com.almalence.focuscam_plus.R;
+ import com.almalence.focuscam_plus.SoundPlayer;
+ import com.almalence.focuscam_plus.cameracontroller.CameraController;
 
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginViewfinder;
-import com.almalence.opencam.R;
-import com.almalence.opencam.SoundPlayer;
-import com.almalence.opencam.cameracontroller.CameraController;
-//-+- -->
+import com.almalence.focuscam.ApplicationScreen;
+import com.almalence.focuscam.MainScreen;
+import com.almalence.focuscam.PluginManager;
+import com.almalence.focuscam.PluginViewfinder;
+import com.almalence.focuscam.SoundPlayer;
+import com.almalence.focuscam.cameracontroller.CameraController;
+import com.almalence.focuscam.R;
 
 public class BarcodeScannerVFPlugin extends PluginViewfinder
 {

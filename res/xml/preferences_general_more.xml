@@ -15,7 +15,7 @@
     
     <!-- -+-  -->
     <PreferenceScreen
-        android:fragment="com.almalence.opencam.Fragment"
+        android:fragment="com.almalence.focuscam.Fragment"
         android:summary="@string/Pref_SaveConfiguration_Summary"
         android:title="@string/Pref_SaveConfiguration_Title" >
         <extra
@@ -25,7 +25,7 @@
     <!--  -+- -->
     <!-- +++
 	<PreferenceScreen
-		 android:fragment="com.almalence.opencam_plus.Fragment"
+		 android:fragment="com.almalence.focuscam_plus.Fragment"
 		 android:title="@string/Pref_SaveConfiguration_Title"
 		 android:summary="@string/Pref_SaveConfiguration_Summary">
 		 <extra 

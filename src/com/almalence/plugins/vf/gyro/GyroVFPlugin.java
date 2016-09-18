@@ -25,16 +25,16 @@ import com.almalence.plugins.capture.panoramaaugmented.VfGyroSensor;
 import com.almalence.ui.RotateImageView;
 
 /* <!-- +++
-import com.almalence.opencam_plus.ApplicationScreen;
-import com.almalence.opencam_plus.PluginViewfinder;
-import com.almalence.opencam_plus.R;
-import com.almalence.opencam_plus.cameracontroller.CameraController;
+import com.almalence.focuscam_plus.ApplicationScreen;
+import com.almalence.focuscam_plus.PluginViewfinder;
+import com.almalence.focuscam_plus.R;
+import com.almalence.focuscam_plus.cameracontroller.CameraController;
 +++ --> */
 //<!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.PluginViewfinder;
-import com.almalence.opencam.R;
-import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.focuscam.ApplicationScreen;
+import com.almalence.focuscam.PluginViewfinder;
+import com.almalence.focuscam.cameracontroller.CameraController;
+import com.almalence.focuscam.R;
 
 //-+- -->
 

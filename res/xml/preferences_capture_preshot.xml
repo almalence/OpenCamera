@@ -36,7 +36,7 @@
 		<!-- -+-  -->
     	<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
     	    android:title="@string/moreText"
-    	    android:fragment="com.almalence.opencam.Fragment" 
+    	    android:fragment="com.almalence.focuscam.Fragment" 
             >
 			 <extra 
 			     android:name="type" 
@@ -46,7 +46,7 @@
 		<!-- +++
 		<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
     	    android:title="@string/moreText"
-    	    android:fragment="com.almalence.opencam_plus.Fragment" 
+    	    android:fragment="com.almalence.focuscam_plus.Fragment" 
             >
 			 <extra 
 			     android:name="type" 

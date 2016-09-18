@@ -19,12 +19,12 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.ui;
 
 /* <!-- +++
- import com.almalence.opencam_plus.R;
- import com.almalence.opencam_plus.MainScreen;
+ import com.almalence.focuscam_plus.R;
+ import com.almalence.focuscam_plus.MainScreen;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.MainScreen;
-import com.almalence.opencam.R;
+import com.almalence.focuscam.MainScreen;
+import com.almalence.focuscam.R;
 //-+- -->
 
 import com.almalence.util.Util;

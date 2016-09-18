@@ -19,16 +19,16 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.plugins.processing.bestshot;
 
 /* <!-- +++
- import com.almalence.opencam_plus.ConfigParser;
- import com.almalence.opencam_plus.PluginManager;
- import com.almalence.opencam_plus.PluginProcessing;
- import com.almalence.opencam_plus.cameracontroller.CameraController;
+ import com.almalence.focuscam_plus.ConfigParser;
+ import com.almalence.focuscam_plus.PluginManager;
+ import com.almalence.focuscam_plus.PluginProcessing;
+ import com.almalence.focuscam_plus.cameracontroller.CameraController;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ConfigParser;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginProcessing;
-import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.focuscam.ConfigParser;
+import com.almalence.focuscam.PluginManager;
+import com.almalence.focuscam.PluginProcessing;
+import com.almalence.focuscam.cameracontroller.CameraController;
 //-+- -->
 import com.almalence.plugins.processing.bestshot.AlmaShotBestShot;
 

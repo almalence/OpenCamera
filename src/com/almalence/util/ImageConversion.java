@@ -27,11 +27,10 @@ import android.view.Display;
 import android.view.WindowManager;
 
 /* <!-- +++
-import com.almalence.opencam_plus.ApplicationScreen;
+import com.almalence.focuscam_plus.ApplicationScreen;
 +++ --> */
 //<!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-//-+- -->
+import com.almalence.focuscam.ApplicationScreen;
 
 public class ImageConversion
 {

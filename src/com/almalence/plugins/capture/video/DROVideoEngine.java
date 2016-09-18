@@ -21,14 +21,14 @@ import android.util.Log;
 import android.widget.Toast;
 
 /* <!-- +++
- import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.cameracontroller.CameraController;
- import com.almalence.opencam_plus.ui.EglEncoder;
+ import com.almalence.focuscam_plus.ApplicationScreen;
+ import com.almalence.focuscam_plus.cameracontroller.CameraController;
+ import com.almalence.focuscam_plus.ui.EglEncoder;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.ui.EglEncoder;
+import com.almalence.focuscam.ApplicationScreen;
+import com.almalence.focuscam.cameracontroller.CameraController;
+import com.almalence.focuscam.ui.EglEncoder;
 
 //-+- -->
 

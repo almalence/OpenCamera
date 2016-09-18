@@ -29,11 +29,10 @@ import com.almalence.plugins.processing.multishot.AlmaCLRShot.ObjectInfo;
 import com.almalence.util.Size;
 
 /* <!-- +++
-import com.almalence.opencam_plus.cameracontroller.CameraController;
+import com.almalence.focuscam_plus.cameracontroller.CameraController;
 +++ --> */
 //<!-- -+-
-import com.almalence.opencam.cameracontroller.CameraController;
-//-+- -->
+import com.almalence.focuscam.cameracontroller.CameraController;
 
 public class ObjectRemovalCore
 {

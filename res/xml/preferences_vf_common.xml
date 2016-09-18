@@ -33,7 +33,7 @@
             android:key="@string/Preference_SwipingEnabledChecked" />
 	    
 	    <PreferenceScreen 
-            android:fragment="com.almalence.opencam.Fragment" 
+            android:fragment="com.almalence.focuscam.Fragment" 
             android:title="@string/moreText" 
             >
 			 <extra 
@@ -72,7 +72,7 @@
             android:key="@string/Preference_ShowFastSwitchShutterValue" />
 
 	    <PreferenceScreen 
-            android:fragment="com.almalence.opencam_plus.Fragment" 
+            android:fragment="com.almalence.focuscam_plus.Fragment" 
             android:title="@string/moreText" 
             >
 			 <extra 

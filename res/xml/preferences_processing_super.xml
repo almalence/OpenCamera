@@ -6,7 +6,7 @@
         android:title="@string/Pref_Super_TitleUpscale" />
 
 <!-- -+-  -->
-<com.almalence.opencam.ui.SeekBarPreference
+<com.almalence.focuscam.ui.SeekBarPreference
     android:defaultValue="0"
     android:dialogMessage=""
     android:key="brightnessPref"
@@ -17,7 +17,7 @@
 
 <!--  -+- -->
 <!-- +++
-	<com.almalence.opencam_plus.ui.SeekBarPreference
+	<com.almalence.focuscam_plus.ui.SeekBarPreference
         android:defaultValue="0"
         android:dialogMessage=""
         android:key="brightnessPref"

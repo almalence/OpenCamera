@@ -14,10 +14,10 @@ import android.widget.RelativeLayout;
 
 import com.almalence.sony.cameraremote.ServerDevice.ApiService;
 /* <!-- +++
-import com.almalence.opencam_plus.R;
+import com.almalence.focuscam_plus.R;
 +++ --> */
 //<!-- -+-
-import com.almalence.opencam.R;
+import com.almalence.focuscam.R;
 //-+- -->
 
 public class DeviceListAdapter extends BaseAdapter {

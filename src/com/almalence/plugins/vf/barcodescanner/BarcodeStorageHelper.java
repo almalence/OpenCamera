@@ -17,10 +17,10 @@ import org.json.JSONObject;
 import android.content.Context;
 
 /* <!-- +++
- import com.almalence.opencam_plus.ApplicationScreen;
+ import com.almalence.focuscam_plus.ApplicationScreen;
  +++ --> */
 //<!-- -+-
-import com.almalence.opencam.ApplicationScreen;
+import com.almalence.focuscam.ApplicationScreen;
 
 //-+- -->
 

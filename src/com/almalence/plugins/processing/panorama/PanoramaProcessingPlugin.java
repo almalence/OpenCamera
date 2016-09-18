@@ -38,18 +38,18 @@ import com.almalence.YuvImage;
 import com.almalence.util.ImageConversion;
 
 /* <!-- +++
- import com.almalence.opencam_plus.ApplicationScreen;
- import com.almalence.opencam_plus.ConfigParser;
- import com.almalence.opencam_plus.PluginManager;
- import com.almalence.opencam_plus.PluginProcessing;
- import com.almalence.opencam_plus.R;
+ import com.almalence.focuscam_plus.ApplicationScreen;
+ import com.almalence.focuscam_plus.ConfigParser;
+ import com.almalence.focuscam_plus.PluginManager;
+ import com.almalence.focuscam_plus.PluginProcessing;
+ import com.almalence.focuscam_plus.R;
  +++ --> */
 // <!-- -+-
-import com.almalence.opencam.ApplicationScreen;
-import com.almalence.opencam.ConfigParser;
-import com.almalence.opencam.PluginManager;
-import com.almalence.opencam.PluginProcessing;
-import com.almalence.opencam.R;
+import com.almalence.focuscam.ApplicationScreen;
+import com.almalence.focuscam.ConfigParser;
+import com.almalence.focuscam.PluginManager;
+import com.almalence.focuscam.PluginProcessing;
+import com.almalence.focuscam.R;
 //-+- -->
 
 public class PanoramaProcessingPlugin extends PluginProcessing
