@@ -1,0 +1,25 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/Pref_FocusStacking_Category_Title">   
+  <!-- 	<ListPreference
+        android:defaultValue="0"
+        android:key="@string/Preference_OutputImageSizeRearValue"
+        android:title="@string/pref_title_outputres"
+        android:entries="@array/outputresArray"
+        android:entryValues="@array/outputresArrayValues"/>
+    
+    <ListPreference
+        android:defaultValue="0"
+        android:key="@string/Preference_OutputImageSizeFrontValue"
+        android:title="@string/pref_title_outputres"
+        android:entries="@array/outputresArray"
+        android:entryValues="@array/outputresArrayValues"/> -->
+        
+     <ListPreference
+    	android:defaultValue="0"
+   		android:entries="@array/savemodeArray"
+    	android:entryValues="@array/savemodeArrayValues"
+    	android:key="@string/Preference_FocusBracketing_Save_Pref"
+    	android:title="@string/Pref_SaveMode_title"/>
+	</PreferenceCategory>
+</PreferenceScreen>

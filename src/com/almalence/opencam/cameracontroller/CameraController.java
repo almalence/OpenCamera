@@ -209,7 +209,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public static boolean							isMotoXPure 	= Build.MODEL.toLowerCase().replace(" ", "").contains("xt1575");
 	public static boolean							isHTCM10 	 	= Build.MODEL.toLowerCase().replace(" ", "").contains("htc_m10h");
-	
+	public static boolean							isSnapdgragonTestDevice = Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("msm8996forarm64");	
 
 	// Android camera parameters constants
 	private static String							sceneAuto;
@@ -1606,6 +1606,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		float mpix = (float) lmpix / 1000000.f;
 		float ratio = (float) ((float) currSizeWidth / (float) currSizeHeight);
 
+		if (!(Math.abs(ratio - 4 / 3.f) < 0.1f))
+			return;
 		// find good location in a list
 		int loc;
 		for (loc = 0; loc < CameraController.ResolutionsMPixList.size(); ++loc)
@@ -3254,6 +3256,22 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		else
 			return 0;
 	}
+	
+	public static float getHyperfocalFocusDistance()
+	{
+		if (CameraController.isCamera2)
+			return Camera2Controller.getCameraHyperfocalFocusDistance();
+		else
+			return 0;
+	}
+	
+	public static float getCameraFocusDistance()
+	{
+		if (CameraController.isCamera2)
+			return Camera2Controller.getCameraFocusDistance();
+		else
+			return -1.0f;
+	}
 
 	public static boolean isManualExposureTimeSupported()
 	{
@@ -4247,7 +4265,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	// Note: per-frame 'gain' and 'exposure' parameters are only effective for
 	// Camera2 API at the moment
 	public static int captureImagesWithParams(int nFrames, int format, int[] pause, int[] evRequested, int[] gain,
-			long[] exposure, boolean setPowerGamma, boolean resInHeap, boolean indicate)
+			long[] exposure, float[] focusDistances, boolean setPowerGamma, boolean resInHeap, boolean indicate)
 	{
 		pauseBetweenShots = pause;
 		evValues = evRequested;
@@ -4296,7 +4314,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				}
 				return 0;
 			} else
-				return Camera2Controller.captureImageWithParamsCamera2(nFrames, format, pause, evRequested, gain, exposure, setPowerGamma,
+				return Camera2Controller.captureImageWithParamsCamera2(nFrames, format, pause, evRequested, gain, exposure, focusDistances, setPowerGamma,
 						resultInHeap, indicateCapturing);
 		} else
 		{

@@ -136,6 +136,10 @@ public interface ApplicationInterface
 	//Used to re-initialize camera object if needed.
 	public void relaunchCamera();
 	
+	//Used to re-initialize camera object in time.
+	public void pauseCamera();
+	public void resumeCamera();
+	
 	//Inform Application that current capturing is failed.
 	public void captureFailed();
 	

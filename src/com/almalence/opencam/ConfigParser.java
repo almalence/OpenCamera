@@ -174,20 +174,20 @@ public class ConfigParser
 		parser.require(XmlPullParser.START_TAG, ns, "defaultmode");
 		String modeID = parser.getAttributeValue(null, "id");
 		
-		//set super mode by default on these devices
-		if (CameraController.isNexus5or6 ||
-		    CameraController.isFlex2 ||
-		    CameraController.isOnePlusTwo||
-		    CameraController.isGalaxyS7)
-		{
-			Iterator<Mode> it = modes.iterator();
-			while(it.hasNext())
-			{
-				Mode mode = it.next();
-				if(mode.modeID.contains("nightmode"))
-					modeID = "nightmode";
-			}
-		}
+		//set super mode by default on these devices (only for A Better Camera)
+//		if (CameraController.isNexus5or6 ||
+//		    CameraController.isFlex2 ||
+//		    CameraController.isOnePlusTwo||
+//		    CameraController.isGalaxyS7)
+//		{
+//			Iterator<Mode> it = modes.iterator();
+//			while(it.hasNext())
+//			{
+//				Mode mode = it.next();
+//				if(mode.modeID.contains("nightmode"))
+//					modeID = "nightmode";
+//			}
+//		}
 		
 		parser.nextTag();
 		return modeID;

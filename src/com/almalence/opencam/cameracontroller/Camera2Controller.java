@@ -111,8 +111,12 @@ public class Camera2Controller
 	private static long[]				exposureTime				= null; //List of exposure time values for each requested shot.
 	private static long 				currentExposure 			= 0;    //Exposure time of last captured frame
 	private static int 					currentSensitivity 			= 0;    //Sensor sensitivity (ISO) of last captured frame
+	private static float[]				focusDistance				= null; //List of focus distance values for each requested shot
 	private static int 					blevel			 			= 0;    //Black level offset
 	private static int 					wlevel 						= 1024; //Maximum raw value output by sensor.
+	
+	private static boolean				fbRequested					= false; //Flag to show that focus bracketing capture is needed
+	private static List<CaptureRequest> fbRequests					= null;  //Capture requests for focus bracketing
 	
 	private static boolean				manualPowerGamma			= false; //Used only for Almalence's SuperSensor mode
 	
@@ -1318,6 +1322,23 @@ public class Camera2Controller
 		return 0;
 	}
 	
+	public static float getCameraHyperfocalFocusDistance()
+	{
+		if (Camera2Controller.getInstance().camCharacter != null &&
+			(Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.LENS_INFO_FOCUS_DISTANCE_CALIBRATION) ==
+						CameraCharacteristics.LENS_INFO_FOCUS_DISTANCE_CALIBRATION_APPROXIMATE ||
+			Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.LENS_INFO_FOCUS_DISTANCE_CALIBRATION) ==
+						CameraCharacteristics.LENS_INFO_FOCUS_DISTANCE_CALIBRATION_CALIBRATED))
+			return Camera2Controller.getInstance().camCharacter.get(CameraCharacteristics.LENS_INFO_HYPERFOCAL_DISTANCE);
+		
+		return 0;
+	}
+	
+	public static float getCameraFocusDistance()
+	{
+		return PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext()).getFloat(ApplicationScreen.sFocusDistancePref, -1);
+	}
+	
 	public static long getCameraMinimumExposureTime()
 	{
 		if (Camera2Controller.getInstance().camCharacter != null
@@ -1776,7 +1797,7 @@ public class Camera2Controller
 
 		try
 		{
-			Camera2Controller.getInstance().mCaptureSession.setRepeatingRequest(Camera2Controller.previewRequestBuilder.build(), captureCallback, null);
+			Camera2Controller.getInstance().mCaptureSession.setRepeatingRequest(Camera2Controller.previewRequestBuilder.build(), previewCaptureCallback, null);
 		} catch (CameraAccessException e)
 		{
 			e.printStackTrace();
@@ -2327,7 +2348,7 @@ public class Camera2Controller
 	// ev - exposure compensation
 	// gain - sensor sensitivity (ISO)
 	// expo - exposure time value in case of manual exposure time preference
-	private static void SetupPerFrameParameters(int ev, int gain, long expo, boolean isRAWCapture)
+	private static void SetupPerFrameParameters(int ev, int gain, long expo, float focusDistance, boolean isRAWCapture)
 	{
 		// explicitly disable AWB for the duration of still/burst capture to get
 		// full burst with the same WB
@@ -2375,6 +2396,20 @@ public class Camera2Controller
 			{
 				rawRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, expo);
 				rawRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
+			}
+		}
+		
+		if(focusDistance != -1)
+		{
+			stillRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
+			stillRequestBuilder.set(CaptureRequest.LENS_FOCUS_DISTANCE, focusDistance);
+			
+			precaptureRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
+			precaptureRequestBuilder.set(CaptureRequest.LENS_FOCUS_DISTANCE, focusDistance);
+			if(isRAWCapture)
+			{
+				rawRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF);
+				rawRequestBuilder.set(CaptureRequest.LENS_FOCUS_DISTANCE, focusDistance);
 			}
 		}
 	}
@@ -2425,7 +2460,7 @@ public class Camera2Controller
 	//it starts sequence of tuning still capture requests
 	//Call next methods only when capture become allowed (preview is focused)
 	public static int captureImageWithParamsCamera2(final int nFrames, final int format, final int[] pause,
-													final int[] evRequested, final int[] gain, final long[] exposure,
+													final int[] evRequested, final int[] gain, final long[] exposure, final float[] focusDistances,
 													final boolean setPowerGamma, final boolean resInHeap, final boolean indication)
 	{
 //		inCapture = true; Debug variable. Used in logic to capture RAW in Super mode on Galaxy S6
@@ -2442,7 +2477,7 @@ public class Camera2Controller
 			{
 				try
 				{
-					Camera2Controller.getInstance().mCaptureSession.capture(Camera2Controller.previewRequestBuilder.build(), captureCallback, null);
+					Camera2Controller.getInstance().mCaptureSession.capture(Camera2Controller.previewRequestBuilder.build(), previewCaptureCallback, null);
 				}
 				catch (CameraAccessException e)
 				{
@@ -2460,18 +2495,18 @@ public class Camera2Controller
 					if (captureAllowed)
 					{
 						this.cancel();
-						captureImageWithParamsCamera2Allowed(nFrames, format, pause, evRequested, gain, exposure, setPowerGamma, resInHeap, indication);
+						captureImageWithParamsCamera2Allowed(nFrames, format, pause, evRequested, gain, exposure, focusDistances, setPowerGamma, resInHeap, indication);
 					}
 				}
 
 				public void onFinish()
 				{
-					captureImageWithParamsCamera2Allowed(nFrames, format, pause, evRequested, gain, exposure, setPowerGamma, resInHeap, indication);
+					captureImageWithParamsCamera2Allowed(nFrames, format, pause, evRequested, gain, exposure, focusDistances, setPowerGamma, resInHeap, indication);
 				}
 			}.start();
 		}
 		else
-			captureImageWithParamsCamera2Allowed(nFrames, format, pause, evRequested, gain, exposure, setPowerGamma, resInHeap, indication);
+			captureImageWithParamsCamera2Allowed(nFrames, format, pause, evRequested, gain, exposure, focusDistances, setPowerGamma, resInHeap, indication);
 		
 		return requestID;
 	}
@@ -2481,7 +2516,7 @@ public class Camera2Controller
 	//First of all make pre-capture request for exposure metering
 	//For all devices lower that HARDWARE_LEVEL_FULL or LIMITED just call capture method without pre-capture
 	public static void captureImageWithParamsCamera2Allowed (final int nFrames, final int format, final int[] pause,
-			final int[] evRequested, final int[] gain, final long[] exposure, final boolean setPowerGamma, final boolean resInHeap, final boolean indication) {
+			final int[] evRequested, final int[] gain, final long[] exposure, final float[] focusDistances, final boolean setPowerGamma, final boolean resInHeap, final boolean indication) {
 		try
 		{
 			lastCaptureFormat = format;
@@ -2528,14 +2563,14 @@ public class Camera2Controller
 											CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
 									
 									captureImageWithParamsCamera2Simple(nFrames, format, pause,
-											evRequested, gain, exposure, setPowerGamma, resInHeap, indication);
+											evRequested, gain, exposure, focusDistances, setPowerGamma, resInHeap, indication);
 								}
 							}, null);
 				}
 			} else
 			{
 				captureImageWithParamsCamera2Simple(nFrames, format, pause,
-						evRequested, gain, exposure, setPowerGamma, resInHeap, indication);
+						evRequested, gain, exposure, focusDistances, setPowerGamma, resInHeap, indication);
 			}
 		} catch (CameraAccessException e)
 		{
@@ -2563,14 +2598,15 @@ public class Camera2Controller
 							pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
 							evCompensation == null ? 0 : evCompensation[currentFrameIndex],
 							sensorGain == null ? currentSensitivity : sensorGain[currentFrameIndex],
-							exposureTime == null ? 0 : exposureTime[currentFrameIndex], manualPowerGamma);
+							exposureTime == null ? 0 : exposureTime[currentFrameIndex], focusDistance == null ? -1.0f : focusDistance[currentFrameIndex],
+							manualPowerGamma);
     		}
         }
     };
     
 	//Exact here we request capture session to capture frame
 	public static int captureImageWithParamsCamera2Simple(final int nFrames, final int format, final int[] pause,
-														  final int[] evRequested, final int[] gain, final long[] exposure,
+														  final int[] evRequested, final int[] gain, final long[] exposure, final float[] focusDistances,
 														  final boolean setPowerGamma, final boolean resInHeap, final boolean indication)
 	{
 		
@@ -2610,6 +2646,7 @@ public class Camera2Controller
 			currentFrameIndex = 0;
 			pauseBetweenShots = pause;
 			evCompensation = evRequested;
+			focusDistance = focusDistances;
 			sensorGain = gain;
 			exposureTime = exposure;
 			
@@ -2621,7 +2658,8 @@ public class Camera2Controller
 						   pauseBetweenShots == null ? 0 : pauseBetweenShots[currentFrameIndex],
 						   evCompensation == null ? selectedEvCompensation : evCompensation[currentFrameIndex],
 						   sensorGain == null ? currentSensitivity : sensorGain[currentFrameIndex],
-						   exposureTime == null ? 0 : exposureTime[currentFrameIndex], manualPowerGamma);
+						   exposureTime == null ? 0 : exposureTime[currentFrameIndex], focusDistance == null ? -1.0f : focusDistance[currentFrameIndex],
+						   manualPowerGamma);
 				
 				//Pre-capture was commented because it was second time when it called!
 				//First time it's calling in captureImageWithParamsCamera2Allowed method
@@ -2688,30 +2726,57 @@ public class Camera2Controller
 //					}
 //			}
 
-			for (int n = 0; n < nFrames; ++n)
-			{
-				SetupPerFrameParameters(evRequested == null ? selectedEvCompensation : evRequested[n], gain == null ? currentSensitivity : gain[n],
-										exposure == null ? 0 : exposure[n], isRAWCapture);
-
-				if(Camera2Controller.getInstance().mCaptureSession != null)
+			if(focusDistances == null)
+				for (int n = 0; n < nFrames; ++n)
 				{
-					try
-					{
-						requestID = Camera2Controller.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
-																							stillCaptureCallback, null);
+					SetupPerFrameParameters(evRequested == null ? selectedEvCompensation : evRequested[n], gain == null ? currentSensitivity : gain[n],
+											exposure == null ? 0 : exposure[n], focusDistances == null ? -1.0f : focusDistances[n], isRAWCapture);
 	
-						pluginManager.addRequestID(n, requestID);
-						// FixMe: Why aren't requestID assigned if there is request with ev's being adjusted??
-	//						if (evRequested == null) requestID = tmp;
-						
-						if(isRAWCapture)
-							Camera2Controller.getInstance().mCaptureSession.capture(rawRequestBuilder.build(),
-									stillCaptureCallback, null);
-					} catch (CameraAccessException e)
+					if(Camera2Controller.getInstance().mCaptureSession != null)
 					{
-						e.printStackTrace();
+						try
+						{
+							requestID = Camera2Controller.getInstance().mCaptureSession.capture(stillRequestBuilder.build(),
+																								stillCaptureCallback, null);
+		
+							pluginManager.addRequestID(n, requestID);
+							// FixMe: Why aren't requestID assigned if there is request with ev's being adjusted??
+		//						if (evRequested == null) requestID = tmp;
+							
+							if(isRAWCapture)
+								Camera2Controller.getInstance().mCaptureSession.capture(rawRequestBuilder.build(),
+										stillCaptureCallback, null);
+						} catch (CameraAccessException e)
+						{
+							e.printStackTrace();
+						}
 					}
 				}
+			else
+			{
+				List<CaptureRequest> requests = new ArrayList<CaptureRequest>();
+				for (int n = 0; n < nFrames; ++n)
+				{
+					SetupPerFrameParameters(evRequested == null ? selectedEvCompensation : evRequested[n], gain == null ? currentSensitivity : gain[n],
+							exposure == null ? 0 : exposure[n], focusDistances == null ? -1.0f : focusDistances[n], isRAWCapture);
+					
+					requests.add(stillRequestBuilder.build());
+				}
+				
+				startFocusBracketingCapture(focusDistances, requests);
+//				if(Camera2Controller.getInstance().mCaptureSession != null)
+//				{
+//					try
+//					{
+//						requestID = Camera2Controller.getInstance().mCaptureSession.captureBurst(requests,
+//								stillCaptureCallback, null);
+//		
+//						pluginManager.addRequestID(0, requestID);
+//					} catch (CameraAccessException e)
+//					{
+//						e.printStackTrace();
+//					}
+//				}
 			}
 		}
 
@@ -2723,7 +2788,7 @@ public class Camera2Controller
 	//Method to capture next image in case of multishot requested
 	//Called for all frames instead very first frame
 	public static int captureNextImageWithParams(final int format, final int frameIndex, final int pause, final int evRequested,
-			final int gain, final long exposure, final boolean setPowerGamma)
+			final int gain, final long exposure, final float focusDistance, final boolean setPowerGamma)
 	{
 		int requestID = -1;
 
@@ -2740,15 +2805,16 @@ public class Camera2Controller
 			}
 
 			final boolean isRAWCapture = (format == CameraController.RAW);
-			SetupPerFrameParameters(evRequested, gain, exposure, isRAWCapture);
-			captureNextImageWithParamsSimple(format, frameIndex, pause, evRequested, gain, exposure);
+			SetupPerFrameParameters(evRequested, gain, exposure, focusDistance, isRAWCapture);
+			captureNextImageWithParamsSimple(format, frameIndex, pause, evRequested, gain, exposure, focusDistance);
 			
 		return requestID;
 	}
 
 	private static int captureNextImageWithParamsSimple(final int format, final int frameIndex,
 														final int pause, final int evRequested,
-														final int gain, final long exposure)
+														final int gain, final long exposure,
+														final float focusDistance)
 	{
 		int requestID = -1;
 
@@ -2812,6 +2878,28 @@ public class Camera2Controller
 
 		return requestID;
 	}
+	
+	
+	
+	private static void startFocusBracketingCapture(final float[] focusDistances, final List<CaptureRequest> requests)
+	{
+		fbRequests = requests;
+		totalFrames = requests.size();
+		currentFrameIndex = 0;
+		focusDistance = focusDistances;
+		
+		Camera2Controller.setCameraFocusDistanceCamera2(focusDistance[currentFrameIndex]);
+		fbRequested = true;
+		
+	}
+	
+	private static void nextFocusBracketingCapture()
+	{
+		Camera2Controller.setCameraFocusDistanceCamera2(focusDistance[currentFrameIndex]);
+		fbRequested = true;
+	}
+	
+	
 
 	//Initiate auto focus regardless to focus mode
 	//actually used to 'lock' focus before manual exposure metering is set
@@ -2823,7 +2911,7 @@ public class Camera2Controller
 					CameraCharacteristics.CONTROL_AF_TRIGGER_START);
 			try
 			{
-				Camera2Controller.getInstance().mCaptureSession.capture(Camera2Controller.previewRequestBuilder.build(), captureCallback, null);
+				Camera2Controller.getInstance().mCaptureSession.capture(Camera2Controller.previewRequestBuilder.build(), previewCaptureCallback, null);
 			} catch (CameraAccessException e)
 			{
 				e.printStackTrace();
@@ -2845,7 +2933,7 @@ public class Camera2Controller
 			
 			try
 			{
-				Camera2Controller.getInstance().mCaptureSession.setRepeatingRequest(Camera2Controller.previewRequestBuilder.build(), captureCallback, null);
+				Camera2Controller.getInstance().mCaptureSession.setRepeatingRequest(Camera2Controller.previewRequestBuilder.build(), previewCaptureCallback, null);
 			} catch (CameraAccessException e)
 			{
 				e.printStackTrace();
@@ -2857,7 +2945,7 @@ public class Camera2Controller
 					CameraCharacteristics.CONTROL_AF_TRIGGER_START);
 			try
 			{
-				Camera2Controller.getInstance().mCaptureSession.capture(Camera2Controller.previewRequestBuilder.build(), captureCallback, null);
+				Camera2Controller.getInstance().mCaptureSession.capture(Camera2Controller.previewRequestBuilder.build(), previewCaptureCallback, null);
 			} catch (CameraAccessException e)
 			{
 				e.printStackTrace();
@@ -2888,7 +2976,7 @@ public class Camera2Controller
 														CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
 			try
 			{
-				Camera2Controller.getInstance().mCaptureSession.capture(Camera2Controller.previewRequestBuilder.build(), captureCallback, null);
+				Camera2Controller.getInstance().mCaptureSession.capture(Camera2Controller.previewRequestBuilder.build(), previewCaptureCallback, null);
 			} catch (CameraAccessException e)
 			{
 				e.printStackTrace();
@@ -2899,7 +2987,7 @@ public class Camera2Controller
 														CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE);
 			try
 			{
-				Camera2Controller.getInstance().mCaptureSession.capture(Camera2Controller.previewRequestBuilder.build(), captureCallback, null);
+				Camera2Controller.getInstance().mCaptureSession.capture(Camera2Controller.previewRequestBuilder.build(), previewCaptureCallback, null);
 			} catch (CameraAccessException e)
 			{
 				e.printStackTrace();
@@ -3290,7 +3378,7 @@ public class Camera2Controller
 	};
 
 	
-	private final static CameraCaptureSession.CaptureCallback captureCallback	= new CameraCaptureSession.CaptureCallback()
+	private final static CameraCaptureSession.CaptureCallback previewCaptureCallback	= new CameraCaptureSession.CaptureCallback()
 	{
 		boolean resetInProgress = false;
 		int resetRequestId = 0;
@@ -3302,6 +3390,7 @@ public class Camera2Controller
 				CaptureRequest request,
 				TotalCaptureResult result)
 		{
+			if(!previewRunning) return;
 			try
 			{
 //				if(Camera2Controller.autoFocusTriggered)
@@ -3381,8 +3470,46 @@ public class Camera2Controller
 					resetCaptureCallback();
 					captureAllowed = true;
 				}
+				
+				int lensState = result.get(CaptureResult.LENS_STATE);
+				if(lensState == CaptureResult.LENS_STATE_MOVING)
+					captureAllowed = false;
+				else
+					captureAllowed = true;
 			} catch (Exception e) {
 				e.printStackTrace();
+			}
+			
+			try {
+				
+				if(Camera2Controller.fbRequested)
+				{
+					float fdist = result.get(CaptureResult.LENS_FOCUS_DISTANCE);
+					float r = Util.round(fdist, 2);
+					float f = Util.round(focusDistance[currentFrameIndex], 1);
+//					Log.e(TAG, "onPreview FOCUS DISTANCE = " + fdist + " waiting for distance = " + focusDistance[currentFrameIndex] + "\n Rounded real focus = " + r + " expected focus = " + f);
+					if(Math.abs(r - f) < 0.1f)
+					{
+						if(Camera2Controller.getInstance().mCaptureSession != null)
+						{
+							try
+							{
+								fbRequested = false;
+								int requestID = Camera2Controller.getInstance().mCaptureSession.capture(fbRequests.get(currentFrameIndex++),
+																									stillCaptureCallback, null);
+			
+								pluginManager.addRequestID(currentFrameIndex, requestID);
+							} catch (CameraAccessException e)
+							{
+								e.printStackTrace();
+							}
+						}
+					}
+				}
+				
+			}
+			 catch (Exception e) {
+					e.printStackTrace();
 			}
 		}
 	
@@ -3404,7 +3531,7 @@ public class Camera2Controller
 							CameraCharacteristics.CONTROL_AF_TRIGGER_CANCEL);
 					try
 					{
-						Camera2Controller.getInstance().mCaptureSession.capture(Camera2Controller.previewRequestBuilder.build(), captureCallback, null);
+						Camera2Controller.getInstance().mCaptureSession.capture(Camera2Controller.previewRequestBuilder.build(), previewCaptureCallback, null);
 					} catch (CameraAccessException e)
 					{
 						e.printStackTrace();
@@ -3416,7 +3543,7 @@ public class Camera2Controller
 							CameraCharacteristics.CONTROL_AF_TRIGGER_IDLE);
 					try
 					{
-						resetRequestId = Camera2Controller.getInstance().mCaptureSession.capture(Camera2Controller.previewRequestBuilder.build(), captureCallback, null);
+						resetRequestId = Camera2Controller.getInstance().mCaptureSession.capture(Camera2Controller.previewRequestBuilder.build(), previewCaptureCallback, null);
 					} catch (CameraAccessException e)
 					{
 						e.printStackTrace();
@@ -3668,6 +3795,11 @@ public class Camera2Controller
 					pluginManager.onImageTaken(frame, frameData, frame_len, isYUV ? CameraController.YUV : CameraController.JPEG);
 					if (CameraController.getFocusMode() != CameraParameters.AF_MODE_CONTINUOUS_PICTURE && !CameraController.isGalaxyS7)
 						Camera2Controller.cancelAutoFocusCamera2();
+				}
+				
+				if(focusDistance != null && currentFrameIndex < totalFrames)
+				{
+					nextFocusBracketingCapture();
 				}
 			}
 

@@ -53,6 +53,9 @@ public class ImageConversion
 	public static native void addCornersRGBA8888(byte[] rgb_out, int outWidth, int outHeight);
 	
 	public static synchronized native int[] NV21toARGB(int inptr, Size src, Rect rect, Size dst);
+	public static synchronized native int[] NV21ByteArraytoARGB(byte[] inptr, int srcW, int srcH, Rect rect, int dstW, int dstH);
+	
+	public static synchronized native boolean BitmapFromNV21ByteArray(Object bitmap, byte[] inptr, int srcW, int srcH, Rect rect, int dstW, int dstH);
 
 	
 	static

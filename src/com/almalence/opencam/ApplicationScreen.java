@@ -1178,6 +1178,27 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 			ApplicationScreen.instance.resumeMain();
 		}
 	}
+	
+	@Override
+	public void pauseCamera()
+	{
+		CameraController.onPause(true);
+
+		if (CameraController.isRemoteCamera())
+			stopRemotePreview();
+	}
+	
+	@Override
+	public void resumeCamera()
+	{
+		CameraController.onResume();
+		
+		// One of device camera is selected.
+		if (CameraController.isUseCamera2())
+			CameraController.setupCamera(null, true);
+		else if ((surfaceCreated && (!CameraController.isCameraCreated())))
+			CameraController.setupCamera(surfaceHolder, true);
+	}
 
 	protected long getAvailableInternalMemory()
 	{

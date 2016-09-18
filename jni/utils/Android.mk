@@ -6,6 +6,6 @@ LOCAL_MODULE    := utils-image
 LOCAL_SRC_FILES := ImageConversionUtils.cpp
 LOCAL_STATIC_LIBRARIES := jpeg gomp
 LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)
-LOCAL_LDLIBS := -ldl -llog
+LOCAL_LDLIBS := -ldl -llog -landroid -ljnigraphics
 
 include $(BUILD_SHARED_LIBRARY)

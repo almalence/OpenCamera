@@ -19,6 +19,7 @@ package com.almalence.util;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
@@ -1025,4 +1026,18 @@ public final class Util
 		
 		return res;
 	}
+	
+	
+	/**
+     * Round to certain number of decimals
+     * 
+     * @param d
+     * @param decimalPlace
+     * @return
+     */
+    public static float round(float d, int decimalPlace) {
+        BigDecimal bd = new BigDecimal(Float.toString(d));
+        bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_DOWN);
+        return bd.floatValue();
+    }
 }

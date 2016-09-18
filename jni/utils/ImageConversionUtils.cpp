@@ -20,6 +20,7 @@ by Almalence Inc. All Rights Reserved.
 #include <string.h>
 #include <stdlib.h>
 #include <android/log.h>
+#include <android/bitmap.h>
 
 #include <setjmp.h>
 #include "jpeglib.h"
@@ -951,4 +952,88 @@ extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_util_ImageConversion_N
 	LOGD("NV21toARGB - end");
 
 	return jpixels;
+}
+
+
+extern "C" JNIEXPORT jintArray JNICALL Java_com_almalence_util_ImageConversion_NV21ByteArraytoARGB
+(
+	JNIEnv* env,
+	jobject thiz,
+	jbyteArray inptr,
+	jint srcW,
+	jint srcH,
+	jobject rect,
+	jint dstW,
+	jint dstH
+)
+{
+	LOGD("NV21toARGB - start");
+
+	Uint32 * pixels;
+	jintArray jpixels = NULL;
+
+	jclass class_rect = env->GetObjectClass(rect);
+	jfieldID id_left = env->GetFieldID(class_rect, "left", "I");
+	jint left = env->GetIntField(rect,id_left);
+	jfieldID id_top = env->GetFieldID(class_rect, "top", "I");
+	jint top = env->GetIntField(rect,id_top);
+	jfieldID id_right = env->GetFieldID(class_rect, "right", "I");
+	jint right = env->GetIntField(rect,id_right);
+	jfieldID id_bottom = env->GetFieldID(class_rect, "bottom", "I");
+	jint bottom = env->GetIntField(rect,id_bottom);
+
+	jpixels = env->NewIntArray(dstW*dstH);
+	LOGD("Memory alloc size = %d * %d", dstW, dstH);
+	pixels = (Uint32 *)env->GetIntArrayElements(jpixels, NULL);
+
+	Uint8 *inpxls = (Uint8 *)env->GetByteArrayElements(inptr, NULL);;
+
+	NV21_to_RGB_scaled(inpxls, srcW, srcH, left, top, right - left, bottom - top, dstW, dstH, 4, (Uint8 *)pixels);
+
+	env->ReleaseIntArrayElements(jpixels, (jint*)pixels, 0);
+	env->ReleaseByteArrayElements(inptr, (jbyte*)inpxls, 0);
+
+	LOGD("NV21toARGB - end");
+
+	return jpixels;
+}
+
+extern "C" JNIEXPORT jboolean JNICALL Java_com_almalence_util_ImageConversion_BitmapFromNV21ByteArray
+(
+		JNIEnv* env,
+		jobject thiz,
+		jobject bitmap,
+		jbyteArray inptr,
+		jint srcW,
+		jint srcH,
+		jobject rect,
+		jint dstW,
+		jint dstH
+)
+{
+	int ret;
+	Uint32 * bitmap_data;
+
+	if ((ret = AndroidBitmap_lockPixels(env, bitmap, ((void**)&bitmap_data))) < 0)
+		return false;
+
+	jclass class_rect = env->GetObjectClass(rect);
+	jfieldID id_left = env->GetFieldID(class_rect, "left", "I");
+	jint left = env->GetIntField(rect,id_left);
+	jfieldID id_top = env->GetFieldID(class_rect, "top", "I");
+	jint top = env->GetIntField(rect,id_top);
+	jfieldID id_right = env->GetFieldID(class_rect, "right", "I");
+	jint right = env->GetIntField(rect,id_right);
+	jfieldID id_bottom = env->GetFieldID(class_rect, "bottom", "I");
+	jint bottom = env->GetIntField(rect,id_bottom);
+
+	Uint8 *inpxls = (Uint8 *)env->GetByteArrayElements(inptr, NULL);
+
+	NV21_to_RGB_scaled(inpxls, srcW, srcH, left, top, right - left, bottom - top, dstW, dstH, 4, (Uint8 *)bitmap_data);
+
+	AndroidBitmap_unlockPixels(env, bitmap);
+
+	env->ReleaseByteArrayElements(inptr, (jbyte*)inpxls, 0);
+
+	return true;
 }

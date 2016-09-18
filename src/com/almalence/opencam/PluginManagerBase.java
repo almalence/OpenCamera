@@ -791,6 +791,8 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			pluginList.get(activeVF.get(i)).onCameraParametersSetup();
 		if (null != pluginList.get(activeCapture))
 			pluginList.get(activeCapture).onCameraParametersSetup();
+		if (null != pluginList.get(activeProcessing))
+			pluginList.get(activeProcessing).onCameraParametersSetup();
 	}
 
 	public void onCameraSetup()
@@ -1651,6 +1653,193 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		ApplicationScreen.instance.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
 	}
 
+	public void saveInputFileMPO(boolean isYUV, Long SessionID, int nFrames, int[] yuvBuffer, String fileFormat)
+	{
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		ContentValues values = null;
+		String resultOrientation = getFromSharedMem("frameorientation1" + Long.toString(SessionID));
+		String resultMirrored = getFromSharedMem("framemirrored1" + Long.toString(SessionID));
+		
+		Boolean cameraMirrored = false;
+		if (resultMirrored != null)
+			cameraMirrored = Boolean.parseBoolean(resultMirrored);
+
+		int mDisplayOrientation = 0;
+		if (resultOrientation != null)
+		{
+			mDisplayOrientation = Integer.parseInt(resultOrientation);
+		}
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
+		boolean saveGeoInfo = prefs.getBoolean("useGeoTaggingPrefExport", false);
+
+		File saveDir = getSaveDir(false);
+		File file = new File(saveDir, fileFormat + ".mpo");
+		FileOutputStream os = null;
+
+		try
+		{
+			try
+			{
+				os = new FileOutputStream(file);
+			} catch (Exception e)
+			{
+				// save always if not working saving to sdcard
+				e.printStackTrace();
+				saveDir = getSaveDir(true);
+				file = new File(saveDir, fileFormat + ".mpo");
+
+				os = new FileOutputStream(file);
+			}
+		} catch (FileNotFoundException e1)
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		try
+		{
+			if (os != null)
+			{
+				
+				for(int i = 0; i < nFrames; i++)
+				{
+					jpegQuality = Integer.parseInt(prefs.getString(MainScreen.sJPEGQualityPref, "95"));
+	
+					com.almalence.YuvImage image = new com.almalence.YuvImage(yuvBuffer[i], ImageFormat.NV21,
+							imageSize.getWidth(), imageSize.getHeight(), null);
+					// to avoid problems with SKIA
+					int cropHeight = image.getHeight() - image.getHeight() % 16;
+					image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), jpegQuality, os);
+				}
+
+				mDisplayOrientation = saveExifToInput(file, mDisplayOrientation, cameraMirrored, saveGeoInfo);
+				
+				os.close();
+			}
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		values = new ContentValues();
+		values.put(ImageColumns.TITLE, file.getName().substring(0, file.getName().lastIndexOf(".")));
+		values.put(ImageColumns.DISPLAY_NAME, file.getName());
+		values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
+		values.put(ImageColumns.MIME_TYPE, "image/jpeg");
+		values.put(ImageColumns.ORIENTATION, mDisplayOrientation);
+		values.put(ImageColumns.DATA, file.getAbsolutePath());
+
+		if (saveGeoInfo)
+		{
+			Location l = MLocation.getLocation(ApplicationScreen.getMainContext());
+
+			if (l != null)
+			{
+				values.put(ImageColumns.LATITUDE, l.getLatitude());
+				values.put(ImageColumns.LONGITUDE, l.getLongitude());
+			}
+		}
+
+		ApplicationScreen.instance.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+	}
+	
+	
+	public void saveFocusAreasFile(int yuvBuffer, String fileFormat, int mImageWidth, int mImageHeight)
+	{
+		
+		ContentValues values = null;
+
+		DocumentFile file;
+		DocumentFile saveDir = getSaveDirNew(false);
+		if (saveDir == null || !saveDir.exists())
+		{
+			return;
+		}
+
+		file = saveDir.createFile("image/jpeg", fileFormat);
+		if (file == null || !file.canWrite())
+		{
+			return;
+		}
+
+		OutputStream os = null;
+		File bufFile = new File(ApplicationScreen.instance.getFilesDir(), "buffer.jpeg");
+		try
+		{
+			os = new FileOutputStream(bufFile);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		if (os != null)
+		{
+			try
+			{
+				jpegQuality = 95;
+
+				com.almalence.YuvImage image = new com.almalence.YuvImage(yuvBuffer, ImageFormat.NV21,
+						mImageWidth, mImageHeight, null);
+				// to avoid problems with SKIA
+				int cropHeight = image.getHeight() - image.getHeight() % 16;
+				image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), jpegQuality, os);
+				os.close();
+			} catch (IOException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			// Copy buffer image with exif tags into result file.
+			InputStream is = null;
+			int len;
+			byte[] buf = new byte[1024];
+			try
+			{
+				os = ApplicationScreen.instance.getContentResolver().openOutputStream(file.getUri());
+				is = new FileInputStream(bufFile);
+				while ((len = is.read(buf)) > 0)
+				{
+					os.write(buf, 0, len);
+				}
+				is.close();
+				os.close();
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		bufFile.delete();
+
+		values = new ContentValues();
+		values.put(ImageColumns.TITLE, file.getName().substring(0, file.getName().lastIndexOf(".")));
+		values.put(ImageColumns.DISPLAY_NAME, file.getName());
+		values.put(ImageColumns.DATE_TAKEN, System.currentTimeMillis());
+		values.put(ImageColumns.MIME_TYPE, "image/jpeg");
+		values.put(ImageColumns.ORIENTATION, 0);
+		
+		String filePath = file.getName();
+		// If we able to get File object, than get path from it.
+		// fileObject should not be null for files on phone memory.
+		File fileObject = Util.getFileFromDocumentFile(file);
+		if (fileObject != null)
+		{
+			filePath = fileObject.getAbsolutePath();
+			values.put(ImageColumns.DATA, filePath);
+		} else
+		{
+			// This case should typically happen for files saved to SD
+			// card.
+			String documentPath = Util.getAbsolutePathFromDocumentFile(file);
+			values.put(ImageColumns.DATA, documentPath);
+		}
+
+		ApplicationScreen.instance.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+	}
+	
+	
 	public static int saveExifToInput(File file, int displayOrientation, boolean cameraMirrored, boolean saveGeo)
 	{
 		try

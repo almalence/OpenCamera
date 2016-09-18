@@ -12,6 +12,9 @@
     <string name="expobracketing_mode_name">Expo-bracketing</string>
     <string name="expobracketing_mode_howto"></string>
     
+    <string name="focusbracketing_mode_name">Focus-bracketing</string>
+    <string name="focusbracketing_mode_howto"></string>
+    
     <string name="hdr_mode_name">HDR</string>
     <string name="hdr_mode_howto"></string>
     

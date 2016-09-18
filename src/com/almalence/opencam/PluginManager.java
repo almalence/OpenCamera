@@ -58,6 +58,7 @@ import android.widget.Toast;
 import com.almalence.plugins.capture.bestshot.BestShotCapturePlugin;
 import com.almalence.plugins.capture.burst.BurstCapturePlugin;
 import com.almalence.plugins.capture.expobracketing.ExpoBracketingCapturePlugin;
+import com.almalence.plugins.capture.focusbracketing.FocusBracketingCapturePlugin;
 import com.almalence.plugins.capture.multishot.MultiShotCapturePlugin;
 import com.almalence.plugins.capture.night.NightCapturePlugin;
 import com.almalence.plugins.capture.panoramaaugmented.PanoramaAugmentedCapturePlugin;
@@ -67,6 +68,7 @@ import com.almalence.plugins.capture.video.VideoCapturePlugin;
 import com.almalence.plugins.export.standard.ExportPlugin;
 import com.almalence.plugins.processing.bestshot.BestshotProcessingPlugin;
 import com.almalence.plugins.processing.hdr.HDRProcessingPlugin;
+import com.almalence.plugins.processing.focusstacking.FocusStackingProcessingPlugin;
 import com.almalence.plugins.processing.multishot.MultiShotProcessingRouter;
 import com.almalence.plugins.processing.night.NightProcessingPlugin;
 import com.almalence.plugins.processing.panorama.PanoramaProcessingPlugin;
@@ -186,6 +188,10 @@ public class PluginManager extends PluginManagerBase
 		ExpoBracketingCapturePlugin expoBracketingCapturePlugin = new ExpoBracketingCapturePlugin();
 		pluginList.put(expoBracketingCapturePlugin.getID(), expoBracketingCapturePlugin);
 		listCapture.add(expoBracketingCapturePlugin);
+		
+		FocusBracketingCapturePlugin focusBracketingCapturePlugin = new FocusBracketingCapturePlugin();
+		pluginList.put(focusBracketingCapturePlugin.getID(), focusBracketingCapturePlugin);
+		listCapture.add(focusBracketingCapturePlugin);
 
 		NightCapturePlugin nightCapturePlugin = new NightCapturePlugin();
 		pluginList.put(nightCapturePlugin.getID(), nightCapturePlugin);
@@ -231,6 +237,10 @@ public class PluginManager extends PluginManagerBase
 		HDRProcessingPlugin hdrProcessingPlugin = new HDRProcessingPlugin();
 		pluginList.put(hdrProcessingPlugin.getID(), hdrProcessingPlugin);
 		listProcessing.add(hdrProcessingPlugin);
+		
+		FocusStackingProcessingPlugin focusStackingProcessingPlugin = new FocusStackingProcessingPlugin();
+		pluginList.put(focusStackingProcessingPlugin.getID(), focusStackingProcessingPlugin);
+		listProcessing.add(focusStackingProcessingPlugin);
 
 		MultiShotProcessingRouter multiShotProcessingPlugin = new MultiShotProcessingRouter();
 		pluginList.put(multiShotProcessingPlugin.getID(), multiShotProcessingPlugin);
@@ -596,6 +606,9 @@ public class PluginManager extends PluginManagerBase
 		} else if ("expobracketing".equals(settings))
 		{
 			AddModeSettings("expobracketing", pf);
+		} else if ("focusbracketing".equals(settings))
+		{
+			AddModeSettings("focusbracketing", pf);
 		} else if ("hdr".equals(settings))
 		{
 			AddModeSettings("hdrmode", pf);
@@ -984,10 +997,13 @@ public class PluginManager extends PluginManagerBase
 
 				pluginList.get(activeProcessing).onStartPostProcessing();
 				ApplicationScreen.getGUIManager().onPostProcessingStarted();
+				
+				ApplicationScreen.instance.pauseCamera();
 			}
 			break;
 
 		case ApplicationInterface.MSG_POSTPROCESSING_FINISHED:
+			ApplicationScreen.instance.resumeCamera();
 			sessionID = 0;
 			String sSessionID = getFromSharedMem("sessionID");
 			if (sSessionID != null)

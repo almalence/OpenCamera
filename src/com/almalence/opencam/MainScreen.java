@@ -2732,7 +2732,7 @@ public class MainScreen extends ApplicationScreen
 		if (mode.SKU.isEmpty())
 		{
 			int launchesLeft = MainScreen.getLeftLaunches(mode.modeID);
-//			launchesLeft = 100; //Using for testing free version
+			launchesLeft = 100; //Using for testing free version
 
 			if ((1 == launchesLeft) || (3 == launchesLeft))
 			{
@@ -2772,7 +2772,7 @@ public class MainScreen extends ApplicationScreen
 		}
 
 		int launchesLeft = MainScreen.getLeftLaunches(mode.modeID);
-//		launchesLeft = 100; //Using for testing free version
+		launchesLeft = 100; //Using for testing free version
 		int id = MainScreen.getAppResources().getIdentifier(
 				(CameraController.isUseCamera2() ? mode.modeNameHAL : mode.modeName), "string",
 				MainScreen.thiz.getPackageName());
@@ -2957,7 +2957,7 @@ public class MainScreen extends ApplicationScreen
 		boolean isSaving = prefs.getBoolean("SaveConfiguration_Mode", true);
 		if (!isSaving)
 		{
-			prefsEditor.putString("defaultModeName", "single");
+			prefsEditor.putString("defaultModeName", "focusbracketing");
 			prefsEditor.commit();
 		}
 

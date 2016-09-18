@@ -1137,7 +1137,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 		public void run()
 		{
 			createRequestIDList(1);
-			CameraController.captureImagesWithParams(1, CameraController.YUV, null, null, null, null, false, false, true);
+			CameraController.captureImagesWithParams(1, CameraController.YUV, null, null, null, null, null, false, false, true);
 			
 		}
 	};

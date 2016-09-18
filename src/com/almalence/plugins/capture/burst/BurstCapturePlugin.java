@@ -347,7 +347,7 @@ public class BurstCapturePlugin extends PluginCapture
 					final int[] pause = new int[imageAmount];
 					Arrays.fill(pause, pauseBetweenShots);
 					createRequestIDList(imageAmount * 2);
-					CameraController.captureImagesWithParams(imageAmount, CameraController.RAW, pause, null, null, null, false, true,
+					CameraController.captureImagesWithParams(imageAmount, CameraController.RAW, pause, null, null, null, null, false, true,
 							true);
 					return;
 				}
@@ -363,7 +363,7 @@ public class BurstCapturePlugin extends PluginCapture
 		final int[] pause = new int[imageAmount];
 		Arrays.fill(pause, pauseBetweenShots);
 		createRequestIDList(imageAmount);
-		CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, pause, null, null, null, false, true,
+		CameraController.captureImagesWithParams(imageAmount, CameraController.JPEG, pause, null, null, null, null, false, true,
 				true);
 	}
 

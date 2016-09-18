@@ -92,6 +92,9 @@ include $(MY_CORE_PATH)/bestshot/Android.mk
 # Night plugin
 include $(MY_CORE_PATH)/nightprocessing/Android.mk
 
+# FocusStacking plugin
+include $(MY_CORE_PATH)/focusstacking/Android.mk
+
 # HDR plugin
 include $(MY_CORE_PATH)/hdrprocessing/Android.mk
 
@@ -121,6 +124,9 @@ include $(MY_CORE_PATH)/histogram/Android.mk
 
 # yuvimage helper
 include $(MY_CORE_PATH)/yuvimage/Android.mk
+
+# yuvbitmap helper
+include $(MY_CORE_PATH)/yuvbitmap/Android.mk
 
 # swapheap helper (move data between native and java heaps)
 include $(MY_CORE_PATH)/swapheap/Android.mk

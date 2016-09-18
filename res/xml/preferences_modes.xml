@@ -19,7 +19,13 @@
 			 android:title="@string/Pref_Expobracketing_Title">
 			 <extra android:name="type" android:value="expobracketing"/>
 		</PreferenceScreen>
-		
+
+		<PreferenceScreen
+			 android:fragment="com.almalence.opencam.Fragment"
+			 android:title="@string/Pref_Focusbracketing_Title">
+			 <extra android:name="type" android:value="focusbracketing"/>
+		</PreferenceScreen>
+
 		<PreferenceScreen
 			 android:fragment="com.almalence.opencam.Fragment"
 			 android:title="@string/Pref_HDR_Title">
@@ -87,7 +93,13 @@
 			 android:title="@string/Pref_Expobracketing_Title">
 			 <extra android:name="type" android:value="expobracketing"/>
 		</PreferenceScreen>
-		
+
+		<PreferenceScreen
+			 android:fragment="com.almalence.opencam_plus.Fragment"
+			 android:title="@string/Pref_Focusbracketing_Title">
+			 <extra android:name="type" android:value="focusbracketing"/>
+		</PreferenceScreen>
+
 		<PreferenceScreen
 			 android:fragment="com.almalence.opencam_plus.Fragment"
 			 android:title="@string/Pref_HDR_Title">
