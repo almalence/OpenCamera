@@ -1635,17 +1635,17 @@ public class MainScreen extends ApplicationScreen
 			return true;
 
 		// <!-- -+-
-		if (keyCode == KeyEvent.KEYCODE_BACK)
-		{
-			if (AppRater.showRateDialogIfNeeded(this))
-			{
-				return true;
-			}
-			if (AppWidgetNotifier.showNotifierDialogIfNeeded(this))
-			{
-				return true;
-			}
-		}
+//		if (keyCode == KeyEvent.KEYCODE_BACK)
+//		{
+//			if (AppRater.showRateDialogIfNeeded(this))
+//			{
+//				return true;
+//			}
+//			if (AppWidgetNotifier.showNotifierDialogIfNeeded(this))
+//			{
+//				return true;
+//			}
+//		}
 		// -+- -->
 
 		return false;

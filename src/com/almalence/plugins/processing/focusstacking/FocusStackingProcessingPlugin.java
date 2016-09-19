@@ -18,43 +18,22 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.processing.focusstacking;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.PorterDuff.Mode;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.ListPreference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.support.v4.provider.DocumentFile;
-import android.util.DisplayMetrics;
 import android.util.Log;
-//import android.util.Size;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -62,33 +41,25 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
-import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.ImageView.ScaleType;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+import com.almalence.SwapHeap;
+import com.almalence.asynctaskmanager.OnTaskCompleteListener;
 import com.almalence.focuscam.ApplicationInterface;
 import com.almalence.focuscam.ApplicationScreen;
 import com.almalence.focuscam.ConfigParser;
-import com.almalence.focuscam.MainScreen;
 import com.almalence.focuscam.PluginManager;
 import com.almalence.focuscam.PluginProcessing;
+import com.almalence.focuscam.R;
 import com.almalence.focuscam.cameracontroller.CameraController;
 import com.almalence.focusstacking.AlmaShotFocusStacking;
-import com.almalence.SwapHeap;
-import com.almalence.YuvImage;
-import com.almalence.asynctaskmanager.OnTaskCompleteListener;
-import com.almalence.focuscam.R;
-
-import com.almalence.plugins.processing.sequence.SequenceProcessingPlugin;
-import com.almalence.util.ImageConversion;
 import com.almalence.util.Size;
+//import android.util.Size;
 
 /* <!-- +++
  import com.almalence.focuscam_plus.ConfigParser;
@@ -127,7 +98,6 @@ public class FocusStackingProcessingPlugin extends PluginProcessing implements O
 	private boolean				mCameraMirrored							= false;
 
 	private boolean				postProcessingRun						= false;
-	private static int			mBitmapRotation							= 0;
 	
 	private int					mImageWidth;
 	private int					mImageHeight;
@@ -357,8 +327,6 @@ public class FocusStackingProcessingPlugin extends PluginProcessing implements O
 		mImageWidth = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("imageWidth" + sessionID));
 		mImageHeight = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("imageHeight" + sessionID));
 		
-		mBitmapRotation = (mImageDataOrientation + (mImageDataOrientation == 0 || mImageDataOrientation == 180 ? 0 : 270))%360;
-
 //		Log.e(TAG, "START!!!!");
 //		AlmaShotFocusStacking.AlmaShotInitialize();
 		mImageAmount = Integer.parseInt(PluginManager.getInstance().getFromSharedMem(

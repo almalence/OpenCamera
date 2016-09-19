@@ -23,11 +23,17 @@ import java.util.List;
 
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.hardware.camera2.CaptureResult;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.almalence.focuscam.ApplicationInterface;
+import com.almalence.focuscam.ApplicationScreen;
+import com.almalence.focuscam.CameraParameters;
+import com.almalence.focuscam.PluginCapture;
+import com.almalence.focuscam.PluginManager;
+import com.almalence.focuscam.R;
+import com.almalence.focuscam.cameracontroller.CameraController;
 /* <!-- +++
  import com.almalence.focuscam_plus.ApplicationScreen;
  import com.almalence.focuscam_plus.PluginCapture;
@@ -39,14 +45,6 @@ import android.util.Log;
  import com.almalence.focuscam_plus.CameraParameters;
  +++ --> */
 // <!-- -+-
-import com.almalence.focuscam.ApplicationInterface;
-import com.almalence.focuscam.ApplicationScreen;
-import com.almalence.focuscam.CameraParameters;
-import com.almalence.focuscam.PluginCapture;
-import com.almalence.focuscam.PluginManager;
-import com.almalence.focuscam.cameracontroller.CameraController;
-import com.almalence.focuscam.ui.GUI.CameraParameter;
-import com.almalence.focuscam.R;
 
 //-+- -->
 
