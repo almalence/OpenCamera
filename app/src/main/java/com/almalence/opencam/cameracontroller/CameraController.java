@@ -75,7 +75,6 @@ import com.almalence.util.Util;
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.CameraParameters;
-import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManagerInterface;
 import com.almalence.opencam.R;
 
@@ -84,7 +83,6 @@ import com.almalence.opencam.R;
  import com.almalence.opencam_plus.ApplicationInterface;
  import com.almalence.opencam_plus.ApplicationScreen;
  import com.almalence.opencam_plus.CameraParameters;
- import com.almalence.opencam_plus.MainScreen;
  import com.almalence.opencam_plus.PluginManagerInterface;
  import com.almalence.opencam_plus.R;
  +++ --> */
@@ -129,7 +127,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-us995")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-ls996");
 
-	public static boolean							isG5			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h830");
+	public static boolean							isG5			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h830")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h850")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h858")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-vs987")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h820")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-ls992")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-us992")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h860n");
 	
 	public static boolean							isG4			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h818")  ||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h815")  ||
@@ -178,9 +183,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	
 	public static boolean							isSony			= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("sony");
 	
-	public static boolean							isSonyZ5		= Build.MANUFACTURER.toLowerCase().replace(" ", "").contains("sony") &&
-																	  (
-																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("E5823")||
+	public static boolean							isSonyZ5		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e5823")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e6603")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e6633")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e6653")||
@@ -193,10 +196,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e6833")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e6853")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e6883")||
-																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("so-03h")
-																	  );
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("so-03h");
 	
 	public static boolean							isHuawei		= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("huawei");
+	public static boolean							isHuaweiP9		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("eva-l19");
 	
 	public static boolean							isGionee		= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("gionee");
 	
@@ -204,7 +207,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																		&& (Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("two") || 
 																			Build.MODEL.contains("2"));
 	
-	public static boolean							isMotoXPure 	 = Build.MODEL.toLowerCase().replace(" ", "").contains("xt1575");
+	public static boolean							isMotoXPure 	= Build.MODEL.toLowerCase().replace(" ", "").contains("xt1575");
+	public static boolean							isHTCM10 	 	= Build.MODEL.toLowerCase().replace(" ", "").contains("htc_m10h");
 	
 
 	// Android camera parameters constants
@@ -1157,8 +1161,13 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			// hard-code to enable these only, as we have no profiles for
 			// other models at the moment
-			if ((CameraController.isNexus5or6 || CameraController.isFlex2
-					|| CameraController.isOnePlusTwo || CameraController.isGalaxyS7)
+			if ((CameraController.isNexus5or6 || 
+				 CameraController.isFlex2 || 
+				 CameraController.isOnePlusTwo || 
+				 CameraController.isGalaxyS7 ||
+				 CameraController.isHTCM10
+				 //CameraController.isG5
+				 )
 				/*|| CameraController.isGalaxyS6*/
 				/*|| CameraController.isG4*/)
 				SuperModeOk = true;
@@ -2274,7 +2283,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			{
 				if (!CameraController.isCamera2)
 				{
-					if (camera == null || (camera != null && camera.getParameters() == null))
+					if (camera == null || (camera != null && camera.getParameters() == null) || CameraController.isG5)//G5 works incorrectly with exposure lock
 						return false;
 
 					Camera.Parameters params = camera.getParameters();

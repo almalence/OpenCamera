@@ -55,6 +55,8 @@ int FStacking_Align
 (
 	void **instance,
 	Uint8 **in,
+	Uint8 *restrict layout,
+	Uint8 *restrict debug,
 	int   SensorGain,
 	int   sx,
 	int   sy,
@@ -64,6 +66,24 @@ int FStacking_Align
 	int   postFilter,
 	int   scaleOutput,
 	int   fastMode
+);
+
+int FStacking_GetAlignedFrames
+(
+	void *instance,
+	Uint8 **out,
+	int sx,
+	int sy,
+	int nFrames
+);
+
+
+int FStacking_GetFocusAreaMap
+(
+	void *instance,
+	Uint8 *out,
+	int sx,
+	int sy
 );
 
 

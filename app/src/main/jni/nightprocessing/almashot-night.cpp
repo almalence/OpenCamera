@@ -192,87 +192,87 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 			}
 		}
 
-		if (fgamma && (iso>0))
+		if (fgamma != 0.0f && (iso > 0) && cameraIndex != 903)
 		{
 			// iso 100 = +0.1
 			// iso 800 = -0.05
-			fgamma += 0.1f - ( logf(iso) * 3.321928095f-6.644f)*0.15f/3.f;
-			if (fgamma < 0.45f) fgamma = 0.45f;
+			fgamma += 0.09f - (logf(iso) * 3.321928095f - 6.644f) * 0.165f/3.0f;//log2f replaced with logf(iso) * 3.321928095f for android <4.3
+		}
+
+		if (fgamma != 0.0f)
+		{
+			if (fgamma < 0.43f) fgamma = 0.43f;
 			if (fgamma > 0.6f) fgamma = 0.6f;
 		}
 
-		// for SR-only fgamma = 0, gamma will evaluate to 0 also
-		int gamma = (int)(fgamma * 256 + 0.5f);
-
-		// threshold at which profiles are switched (about 1.5x zoom)
 		int zoomAbove15x = sxo >= 3*(sx_zoom-2*SIZE_GUARANTEE_BORDER)/2;
 		int zoomAbove30x = sxo >= 3*sx_zoom;
+		float zoom = sxo / float(sx_zoom);
 
+		int filter = 256;
+		int sharpen = 1;
+		if (zoomAbove30x) sharpen = 0x80; // fine edge enhancement instead of primitive sharpen at high zoom levels
 
-		int sensorGain, deGhostGain, filter, sharpen;
+//
+//
+//
+//		if (fgamma && (iso>0))
+//		{
+//			// iso 100 = +0.1
+//			// iso 800 = -0.05
+//			fgamma += 0.1f - ( logf(iso) * 3.321928095f-6.644f)*0.15f/3.f;
+//			if (fgamma < 0.45f) fgamma = 0.45f;
+//			if (fgamma > 0.6f) fgamma = 0.6f;
+//		}
+//
+//		// for SR-only fgamma = 0, gamma will evaluate to 0 also
+//		int gamma = (int)(fgamma * 256 + 0.5f);
+//
+//		// threshold at which profiles are switched (about 1.5x zoom)
+//		int zoomAbove15x = sxo >= 3*(sx_zoom-2*SIZE_GUARANTEE_BORDER)/2;
+//		int zoomAbove30x = sxo >= 3*sx_zoom;
+
 
 		switch (cameraIndex)
 		{
-		case 100:		// Nexus 5
-			deGhostGain = 256*80/100;
-			sensorGain = (int)( 256*powf((float)iso/100, 0.5f) );
+		case 103:// Nexus 6
+		case 507:// LG G Flex2
+		case 1900:// Cyanogen 0
+		case 2201:
+			break;
 
+		case 100:		// Nexus 5
 			// slightly more sharpening and less filtering at low zooms
 			sharpen = 2;
-			filter = 384; // 320; // 256;
-			if (zoomAbove30x) sharpen = 0x80;	// fine edge enhancement instead of primitive sharpen at high zoom levels
-			else if (zoomAbove15x) sharpen = 1;
-			else filter = 192;
+			if (zoomAbove15x) filter = 384;
+				else filter = 192;
 			break;
-		case 103:		// Nexus 6
-			deGhostGain = 256*50/100;
-			sensorGain = (int)( 107*256/100*powf((float)iso/100, 0.7f) );
 
-			sharpen = 1;
-			if (!zoomAbove15x) sharpen = 0x80;	// slightly more filtering at low zooms (noise interpolation artefacts are evident otherwise)
-				filter = 256;
-			break;
-		case 105:	// Nexus 5X
-		case 106:	// Nexus 6P
-			deGhostGain = (256 * (60 - 0.015f * iso) / 100);
-			if (deGhostGain < 56) deGhostGain = 56;
-			sensorGain = (int)(1.7f * 256 * powf(((float)iso) / 100, 0.45f));
-
+		case 105:// Nexus 5X - same camera module as in Nexus 6p
+		case 106:// Nexus 6P
 			sharpen = 2;
-			if (zoomAbove30x) sharpen = 0x80;// fine edge enhancement instead of primitive sharpen at high zoom levels
 			if (zoomAbove15x) filter = 256;
 				else filter = 192;
 			break;
-		case 507:		// LG G Flex2
-			deGhostGain = 256*60/100;
-			sensorGain = (int)( 2*256*powf((float)iso/100, 0.45f) );
 
-			sharpen = 1;
-			if (zoomAbove30x) sharpen = 0x80;// fine edge enhancement instead of primitive sharpen at high zoom levels
-				filter = 300;
-			if (!zoomAbove15x) filter = 192;// slightly less filtering at low zooms (somehow sr processing is creating less sharp images here)
+		case 903:// HTC10
+			// use both edge enhancement and sharpening at high zoom levels
+			sharpen |= 1;
 			break;
-		case 1006:// Galaxy S7
-			deGhostGain = (100 - (int)(iso * 0.0004167f)) * 256 / 100;
-			sensorGain = (int)(1.05f * 256 * powf(((float)iso) / 100, 0.5f));
 
-			sharpen = 1;
+		case 1005:// Galaxy S6
 			// do not use fine edge enhancement (looks too plastic on S6)
-			//if (zoomAbove30x) sharpen = 0x80;// fine edge enhancement instead of primitive sharpen at high zoom levels
-			filter = 256;
-			//if (!zoomAbove15x) filter = 320;// slightly more filtering at low zooms
-			break;
-		case 2000:// OnePlus 2
-			deGhostGain = (256 * (50 - 0.01f * iso) / 100);
-			if (deGhostGain < 54) deGhostGain = 54;
-			sensorGain = (int)(1.4f * 256 * powf(((float)iso) / 100, 0.45f));
-
 			sharpen = 1;
-			if (zoomAbove30x) sharpen = 0x80;// fine edge enhancement instead of primitive sharpen at high zoom levels
+			filter = 288; // 256;
+			break;
 
-			filter = 256;
+		case 1006:// Galaxy S7
+			// do not use fine edge enhancement (looks too plastic on S6)
+			sharpen = 1;
+			break;
+
+		case 2000:// OnePlus 2
 			if (zoomAbove15x) filter = 160;
-
 			break;
 		default:
 			__android_log_print(ANDROID_LOG_INFO, "CameraTest", "Error: Unknown camera");
@@ -286,12 +286,10 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 		int err = Super_Process(
 				yuv, NULL, &OutPic,
 				sx_zoom, sy_zoom, sx_zoom, sxo, syo, nImages,
-				sensorGain,
-				deGhostGain*deghostTable[DeGhostPref]/256,
-				1,							// deghostFrames
+				iso,
 				filter,
 				sharpen,
-				gamma,
+				fgamma,
 				cameraIndex,
 				0);							// externalBuffers
 

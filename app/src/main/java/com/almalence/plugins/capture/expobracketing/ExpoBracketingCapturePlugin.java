@@ -111,14 +111,14 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		camera2Preference = prefs.getBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false);
 		
-		if(CameraController.isFlex2 && camera2Preference)
-		{
-			prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false).commit();
-			CameraController.setUseCamera2(false);
-			
-			CameraController.isOldCameraOneModeLaunched = true;
-			PluginManager.getInstance().setSwitchModeType(true);
-		}
+//		if(CameraController.isFlex2 && camera2Preference)
+//		{
+//			prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false).commit();
+//			CameraController.setUseCamera2(false);
+//			
+//			CameraController.isOldCameraOneModeLaunched = true;
+//			PluginManager.getInstance().setSwitchModeType(true);
+//		}
 	}
 
 	@Override
@@ -168,15 +168,14 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), camera2Preference).commit();
 	}
 	
-	
 	@Override
 	public void onStop()
 	{
-		if(CameraController.isFlex2 && camera2Preference)
-		{
-			CameraController.useCamera2OnRelaunch(true);
-			CameraController.setUseCamera2(camera2Preference);
-		}
+//		if(CameraController.isFlex2 && camera2Preference)
+//		{
+//			CameraController.useCamera2OnRelaunch(true);
+//			CameraController.setUseCamera2(camera2Preference);
+//		}
 	}
 
 	@Override
@@ -639,7 +638,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			CameraController.isNexus6p || 
 			CameraController.isFlex2 || 
 			CameraController.isGalaxyS7 || 
-			CameraController.isG5)
+			CameraController.isG5||
+			CameraController.isHTCM10)
 		{
 			gain = new int[3];
 			gain[0] = CameraController.getCurrentSensitivity();

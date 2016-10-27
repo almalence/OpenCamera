@@ -913,6 +913,46 @@ public final class Util
 		}
 	}
 
+	
+//	public static String getAbsolutePathFromDocumentFile(DocumentFile documentFile)
+//	{
+//		// We can't get absolute path from DocumentFile or Uri.
+//		// It is a hack to build absolute path by DocumentFile.
+//		// May not work on some devices.
+//		Uri uri = documentFile.getUri();
+//		final String docId = DocumentsContract.getDocumentId(uri);
+//		final String[] split = docId.split(":");
+//		final String id = split[1];
+//
+//		String sd = null;
+//		sd = System.getenv("SECONDARY_STORAGE");
+//		if (sd == null)
+//		{
+//			sd = System.getenv("EXTERNAL_STORAGE");
+//		}
+//
+//		if (sd != null)
+//		{
+//			// On some devices SECONDARY_STORAGE has several paths
+//			// separated with a colon (":"). This is why we split
+//			// the String.
+//			String[] paths = sd.split(":");
+//			for (String p : paths)
+//			{
+//				File fileSD = new File(p);
+//				if (fileSD.isDirectory())
+//				{
+//					sd = fileSD.getAbsolutePath();
+//				}
+//			}
+//
+//			String documentPath = sd + "/" + id;
+//			return documentPath;
+//		}
+//		return null;
+//	}
+	
+	
 	// Get File absolute path from DocumentFile object.
 	// This method should be used only for files saved to SD-card.
 	public static String getAbsolutePathFromDocumentFile(DocumentFile documentFile)
@@ -929,9 +969,11 @@ public final class Util
 		sd = System.getenv("SECONDARY_STORAGE");
 		if (sd == null)
 		{
-			sd = System.getenv("EXTERNAL_STORAGE");
+//			sd = System.getenv("EXTERNAL_STORAGE");
+			
+			String documentPath = "/storage" + "/" + docId.replace(":", "/");
+			return documentPath;
 		}
-
 		if (sd != null)
 		{
 			// On some devices SECONDARY_STORAGE has several paths
