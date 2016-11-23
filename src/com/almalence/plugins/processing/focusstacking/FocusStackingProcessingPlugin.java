@@ -997,12 +997,16 @@ public class FocusStackingProcessingPlugin extends PluginProcessing implements O
 			isTouchToReFocus = true;
 //			this.mCurrentFocusDepth = 1;
 			this.mBaseFrameIndex = focused_image_index;
-			this.mCurrentFocusDepth = 1;
+			//this.mCurrentFocusDepth = 1;
 			
 			int maxFocusDepth = Math.max(this.mBaseFrameIndex +1, mImageAmount - this.mBaseFrameIndex); //Initial processing result contains all input frames
 			
 			this.focusDepthSeekBar.setMax((maxFocusDepth - 1)/* * 10*/); //0 - is a minimum value of seek bar. mImageAmount's minimum value is 1.
-			this.focusDepthSeekBar.setProgress(0); //Initially full range focus stacking is calculating
+			if(this.mCurrentFocusDepth > maxFocusDepth)
+				this.mCurrentFocusDepth = maxFocusDepth;
+			
+			this.focusDepthSeekBar.setProgress(this.mCurrentFocusDepth - 1);
+			//this.focusDepthSeekBar.setProgress(0); //Initially full range focus stacking is calculating
 			
 			if (this.fstackingTaskCurrent == null)
 			{
@@ -1023,6 +1027,19 @@ public class FocusStackingProcessingPlugin extends PluginProcessing implements O
 //					Log.e(TAG, "pending FocusStackinTask already created");
 				}
 			}
+		}
+		else
+		{
+			FocusStackingProcessingPlugin.setProgressBarVisibility(true);
+			Handler handler = new Handler();
+			Runnable runnable = new Runnable() {        
+			    
+				@Override
+				public void run() {
+					FocusStackingProcessingPlugin.setProgressBarVisibility(false);					
+				}
+			};
+			handler.postDelayed(runnable, 100);
 		}
 	}
 
@@ -1490,7 +1507,9 @@ public class FocusStackingProcessingPlugin extends PluginProcessing implements O
 					ApplicationInterface.MSG_CONTROL_UNLOCKED);
 
 			ApplicationScreen.getGUIManager().lockControls = false;
-
+			
+			postProcessingRun = false;
+			
 			ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_POSTPROCESSING_FINISHED);
 		}
 	}
