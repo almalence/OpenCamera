@@ -1043,7 +1043,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	{
 		isCameraConfiguring = false;
 
-		onResumeTimer = new CountDownTimer(50, 50)
+		onResumeTimer = new CountDownTimer(100, 100)
 		{
 			public void onTick(long millisUntilFinished)
 			{
