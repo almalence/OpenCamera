@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    <string name="Pref_Common_Header_Title">Configurações comuns</string>
+    <string name="Pref_Common_Header_Summary">Câmera e outros</string>
+    <string name="Pref_Common_Preference_Title">Configurações da câmera</string>
+    <string name="Pref_Common_Preference_Summary">Câmera e outros</string>
+    <string name="Pref_Common_UseFrontCamera_Title">Câmera frontal</string>
+    <string name="Pref_Common_UseFrontCamera_Summary">Usar câmera frontal</string>
+    <string name="Pref_Common_ImageSize_Title">Tamanho da imagem</string>
+    <string name="Pref_Comon_SmartMultishot_And_Night_ImageSize_Title">Tamanho da imagem (Multidisparo Inteligente e Noite)</string>
+    <string name="Pref_Common_ImageSize_Summary">\nNota: alguns modos têm configurações individuais para o tamanho das imagens</string>
+    <string name="Pref_Common_Shutter_Title">Operação silenciosa</string>
+    <string name="Pref_Common_Shutter_Summary">Não garantido que funcione em todos os modelos</string>
+    <string name="Pref_Common_HWShutter_Summary">Use o obturador do hardware para iniciar o aplicativo</string>
+    <string name="Pref_Common_ShotOnTap_Title">Toque para disparar</string>
+    <string name="Pref_Common_ShotOnTap_Summary">Focar e disparar no toque</string>
+    <string name="Pref_Common_UseCamera2_Title">Usar interface do Сamera2</string>
+    <string name="Pref_Common_UseCamera2_Summary">Modo experimental. Funcionará com número limitado de dispositivos</string>    
+    <string name="Pref_Common_MediaRescan_Title">Digitalizar mídia de novo ao sair</string>
+    <string name="Pref_Common_MediaRescan_Summary">Ajuda caso as imagens não apareçam na galeria.</string>
+    <string name="Pref_Common_Gallery_Title">Permitir para selecionar a galeria externa</string>
+    <string name="Pref_Common_Gallery_Summary">Não use o A Better Editor&amp;Effects como visualizador padrão caso instalado</string>
+    <string name="Pref_Common_JPEGQuality_Title">Qualidade jpeg</string>
+    <string name="Pref_Common_VolumeButton_Title">Botão de volume</string>
+    <string name="Pref_SaveConfiguration_Title">Salvar configuração</string>
+    <string name="Pref_SaveConfiguration_Summary">Selecione quais configurações salvar entre as inicializações</string>
+    <string name="Pref_SaveConfiguration_ShootingMode_Title">Modo de disparo</string>
+    <string name="Pref_SaveConfiguration_ImageSize_Title">Tamanho da imagem</string>
+    <string name="Pref_SaveConfiguration_SceneMode_Title">Modo de cena</string>
+    <string name="Pref_SaveConfiguration_FocusMode_Title">Modo de focagem</string>
+    <string name="Pref_SaveConfiguration_WBMode_Title">Modo de balanço de branco</string>
+    <string name="Pref_SaveConfiguration_ISOMode_Title">Modo ISO</string>
+    <string name="Pref_SaveConfiguration_FlashMode_Title">Modo de flash</string>
+    <string name="Pref_SaveConfiguration_FrontRear_Title">Câmera selecionada</string>
+    <string name="Pref_SaveConfiguration_DelayedCapture_Title">Disparador automático</string>
+    <string name="Pref_SaveConfiguration_ExpoCompensation_Title">Compensação de exposição</string>
+    <string name="Pref_Common_DelayedCapture_Title">Captura do disparador automático</string>
+    <string name="Pref_Common_DelayedCapture_Summary">Mostrar controle do disparador automático/photo timelapse</string>
+    <string name="Pref_ShowHelp_Title">Mostrar ajuda</string>
+    <string name="Pref_WhowHelp_Summary">Mostrar ajuda ao iniciar modo (Panorama, Remoção de objetos, Sequência, Foto de Grupo)</string>
+    <string name="Pref_Common_HeadsetTap_Title">Obturador do fone de ouvido</string>
+    <string name="Pref_Common_HeadsetTap_Summary">Use os botões do fone de ouvido como obturador</string>
+    
+    
+    <string name="helpTextDontShow">Não exibir</string>
+    
+    <string name="ev_zero">0</string>    
+    <string name="blockingText">Aguarde. Processando...</string>
+    <string name="almalence_gui_selected">selecionado</string>
+
+    <string name="settings_mode_scene">Modo de cena</string>
+    <string name="settings_mode_wb">Balanço de branco</string>
+    <string name="settings_mode_focus">Modo de foco</string>
+    <string name="settings_mode_flash">Modo flash</string>
+    <string name="settings_mode_iso">ISO</string>
+    <string name="settings_mode_metering">Modo de medição da exposição</string>
+    <string name="settings_mode_rear">câmera traseira</string>
+    <string name="settings_mode_front">Câmera frontal</string>
+    <string name="settings_mode_exposure">Exposição</string>
+    <string name="settings_mode_moresettings">Mais configurações</string>
+    <string name="settings_mode_aeaflock">AE\\AF Bloqueado</string>
+    <string name="settings_mode_aeafunlock">AE\\AF Desbloqueado</string>
+    
+    <string name="settings_not_available">Indisponível no modo atual</string>
+    <string name="processing_not_finished">O processamento não terminou ainda. Aguarde.</string>
+        
+    <string name="Pref_General_Preference_Title">Configurações Gerais</string>
+	<string name="Pref_General_Preference_Summary">Câmera e captura</string>
+	<string name="Pref_VF_Preference_Title">Configurações do visor</string>
+	<string name="Pref_VF_Preference_Summary">O que exibir</string>
+	<string name="Pref_Modes_Preference_Title">Configurações de modos de captura</string>
+	<string name="Pref_Modes_Preference_Summary">HDR, Noite, Panorama ...</string>
+	<string name="Pref_Saving_Preference_Title">Salvar e compartilhar</string>
+	<string name="Pref_Saving_Preference_Summary">Nomes de arquivos, formatos, geomarcação, exif e outros parâmetros</string>
+	<string name="Pref_Advanced_Preference_Title">Avançado</string>
+	<string name="Pref_Advanced_Preference_Summary">Configurações para usuários experientes</string>
+	<string name="Pref_Unlock_Preference_Title">Desbloquear</string>
+	<string name="Pref_Unlock_Preference_Summary">Desbloquear recursos premium</string>
+	
+	<string name="layout_hint_bottom">Selecionar modo de câmera</string>
+	<string name="layout_hint_center">Deslize para mais/menos informações</string>
+	<string name="layout_hint_top_left">Aperte e segure\npara configurar</string>
+	<string name="layout_hint_top_center">Puxe para mais informações</string>
+
+	<string name="Dro_Help">A nova tecnologia da Almalence faz com que as câmeras vejam como olho humano! O DRO (Otimizador de Gama Dinâmica) usa uma técnica similar ao mapeamento de tonalidade, melhora automaticamente as imagens em 100% dos casos e pode substituir o HDR na maioria dos casos.\n\n1. Aperte o obturador para tirar foto\n2. Aguarde até ser processada em segundos!</string>
+	
+	<string name="setTimerText">Definir</string>
+	<string name="soundTimerText">Som na contagem regressiva</string>
+	<string name="flashTimerText">Flash na contagem regressiva</string>	
+
+	<string name="secondsText">segundos</string>	
+	<string name="okText">OK</string>
+	
+	<string name="moreText">Mais...</string>
+	
+</resources>

@@ -1,0 +1,81 @@
+ECLIPSE ANDROID PROJECT IMPORT SUMMARY
+======================================
+
+Ignored Files:
+--------------
+The following files were *not* copied into the new Gradle project; you
+should evaluate whether these are still needed in your project and if
+so manually move them:
+
+* .gitignore
+* .idea/
+* .idea/OpenCamera.iml
+* .idea/compiler.xml
+* .idea/copyright/
+* .idea/copyright/profiles_settings.xml
+* .idea/encodings.xml
+* .idea/misc.xml
+* .idea/modules.xml
+* .idea/vcs.xml
+* .idea/workspace.xml
+* .project_plus
+* Almalence Imaging SDK for Open Camera - LICENSE.pdf
+* LICENSE
+* README.md
+* default.properties
+* doc/
+* doc/Almalence GUI.doc
+* doc/Developer's guide - Plugins creation.doc
+* doc/GUI customization.doc
+* doc/OpenCam draft structure.doc
+* doc/SharedMemory.txt
+* doc/android-tree-build/
+* doc/android-tree-build/Android.mk
+* doc/android-tree-build/instructions.txt
+
+Moved Files:
+------------
+Android Gradle projects use a different directory structure than ADT
+Eclipse projects. Here's how the projects were restructured:
+
+* AndroidManifest.xml => OpenCamera/src/main/AndroidManifest.xml
+* assets/ => OpenCamera/src/main/assets/
+* jni/ => OpenCamera/src/main/jni/
+* libs/android-support-v13.jar => OpenCamera/libs/android-support-v13.jar
+* libs/androidexiv2.jar => OpenCamera/libs/androidexiv2.jar
+* libs/armeabi-v7a/libYuvBitmap.so => OpenCamera/src/main/jniLibs/armeabi-v7a/libYuvBitmap.so
+* libs/armeabi-v7a/libalmalence-mp4editor.so => OpenCamera/src/main/jniLibs/armeabi-v7a/libalmalence-mp4editor.so
+* libs/armeabi-v7a/libalmalib.so => OpenCamera/src/main/jniLibs/armeabi-v7a/libalmalib.so
+* libs/armeabi-v7a/libalmashot-dro.so => OpenCamera/src/main/jniLibs/armeabi-v7a/libalmashot-dro.so
+* libs/armeabi-v7a/libalmashot-fstacking.so => OpenCamera/src/main/jniLibs/armeabi-v7a/libalmashot-fstacking.so
+* libs/armeabi-v7a/libalmashot-hdr.so => OpenCamera/src/main/jniLibs/armeabi-v7a/libalmashot-hdr.so
+* libs/armeabi-v7a/libalmashot-moving.so => OpenCamera/src/main/jniLibs/armeabi-v7a/libalmashot-moving.so
+* libs/armeabi-v7a/libalmashot-night.so => OpenCamera/src/main/jniLibs/armeabi-v7a/libalmashot-night.so
+* libs/armeabi-v7a/libalmashot-pano.so => OpenCamera/src/main/jniLibs/armeabi-v7a/libalmashot-pano.so
+* libs/armeabi-v7a/libalmashot-seamless.so => OpenCamera/src/main/jniLibs/armeabi-v7a/libalmashot-seamless.so
+* libs/armeabi-v7a/libbestshot.so => OpenCamera/src/main/jniLibs/armeabi-v7a/libbestshot.so
+* libs/armeabi-v7a/libhiresportrait.so => OpenCamera/src/main/jniLibs/armeabi-v7a/libhiresportrait.so
+* libs/armeabi-v7a/libhistogram.so => OpenCamera/src/main/jniLibs/armeabi-v7a/libhistogram.so
+* libs/armeabi-v7a/libpreshot.so => OpenCamera/src/main/jniLibs/armeabi-v7a/libpreshot.so
+* libs/armeabi-v7a/libswapheap.so => OpenCamera/src/main/jniLibs/armeabi-v7a/libswapheap.so
+* libs/armeabi-v7a/libutils-image.so => OpenCamera/src/main/jniLibs/armeabi-v7a/libutils-image.so
+* libs/armeabi-v7a/libutils-jni.so => OpenCamera/src/main/jniLibs/armeabi-v7a/libutils-jni.so
+* libs/armeabi-v7a/libyuvimage.so => OpenCamera/src/main/jniLibs/armeabi-v7a/libyuvimage.so
+* libs/openiab-0.9.8.6.jar => OpenCamera/libs/openiab-0.9.8.6.jar
+* res/ => OpenCamera/src/main/res/
+* src/ => OpenCamera/src/main/java/
+
+Next Steps:
+-----------
+You can now build the project. The Gradle project needs network
+connectivity to download dependencies.
+
+Bugs:
+-----
+If for some reason your project does not build, and you determine that
+it is due to a bug or limitation of the Eclipse to Gradle importer,
+please file a bug at http://b.android.com with category
+Component-Tools.
+
+(This import summary is for your information only, and can be deleted
+after import once you are satisfied with the results.)

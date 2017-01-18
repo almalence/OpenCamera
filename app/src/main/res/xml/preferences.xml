@@ -1,0 +1,51 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+	    <!-- -+-  -->
+    <PreferenceScreen android:title="@string/Pref_Common_ImageSize_Title"
+        	android:fragment="com.almalence.focuscam.Fragment" 
+           >
+		 <extra 
+		     android:name="type" 
+		     android:value="general_image_size" />
+	</PreferenceScreen>
+	<!--  -+- -->
+	<!-- +++
+	<PreferenceScreen android:title="@string/Pref_Common_ImageSize_Title"
+        	android:fragment="com.almalence.focuscam_plus.Fragment" 
+           >
+		 <extra 
+		     android:name="type" 
+		     android:value="general_image_size" />
+	</PreferenceScreen>
+	+++ -->
+	
+	<ListPreference
+		android:title="@string/Pref_Common_VolumeButton_Title"
+		android:key="volumeButtonPrefCommon"
+		android:defaultValue="0"
+		android:entries="@array/volumeButtonArrayCommon"
+		android:entryValues="@array/volumeButtonValuesCommon" />
+	<CheckBoxPreference
+		android:title="@string/Pref_ShowHelp_Title"
+		android:summary="@string/Pref_WhowHelp_Summary"
+		android:defaultValue="true" 
+		android:key="showHelpPrefCommon" />
+    
+    <!-- -+-  -->
+    <PreferenceScreen android:title="@string/moreText"
+        	android:fragment="com.almalence.focuscam.Fragment" 
+           >
+		 <extra 
+		     android:name="type" 
+		     android:value="general_more" />
+	</PreferenceScreen>
+	<!--  -+- -->
+	<!-- +++
+	<PreferenceScreen android:title="@string/moreText"
+        	android:fragment="com.almalence.focuscam_plus.Fragment" 
+           >
+		 <extra 
+		     android:name="type" 
+		     android:value="general_more" />
+	</PreferenceScreen>
+	+++ -->
+</PreferenceScreen>

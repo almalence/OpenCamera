@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="Pref_Common_Header_Title">Общие настройки</string>
+    <string name="Pref_Common_Header_Summary">Камера и др.</string>
+    <string name="Pref_Common_Preference_Title">Настройки камеры</string>
+    <string name="Pref_Common_Preference_Summary">Камера и др.</string>
+    <string name="Pref_Common_UseFrontCamera_Title">Фронтальная камера</string>
+    <string name="Pref_Common_UseFrontCamera_Summary">Использовать фронтальную камеру</string>
+    <string name="Pref_Common_ImageSize_Title">Размер снимка</string>
+    <string name="Pref_Common_ColorEffect_Title">Цветовой эффект</string>
+    <string name="Pref_Comon_SmartMultishot_And_Night_ImageSize_Title">Размер снимка (Multishot, Ночь)</string>
+    <string name="Pref_Comon_SmartMultishot_And_Super_ImageSize_Title">Размер снимка (Multishot)</string>
+    <string name="Pref_Common_ImageSize_Summary">\nВнимание: некоторые режимы имеют индивидуальные настройки размера снимка</string>
+    <string name="Pref_Common_Shutter_Title">Отключить звуки</string>
+    <string name="Pref_Common_Shutter_Summary">Возможно, работает не на всех моделях</string>
+    <string name="Pref_Common_HWShutter_Title">Кнопка камеры</string>
+    <string name="Pref_Common_HWShutter_Summary">Запуск приложения по кнопке камеры на боковой панеле</string>
+    <string name="Pref_Common_ShotOnTap_Title">Съёмка по клику</string>
+    <string name="Pref_Common_Antibanding_Title">Антибендинг</string>
+    <string name="Pref_Common_ShotOnTap_Summary">Фокусировка и съемка по клику</string>
+    <string name="Pref_Common_UseCamera2_Title">Использовать новый интерфейс камеры</string>
+    <string name="Pref_Common_UseCamera2_Summary">Экспериментальный режим. Работает на ограниченном числе устройств с Android 5</string>
+    <string name="Pref_Common_CaptureRAW_Title">Съёмка RAW+JPEG</string>
+    <string name="Pref_Common_CaptureRAW_Summary">Снимок сохраняется в формате DNG. Работает на ограниченном числе устройств</string>
+    <string name="Pref_Common_CaptureRAW_Description">Съёмка RAW возможна только в режимах Стандартный, Серия и Брекетинг экспозиции. Так же, в этом режиме не может быть показана гистограмма</string>
+    <string name="Pref_Common_VolumeButton_Title">Кнопка громкости</string>
+    <string name="Pref_Common_MediaRescan_Title">Ре-скан карточки памяти при выходе</string>
+    <string name="Pref_Common_MediaRescan_Summary">Используйте если снимки не появляются в галерее.</string>
+	<string name="Pref_Common_Gallery_Title">Выбор внешних галерей</string>
+    <string name="Pref_Common_Gallery_Summary">Не использовать редактор A Better Editor&amp;Effects по умолчанию, если он установлен</string>
+    <string name="Pref_Common_JPEGQuality_Title">Качество jpeg</string>
+    <string name="blockingText">Подождите, идет обработка...</string>
+	<string name="helpTextDontShow">Не показывать</string>
+	<string name="Pref_Common_HeadsetTap_Title">Кнопки наушников</string>
+    <string name="Pref_Common_HeadsetTap_Summary">Использовать кнопки наушников для съемки</string>
+    <string name="Pref_Common_ConnectToSonyCameras_Title">Позволять выбор Sony камер</string>
+    <string name="Pref_Common_ConnectToSonyCameras_Summary">Включить возможность выбора устройств Sony</string>
+    <string name="Pref_SaveConfiguration_Title">Сохранение настроек</string>
+    <string name="Pref_SaveConfiguration_Summary">Выбрать настройки, сохраняемые между запусками</string>
+    <string name="Pref_SaveConfiguration_ShootingMode_Title">Режимы съемки</string>
+    <string name="Pref_SaveConfiguration_ImageSize_Title">Размер</string>
+    <string name="Pref_SaveConfiguration_SceneMode_Title">Сцену</string>
+    <string name="Pref_SaveConfiguration_FocusMode_Title">Фокус</string>
+    <string name="Pref_SaveConfiguration_WBMode_Title">Баланс белого</string>
+    <string name="Pref_SaveConfiguration_ISOMode_Title">ISO</string>
+    <string name="Pref_SaveConfiguration_FlashMode_Title">Вспышка</string>
+    <string name="Pref_SaveConfiguration_FrontRear_Title">Передняя/задняя камера</string>
+    <string name="Pref_SaveConfiguration_DelayedCapture_Title">Таймер съемки</string>
+    <string name="Pref_SaveConfiguration_ExpoCompensation_Title">Компенсация экспозиции</string>
+    <string name="Pref_Common_DelayedCapture_Title">Съемка по таймеру</string>
+    <string name="Pref_Common_DelayedCapture_Summary">Показать контрол съемки по таймеру/timelapse на главном экране</string>
+    <string name="Pref_ShowHelp_Title">Показывать помощь</string>
+    <string name="Pref_WhowHelp_Summary">Показывать помощь при запуске режима (режимы панорамы, Smart multishot)</string>
+    
+    <string name="almalence_gui_selected">выбран</string>
+    
+     <string name="sceneAuto">Авто</string>
+    <string name="sceneAction">Движение</string>
+    <string name="scenePortrait">Портрет</string>
+    <string name="sceneLandscape">Ландшафт</string>
+    <string name="sceneNight">Ночь</string>
+    <string name="sceneNightPortrait">Ночной портрет</string>
+    <string name="sceneTheatre">Театр</string>
+    <string name="sceneBeach">Пляж</string>
+    <string name="sceneSnow">Снег</string>
+    <string name="sceneSunset">Закат</string>
+    <string name="sceneSteadyPhoto">Steadyphoto</string>
+    <string name="sceneFireworks">Фейерверк</string>
+    <string name="sceneSports">Спорт</string>
+    <string name="sceneParty">Вечеринка</string>
+    <string name="sceneCandlelight">Свеча</string>
+    <string name="sceneBarcode">Штрихкод</string>
+    <string name="sceneHDR">HDR</string>
+    <string name="sceneAR">AR</string>
+    
+    <string name="wbManual">Ручной</string>
+    <string name="wbAuto">Авто</string>
+    <string name="wbIncandescent">Накаливания</string>
+    <string name="wbFluorescent">Флюоресцентная</string>
+    <string name="wbWarmFluorescent">Теплая флюоресцентная</string>
+    <string name="wbDaylight">Дневной свет</string>
+    <string name="wbCloudyDaylight">Облачно</string>
+    <string name="wbTwilight">Сумерки</string>
+    <string name="wbShade">Тень</string>
+
+    <string name="focusAuto">Авто</string>
+    <string name="focusInfinity">Бесконечность</string>
+    <string name="focusNormal">Нормальная</string>
+    <string name="focusMacro">Макро</string>
+    <string name="focusFixed">Фиксированый</string>
+    <string name="focusEdof">Edof</string>
+    <string name="focusContinuousVideo">Сontinuous video</string>
+    <string name="focusContinuousPicture">Continuous picture</string>
+    
+    <string name="flashAuto">авто</string>
+    <string name="flashOn">вкл</string>
+    <string name="flashOff">выкл</string>
+    <string name="flashRedEye">red-eye</string>
+    <string name="flashTorch">фонарик</string>
+    <string name="flashCaptureTorch">фонарик для съемки</string>
+    
+    <string name="isoAuto">авто</string> 
+    
+    <string name="colorEffectOff">Нет</string>
+    <string name="colorEffectAqua">Вода</string>
+    <string name="colorEffectBlackboard">Классная доска</string>
+    <string name="colorEffectMono">Моно</string>
+    <string name="colorEffectNegative">Негатив</string>
+    <string name="colorEffectPosterize">Постеризация</string>
+    <string name="colorEffectSepia">Сепия</string>
+    <string name="colorEffectSolarize">Засвет</string>
+    <string name="colorEffectWhiteboard">Доска</string>
+    
+    <string name="settings_mode_scene">Сцена</string>
+    <string name="settings_mode_wb">Баланс белого</string>
+    <string name="settings_mode_focus">Фокусировка</string>
+    <string name="settings_mode_flash">Вспышка</string>
+    <string name="settings_mode_iso">ISO</string>
+    <string name="settings_mode_rear">Основная</string>
+    <string name="settings_mode_front">Фронтальная</string>
+    <string name="settings_mode_exposure">"Экспокоррекция"</string>
+    <string name="settings_mode_self_timer">Таймер</string>
+    <string name="settings_mode_image_size">Размер снимка</string>
+    <string name="settings_mode_color_effect">Цветовой эффект</string>
+    <string name="settings_mode_moresettings">Настройки</string>
+    
+    <string name="settings_not_available">Недоступно в выбранном режиме</string>
+    <string name="processing_not_finished">Обработка еще не завершена. Пожалуйста подождите.</string>
+        
+    <string name="Pref_General_Preference_Title">Общие настройки</string>
+	<string name="Pref_General_Preference_Summary">Камера и съемка</string>
+	<string name="Pref_VF_Preference_Title">Настройки экрана</string>
+	<string name="Pref_VF_Preference_Summary">Что показывать</string>
+	<string name="Pref_Modes_Preference_Title">Настройки режимов съемки</string>
+	<string name="Pref_Saving_Preference_Title">Сохранение и sharing</string>
+	<string name="Pref_Saving_Timestamp_Preference_Title">Печать даты</string>
+	<string name="Pref_Saving_Preference_Summary">Форматы, именование, геотэги, exif и др. параметры</string>
+	<string name="Pref_Advanced_Preference_Title">Расширенные настройки</string>
+	<string name="Pref_Advanced_Preference_Summary">Настройки для продвинутых пользователей</string>
+	<string name="Pref_Unlock_Preference_Title">Разблокировка/Помощь</string>
+	<string name="Pref_Unlock_Preference_Summary">Разблокировать премиальные функции</string>
+	<string name="Pref_Help_Preference_Title">Помощь</string>
+	<string name="Pref_Help_Preference_Summary">Помощь и подсказки</string>
+	
+	<string name="layout_hint_bottom">Выбрать режим камеры</string>
+	<string name="layout_hint_center">Переключение экранов</string>
+	<string name="layout_hint_top_left">Длинное нажатие\nчтобы выбрать</string>
+	<string name="layout_hint_top_center">Выдвинуть доп. опции</string>
+
+	<string name="Dro_Help">Технология позволяющая увидеть больше деталей на снимке. Вытягивает затемненные и засвеченные области, делая сцену более естественной. Dro - может быть использован в большинстве случаев вместо HDR.\n\n1. Снимите фотографию\n2. Дождитесь конца обработки!</string>
+
+	<string name="setTimerText">Установить</string>
+	<string name="soundTimerText">Звук при отсчете</string>
+	<string name="flashTimerText">Вспышка при отсчете</string>
+	<string name="secondsText">секунд</string>
+
+	<string name="moreText">Ещё...</string>				
+</resources>

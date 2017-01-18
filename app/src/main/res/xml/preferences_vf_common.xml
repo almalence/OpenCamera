@@ -1,0 +1,84 @@
+<!-- -+-  -->
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+	    <CheckBoxPreference
+			android:title="@string/Pref_Common_DelayedCapture_Title"
+			android:summary="@string/Pref_Common_DelayedCapture_Summary"
+			android:defaultValue="false" 
+			android:key="@string/Preference_ShowDelayedCaptureValue" />
+	    
+	    <CheckBoxPreference
+	        android:title="@string/Pref_KeepScreenOn"
+	        android:summary="@string/Pref_KeepScreenOn_Summary"
+	        android:defaultValue="false"
+            android:key="@string/Preference_KeepScreenOnValue" />
+	    
+	    <CheckBoxPreference
+	        android:title="@string/Pref_MaxScreenBrightness"
+	        android:summary="@string/Pref_MaxScreenBrightness_Summary"
+	        android:defaultValue="false"
+            android:key="maxScreenBrightnessPref" />
+	    
+	    <CheckBoxPreference
+	        android:title="@string/Pref_FastSwitchShutter"
+	        android:summary="@string/Pref_FastSwitchShutter_Summary"
+	        android:defaultValue="true"
+            android:key="@string/Preference_ShowFastSwitchShutterValue" />
+	    
+	    <CheckBoxPreference
+	        android:title="@string/Pref_SwipingEnabled"
+	        android:summary="@string/Pref_SwipingEnabled_Summary"
+	        android:defaultValue="true"
+            android:key="@string/Preference_SwipingEnabledChecked" />
+	    
+	    <PreferenceScreen 
+            android:fragment="com.almalence.focuscam.Fragment" 
+            android:title="@string/moreText" 
+            >
+			 <extra 
+			     android:name="type" 
+			     android:value="vf_more" />
+		</PreferenceScreen>
+		
+</PreferenceScreen>
+<!--  -+- -->
+<!-- +++
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+	    <CheckBoxPreference
+			android:title="@string/Pref_Common_DelayedCapture_Title"
+			android:summary="@string/Pref_Common_DelayedCapture_Summary"
+			android:defaultValue="false" 
+			android:key="@string/Preference_ShowDelayedCaptureValue" />
+	    
+	    <CheckBoxPreference
+	        android:title="@string/Pref_KeepScreenOn"
+	        android:summary="@string/Pref_KeepScreenOn_Summary"
+	        android:defaultValue="false"
+            android:key="@string/Preference_KeepScreenOnValue" />
+	    
+	    <CheckBoxPreference
+	        android:title="@string/Pref_MaxScreenBrightness"
+	        android:summary="@string/Pref_MaxScreenBrightness_Summary"
+	        android:defaultValue="false"
+            android:key="maxScreenBrightnessPref" />
+	   
+	    <CheckBoxPreference
+	        android:title="@string/Pref_FastSwitchShutter"
+	        android:summary="@string/Pref_FastSwitchShutter_Summary"
+	        android:defaultValue="true"
+            android:key="@string/Preference_ShowFastSwitchShutterValue" />
+
+	    <PreferenceScreen 
+            android:fragment="com.almalence.focuscam_plus.Fragment" 
+            android:title="@string/moreText" 
+            >
+			 <extra 
+			     android:name="type" 
+			     android:value="vf_more" />
+		</PreferenceScreen>
+		
+</PreferenceScreen>
++++ -->

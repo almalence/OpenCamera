@@ -1,0 +1,104 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:enabled="false"
+        android:key="@string/Preference_UseCamera2Key"
+        android:summary="@string/Pref_Common_UseCamera2_Summary"
+        android:title="@string/Pref_Common_UseCamera2_Title" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="@string/Preference_CaptureRAWValue"
+        android:summary="@string/Pref_Common_CaptureRAW_Summary"
+        android:title="@string/Pref_Common_CaptureRAW_Title" />
+    
+    <!-- -+-  -->
+    <PreferenceScreen
+        android:fragment="com.almalence.focuscam.Fragment"
+        android:summary="@string/Pref_SaveConfiguration_Summary"
+        android:title="@string/Pref_SaveConfiguration_Title" >
+        <extra
+            android:name="type"
+            android:value="save_configuration" />
+    </PreferenceScreen>
+    <!--  -+- -->
+    <!-- +++
+	<PreferenceScreen
+		 android:fragment="com.almalence.focuscam_plus.Fragment"
+		 android:title="@string/Pref_SaveConfiguration_Title"
+		 android:summary="@string/Pref_SaveConfiguration_Summary">
+		 <extra 
+		 	android:name="type" 
+		 	android:value="save_configuration"/>
+	</PreferenceScreen>
+	+++ -->
+    <ListPreference
+        android:defaultValue="95"
+        android:entries="@array/JPEGQualityArrayCommon"
+        android:entryValues="@array/JPEGQualityValuesCommon"
+        android:key="@string/Preference_JPEGQualityCommonValue"
+        android:title="@string/Pref_Common_JPEGQuality_Title" />
+    <ListPreference
+        android:defaultValue="0"
+        android:entries="@array/shotOnTapArrayCommon"
+        android:entryValues="@array/shotOnTapValuesCommon"
+        android:key="@string/Preference_ShotOnTapValue"
+        android:title="@string/Pref_Common_ShotOnTap_Title" />
+    <ListPreference
+        android:defaultValue="0"
+        android:entries="@array/shotOnReleaseArrayCommon"
+        android:entryValues="@array/shotOnReleaseValuesCommon"
+        android:key="@string/Preference_ShotOnReleaseValue"
+        android:title="@string/Pref_Common_ShotOnRelease_Title" />
+    <ListPreference
+        android:defaultValue="0"
+        android:entries="@array/dimsArrayCommon"
+        android:entryValues="@array/dimsValuesCommon"
+        android:key="@string/Preference_FrontColorEffectValue"
+        android:summary=""
+        android:title="@string/Pref_Common_ColorEffect_Title" />
+    <ListPreference
+        android:defaultValue="0"
+        android:entries="@array/dimsArrayCommon"
+        android:entryValues="@array/dimsValuesCommon"
+        android:key="@string/Preference_RearColorEffectValue"
+        android:summary=""
+        android:title="@string/Pref_Common_ColorEffect_Title" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="@string/Preference_ConnectToSonyCameras"
+        android:summary="@string/Pref_Common_ConnectToSonyCameras_Summary"
+        android:title="@string/Pref_Common_ConnectToSonyCameras_Title" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="headsetPrefCommon"
+        android:summary="@string/Pref_Common_HeadsetTap_Summary"
+        android:title="@string/Pref_Common_HeadsetTap_Title" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="@string/Preference_ShutterCommonValue"
+        android:summary="@string/Pref_Common_Shutter_Summary"
+        android:title="@string/Pref_Common_Shutter_Title" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="useHWShutterButtonLauncher"
+        android:summary="@string/Pref_Common_HWShutter_Summary"
+        android:title="@string/Pref_Common_HWShutter_Title" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="@string/Preference_allowExternalGalleries"
+        android:summary="@string/Pref_Common_Gallery_Summary"
+        android:title="@string/Pref_Common_Gallery_Title" />
+    <ListPreference
+        android:defaultValue="3"
+        android:entries="@array/antibandingArrayCommon"
+        android:entryValues="@array/antibandingValuesCommon"
+        android:key="@string/Preference_AntibandingValue"
+        android:title="@string/Pref_Common_Antibanding_Title" />
+    
+    <Preference
+        android:id="@+id/camera_parameters"
+        android:key="camera_parameters"
+        android:title="@string/Pref_CameraParameters_Title" />
+</PreferenceScreen>

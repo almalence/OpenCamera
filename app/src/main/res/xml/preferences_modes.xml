@@ -1,0 +1,147 @@
+<!-- -+-  -->
+<PreferenceScreen
+ xmlns:android="http://schemas.android.com/apk/res/android">
+ 
+    	<PreferenceScreen
+			 android:fragment="com.almalence.focuscam.Fragment"
+			 android:title="@string/Pref_Dro_Preference_Title">
+			 <extra android:name="type" android:value="dro"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.focuscam.Fragment"
+			 android:title="@string/Pref_Burst_Title">
+			 <extra android:name="type" android:value="burst"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.focuscam.Fragment"
+			 android:title="@string/Pref_Expobracketing_Title">
+			 <extra android:name="type" android:value="expobracketing"/>
+		</PreferenceScreen>
+
+		<PreferenceScreen
+			 android:fragment="com.almalence.focuscam.Fragment"
+			 android:title="@string/Pref_Focusbracketing_Title">
+			 <extra android:name="type" android:value="focusbracketing"/>
+		</PreferenceScreen>
+
+		<PreferenceScreen
+			 android:fragment="com.almalence.focuscam.Fragment"
+			 android:title="@string/Pref_HDR_Title">
+			 <extra android:name="type" android:value="hdr"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.focuscam.Fragment"
+			 android:title="@string/Pref_Night_Title"
+			 android:key="night">
+			 <extra android:name="type" android:value="night"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.focuscam.Fragment"
+			 android:title="@string/Pref_Super_Title"
+			 android:key="super">
+			 <extra android:name="type" android:value="super"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.focuscam.Fragment"
+			 android:title="@string/Pref_Video_Title">
+			 <extra android:name="type" android:value="video"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.focuscam.Fragment"
+			 android:title="@string/Pref_Preshot_Title">
+			 <extra android:name="type" android:value="preshot"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.focuscam.Fragment"
+			 android:title="@string/Pref_MultiShot_Title">
+			 <extra android:name="type" android:value="multishot"/>
+		</PreferenceScreen>
+
+		<PreferenceScreen
+			 android:fragment="com.almalence.focuscam.Fragment"
+			 android:title="@string/Pref_PanoramaAugmented_Title">
+			 <extra android:name="type" android:value="panorama_augmented"/>
+		</PreferenceScreen>
+
+</PreferenceScreen>
+<!--  -+- -->
+<!-- +++
+<PreferenceScreen
+ xmlns:android="http://schemas.android.com/apk/res/android">
+ 
+ 		<PreferenceScreen
+			 android:fragment="com.almalence.focuscam_plus.Fragment"
+			 android:title="@string/Pref_Dro_Preference_Title">
+			 <extra android:name="type" android:value="dro"/>
+		</PreferenceScreen>
+ 
+		<PreferenceScreen
+			 android:fragment="com.almalence.focuscam_plus.Fragment"
+			 android:title="@string/Pref_Burst_Title">
+			 <extra android:name="type" android:value="burst"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.focuscam_plus.Fragment"
+			 android:title="@string/Pref_Expobracketing_Title">
+			 <extra android:name="type" android:value="expobracketing"/>
+		</PreferenceScreen>
+
+		<PreferenceScreen
+			 android:fragment="com.almalence.focuscam_plus.Fragment"
+			 android:title="@string/Pref_Focusbracketing_Title">
+			 <extra android:name="type" android:value="focusbracketing"/>
+		</PreferenceScreen>
+
+		<PreferenceScreen
+			 android:fragment="com.almalence.focuscam_plus.Fragment"
+			 android:title="@string/Pref_HDR_Title">
+			 <extra android:name="type" android:value="hdr"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.focuscam_plus.Fragment"
+			 android:title="@string/Pref_Night_Title">
+			 <extra android:name="type" android:value="night"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.focuscam_plus.Fragment"
+			 android:title="@string/Pref_Super_Title"
+			 android:key="super">
+			 <extra android:name="type" android:value="super"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.focuscam_plus.Fragment"
+			 android:title="@string/Pref_Video_Title">
+			 <extra android:name="type" android:value="video"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.focuscam_plus.Fragment"
+			 android:title="@string/Pref_Preshot_Title">
+			 <extra android:name="type" android:value="preshot"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.focuscam_plus.Fragment"
+			 android:title="@string/Pref_MultiShot_Title">
+			 <extra android:name="type" android:value="multishot"/>
+		</PreferenceScreen>
+		
+		<PreferenceScreen
+			 android:fragment="com.almalence.focuscam_plus.Fragment"
+			 android:title="@string/Pref_PanoramaAugmented_Title">
+			 <extra android:name="type" android:value="panorama_augmented"/>
+		</PreferenceScreen>
+		
+</PreferenceScreen>
++++ -->

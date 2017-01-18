@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<string-array name="savemodeArray">
+   <item>@string/Pref_SaveMode_resultonly</item>
+   <item>@string/Pref_SaveMode_processed</item>
+   <item>@string/Pref_SaveMode_all</item>
+</string-array>
+
+<string-array name="savemodeArrayValues">
+   <item>0</item>
+   <item>1</item>
+   <item>2</item>
+</string-array>
+
+<string-array name="outputresArray">
+   <item>@string/dimensions_none</item>
+</string-array>
+
+<string-array name="outputresArrayValues">
+   <item>0</item>
+</string-array>
+
+</resources>

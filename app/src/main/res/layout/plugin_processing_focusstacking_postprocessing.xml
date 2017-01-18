@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mm="http://millennialmedia.com/android/schema"
+    android:id="@+id/objectremovalLayout"
+    android:background="@android:color/black"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <com.almalence.plugins.processing.focusstacking.ShowOffView android:id="@+id/imageHolder"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/focusDepthLayout"
+        android:layout_below="@+id/buttonsLayout"/>
+    
+    <!-- <com.almalence.plugins.processing.focusstacking.TouchImageView android:id="@+id/imageHolder"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/focusDepthLayout"
+        android:layout_below="@+id/fstacking_trashButton"/> -->
+    
+    <ProgressBar android:id="@+id/progressBarProcessing"
+	    		 android:layout_width="wrap_content"
+	    		 android:layout_height="wrap_content"
+	    		 android:indeterminate="true"
+	    		 android:layout_centerInParent="true"
+	    		 android:layout_margin="10dp"
+	    		 style="@android:style/Widget.Holo.Light.ProgressBar"/>
+
+    <RelativeLayout
+                android:id="@+id/buttonsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentTop="true"
+                android:orientation="horizontal"                
+                android:visibility="visible" >
+	    <Button android:id="@+id/fstacking_trashButton"
+									android:layout_width="50dp"
+									android:layout_margin="2dip"
+									android:layout_height="50dp"
+									android:background="@drawable/plugin_processing_preshot_back_background"
+									android:layout_alignParentLeft="true"
+									android:layout_alignParentTop="true"
+									android:visibility="invisible"/>  
+		<Button android:id="@+id/fstacking_fmapButton"
+									android:layout_width="50dp"
+									android:layout_margin="2dip"
+									android:layout_height="50dp"
+									android:background="@drawable/gui_almalence_rotatedevice"
+									android:layout_centerInParent="true"
+									android:layout_alignParentTop="true"
+									android:visibility="invisible"/>
+		<Button android:id="@+id/fstacking_saveButton"
+									android:layout_width="50dp"
+									android:layout_margin="2dip"
+									android:layout_height="50dp"
+									android:background="@drawable/button_save_background"
+									android:layout_alignParentRight="true"
+									android:layout_alignParentTop="true"
+									android:visibility="invisible"/>
+	</RelativeLayout>
+	
+	<RelativeLayout
+                android:id="@+id/focusDepthLayout"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:orientation="horizontal"
+                android:background="@drawable/ev_background"
+                android:visibility="visible" >
+
+                <TextView
+                    android:id="@+id/focusDepthLeftText"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:paddingLeft="10dp"
+                    android:text="Min"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/exposureTimeTitleSize"
+                    android:textStyle="bold" />
+                
+                <LinearLayout
+                    android:id="@+id/focusDepthSeekBarLayout"
+                    android:layout_toRightOf="@+id/focusDepthLeftText"
+                    android:layout_toLeftOf="@+id/focusDepthRightText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:gravity="right"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/focusDepthTitleText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="center"
+                        android:text="Depth of focus"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/exposureTimeTitleSize"
+                        android:textStyle="bold" />
+
+                    <!-- <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" > -->
+
+                        <SeekBar
+                            android:id="@+id/focusDepthSeekBar"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal" />
+                    <!-- </LinearLayout> -->
+                </LinearLayout>
+                
+                <TextView
+                    android:id="@+id/focusDepthRightText"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:paddingLeft="10dp"
+                    android:text="Max"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/exposureTimeTitleSize"
+                    android:textStyle="bold" />
+                
+                
+	</RelativeLayout>
+</RelativeLayout>

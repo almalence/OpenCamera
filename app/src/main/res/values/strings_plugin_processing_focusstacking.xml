@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="Pref_FocusStacking_Category_Title">Processing</string>
+    
+    <string name="Pref_SaveMode_title">Save mode</string>    
+    <string name="Pref_SaveMode_resultonly">\"All in focus\" result only</string>
+    <string name="Pref_SaveMode_processed">Result plus aligned input frames</string>
+    <string name="Pref_SaveMode_all">All frames (result, aligned, input)</string>
+    
+    <string name="Preference_OutputImageSizeFrontValue">outputImageSizePrefCommonFront</string>
+    <string name="Preference_OutputImageSizeRearValue">outputImageSizePrefCommonBack</string>
+    <string name="Preference_FocusBracketing_Save_Pref">fStackingSaveModePref</string>
+    <string name="pref_title_outputres">Output resolution</string>
+   
+</resources>

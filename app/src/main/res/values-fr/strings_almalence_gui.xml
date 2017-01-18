@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    <string name="Pref_Common_Header_Title">Paramètres habituels</string>
+    <string name="Pref_Common_Header_Summary">Appareil photo et autres</string>
+    <string name="Pref_Common_Preference_Title">Paramètres de l\'appareil photo</string>
+    <string name="Pref_Common_Preference_Summary">Appareil photo et autres</string>
+    <string name="Pref_Common_UseFrontCamera_Title">Appareil photo frontal</string>
+    <string name="Pref_Common_UseFrontCamera_Summary">Utiliser l\'appareil photo frontal</string>
+    <string name="Pref_Common_ImageSize_Title">Taille de l\'image</string>
+    <string name="Pref_Comon_SmartMultishot_And_Night_ImageSize_Title">Taille de l\'image (Rafale intelligente et nuit)</string>
+    <string name="Pref_Common_ImageSize_Summary">\nRemarque : certains modes comportent un paramètre spécial de configuration de la taille de l\'image</string>
+    <string name="Pref_Common_Shutter_Title">Fonctionnement silencieux</string>
+    <string name="Pref_Common_Shutter_Summary">Nous ne garantissons toutefois pas le fonctionnement sur tous les modèles</string>
+    <string name="Pref_Common_HWShutter_Summary">Utiliser l\'obturateur de l\'appareil pour démarrer l\'application</string>
+    <string name="Pref_Common_ShotOnTap_Title">Appuyer pour prendre la photo</string>
+    <string name="Pref_Common_ShotOnTap_Summary">Effectuez la mise au point et appuyez pour prendre une photo</string>
+    <string name="Pref_Common_UseCamera2_Title">Utiliser l\'interface Сamera2</string>
+    <string name="Pref_Common_UseCamera2_Summary">Mode expérimental. Fonctionnera sur un nombre limité d\'appareils</string>    
+    <string name="Pref_Common_MediaRescan_Title">Relance de l\'analyse des fichiers média en quittant</string>
+    <string name="Pref_Common_MediaRescan_Summary">Aide si les images n\'apparaissent pas dans la galerie.</string>
+    <string name="Pref_Common_Gallery_Title">Autoriser la sélection de la galerie externe.</string>
+    <string name="Pref_Common_Gallery_Summary">S\'il est installé, n\'utilisez pas A Better Editor&amp;Effects comme visionneuse par défaut</string>
+    <string name="Pref_Common_JPEGQuality_Title">Qualité jpeg</string>
+    <string name="Pref_Common_VolumeButton_Title">Bouton du son</string>
+    <string name="Pref_SaveConfiguration_Title">Enregistrer la configuration</string>
+    <string name="Pref_SaveConfiguration_Summary">Sélectionnez les paramètres à enregistrer entre deux lancements.</string>
+    <string name="Pref_SaveConfiguration_ShootingMode_Title">Mode Prise de vue</string>
+    <string name="Pref_SaveConfiguration_ImageSize_Title">Taille de la photo</string>
+    <string name="Pref_SaveConfiguration_SceneMode_Title">Mode Scène</string>
+    <string name="Pref_SaveConfiguration_FocusMode_Title">Mode Mise au point</string>
+    <string name="Pref_SaveConfiguration_WBMode_Title">Mode Balance des blancs</string>
+    <string name="Pref_SaveConfiguration_ISOMode_Title">Mode ISO</string>
+    <string name="Pref_SaveConfiguration_FlashMode_Title">Mode Flash</string>
+    <string name="Pref_SaveConfiguration_FrontRear_Title">Appareil photo sélectionné</string>
+    <string name="Pref_SaveConfiguration_DelayedCapture_Title">Retardateur</string>
+    <string name="Pref_SaveConfiguration_ExpoCompensation_Title">Correction d\'exposition</string>
+    <string name="Pref_Common_DelayedCapture_Title">Prise de vue avec retardateur</string>
+    <string name="Pref_Common_DelayedCapture_Summary">Affiche la commande du retardateur/photo timelapse</string>
+    <string name="Pref_ShowHelp_Title">Affiche l\'aide</string>
+    <string name="Pref_WhowHelp_Summary">Affiche l\'aide au démarrage du mode (Panorama, Suppression d\'objet, Séquence, Photo de groupe)</string>
+    <string name="Pref_Common_HeadsetTap_Title">Obturateur du casque</string>
+    <string name="Pref_Common_HeadsetTap_Summary">Utilisez les boutons du casque en guise d\'obturateur</string>
+    
+    
+    <string name="helpTextDontShow">Ne pas afficher</string>
+    
+    <string name="ev_zero">0</string>    
+    <string name="blockingText">Veuillez patienter, traitement en cours</string>
+    <string name="almalence_gui_selected">sélectionné</string>
+
+    <string name="settings_mode_scene">Mode Scène</string>
+    <string name="settings_mode_wb">Balance des blancs</string>
+    <string name="settings_mode_focus">Mode Mise au point</string>
+    <string name="settings_mode_flash">Mode Flash</string>
+    <string name="settings_mode_iso">ISO</string>
+    <string name="settings_mode_metering">Mode Mesure d\'exposition</string>
+    <string name="settings_mode_rear">Appareil photo arrière</string>
+    <string name="settings_mode_front">Appareil photo frontal</string>
+    <string name="settings_mode_exposure">Exposition</string>
+    <string name="settings_mode_moresettings">Plus de paramètres</string>
+    <string name="settings_mode_aeaflock">EAFA verrouillé</string>
+    <string name="settings_mode_aeafunlock">EAFA déverrouillé</string>
+    
+    <string name="settings_not_available">Aucune disponibilité dans le mode actuel</string>
+    <string name="processing_not_finished">Traitement non terminé. Veuillez patienter.</string>
+        
+    <string name="Pref_General_Preference_Title">Paramètres généraux</string>
+	<string name="Pref_General_Preference_Summary">Appareil photo et prise de vue</string>
+	<string name="Pref_VF_Preference_Title">Paramètres du viseur</string>
+	<string name="Pref_VF_Preference_Summary">À afficher</string>
+	<string name="Pref_Modes_Preference_Title">Paramètres des modes de prise de vue</string>
+	<string name="Pref_Modes_Preference_Summary">Plage dynamique étendue, Nuit, Panorama...</string>
+	<string name="Pref_Saving_Preference_Title">Enregistrer et partager</string>
+	<string name="Pref_Saving_Preference_Summary">Noms des fichiers, formats, géotags, données exif et autres paramètres</string>
+	<string name="Pref_Advanced_Preference_Title">Avancé</string>
+	<string name="Pref_Advanced_Preference_Summary">Paramètres pour utilisateurs expérimentés</string>
+	<string name="Pref_Unlock_Preference_Title">Déverrouiller</string>
+	<string name="Pref_Unlock_Preference_Summary">Déverrouiller les fonctionnalités haut de gamme</string>
+	
+	<string name="layout_hint_bottom">Choisir le mode de l\'appareil photo</string>
+	<string name="layout_hint_center">Balayer pour voir plus ou moins d\'infos</string>
+	<string name="layout_hint_top_left">Presser longuement\npour configurer</string>
+	<string name="layout_hint_top_center">Faire descendre pour plus d\'options</string>
+
+	<string name="Dro_Help">La nouvelle technologie développée par Almalence permet aux appareils photos de "voir" comme l\'œil le fait ! L\'OPD (Optimisation de la plage dynamique) utilise une technique similaire au mappage de ton, améliorant automatiquement toutes les photos, et peut remplacer la plupart du temps la plage dynamique étendue.\n\n1. Appuyez sur l\'obturateur pour prendre une photo\n2. Attendez une seconde que le cliché soit traité !</string>
+	
+	<string name="setTimerText">Configurer</string>
+	<string name="soundTimerText">Son de compte à rebours</string>
+	<string name="flashTimerText">Flash de compte à rebours</string>	
+
+	<string name="secondsText">secondes</string>	
+	<string name="okText">OK</string>
+	
+	<string name="moreText">Plus...</string>
+	
+</resources>

@@ -1,0 +1,140 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    <string name="Pref_Common_Header_Title">常用設定</string>
+    <string name="Pref_Common_Header_Summary">相機和其他</string>
+    <string name="Pref_Common_Preference_Title">相機設定</string>
+    <string name="Pref_Common_Preference_Summary">相機和其他</string>
+    <string name="Pref_Common_UseFrontCamera_Title">前方攝影機</string>
+    <string name="Pref_Common_UseFrontCamera_Summary">使用前方攝影機</string>
+    <string name="Pref_Common_ImageSize_Title">圖像尺寸</string>
+    <string name="Pref_Comon_SmartMultishot_And_Night_ImageSize_Title">圖像尺寸(智慧連拍和夜景)</string>
+    <string name="Pref_Common_ImageSize_Summary">\n請注意: 一些模式有單個的圖像尺寸設定</string>
+    <string name="Pref_Common_Shutter_Title">靜音操作</string>
+    <string name="Pref_Common_Shutter_Summary">不保證在所有模型上都可使用</string>
+    <string name="Pref_Common_HWShutter_Summary">使用硬體快門啟動應用程式</string>
+    <string name="Pref_Common_ShotOnTap_Title">觸按拍攝</string>
+    <string name="Pref_Common_ShotOnTap_Summary">輕點對焦和拍攝</string>
+    <string name="Pref_Common_UseCamera2_Title">使用Сamera2介面</string>
+    <string name="Pref_Common_UseCamera2_Summary">實驗模式。在有限的裝置數量上可用</string>    
+    <string name="Pref_Common_MediaRescan_Title">結束時重新掃描媒體</string>
+    <string name="Pref_Common_MediaRescan_Summary">圖像未出現在藝廊中時幫助。</string>
+    <string name="Pref_Common_Gallery_Title">允許選擇外部圖庫</string>
+    <string name="Pref_Common_Gallery_Summary">不使用ABC編輯器作為預設檢視器(如果安裝)</string>
+    <string name="Pref_Common_JPEGQuality_Title">JPEG畫質</string>
+    <string name="Pref_Common_VolumeButton_Title">音量按鈕</string>
+    <string name="Pref_SaveConfiguration_Title">儲存設定</string>
+    <string name="Pref_SaveConfiguration_Summary">選擇啟動之間儲存哪些設定</string>
+    <string name="Pref_SaveConfiguration_ShootingMode_Title">拍攝模式</string>
+    <string name="Pref_SaveConfiguration_ImageSize_Title">圖像尺寸</string>
+    <string name="Pref_SaveConfiguration_SceneMode_Title">場景模式</string>
+    <string name="Pref_SaveConfiguration_FocusMode_Title">對焦模式</string>
+    <string name="Pref_SaveConfiguration_WBMode_Title">白平衡模式</string>
+    <string name="Pref_SaveConfiguration_ISOMode_Title">ISO模式</string>
+    <string name="Pref_SaveConfiguration_FlashMode_Title">閃光模式</string>
+    <string name="Pref_SaveConfiguration_FrontRear_Title">已選相機</string>
+    <string name="Pref_SaveConfiguration_DelayedCapture_Title">自拍計時器</string>
+    <string name="Pref_SaveConfiguration_ExpoCompensation_Title">曝光補償</string>
+    <string name="Pref_Common_DelayedCapture_Title">自拍計時器拍攝</string>
+    <string name="Pref_Common_DelayedCapture_Summary">顯示自拍計時器控制</string>
+    <string name="Pref_ShowHelp_Title">顯示說明</string>
+    <string name="Pref_WhowHelp_Summary">啟動模式時顯示說明(全景、對象移除、順序、群攝)</string>
+    <string name="Pref_Common_HeadsetTap_Title">耳機快門</string>
+    <string name="Pref_Common_HeadsetTap_Summary">使用耳機按鈕作為快門</string>
+    
+    
+    <string name="helpTextDontShow">不顯示</string>
+    
+    <string name="ev_zero">0</string>    
+    <string name="blockingText">請稍等，正在處理…</string>
+    <string name="almalence_gui_selected">已選</string>
+
+    <string name="sceneAuto">自動</string>
+    <string name="sceneAction">Action</string>
+    <string name="scenePortrait">人像</string>
+    <string name="sceneLandscape">景觀</string>
+    <string name="sceneNight">夜間</string>
+    <string name="sceneNightPortrait">夜間人像</string>
+    <string name="sceneTheatre">劇院</string>
+    <string name="sceneBeach">沙灘</string>
+    <string name="sceneSnow">雪地</string>
+    <string name="sceneSunset">黃昏</string>
+    <string name="sceneSteadyPhoto">防手震</string>
+    <string name="sceneFireworks">煙火</string>
+    <string name="sceneSports">運動</string>
+    <string name="sceneParty">派對</string>
+    <string name="sceneCandlelight">燭光</string>
+    <string name="sceneBarcode">條碼</string>
+    <string name="sceneHDR">HDR</string>
+    <string name="sceneAR">AR</string>
+    
+    <string name="wbAuto">自動</string>
+    <string name="wbIncandescent">白熾燈</string>
+    <string name="wbFluorescent">螢光燈</string>
+    <string name="wbWarmFluorescent">暖螢光燈</string>
+    <string name="wbDaylight">陽光</string>
+    <string name="wbCloudyDaylight">陰天</string>
+    <string name="wbTwilight">黃昏</string>
+    <string name="wbShade">陰影</string>
+    
+    <string name="focusAuto">自動</string>
+    <string name="focusInfinity">無限遠</string>
+    <string name="focusNormal">Normal</string>
+    <string name="focusMacro">微距</string>
+    <string name="focusFixed">固定</string>
+    <string name="focusEdof">Edof</string>
+    <string name="focusContinuousVideo">影片連續對焦</string>
+    <string name="focusContinuousPicture">連續對焦</string>
+    <string name="focusAFLock">AF lock</string>
+    
+    <string name="flashAuto">自動</string>
+    <string name="flashOn">On</string>
+    <string name="flashOff">Off</string>
+    <string name="flashRedEye">防紅眼</string>
+    <string name="flashTorch">持續開啟</string>
+
+    <string name="settings_mode_scene">場景模式</string>
+    <string name="settings_mode_wb">白平衡</string>
+    <string name="settings_mode_focus">對焦模式</string>
+    <string name="settings_mode_flash">閃光模式</string>
+    <string name="settings_mode_iso">ISO</string>
+    <string name="settings_mode_metering">測光模式</string>
+    <string name="settings_mode_rear">後方攝影機</string>
+    <string name="settings_mode_front">前方攝影機</string>
+    <string name="settings_mode_exposure">曝光</string>
+    <string name="settings_mode_moresettings">更多設定</string>
+    <string name="settings_mode_aeaflock">AE\\AF已鎖定</string>
+    <string name="settings_mode_aeafunlock">AE\\AF已解鎖</string>
+    
+    <string name="settings_not_available">在當前模式中不可用</string>
+    <string name="processing_not_finished">處理尚未完成。請等待。</string>
+        
+    <string name="Pref_General_Preference_Title">一般設定</string>
+	<string name="Pref_General_Preference_Summary">相機和拍攝</string>
+	<string name="Pref_VF_Preference_Title">取景器設定</string>
+	<string name="Pref_VF_Preference_Summary">顯示內容</string>
+	<string name="Pref_Modes_Preference_Title">拍攝模式設定</string>
+	<string name="Pref_Modes_Preference_Summary">HDR、夜間、全景...</string>
+	<string name="Pref_Saving_Preference_Title">儲存和分享</string>
+	<string name="Pref_Saving_Preference_Summary">檔案名、格式、地理標記，exif及其他參數</string>
+	<string name="Pref_Advanced_Preference_Title">進階</string>
+	<string name="Pref_Advanced_Preference_Summary">專業使用者設定</string>
+	<string name="Pref_Unlock_Preference_Title">解鎖</string>
+	<string name="Pref_Unlock_Preference_Summary">解鎖高級功能</string>
+	
+	<string name="layout_hint_bottom">選擇相機模式</string>
+	<string name="layout_hint_center">滑動獲取更多/更少資訊</string>
+	<string name="layout_hint_top_left">長按\n以設定</string>
+	<string name="layout_hint_top_center">拉動可獲取更多選項</string>
+
+	<string name="Dro_Help">Almalence的新技術，使相機像人眼一樣看事物！ DRO(動態範圍優化)採用了類似色調映射的技術，100%情況下可改善圖像，並且可在大多數情況下代替HDR。\n\n1.按下快門拍照\n2.等待快速處理！</string>
+	
+	<string name="setTimerText">設定</string>
+	<string name="soundTimerText">倒計時聲音</string>
+	<string name="flashTimerText">倒計時閃光</string>	
+
+	<string name="secondsText">秒</string>	
+	<string name="okText">好</string>
+	
+	<string name="moreText">更多...</string>
+	
+</resources>

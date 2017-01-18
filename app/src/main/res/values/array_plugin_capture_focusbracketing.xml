@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<string-array name="focusBracketingModeArray">
+   <item>@string/Pref_FocusBracketingMode_standard</item>
+   <item>@string/Pref_FocusBracketingMode_macro</item>
+   <item>@string/Pref_FocusBracketingMode_fullrange</item>
+   <item>@string/Pref_FocusBracketingMode_custom</item>
+</string-array>
+
+<string-array name="focusBracketingModeArrayValues">
+   <item>0</item>
+   <item>1</item>
+   <item>2</item>
+   <item>3</item>
+</string-array>
+
+</resources>

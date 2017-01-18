@@ -1,0 +1,23 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/Pref_FocusBracketing_Category_Title">   
+    	<ListPreference
+        android:defaultValue="0"
+        android:entries="@array/focusBracketingModeArray"
+        android:entryValues="@array/focusBracketingModeArrayValues"
+        android:key="@string/Preference_FocusBracketingPref"
+        android:title="@string/Pref_FocusBracketingMode_title" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/Preference_FocusBracketingBurstPref"
+            android:summary="@string/Pref_FocusBracketingBurst_summary"
+            android:title="@string/Pref_FocusBracketingBurst_title" />
+    	
+    	<CheckBoxPreference
+        android:defaultValue="false"
+        android:key="@string/Preference_FocusBracketingEditModePref"
+        android:summary="@string/Pref_FocusBracketingEditMode_summary"
+        android:title="@string/Pref_FocusBracketingEditMode_title" />			
+	</PreferenceCategory>
+</PreferenceScreen>

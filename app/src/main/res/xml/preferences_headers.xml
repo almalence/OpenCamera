@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+<!-- -+-  -->
+    <header 
+        android:fragment="com.almalence.focuscam.Fragment"
+        android:title="@string/Pref_General_Preference_Title"
+        android:summary="@string/Pref_General_Preference_Summary">
+        <extra android:name="type" android:value="general_settings" />
+    </header>
+    <header 
+        android:fragment="com.almalence.focuscam.Fragment"
+        android:title="@string/Pref_VF_Preference_Title"
+        android:summary="@string/Pref_VF_Preference_Summary">
+        <extra android:name="type" android:value="vf_settings" />
+    </header>
+    <header 
+        android:fragment="com.almalence.focuscam.Fragment"
+        android:title="@string/Pref_Modes_Preference_Title"
+        android:summary="@string/Pref_Modes_Preference_Summary">
+        <extra android:name="type" android:value="shooting_settings" />
+    </header>
+    <header 
+        android:fragment="com.almalence.focuscam.Fragment"
+        android:title="@string/Pref_Saving_Preference_Title"
+        android:summary="@string/Pref_Saving_Preference_Summary">
+        <extra android:name="type" android:value="saving_settings" />
+    </header>
+    <header 
+        android:fragment="com.almalence.focuscam.Fragment"
+        android:title="@string/Pref_Unlock_Preference_Title"
+        android:summary="@string/Pref_Unlock_Preference_Summary">
+        <extra android:name="type" android:value="plugins_settings" />
+    </header>
+    
+    <header 
+        android:id="@+id/about_header"
+        android:key="about"
+        android:summary="@string/Pref_About_Summary"
+        android:title="@string/Pref_About_Title">
+    </header>
+<!--  -+- -->
+<!-- +++
+    <header 
+        android:fragment="com.almalence.focuscam_plus.Fragment"
+        android:title="@string/Pref_General_Preference_Title"
+        android:summary="@string/Pref_General_Preference_Summary">
+        <extra android:name="type" android:value="general_settings" />
+    </header>
+    <header 
+        android:fragment="com.almalence.focuscam_plus.Fragment"
+        android:title="@string/Pref_VF_Preference_Title"
+        android:summary="@string/Pref_VF_Preference_Summary">
+        <extra android:name="type" android:value="vf_settings" />
+    </header>
+    <header 
+        android:fragment="com.almalence.focuscam_plus.Fragment"
+        android:title="@string/Pref_Modes_Preference_Title"
+        android:summary="@string/Pref_Modes_Preference_Summary">
+        <extra android:name="type" android:value="shooting_settings" />
+    </header>
+    <header 
+        android:fragment="com.almalence.focuscam_plus.Fragment"
+        android:title="@string/Pref_Saving_Preference_Title"
+        android:summary="@string/Pref_Saving_Preference_Summary">
+        <extra android:name="type" android:value="saving_settings" />
+    </header>
+    <header 
+        android:fragment="com.almalence.focuscam_plus.Fragment"
+        android:title="@string/Pref_Help_Preference_Title"
+        android:summary="@string/Pref_Help_Preference_Summary">
+        <extra android:name="type" android:value="plugins_settings" />
+    </header>
+    <header 
+        android:id="@+id/about_header"
+        android:key="about"
+        android:summary="@string/Pref_About_Summary"
+        android:title="@string/Pref_About_Title">
+    </header>
++++ -->
+    
+</preference-headers>

@@ -1,0 +1,34 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory
+        android:key="Pref_NightCapture_Category"
+        android:title="@string/Pref_NightCapture_Preference_Title" >
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/NightVisionLayerShow"
+            android:summary="@string/Pref_NightCapture_NightVision_Summary"
+            android:title="@string/Pref_NightCapture_NightVision_Title" />
+
+        <!-- -+-  -->
+        <PreferenceScreen
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:fragment="com.almalence.focuscam.Fragment"
+            android:title="@string/moreText" >
+            <extra
+                android:name="type"
+                android:value="capture_night_more" />
+        </PreferenceScreen>
+        <!--  -+- -->
+        <!-- +++
+		<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
+    	    android:title="@string/moreText"
+    	    android:fragment="com.almalence.focuscam_plus.Fragment" 
+            >
+			 <extra 
+			     android:name="type" 
+			     android:value="capture_night_more" />
+    	</PreferenceScreen>
+		+++ -->
+    </PreferenceCategory>
+
+</PreferenceScreen>

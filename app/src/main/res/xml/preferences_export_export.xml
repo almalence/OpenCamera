@@ -1,0 +1,58 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+		<ListPreference
+			android:title="@string/pref_advanced_saving_saveToPref_title"
+			android:summary="@string/pref_advanced_saving_saveToPref_summary"
+			android:key="@string/Preference_SaveToValue"
+			android:defaultValue="0"
+			android:entries="@array/saveArray"
+			android:entryValues="@array/saveValues" /> 
+				        				 
+    	<CheckBoxPreference
+            android:title="@string/Pref_Export_UseGeoTagging_Title"
+            android:defaultValue="false"
+            android:summary="@string/Pref_Export_UseGeoTagging_Summary"
+            android:key="@string/Preference_UseGeotaggingValue" />
+
+    	<!-- -+-  -->
+    	<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
+    	    android:title="@string/Pref_Saving_Timestamp_Preference_Title"
+    	    android:fragment="com.almalence.focuscam.Fragment" 
+            >
+			 <extra 
+			     android:name="type" 
+			     android:value="export_timestamp" />
+    	</PreferenceScreen>
+    	<!--  -+- -->
+		<!-- +++
+		<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
+    	    android:title="@string/Pref_Saving_Timestamp_Preference_Title"
+    	    android:fragment="com.almalence.focuscam_plus.Fragment" 
+            >
+			 <extra 
+			     android:name="type" 
+			     android:value="export_timestamp" />
+    	</PreferenceScreen>
+		+++ -->
+		
+    	<!-- -+-  -->
+    	<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
+    	    android:title="@string/moreText"
+    	    android:fragment="com.almalence.focuscam.Fragment" 
+            >
+			 <extra 
+			     android:name="type" 
+			     android:value="export_more" />
+    	</PreferenceScreen>
+    	<!--  -+- -->
+		<!-- +++
+		<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
+    	    android:title="@string/moreText"
+    	    android:fragment="com.almalence.focuscam_plus.Fragment" 
+            >
+			 <extra 
+			     android:name="type" 
+			     android:value="export_more" />
+    	</PreferenceScreen>
+		+++ -->
+		
+</PreferenceScreen>
