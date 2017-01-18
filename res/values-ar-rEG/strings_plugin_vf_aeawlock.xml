@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_VF_AEAWLock_Preference_Title">قفل التعريض الضوئي التلقائي//توازن اللون الأبيض</string>
-	
-	<string name="Pref_VF_ShowAEAWLock_Title">عرض عناصر التحكم في قفل التعريض الضوئي التلقائي وتوازن اللون الأبيض</string>
-	<string name="Pref_VF_ShowAEAFLock_Summary">قد لا يعمل على بعض الأجهزة</string>
-	
-</resources>

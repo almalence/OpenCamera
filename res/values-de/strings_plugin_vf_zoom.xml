@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_Zoom_Preference_Title">Zoom</string>
-	<string name="Pref_Zoom_Preference_Summary">Zoom</string>
-	
-	<string name="Pref_ShowZoom">Zoomsteuerung anzeigen</string>
-	
-</resources>

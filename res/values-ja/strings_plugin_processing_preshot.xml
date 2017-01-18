@@ -1,8 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_PreShotProcessing_Preference_Title">プレショットモード処理中</string>
-	<string name="Pref_PreShotProcessing_Preference_Summary">Back In Time</string>
-	<string name="layout_preshot_hint">スワイプして写真をめくる</string>
-	
-</resources>

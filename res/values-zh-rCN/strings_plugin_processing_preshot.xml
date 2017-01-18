@@ -1,8 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_PreShotProcessing_Preference_Title">预拍摄处理</string>
-	<string name="Pref_PreShotProcessing_Preference_Summary">及时返回</string>
-	<string name="layout_preshot_hint">划动翻转照片</string>
-	
-</resources>

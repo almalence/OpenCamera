@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	<string name="Pref_HiresPortrait_Category_Title">Captura de retrato em alta resolução</string>
-	<string name="Pref_HiresPortrait_Preference_Title">Captura</string>
-	
-	<string name="HiresPortrait_Not_Available">O modo retrato em alta resolução não é suportado pelo seu dispositivo. Para usar este modo, você precisa de um dispositivo com câmeras frontal e traseira.</string>
-	<string name="HiresPortrait_Capture_Front">Faça um selfie com a câmera frontal. Selecione a composição desejada.</string>
-	<string name="HiresPortrait_Capture_Rear">Faça um selfie com a câmera traseira.</string>
-</resources>

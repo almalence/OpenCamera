@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_VF_AEAWLock_Preference_Title">自動露出\\ホワイトバランスロック</string>
-	
-	<string name="Pref_VF_ShowAEAWLock_Title">AEとWBロックコントロールを表示</string>
-	<string name="Pref_VF_ShowAEAFLock_Summary">機能しないデバイスもあります</string>
-	
-</resources>

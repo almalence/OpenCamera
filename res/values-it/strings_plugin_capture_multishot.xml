@@ -1,5 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-    <string name="MultiShot_Help_Header">Multiscatto intelligente</string>
-    <string name="MultiShot_Help">1. Tieni fermo il dispositivo e non muoverti\n2. Per iniziare, premi l\'otturatore\n3. Attendi l\'acquisizione e l\'elaborazione di una serie di immagini\n\nRimozione di oggetti\nTocca gli oggetti in movimento rilevati per eliminarli\n\nSequenza\nSeleziona quali foto utilizzare per il risultato finale\n\nFoto di gruppo\nSeleziona l\'immagine di base dalle miniature (tocca l\'immagine per visualizzare tutte le miniature)\nSeleziona i volti migliori toccandoli</string>
-</resources>

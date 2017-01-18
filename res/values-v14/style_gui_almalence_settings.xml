@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <style name="SettingsStyle" parent="android:Theme.Holo.Light">        
-        <item name="android:textColor">#FFFFFF</item>
-        <item name="android:typeface">monospace</item>
-        <item name="android:background">@drawable/almalence_gui_grid_elem_background</item>        
-    </style>
-</resources>

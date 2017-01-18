@@ -1,6 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-    <string name="Pref_TitleGyroVF">水平</string>
-	<string name="Pref_ShowGyroVF">顯示水平</string>
-	<string name="Pref_GyroTypeVF">使用硬體陀螺儀</string>
-</resources>

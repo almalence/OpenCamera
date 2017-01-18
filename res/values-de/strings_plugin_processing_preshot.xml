@@ -1,8 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_PreShotProcessing_Preference_Title">Verarbeitung der Voraufnahme</string>
-	<string name="Pref_PreShotProcessing_Preference_Summary">Nehmen Sie ein Bild von einem Zeitpunkt vor der Betätigung des Auslösers auf</string>
-	<string name="layout_preshot_hint">Streichen Sie, um Fotos zu drehen</string>
-	
-</resources>

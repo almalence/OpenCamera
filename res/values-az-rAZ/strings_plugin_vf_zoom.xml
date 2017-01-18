@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	
-	<string name="Pref_Zoom_Preference_Title">Yaxınlaşma</string>
-	<string name="Pref_Zoom_Preference_Summary">Yaxınlaşma</string>
-	
-	<string name="Pref_ShowZoom">Yaxınlaşma nəzarətini göstər</string>
-	
-</resources>

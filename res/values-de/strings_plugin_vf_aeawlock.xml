@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_VF_AEAWLock_Preference_Title">Autom. Belichtungs-\Weißabgleichsperre</string>
-	
-	<string name="Pref_VF_ShowAEAWLock_Title">AE- und WB-Sperrsteuerung anzeigen</string>
-	<string name="Pref_VF_ShowAEAFLock_Summary">Funktioniert womöglich nicht bei allen Geräten</string>
-	
-</resources>

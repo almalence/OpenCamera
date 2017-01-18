@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="Pref_TitleGyroVF">Úroveň</string>
-	<string name="Pref_ShowGyroVF">Ukázat úroveň</string>
-	<string name="Pref_GyroTypeVF">Využít vestavěný gyroskop</string>
-</resources>

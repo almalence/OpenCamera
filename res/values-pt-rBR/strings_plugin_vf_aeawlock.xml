@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_VF_AEAWLock_Preference_Title">Exposição automática\\bloqueio do balanço de branco</string>
-	
-	<string name="Pref_VF_ShowAEAWLock_Title">Exibir controles de bloqueio AE e WB</string>
-	<string name="Pref_VF_ShowAEAFLock_Summary">Pode não funcionar em alguns dispositivos</string>
-	
-</resources>

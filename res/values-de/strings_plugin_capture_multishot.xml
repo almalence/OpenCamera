@@ -1,5 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-    <string name="MultiShot_Help_Header">Smart Multishot</string>
-    <string name="MultiShot_Help">1. Halten Sie Ihr Gerät still und bewegen Sie sich nicht.\n2. Drücken Sie auf den Auslöser, um die Aufnahme zu starten.\n3. Warten Sie, bis die Bilderserie aufgenommen und verarbeitet wurde.\nObjektentfernung\nTippen Sie auf die erkannten Objektbewegungen, um sie zu löschen.\n\nSequenzaufnahme\nWählen Sie die Bilder, die im Zielfoto verwendet werden sollen.\n\nGruppenaufnahme\nWählen Sie ein Hauptbild für Vorschaubilder. (Berühren Sie das Bild, um alle Vorschaubilder zu sehen.)\nWählen Sie die besten Gesichter aus, indem Sie diese antippen.</string>
-</resources>

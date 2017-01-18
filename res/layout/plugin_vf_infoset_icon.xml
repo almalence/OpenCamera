@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<com.almalence.ui.RotateImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    	android:id="@+id/infoImage"    	
-    	android:visibility="visible"
-    	android:padding="2dip"
-    	android:scaleType="fitCenter"
-    	android:background="@drawable/infounderlayer"
-		style="@style/OpenCameraStyle"/>

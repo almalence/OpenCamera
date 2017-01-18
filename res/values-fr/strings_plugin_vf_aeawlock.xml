@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_VF_AEAWLock_Preference_Title">Exposition automatique\\Balance des blancs verrouillée</string>
-	
-	<string name="Pref_VF_ShowAEAWLock_Title">Afficher les commandes  de verrouillage d\'EA et de BB</string>
-	<string name="Pref_VF_ShowAEAFLock_Summary">Peut ne pas fonctionner sur certains appareils</string>
-	
-</resources>

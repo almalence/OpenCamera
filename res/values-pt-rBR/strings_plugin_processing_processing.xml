@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_Processing_Preference_Title">Processamento</string>
-	<string name="Pref_Processing_Preference_Summary">Nome do processamento</string>
-	
-</resources>

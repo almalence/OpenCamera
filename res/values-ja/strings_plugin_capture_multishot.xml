@@ -1,5 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-    <string name="MultiShot_Help_Header">スマート・マルチショット・</string>
-    <string name="MultiShot_Help">1.デバイスをじっともち、動かさない \n2.シャッターを押して開始 \n3. 一連の画像が撮影され、処理されるのを待つ\n\nオブジェクト削除\n検知された動くオブジェクトをタップして削除\n\nシークエンス\n最終的に使用する写真を選択\n\nグループ・ショット\n基本の画像をサムネイルで選択（画像をタッチすると全てのサムネイルを表示\nタッチして最も良い顔を選択</string>
-</resources>

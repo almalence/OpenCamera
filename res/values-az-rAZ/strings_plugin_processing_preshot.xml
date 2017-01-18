@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	
-	<string name="Pref_PreShotProcessing_Preference_Title">Önçəkiliş işlənməsi</string>
-	<string name="Pref_PreShotProcessing_Preference_Summary">Vaxtında geri</string>
-	<string name="layout_preshot_hint">Şəkillərə baxmaq üçün sürüşdürün</string>
-	
-</resources>

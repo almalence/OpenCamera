@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	<string name="Pref_HiresPortrait_Category_Title">使用人像拍攝</string>
-	<string name="Pref_HiresPortrait_Preference_Title">捕獲</string>
-	
-	<string name="HiresPortrait_Not_Available">你的裝置不支援使用人像模式。要使用此模式，需要裝置有前後攝影機。</string>
-	<string name="HiresPortrait_Capture_Front">使用前方攝影機拍攝自拍照。選擇希望的圖像構成。</string>
-	<string name="HiresPortrait_Capture_Rear">使用後方攝影機捕獲。</string>
-</resources>

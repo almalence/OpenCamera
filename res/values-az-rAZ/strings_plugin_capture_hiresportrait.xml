@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	<string name="Pref_HiresPortrait_Category_Title">Hires portret çəkilişi</string>
-	<string name="Pref_HiresPortrait_Preference_Title">Çəkiliş</string>
-	
-	<string name="HiresPortrait_Not_Available">Hires portret rejimi sizin cihazda dəstəklənmir. Bu rejimdən istifadə etmək üçün sizə arxa və ön kamerası olan cihaz lazımdır.</string>
-	<string name="HiresPortrait_Capture_Front">Ön kamera ilə özünüzün portretinizi çəkin. İstədiyiniz tərkibi seçin.</string>
-	<string name="HiresPortrait_Capture_Rear">Arxa kamera ilə özünüzün portretinizi çəkin.</string>
-</resources>

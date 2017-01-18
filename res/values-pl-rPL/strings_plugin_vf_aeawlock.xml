@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_VF_AEAWLock_Preference_Title">Blokada automatycznego ustawienia naświetlania\\balansu bieli</string>
-	
-	<string name="Pref_VF_ShowAEAWLock_Title">Pokaż panel blokady automatycznego ustawienia naświetlania i balansu bieli</string>
-	<string name="Pref_VF_ShowAEAFLock_Summary">Może nie działać na niektórych urządzeniach</string>
-	
-</resources>

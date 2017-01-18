@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_Zoom_Preference_Title">확대/축소</string>
-	<string name="Pref_Zoom_Preference_Summary">확대/축소</string>
-	
-	<string name="Pref_ShowZoom">확대/축소 컨트롤 표시</string>
-	
-</resources>

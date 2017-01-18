@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	<string name="Pref_HiresPortrait_Category_Title">高画質ポートレート撮影</string>
-	<string name="Pref_HiresPortrait_Preference_Title">撮影</string>
-	
-	<string name="HiresPortrait_Not_Available">高画質ポートレートはあなたのデバイスではサポートされていません。このモードを使用するには、前面及び背面カメラを搭載したデバイスが必要です。</string>
-	<string name="HiresPortrait_Capture_Front">前面カメラで自分のポートレートを撮影。お好みの構成を選択してください。</string>
-	<string name="HiresPortrait_Capture_Rear">背面カメラで自分のポートレートを撮影。</string>
-</resources>

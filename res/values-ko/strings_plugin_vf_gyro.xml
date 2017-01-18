@@ -1,6 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-    <string name="Pref_TitleGyroVF">레벨</string>
-	<string name="Pref_ShowGyroVF">레벨 표시</string>
-	<string name="Pref_GyroTypeVF">하드웨어 자이로스코프 사용</string>
-</resources>

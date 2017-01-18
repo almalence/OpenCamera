@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_VF_AEAWLock_Preference_Title">Bloqueo de exposición automática\\balance de blancos</string>
-	
-	<string name="Pref_VF_ShowAEAWLock_Title">Mostrar controles de bloqueo de exposición automática y balance de blancos</string>
-	<string name="Pref_VF_ShowAEAFLock_Summary">Es posible que no funcione en algunos dispositivos</string>
-	
-</resources>

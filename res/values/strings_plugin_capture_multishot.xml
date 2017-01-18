@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<resources>
-    <string name="MultiShot_Help_Header">Smart multishot</string>
-    <string name="MultiShot_Help">1. Hold device still and do not move\n2. Press shutter to start\n3. Wait until series of images taken and processed\n\nObject removal\nTap detected moving objects to delete\n\nSequence\nSelect which photos to use in result\n\nGroup shot\nSelect base image in thumbnails (touch image to see all thumbnails)\nSelect best faces by touching</string>
-</resources>

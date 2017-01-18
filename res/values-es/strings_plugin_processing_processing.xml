@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_Processing_Preference_Title">Procesando</string>
-	<string name="Pref_Processing_Preference_Summary">Procesamiento  de nombre</string>
-	
-</resources>

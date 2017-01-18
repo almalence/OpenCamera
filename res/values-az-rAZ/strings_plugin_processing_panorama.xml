@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	
-	<string name="pref_plugin_processing_panorama_preference_title">Panorama işlənməsi</string>
-	<string name="pref_plugin_processing_panorama_preference_summary">Panorama geniş təsvir işlənməsi</string>	
-	
-	<string name="pref_plugin_processing_panorama_saveoriginalframes_title">Original kadrları saxla</string>
-</resources>

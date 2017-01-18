@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_Zoom_Preference_Title">縮放</string>
-	<string name="Pref_Zoom_Preference_Summary">縮放</string>
-	
-	<string name="Pref_ShowZoom">顯示縮放控制</string>
-	
-</resources>

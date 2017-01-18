@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="Pref_TitleGyroVF">Səviyyə</string>
-	<string name="Pref_ShowGyroVF">Səviyyəni göstər</string>
-	<string name="Pref_GyroTypeVF">Avadanlıq giroskopundan istifadə</string>
-</resources>

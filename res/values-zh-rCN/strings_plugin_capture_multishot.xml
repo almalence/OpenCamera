@@ -1,5 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-    <string name="MultiShot_Help_Header">智能连拍</string>
-    <string name="MultiShot_Help">1.握住设备，不要抖动\n2.按快门可开始\n3.等待拍摄和处理系列图像\n\n移除对象\n触按检测到的活动物体可删除\n\n排序\n在结果中选择要用的照片\n\n群拍\n在缩略图中选择基础影像（触按图像可查看所有缩略图）\n触按可选择最佳面孔</string>
-</resources>

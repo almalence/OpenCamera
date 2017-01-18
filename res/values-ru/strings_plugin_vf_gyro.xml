@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="Pref_TitleGyroVF">Уровень</string>
-	<string name="Pref_ShowGyroVF">Показывать уровень</string>
-	<string name="Pref_GyroTypeVF">Использовать аппаратный гироскоп</string>
-</resources>

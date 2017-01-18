@@ -1,5 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-    <string name="MultiShot_Help_Header">Modo disparo múltiple inteligente</string>
-    <string name="MultiShot_Help">1. Mantener el dispositivo fijo y sin mover\n2. Pulsar el disparador para iniciar\n3. Esperar hasta que las series de imágenes se hayan tomado y procesado\nEliminación de objetos\nTocar los objetos en movimiento detectados para eliminarlos\n\nSecuencia\nSeleccionar las fotos a utilizar en el resultado\n\nDisparo grupal\nSeleccionar la imagen de base en las miniaturas (tocar la imagen para ver todas las miniaturas)\nSeleccionar los mejores rostros tocando</string>
-</resources>

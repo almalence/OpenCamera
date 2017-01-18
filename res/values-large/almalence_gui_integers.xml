@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<resources>
-    <integer name="infoControlWidth">40</integer>
-    <integer name="infoControlHeight">40</integer>
-    <integer name="centerViewWidth">200</integer>
-    <integer name="centerViewHeight">200</integer>        
-</resources>

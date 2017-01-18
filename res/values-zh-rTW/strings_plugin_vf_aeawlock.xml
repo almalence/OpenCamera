@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_VF_AEAWLock_Preference_Title">自動曝光\\白平衡鎖定</string>
-	
-	<string name="Pref_VF_ShowAEAWLock_Title">顯示AE和WB鎖定控制</string>
-	<string name="Pref_VF_ShowAEAFLock_Summary">在一些裝置上可能無法使用</string>
-	
-</resources>

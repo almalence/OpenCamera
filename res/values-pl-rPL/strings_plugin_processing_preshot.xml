@@ -1,8 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_PreShotProcessing_Preference_Title">Przetwarzanie zdjęcia wstępnego</string>
-	<string name="Pref_PreShotProcessing_Preference_Summary">Back In Time</string>
-	<string name="layout_preshot_hint">Przesuwaj palcem, aby przeglądać zdjęcia</string>
-	
-</resources>

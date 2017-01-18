@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_Zoom_Preference_Title">تكبير/تصغير</string>
-	<string name="Pref_Zoom_Preference_Summary">تكبير/تصغير</string>
-	
-	<string name="Pref_ShowZoom">عرض التحكم في التكبير/التصغير</string>
-	
-</resources>

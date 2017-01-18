@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_Processing_Preference_Title">처리 중</string>
-	<string name="Pref_Processing_Preference_Summary">처리 이름</string>
-	
-</resources>

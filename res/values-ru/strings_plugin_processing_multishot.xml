@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	<string name="Pref_MultiShot_Preference_Title">Smart multishot обработка</string>
-	<string name="Pref_MultiShot_Preference_Summary">Обработка Smart multishot</string>	
-	
-	<string name="Pref_MultiShot_Save">Сохранять исходные кадры</string>
-</resources>

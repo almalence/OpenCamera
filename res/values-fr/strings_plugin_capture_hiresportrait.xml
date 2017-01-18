@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	<string name="Pref_HiresPortrait_Category_Title">Portrait en haute résolution</string>
-	<string name="Pref_HiresPortrait_Preference_Title">Photographier</string>
-	
-	<string name="HiresPortrait_Not_Available">Mode Portrait en haute résolution non pris en charge par votre appareil. Pour utiliser ce mode, votre portable doit être doté d\'un appareil photo frontal et d\'un arrière.</string>
-	<string name="HiresPortrait_Capture_Front">Prenez votre portrait avec l\'appareil photo frontal. Choisissez la composition désirée.</string>
-	<string name="HiresPortrait_Capture_Rear">Prenez votre portrait avec l\'appareil photo arrière.</string>
-</resources>

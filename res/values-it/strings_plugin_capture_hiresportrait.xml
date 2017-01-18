@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	<string name="Pref_HiresPortrait_Category_Title">Acquisizione in primo piano ad alta risoluzione</string>
-	<string name="Pref_HiresPortrait_Preference_Title">Acquisizione</string>
-	
-	<string name="HiresPortrait_Not_Available">La modalità Primo piano ad alta risoluzione non è supportata dal tuo dispositivo. Per utilizzare questa modalità è necessario un dispositivo con fotocamera anteriore e posteriore.</string>
-	<string name="HiresPortrait_Capture_Front">Acquisisci un selfie con la fotocamera anteriore. Seleziona la composizione desiderata.</string>
-	<string name="HiresPortrait_Capture_Rear">Acquisisci un selfie con la fotocamera posteriore.</string>
-</resources>

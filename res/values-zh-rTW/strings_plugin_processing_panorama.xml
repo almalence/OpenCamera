@@ -1,8 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="pref_plugin_processing_panorama_preference_title">全景處理</string>
-	<string name="pref_plugin_processing_panorama_preference_summary">全景寬影像處理</string>	
-	
-	<string name="pref_plugin_processing_panorama_saveoriginalframes_title">儲存原始圖像</string>
-</resources>

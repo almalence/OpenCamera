@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-     <color name="on_viewfinder_label_background_color">#77333333</color>
-     <color name="recording_time_remaining_text">#FFFF0033</color>
-     <color name="bright_foreground_holo_dark">#fff3f3f3</color>
-</resources>

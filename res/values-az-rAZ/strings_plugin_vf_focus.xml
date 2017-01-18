@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	
-	<string name="Pref_Focus_Preference_Title">Fokus</string>
-	<string name="Pref_Focus_Preference_Summary">Fokus</string>
-	
-	<string name="manual_exposure_unsupported">Cihaz ekspozisiya ölçüsünü yalnız mərkəzdə dəstəkləyir. Ekspozisiya nöqtəsi hərəkət edə bilməz.</string>
-	
-</resources>

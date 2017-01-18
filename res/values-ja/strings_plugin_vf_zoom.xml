@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-	
-	<string name="Pref_Zoom_Preference_Title">ズーム</string>
-	<string name="Pref_Zoom_Preference_Summary">ズーム</string>
-	
-	<string name="Pref_ShowZoom">ズームコントロールを表示</string>
-	
-</resources>

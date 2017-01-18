@@ -1,6 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-    <string name="Pref_TitleGyroVF">Nivel</string>
-	<string name="Pref_ShowGyroVF">Mostrar nivel</string>
-	<string name="Pref_GyroTypeVF">Utilizar giroscopio del hardware</string>
-</resources>

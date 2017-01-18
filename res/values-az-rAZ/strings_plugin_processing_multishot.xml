@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	
-	<string name="Pref_MultiShot_Preference_Title">Ağıllı multi çəkiliş işlənməsi</string>
-	<string name="Pref_MultiShot_Preference_Summary">Multi çəkiliş işlənməsi</string>	
-	
-	<string name="Pref_MultiShot_Save">Original kadrları saxla</string>
-	
-</resources>

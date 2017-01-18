@@ -1,6 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources>
-    <string name="Pref_TitleGyroVF">Niveau</string>
-	<string name="Pref_ShowGyroVF">Montrer le niveau</string>
-	<string name="Pref_GyroTypeVF">Utiliser le gyroscope de l\'appareil</string>
-</resources>
