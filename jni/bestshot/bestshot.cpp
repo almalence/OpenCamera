@@ -194,7 +194,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_bestshot
 //	unsigned char * *jpeg;
 //	jpeg = (unsigned char**)env->GetIntArrayElements(in, NULL);
 
-	BestShot_Select(yuv, sx, sy, nFrames, fullScanMode, BestFrames, FramesScores, nFramesToSelect);
+	BestShot_Select(yuv, sx, sy, sx, nFrames, fullScanMode, BestFrames, FramesScores, nFramesToSelect);
 
 	for (int i=0; i<nFrames; ++i)
 	{

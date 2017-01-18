@@ -62,33 +62,40 @@ extern "C"
 // -------------------------------------------------------------------
 // Still image superzoom functions
 
-int SuperZoom_Preview
-(
-	void  ** instance,
-	Uint8 ** in,
-	Uint8 ** inUV,
-	Uint8 * restrict Preview,
-	int     sx,
-	int     sy,
-	int     stride,
-	int     sxo,
-	int     syo,
-	int     sxp,
-	int     syp,
-	int     nImages,
-	int     SensorGain,
-	int     DeGhostGain,
-	int     DeGhostFrames,
-	int     kelvin1,
-	int     kelvin2,
-	int     SizeGuaranteeMode,
-	int     noSres,
-	int     postFilter,
-	int     postSharpen,
-	int     largeDisplacements,
-	int   * nBaseFrame,
-	int     cameraIndex,
-	int     externalBuffers
+enum {
+	ALMA_SUPER_NOSRES = 1, 
+	ALMA_SUPER_NOLARGEDISP = 2, // !largeDisplacements
+	ALMA_SUPER_DROLOCAL = 4,
+	ALMA_SUPER_EXTBUF = 8, // externalBuffers
+	ALMA_SUPER_SIZEGUARANTEE = 0x10,
+	ALMA_SUPER_VIDEOBOUND = 0x20 // special frame bounding for RTSS
+};
+
+int SuperZoom_Preview(
+	void **instance,
+	Uint8 **in,
+	Uint8 **inUV,
+	Uint8 *Preview,
+	int sx,
+	int sy,
+	int stride,
+	int sxo,
+	int syo,
+	int ostride,
+	int sxp,
+	int syp,
+	int nImages,
+	int flags,
+	int SensorGain,
+	int DeGhostGain,
+	int DeGhostFrames,
+	int kelvin1,
+	int kelvin2,
+	int postFilter,
+	int postSharpen,
+	int *nBaseFrame,
+	int cameraIndex,
+	int maxStab
 );
 
 // instance - pointer to instance set by SuperZoom_Preview

@@ -58,6 +58,7 @@ import android.media.CamcorderProfile;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
+import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Debug;
 import android.preference.CheckBoxPreference;
@@ -633,8 +634,11 @@ public class MainScreen extends ApplicationScreen
 
 		if (shutterPreference)
 		{
-			AudioManager mgr = (AudioManager) MainScreen.thiz.getSystemService(MainScreen.AUDIO_SERVICE);
-			mgr.setStreamMute(AudioManager.STREAM_SYSTEM, false);
+			if (Build.VERSION.SDK_INT < 23)
+			{
+				AudioManager mgr = (AudioManager) MainScreen.thiz.getSystemService(MainScreen.AUDIO_SERVICE);
+				mgr.setStreamMute(AudioManager.STREAM_SYSTEM, false);
+			}
 		}
 
 		this.mPausing = true;
@@ -892,10 +896,22 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	public void onPreferenceCreate(PreferenceFragment prefActivity)
 	{
-		setImageSizeOptions(prefActivity, MODE_GENERAL);
-		setImageSizeOptions(prefActivity, MODE_SMART_MULTISHOT_AND_NIGHT);
-		setImageSizeOptions(prefActivity, MODE_PANORAMA);
-		setImageSizeOptions(prefActivity, MODE_VIDEO);
+		try{
+			setImageSizeOptions(prefActivity, MODE_GENERAL);
+		} catch (Exception e)
+		{	e.printStackTrace();}
+		try{
+			setImageSizeOptions(prefActivity, MODE_SMART_MULTISHOT_AND_NIGHT);
+		} catch (Exception e)
+		{	e.printStackTrace();}
+		try{
+			setImageSizeOptions(prefActivity, MODE_PANORAMA);
+		} catch (Exception e)
+		{	e.printStackTrace();}
+		try {
+			setImageSizeOptions(prefActivity, MODE_VIDEO);
+		} catch (Exception e)
+		{	e.printStackTrace();}
 	}
 
 	private void setColorEffectOptions(PreferenceFragment prefActivity)
@@ -1718,8 +1734,11 @@ public class MainScreen extends ApplicationScreen
 	{
 		if (MainScreen.getInstance().isShutterSoundEnabled())
 		{
-			AudioManager mgr = (AudioManager) MainScreen.thiz.getSystemService(MainScreen.AUDIO_SERVICE);
-			mgr.setStreamMute(AudioManager.STREAM_SYSTEM, mute);
+			if (Build.VERSION.SDK_INT < 23)
+			{
+				AudioManager mgr = (AudioManager) MainScreen.thiz.getSystemService(MainScreen.AUDIO_SERVICE);
+				mgr.setStreamMute(AudioManager.STREAM_SYSTEM, mute);
+			}
 		}
 	}
 	@Override

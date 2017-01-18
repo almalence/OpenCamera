@@ -53,9 +53,10 @@ extern "C"
 
 int BestShot_Select
 (
-	Uint8 ** in,
+	Uint8 * restrict * in,
 	int      sx,
 	int      sy,
+	int      stride,
 	int      nFrames,
 	int      fullScanMode,
 	int    * BestFrames,
@@ -65,9 +66,10 @@ int BestShot_Select
     
 int BestShot_SelectfromTiles
 (
-    Uint8 ** in,
+    Uint8 * restrict * in,
     int     sx,
     int		sy,
+    int     stride,
     int     x_st,
     int     y_st,
     int     x_en,
