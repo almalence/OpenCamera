@@ -1481,7 +1481,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		if (switchShutterOn)
 		{
-			
 			shutterButton.setVisibility(View.GONE);
 			shutterSwitch.setVisibility(View.VISIBLE);
 

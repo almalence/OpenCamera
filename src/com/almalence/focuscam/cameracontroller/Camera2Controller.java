@@ -2936,16 +2936,19 @@ public class Camera2Controller
 			
 			Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
 					CameraCharacteristics.CONTROL_AF_TRIGGER_START);
+			
+			CaptureRequest request = Camera2Controller.previewRequestBuilder.build();
+			Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, null);//CaptureRequest.CONTROL_AF_TRIGGER_IDLE);
 			try
 			{
-				Camera2Controller.getInstance().mCaptureSession.capture(Camera2Controller.previewRequestBuilder.build(), previewCaptureCallback, null);
+				Camera2Controller.getInstance().mCaptureSession.capture(request, previewCaptureCallback, null);
 			} catch (CameraAccessException e)
 			{
 				e.printStackTrace();
 				return false;
 			}
 			
-			Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_IDLE);
+//			Camera2Controller.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, null);//CaptureRequest.CONTROL_AF_TRIGGER_IDLE);
 			
 			Camera2Controller.autoFocusTriggered = true;
 			
@@ -3386,12 +3389,12 @@ public class Camera2Controller
 			if(!previewRunning) return;
 			try
 			{
-//				if(Camera2Controller.autoFocusTriggered)
-//					Log.e(TAG, "CAPTURE_AF_STATE = " + result.get(CaptureResult.CONTROL_AF_STATE));
+				if(Camera2Controller.autoFocusTriggered)
+					Log.e(TAG, "CAPTURE_AF_STATE = " + result.get(CaptureResult.CONTROL_AF_STATE));
 				if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED
 						&& Camera2Controller.autoFocusTriggered)
 				{
-//					 Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED");
+					 Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED");
 					resetCaptureCallback();
 					CameraController.onAutoFocus(true);
 					Camera2Controller.autoFocusTriggered = false;
@@ -3400,7 +3403,7 @@ public class Camera2Controller
 				else if (result.get(CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED
 						&& Camera2Controller.autoFocusTriggered)
 				{
-//					Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED");
+					Log.e(TAG, "onCaptureCompleted. CaptureResult.CONTROL_AF_STATE) == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED");
 					resetCaptureCallback();
 					CameraController.onAutoFocus(false);
 					Camera2Controller.autoFocusTriggered = false;

@@ -112,6 +112,11 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_focusstacking_AlmaShotFocus
 )
 {
 	LOGE("FStackingInitialize - start");
+	if(nFrames > MAX_FFRAMES)
+	{
+		LOGE("FStackingInitialize. Too many frames: %d. Maximum allowed number is %d\nAborting...",(int)nFrames, (int)MAX_FFRAMES);
+		return -1;
+	}
 	int i;
 	unsigned char **yuv;
 	float* focus;
@@ -341,6 +346,12 @@ extern "C" JNIEXPORT jbyteArray JNICALL Java_com_almalence_focusstacking_AlmaSho
 	jboolean transform
 )
 {
+	if(iImageAmount < 2)
+	{
+		LOGE("FStackingProcess. Too few input images: %d\nAborting...", (int)iImageAmount);
+		return NULL;
+	}
+
 	FStacking_Align(&instance,
 					inputFrame,
 					focusMap,
