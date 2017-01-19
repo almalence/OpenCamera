@@ -127,7 +127,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-us995")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-ls996");
 
-	public static boolean							isG5			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h830");
+	public static boolean							isG5			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h830")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h850")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h858")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-vs987")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h820")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-ls992")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-us992")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h860n");
 	
 	public static boolean							isG4			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h818")  ||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h815")  ||
@@ -1154,8 +1161,13 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			// hard-code to enable these only, as we have no profiles for
 			// other models at the moment
-			if ((CameraController.isNexus5or6 || CameraController.isFlex2
-					|| CameraController.isOnePlusTwo || CameraController.isGalaxyS7)
+			if ((CameraController.isNexus5or6 || 
+				 CameraController.isFlex2 || 
+				 CameraController.isOnePlusTwo || 
+				 CameraController.isGalaxyS7 ||
+				 CameraController.isHTCM10
+				 //CameraController.isG5
+				 )
 				/*|| CameraController.isGalaxyS6*/
 				/*|| CameraController.isG4*/)
 				SuperModeOk = true;

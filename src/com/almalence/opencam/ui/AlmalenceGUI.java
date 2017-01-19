@@ -1501,7 +1501,29 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	@Override
 	public void onResume()
 	{
-		initShutterButton();
+		//fix for shutter disappear on Android 7
+		if (Build.VERSION.SDK_INT >= 24)
+		{
+			new CountDownTimer(200, 200)
+			{
+				public void onTick(long millisUntilFinished)
+				{
+				}
+	
+				public void onFinish()
+				{
+					initShutterButton();
+					setShutterIcon(ShutterButton.DEFAULT);		
+				}
+			}.start();
+		}
+		else
+		{
+			initShutterButton();
+			setShutterIcon(ShutterButton.DEFAULT);
+		}
+		
+		
 
 		//removed as seems to be unnecessary SM 31.03.16
 //		ApplicationScreen.instance.runOnUiThread(new Runnable()
@@ -1513,7 +1535,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 //			}
 //		});
 
-		setShutterIcon(ShutterButton.DEFAULT);
+		
 
 		lockControls = false;
 

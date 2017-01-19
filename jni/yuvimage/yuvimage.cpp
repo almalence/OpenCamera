@@ -185,7 +185,8 @@ extern "C" JNIEXPORT int JNICALL Java_com_almalence_YuvImage_CreateYUVImageFromR
 
 	int16_t colorMatrix[12] = { 256, 0, 0, 0, 0, 256, 0, 0, 0, 0, 256, 0};
 	int kelvin[2] = {kelvin1, kelvin2};
-	Raw_DemosaicAndColorCorrect(rawCropped, yuv, w, h, kelvin, colorMatrix, blevel, wlevel, cameraIndex, outputRGB);
+	Uint8 * gamma = pow22_gamma_table;
+	Raw_DemosaicAndColorCorrect(rawCropped, yuv, w, h, kelvin, colorMatrix, gamma, blevel, wlevel, cameraIndex, outputRGB);
 	//Raw_DemosaicAndColorCorrect(rawCropped, yuv, w, h, kelvin, blevel, wlevel, cameraIndex, outputRGB);
 
 	free(rawCropped);

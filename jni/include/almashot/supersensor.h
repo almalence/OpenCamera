@@ -63,11 +63,9 @@ int Super_Process
 	int		syo,
 	int		nFrames,
 	int     SensorGain,
-	int     DeGhostGain,
-	int     DeGhostFrames,
 	int		postFilter,
 	int		postSharpen,
-	int		gamma,
+	float 	gamma,
 	int     cameraIndex,
 	int     externalBuffers
 );

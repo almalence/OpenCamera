@@ -1043,7 +1043,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	{
 		isCameraConfiguring = false;
 
-		onResumeTimer = new CountDownTimer(50, 50)
+		onResumeTimer = new CountDownTimer(100, 100)
 		{
 			public void onTick(long millisUntilFinished)
 			{
@@ -1876,8 +1876,11 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	// set TRUE to mute and FALSE to unmute
 	public void muteShutter(boolean mute)
 	{
-		AudioManager mgr = (AudioManager) ApplicationScreen.instance.getSystemService(ApplicationScreen.AUDIO_SERVICE);
-		mgr.setStreamMute(AudioManager.STREAM_SYSTEM, mute);
+		if (Build.VERSION.SDK_INT < 23)
+		{
+			AudioManager mgr = (AudioManager) ApplicationScreen.instance.getSystemService(ApplicationScreen.AUDIO_SERVICE);
+			mgr.setStreamMute(AudioManager.STREAM_SYSTEM, mute);
+		}
 	}
 
 	@Override
