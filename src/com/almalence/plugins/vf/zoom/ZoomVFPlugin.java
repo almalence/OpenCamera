@@ -397,6 +397,12 @@ public class ZoomVFPlugin extends PluginViewfinder
 		zoomStopping = true;
 		MainScreen.getGUIManager().removeViews(zoomPanel, R.id.specialPluginsLayout);
 	}
+	
+	@Override
+	public void onPause()
+	{
+		onCameraParametersSetup();
+	}
 
 	@Override
 	public void onGUICreate()
