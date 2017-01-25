@@ -564,6 +564,17 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 				onShutterClick();
 			}
 		});
+		
+		float zoomCurrent;
+		if (!CameraController.isUseCamera2())
+		{
+			zoomCurrent = 0;
+		} else {
+			zoomCurrent = 1.f;
+		}
+
+		if (CameraController.isZoomSupported())
+			CameraController.setZoom(zoomCurrent);
 	}
 
 	@Override
