@@ -244,26 +244,21 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 		case 100:		// Nexus 5
 			// slightly more sharpening and less filtering at low zooms
 			sharpen = 2;
-			if (zoomAbove15x) filter = 384;
-				else filter = 192;
 			break;
 
 		case 105:// Nexus 5X - same camera module as in Nexus 6p
 		case 106:// Nexus 6P
 			sharpen = 2;
-			if (zoomAbove15x) filter = 256;
-				else filter = 192;
 			break;
 
 		case 903:// HTC10
 			// use both edge enhancement and sharpening at high zoom levels
-			sharpen |= 1;
+			sharpen = 2;
 			break;
 
 		case 1005:// Galaxy S6
 			// do not use fine edge enhancement (looks too plastic on S6)
 			sharpen = 1;
-			filter = 288; // 256;
 			break;
 
 		case 1006:// Galaxy S7
@@ -272,10 +267,6 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 			break;
 
 		case 2000:// OnePlus 2
-			if (zoomAbove15x) filter = 160;
-			break;
-		default:
-			__android_log_print(ANDROID_LOG_INFO, "CameraTest", "Error: Unknown camera");
 			break;
 		}
 		if (zoomAbove30x) sharpen = 0x80;	// fine edge enhancement instead of primitive sharpen at high zoom levels

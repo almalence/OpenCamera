@@ -461,7 +461,7 @@ public class NightCapturePlugin extends PluginCapture
 			}
 		} catch (RuntimeException e)
 		{
-			Log.e("CameraTest", "ApplicationScreen.setupCamera unable to setFlashMode");
+			Log.e("Night", "ApplicationScreen.setupCamera unable to setFlashMode");
 		}
 	}
 	
