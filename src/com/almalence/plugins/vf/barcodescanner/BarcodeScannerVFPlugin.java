@@ -235,6 +235,11 @@ public class BarcodeScannerVFPlugin extends PluginViewfinder
 		clearViews();
 		mBound = null;
 		mBarcodesListButton = null;
+		
+		if (mBarcodeScannerState == ON)
+		{
+			onQuickControlClick();
+		}
 	}
 
 	@Override
