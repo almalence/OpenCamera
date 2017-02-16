@@ -450,7 +450,8 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		camera2Preference = prefs.getBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false);
 		
-		if(CameraController.isNexus6 && camera2Preference)
+		//P9 pano is green for some reasons
+		if((CameraController.isNexus6 || CameraController.isHuaweiP9) && camera2Preference)
 		{
 			prefs.edit().putBoolean(ApplicationScreen.getMainContext().getResources().getString(R.string.Preference_UseCamera2Key), false).commit();
 			CameraController.setUseCamera2(false);
@@ -521,7 +522,7 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 	{
 		ApplicationScreen.getGUIManager().removeViews(modeSwitcher, R.id.specialPluginsLayout3);
 		
-		if(CameraController.isNexus6 && camera2Preference)
+		if((CameraController.isNexus6 || CameraController.isHuaweiP9) && camera2Preference)
 		{
 			CameraController.useCamera2OnRelaunch(true);
 			CameraController.setUseCamera2(camera2Preference);
@@ -564,6 +565,17 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 				onShutterClick();
 			}
 		});
+		
+		float zoomCurrent;
+		if (!CameraController.isUseCamera2())
+		{
+			zoomCurrent = 0;
+		} else {
+			zoomCurrent = 1.f;
+		}
+
+		if (CameraController.isZoomSupported())
+			CameraController.setZoom(zoomCurrent);
 	}
 
 	@Override

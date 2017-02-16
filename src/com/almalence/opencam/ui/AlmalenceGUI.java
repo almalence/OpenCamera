@@ -1504,7 +1504,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		//fix for shutter disappear on Android 7
 		if (Build.VERSION.SDK_INT >= 24)
 		{
-			new CountDownTimer(200, 200)
+			new CountDownTimer(300, 300)
 			{
 				public void onTick(long millisUntilFinished)
 				{
