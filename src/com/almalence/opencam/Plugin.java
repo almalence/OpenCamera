@@ -411,7 +411,7 @@ public abstract class Plugin
 			CameraController.setCameraParameters(cp);
 		} catch (RuntimeException e)
 		{
-			Log.e("CameraTest", "ApplicationScreen.setupCamera unable setParameters " + e.getMessage());
+			Log.e("Plugin", "ApplicationScreen.setupCamera unable setParameters " + e.getMessage());
 		}
 	}
 

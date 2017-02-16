@@ -171,7 +171,7 @@ public class BurstCapturePlugin extends PluginCapture
 			}
 		} catch (RuntimeException e)
 		{
-			Log.e("CameraTest", "ApplicationScreen.setupCamera unable to setFlashMode");
+			Log.e("Burst capture", "ApplicationScreen.setupCamera unable to setFlashMode");
 		}
 	}
 

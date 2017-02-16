@@ -384,6 +384,8 @@ void Filters_FilterMoving
     int stride
 );
 
+void Filters_RefBlur(Uint8 *in, Uint8 *out, Uint8 *nMov,
+		int mstride, int sx, int sy, int stride, int mod);
 
 #if defined __cplusplus
 }
