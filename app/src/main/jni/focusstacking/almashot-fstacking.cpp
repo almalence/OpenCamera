@@ -46,16 +46,16 @@ void __attribute__((destructor)) release_openmp() {
 
 #include "fstacking-utils.h"
 
-#define MAX_FFRAMES	8
+#define MAX_FFRAMES	10
 
 static int iInputWidth = 0;
 static int iInputHeight = 0;
 static int iImageAmount = 0;
 
-static unsigned char *inputFrame[MAX_FFRAMES] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
-static unsigned char *alignedFrame[MAX_FFRAMES] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+static unsigned char *inputFrame[MAX_FFRAMES] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+static unsigned char *alignedFrame[MAX_FFRAMES] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 
-static float focusDistances[MAX_FFRAMES] = {0, 0, 0, 0, 0, 0, 0, 0};
+static float focusDistances[MAX_FFRAMES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 static unsigned char* focusMap = NULL;
 
 static void *instance = NULL;
@@ -349,6 +349,8 @@ extern "C" JNIEXPORT jbyteArray JNICALL Java_com_almalence_focusstacking_AlmaSho
 	jboolean transform
 )
 {
+//LOGE("FStacking_Process - start");
+//LOGE("FStacking_Align - start");
 	FStacking_Align(&instance,
 					inputFrame,
 					focusMap,
@@ -362,6 +364,7 @@ extern "C" JNIEXPORT jbyteArray JNICALL Java_com_almalence_focusstacking_AlmaSho
 					1,							// re-scale output
 					1
 					);
+//LOGE("FStacking_Align - end");
 
 //	for(int i = 0; i < iInputWidth/16*iInputHeight/16; i++)
 //		LOGE("focusMap[i] = %d", (int)focusMap[i]);
@@ -443,6 +446,7 @@ extern "C" JNIEXPORT jbyteArray JNICALL Java_com_almalence_focusstacking_AlmaSho
 //	free(OutPic);
 //	OutPic = NULL;
 
+//  LOGE("FStacking_Process - end");
 	return jdata;
 //	return (jint)data;
 //	return (jint) OutPic;

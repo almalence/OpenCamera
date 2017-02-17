@@ -18,15 +18,28 @@ by Almalence Inc. All Rights Reserved.
 
 package com.almalence.plugins.processing.focusstacking;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.ImageFormat;
 import android.graphics.Point;
+import android.graphics.Rect;
+import android.media.ExifInterface;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
@@ -54,10 +67,12 @@ import com.almalence.focuscam.ApplicationInterface;
 import com.almalence.focuscam.ApplicationScreen;
 import com.almalence.focuscam.ConfigParser;
 import com.almalence.focuscam.PluginManager;
+import com.almalence.focuscam.PluginManagerBase;
 import com.almalence.focuscam.PluginProcessing;
 import com.almalence.focuscam.R;
 import com.almalence.focuscam.cameracontroller.CameraController;
 import com.almalence.focusstacking.AlmaShotFocusStacking;
+import com.almalence.focusstacking.AlmaShotMPOWriter;
 import com.almalence.util.Size;
 //import android.util.Size;
 
@@ -489,9 +504,174 @@ public class FocusStackingProcessingPlugin extends PluginProcessing implements O
 	{
 		float focusDistance = focusDistances.get(mBaseFrameIndex);
 		allInFocusYUV = AlmaShotFocusStacking.Process(focusDistance, mCurrentFocusDepth, mImageDataOrientation, mCameraMirrored, transformResult);
+//        allInFocusYUV = AlmaShotFocusStacking.Process(focusDistance, mCurrentFocusDepth, 0, true, true);
+
+//        int frame = SwapHeap.SwapToHeap(allInFocusYUV);
+//        String fileFormat = PluginManager.getInstance().getFileFormat();
+//        String evmark = String.format("_Mirrored");
+//        PluginManager.getInstance().saveInputFile(true, sessionID, 0, null, frame, fileFormat + evmark);
+
+
+//		byte[] mpo_data = getMPODataForAlignedFrames();
+//
+//        String fileFormat = PluginManager.getInstance().getFileFormat();
+//        String evmark = String.format("_alignedFrames");
+//		File saveDir = PluginManagerBase.getSaveDir(false);
+//		File file = new File(saveDir, fileFormat + evmark + ".mpo");
+//		FileOutputStream os = null;
+//
+//		try
+//		{
+//			try
+//			{
+//				os = new FileOutputStream(file);
+//			} catch (Exception e)
+//			{
+//				// save always if not working saving to sdcard
+//				e.printStackTrace();
+//				saveDir = PluginManagerBase.getSaveDir(true);
+//				file = new File(saveDir, fileFormat + evmark + ".mpo");
+//
+//				os = new FileOutputStream(file);
+//			}
+//
+//            os.write(mpo_data);
+//            os.close();
+//		} catch (FileNotFoundException e1)
+//		{
+//			e1.printStackTrace();
+//		} catch (IOException e) {
+//            e.printStackTrace();
+//        }
+    }
+
+	private byte[] getMPODataForAlignedFrames()
+	{
+		int[] alignedFrames = AlmaShotFocusStacking.GetAlignedFrames();
+		Log.e(TAG, "Aligned frames get into JAVA code");
+
+
+		//Use MPOWriter to create Almalane's MPO file
+		CameraController.Size imageSize = CameraController.getCameraImageSize();
+		int jpegQuality = 95;
+
+		int[] jpegdata_pointers = new int[mImageAmount];
+		int[] jpegdata_sizes = new int[mImageAmount];
+
+		try
+		{
+			for(int i = 0; i < mImageAmount; i++)
+			{
+
+				// Create buffer image to deal with exif tags.
+				OutputStream os = null;
+
+                String fileFormat = PluginManager.getInstance().getFileFormat();
+                String evmark = String.format("_inputframe");
+                File saveDir = PluginManagerBase.getSaveDir(false);
+                File bufFile = new File(saveDir, fileFormat + evmark + i + ".jpg");
+				//File bufFile = new File(ApplicationScreen.getMainContext().getFilesDir(), "buffermpo.jpeg");
+				try
+				{
+					os = new FileOutputStream(bufFile);
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+
+//						ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+				com.almalence.YuvImage image = new com.almalence.YuvImage(alignedFrames[i], ImageFormat.NV21,
+						imageSize.getWidth(), imageSize.getHeight(), null);
+				// to avoid problems with SKIA
+				int cropHeight = image.getHeight() - image.getHeight() % 16;
+				image.compressToJpeg(new Rect(0, 0, image.getWidth(), cropHeight), jpegQuality, os);
+
+
+				ExifInterface ei = new ExifInterface(bufFile.getAbsolutePath());
+				int exif_orientation;
+				switch (mImageDataOrientation)
+				{
+					default:
+					case 0:
+						exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+						break;
+					case 90:
+						if (mCameraMirrored)
+						{
+							exif_orientation = ExifInterface.ORIENTATION_ROTATE_270;
+						} else
+						{
+							exif_orientation = ExifInterface.ORIENTATION_ROTATE_90;
+						}
+						break;
+					case 180:
+						exif_orientation = ExifInterface.ORIENTATION_ROTATE_180;
+						break;
+					case 270:
+						if (mCameraMirrored)
+						{
+							exif_orientation = ExifInterface.ORIENTATION_ROTATE_90;
+						} else
+						{
+							exif_orientation = ExifInterface.ORIENTATION_ROTATE_270;
+						}
+						break;
+				}
+				ei.setAttribute(ExifInterface.TAG_ORIENTATION, "" + exif_orientation);
+				ei.saveAttributes();
+
+				// Copy buffer image with exif tags into result file.
+
+				InputStream is;
+				ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				int len;
+				byte[] buf = new byte[4096];
+				try
+				{
+					is = new FileInputStream(bufFile);
+					while ((len = is.read(buf)) > 0)
+					{
+						bos.write(buf, 0, len);
+					}
+					is.close();
+					bos.close();
+				}
+				catch (IOException eIO)
+				{
+					eIO.printStackTrace();
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+
+//						is.close();
+//						os.close();
+
+				byte[] out_bytes = bos.toByteArray();
+				int jpeg_size = out_bytes.length;//os.toByteArray().length;
+				int pointer = SwapHeap.SwapToHeap(out_bytes/*os.toByteArray()*/);
+
+				jpegdata_pointers[i] = pointer;
+				jpegdata_sizes[i] = jpeg_size;
+
+				bufFile.delete();
+			}
+
+			AlmaShotMPOWriter.Initialize(jpegdata_pointers, jpegdata_sizes, focusDistances, mImageAmount);
+			byte[] mpo_data = AlmaShotMPOWriter.ConstructMPOData();
+
+			return mpo_data;
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
 	}
-	
-	
+
+
+	@TargetApi(24)
 	private void saveInputAndProcessedFrames()
 	{
 		try
@@ -503,21 +683,42 @@ public class FocusStackingProcessingPlugin extends PluginProcessing implements O
 			
 			if (FocusStackingProcessingPlugin.SavePreference != 0)
 			{
-				int[] alignedFrames = AlmaShotFocusStacking.GetAlignedFrames();
-				Log.e(TAG, "Aligned frames get into JAVA code");
-				//Saving aligned frames
+				//Construct MPO file in memory as byte array
+				byte[] mpo_data = getMPODataForAlignedFrames();
+
+				// Saving aligned frames
 				String fileFormat = PluginManager.getInstance().getFileFormat();
-//				for (int i = 0; i < mImageAmount; ++i)
-//				{
-//					String evmark = String.format("_aligned_%3.1f", focusDistances.get(i));
-//					int yuvBuffer = alignedFrames[i];//AlmaShotFocusStacking.GetAlignedFrame(i);
-//					PluginManager.getInstance().saveInputFile(true, sessionID, i, null, yuvBuffer, fileFormat + evmark);
-//				}
-				
 				String evmark = String.format("_alignedFrames");
-				PluginManager.getInstance().saveInputFileMPO(true, sessionID, mImageAmount, alignedFrames, fileFormat + evmark);
-				Log.e(TAG, "Aligned frames saved into MPO file");
-				
+
+				File saveDir = PluginManagerBase.getSaveDir(false);
+				File file = new File(saveDir, fileFormat + evmark + ".mpo");
+				FileOutputStream os = null;
+
+				try
+				{
+					try
+					{
+						os = new FileOutputStream(file);
+					} catch (Exception e)
+					{
+						// save always if not working saving to sdcard
+						e.printStackTrace();
+						saveDir = PluginManagerBase.getSaveDir(true);
+						file = new File(saveDir, fileFormat + evmark + ".mpo");
+
+						os = new FileOutputStream(file);
+					}
+
+					os.write(mpo_data);
+					os.close();
+				} catch (FileNotFoundException e1)
+				{
+					e1.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+
 				if(FocusStackingProcessingPlugin.SavePreference == 2)
 				{
 					//Saving input frames
@@ -1223,17 +1424,14 @@ public class FocusStackingProcessingPlugin extends PluginProcessing implements O
 		if(mShowFocusAreasMap)
 		{
 			this.imageView.setData(null);
-//			this.imageView.setImageBitmap(null);
-			
-//			Rect rect = new Rect(0, 0, mImageWidth/16, mImageHeight/16);
-//			int[] ARGBBuffer = ImageConversion.NV21ByteArraytoARGB(mFocusAreasMapImage, mImageWidth/16, mImageHeight/16, rect, mImageWidth/16, mImageHeight/16);
-//			
-//			Bitmap bitmap = Bitmap.createBitmap(ARGBBuffer, mImageWidth/16, mImageHeight/16, Config.ARGB_8888);
-			
+
 			ComplexBitmap bm0 = new ComplexBitmap(0, mFocusAreasMapImage, mImageWidth/16, mImageHeight/16, 0,
 					0, mImageWidth/16, mImageHeight/16, 1);
-//			ComplexBitmap bm0 = new ComplexBitmap(mFocusAreasMapAddress, null, mImageWidth/16, mImageHeight/16, 0,
-//					0, mImageWidth/16, mImageHeight/16, 1);
+
+			//In case of full sized focus map constructed
+//			ComplexBitmap bm0 = new ComplexBitmap(0, mFocusAreasMapImage, mImageWidth, mImageHeight, 0,
+//					0, mImageWidth, mImageHeight, 1);
+
 			Log.e(TAG, "Created ComplexBitmap");
 	//		this.imageView.setProgress(0.0f);
 
@@ -1455,23 +1653,36 @@ public class FocusStackingProcessingPlugin extends PluginProcessing implements O
 	{
 		int sx = mImageWidth/16;
 		int sy = mImageHeight/16;
+
+//		int sx = mImageWidth;
+//		int sy = mImageHeight;
 		
 		int imageSize = sx*sy+2*((sx+1)/2)*((sy+1)/2);
 		
 		int offset = sx*sy;
 		
 		mFocusAreasMapImage = new byte[imageSize];
+
+//		Log.e(TAG, "GetInputByteFrame -- start");
+		byte[] inputFrame = AlmaShotFocusStacking.GetInputByteFrame(mBaseFrameIndex, 0, false);
+//		Log.e(TAG, "GetInputByteFrame -- end");
 		
 		int yIndex = 0;
         int uvIndex = offset;
 		int R, G, B, Y, V, U;
 		int index = 0;
-	        
+
+		int wscale = sx / 16;
 		for (int j = 0; j < sy; j++)
 		{
             for (int i = 0; i < sx; i++)
             {
-            	int frameIndex = mFocusAreasMap[index];
+				//Used to construct focus map in result frame size!
+//            	int x0 = i / 16;
+//				int y0 = j / 16;
+//				index = x0 + y0*wscale;
+
+				int frameIndex = mFocusAreasMap[index];
             	
             	switch(frameIndex)
             	{
@@ -1553,7 +1764,8 @@ public class FocusStackingProcessingPlugin extends PluginProcessing implements O
 //            		B = 255;
 //            	}
 				 // well known RGB to YUV algorithm
-		        Y = ( (  66 * R + 129 * G +  25 * B + 128) >> 8) +  16;
+		        //Y = inputFrame[yIndex]; //In case of using Y channel from real image
+				Y = ( (  66 * R + 129 * G +  25 * B + 128) >> 8) +  16;
 		        U = ( ( -38 * R -  74 * G + 112 * B + 128) >> 8) + 128;
 		        V = ( ( 112 * R -  94 * G -  18 * B + 128) >> 8) + 128;
 		        
@@ -1564,7 +1776,7 @@ public class FocusStackingProcessingPlugin extends PluginProcessing implements O
 		        	mFocusAreasMapImage[uvIndex++] = (byte)((U<0) ? 0 : ((U > 255) ? 255 : U));
 		        }
 
-		        index++;
+		        index++; //Used in case of focus map construction in size/16
             }
 		}
 		

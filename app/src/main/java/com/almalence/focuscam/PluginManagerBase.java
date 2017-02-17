@@ -1846,7 +1846,7 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 		try
 		{
 			ExifInterface ei = new ExifInterface(file.getAbsolutePath());
-			int exif_orientation = ExifInterface.ORIENTATION_NORMAL;
+			int exif_orientation;
 			switch (displayOrientation)
 			{
 			default:

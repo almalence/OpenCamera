@@ -4,7 +4,7 @@
     
     <string name="Pref_SaveMode_title">Save mode</string>    
     <string name="Pref_SaveMode_resultonly">\"All in focus\" result only</string>
-    <string name="Pref_SaveMode_processed">Result plus aligned input frames</string>
+    <string name="Pref_SaveMode_processed">Result plus MPO file containing aligned input frames</string>
     <string name="Pref_SaveMode_all">All frames (result, aligned, input)</string>
     
     <string name="Preference_OutputImageSizeFrontValue">outputImageSizePrefCommonFront</string>

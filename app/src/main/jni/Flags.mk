@@ -1,6 +1,6 @@
 include $(CLEAR_VARS)
 
-LOCAL_CFLAGS := -fno-math-errno -fno-signed-zeros -ftree-vectorize -D__STDC_CONSTANT_MACROS -fopenmp
+LOCAL_CFLAGS := -fno-math-errno -fno-signed-zeros -ftree-vectorize -D__STDC_CONSTANT_MACROS -fopenmp -DLOG_ON
 
 ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
 LOCAL_CFLAGS += -fprefetch-loop-arrays -funroll-loops

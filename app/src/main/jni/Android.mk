@@ -95,6 +95,9 @@ include $(MY_CORE_PATH)/nightprocessing/Android.mk
 # FocusStacking plugin
 include $(MY_CORE_PATH)/focusstacking/Android.mk
 
+# MPO writer implementation - helper module for Focus Stacking
+include $(MY_CORE_PATH)/mpowriter/Android.mk
+
 # HDR plugin
 include $(MY_CORE_PATH)/hdrprocessing/Android.mk
 

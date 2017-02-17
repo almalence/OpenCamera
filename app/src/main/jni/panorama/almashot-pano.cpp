@@ -24,7 +24,7 @@ by Almalence Inc. All Rights Reserved.
 #include "almashot.h"
 #include "panorama.h"
 
-#define LOG_ON
+//#define LOG_ON
 #ifdef LOG_ON
 #define LOG_TAG "PANO_JNI"
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG,__VA_ARGS__)
