@@ -93,7 +93,6 @@ import com.almalence.plugins.capture.video.VideoCapturePlugin;
 import com.almalence.sony.cameraremote.SimpleStreamSurfaceView;
 import com.almalence.sony.cameraremote.utils.NFCHandler;
 import com.almalence.sony.cameraremote.utils.WifiHandler;
-import com.almalence.util.AppWidgetNotifier;
 import com.almalence.util.Util;
 
 //<!-- -+-
@@ -377,7 +376,7 @@ public class MainScreen extends ApplicationScreen
 		AppRater.app_launched(this);
 		// -+- -->
 
-		AppWidgetNotifier.app_launched(this);
+//		AppWidgetNotifier.app_launched(this);
 
 		keepScreenOn = prefs.getBoolean(sKeepScreenOn, false);
 
@@ -1656,10 +1655,10 @@ public class MainScreen extends ApplicationScreen
 			{
 				return true;
 			}
-			if (AppWidgetNotifier.showNotifierDialogIfNeeded(this))
-			{
-				return true;
-			}
+//			if (AppWidgetNotifier.showNotifierDialogIfNeeded(this))
+//			{
+//				return true;
+//			}
 		}
 		// -+- -->
 

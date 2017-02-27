@@ -1,0 +1,10 @@
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:label="@string/widgetFullSolidName"
+    android:minWidth="@dimen/widgetFullSolidInitWidth"
+    android:minHeight="@dimen/widgetFullSolidInitHeight"
+    android:updatePeriodMillis="1800000"    
+    android:previewImage="@drawable/widget_full_solid_preview"
+    android:initialLayout="@layout/widget_opencamera_column_4"     
+    android:resizeMode="none"
+    android:widgetCategory="keyguard|home_screen">
+</appwidget-provider>

@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
    <dimen name="widgetElementWidth">70dp</dimen>
-   <dimen name="widgetElementHeight">80dp</dimen>
+   <dimen name="widgetElementHeight">70dp</dimen>
+   <dimen name="widgetSolidElementWidth">54dp</dimen>
+   <dimen name="widgetSolidElementHeight">54dp</dimen>
+   <dimen name="widgetFullSolidHeight">108dp</dimen>
    <dimen name="widgetDoneButtonHeight">60dp</dimen>
    <dimen name="widgetBgColorLayoutHeight">100dp</dimen>
    <dimen name="widgetBgButtonSize">60dp</dimen>
-   <dimen name="widgetImageSize">65dp</dimen>   
-   <dimen name="widgetTextSize">18sp</dimen>
+   <dimen name="widgetImageSize">65dp</dimen>
+   <dimen name="widgetSolidImageSize">50dp</dimen>
+   <dimen name="widgetSolidSeparatorSize">1dp</dimen>   
+   <dimen name="widgetTextSize">16sp</dimen>
+   
+   <dimen name="widgetLauncherTitleHeight">45dp</dimen>
+   <dimen name="widgetLauncherTextSize">15sp</dimen>
    
    <dimen name="widgetListWidth">300dp</dimen>
    <dimen name="widgetListHeight">500dp</dimen>
@@ -19,8 +27,14 @@
    <dimen name="widgetMinWidth">40dp</dimen>
    <dimen name="widgetMinHeight">40dp</dimen>
    
-   <dimen name="widgetInitWidth">250dp</dimen>
-   <dimen name="widgetInitHeight">40dp</dimen>
+   <dimen name="widgetInitWidth">280dp</dimen>
+   <dimen name="widgetInitHeight">120dp</dimen>
+   
+   <dimen name="widgetSolidInitWidth">280dp</dimen>
+   <dimen name="widgetSolidInitHeight">50dp</dimen>
+   
+   <dimen name="widgetFullSolidInitWidth">280dp</dimen>
+   <dimen name="widgetFullSolidInitHeight">120dp</dimen>
    
    <dimen name="widgetShopDialogHeight">200dp</dimen>
 </resources>

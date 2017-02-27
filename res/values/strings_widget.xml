@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>	
+    
 	<string name="widgetLoadingText">Loading…</string>
 	<string name="widgetConfigureDoneText">Done</string>
-	<string name="widgetBgColorTitle">Widget background color</string>
-	<string name="widgetBgColorTitleFirst">Translucent</string>
-	<string name="widgetBgColorTitleSecond">Solid black</string>
-	<string name="widgetBgColorTitleThird">Transparent</string>
-	<string name="widgetConfigTitle">Widget structure</string>
+	<string name="widgetBgColorTitle">Launcher background color</string>
+	<string name="widgetBgColorTitleTranslucent">Translucent</string>
+	<string name="widgetBgColorTitleBlack">Solid black</string>
+	<string name="widgetBgColorTitleRed">Red</string>
+	<string name="widgetBgColorTitleTransparent">Transparent</string>
+	<string name="widgetConfigTitle">Launcher structure</string>
 	<string name="widgetHideItem">Hide</string>
 	<string name="widgetTorchItem">Torch</string>
+	<string name="widgetBarcodeItem">Barcode scanner</string>
 	<string name="widgetSettingsItem">Settings</string>
-	<string name="widgetHideSettingsText">Hiding all settings buttons will make unable to configure current widget anymore!</string>
+	<string name="widgetHideSettingsText">Removing all Settings buttons will make unable to configure current launcher anymore!</string>
 	<string name="widgetAlert">Warning!</string>	
-	<string name="widgetShopText">To activate widget you need to unlock any premium feature.</string>
-	<string name="widgetGoShopText">Shop</string>
-	<string name="widgetActivation">Widget activation</string>
-	<string name="widgetAdvText">Do you know that you can launch A Better Camera straight into desired mode (be it video or hdr or else)? \nAll you need is our free Widget.</string>
-	<string name="widgetInstallText">Install Widget</string>
-	<string name="widgetNoText">Remind later</string>
-	<string name="editorInstallText">Install Editor</string>
-	<string name="editorNoText">Remind later</string>
-	<string name="editorAdvText">You can edit your images in our FREE A Better Editor&amp;Effects! Filters, effects and much more!</string>
+	<string name="widgetShopText">To activate launcher you have to install A Better Camera application.</string>
+	<string name="widgetGoShopText">Google Play</string>
+	<string name="widgetActivation">Launcher activation</string>
+	
+	<string name="widgetName">ABC Launcher Grid</string>
+	<string name="widgetSolidName">ABC Launcher Compact</string>
+	<string name="widgetFullSolidName">ABC Launcher Full</string>
+	
+	<string name="widgetLauncherTitle">A Better Camera Launcher</string>
+	<string name="widgetLauncherContent">To place the launcher on your home screen, choose an \"ABC Launcher Grid/Compact/Full\" from the Widget tab in your list of apps.</string>
 </resources>
