@@ -390,13 +390,6 @@ public class MainScreen extends ApplicationScreen
 		PluginManager.getInstance().setupDefaultMode();
 		// init gui manager
 		guiManager = new AlmalenceGUI();
-//		guiManager.createInitialGUI();
-//		this.findViewById(R.id.mainLayout1).invalidate();
-//		this.findViewById(R.id.mainLayout1).requestLayout();
-//		guiManager.onCreate();
-
-		// init plugin manager
-//		PluginManager.getInstance().onCreate();
 
 		Intent intent = this.getIntent();
 		goShopping = intent.getBooleanExtra(EXTRA_SHOP, false);
@@ -435,7 +428,6 @@ public class MainScreen extends ApplicationScreen
 
 		boolean isCamera2 = prefs.getBoolean(getResources().getString(R.string.Preference_UseCamera2Key),
 				CameraController.checkHardwareLevel());
-//						(CameraController.isMotoXPure || CameraController.isNexus5or6 || CameraController.isFlex2 || CameraController.isAndroidOne || CameraController.isGalaxyS6 || CameraController.isOnePlusTwo/*|| CameraController.isG4*/) ? true : false);
 		CameraController.setUseCamera2(isCamera2);
 		prefs.edit()
 				.putBoolean(getResources().getString(R.string.Preference_UseCamera2Key), CameraController.isUseCamera2())
@@ -709,8 +701,6 @@ public class MainScreen extends ApplicationScreen
 		destroyBillingHandler();
 		/**** Billing *****/
 		// -+- -->
-
-//		this.hideOpenGLLayer();
 	}
 
 
