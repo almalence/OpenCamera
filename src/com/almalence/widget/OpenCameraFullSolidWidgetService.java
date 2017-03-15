@@ -18,6 +18,7 @@ import com.almalence.opencam_plus.Mode;
 import com.almalence.opencam.R;
 import com.almalence.opencam.ConfigParser;
 import com.almalence.opencam.Mode;
+import com.almalence.opencam.cameracontroller.CameraController;
 //-+- -->
 
 import android.appwidget.AppWidgetManager;
@@ -207,7 +208,7 @@ class OpenCameraFullSolidRemoteViewsFactory implements RemoteViewsService.Remote
 		{
 			Mode tmp = it.next();
 			int iconID = mContext.getResources().getIdentifier(
-					  tmp.icon, "drawable",
+					CameraController.isUseSuperMode() ? tmp.iconHAL : tmp.icon, "drawable",
 					mContext.getPackageName());
 			OpenCameraWidgetItem mode = new OpenCameraWidgetItem(tmp.modeID, iconID, false);
 			mWidgetItems.add(mode);

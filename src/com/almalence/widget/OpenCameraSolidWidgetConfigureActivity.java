@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.xmlpull.v1.XmlPullParserException;
 
+import com.almalence.opencam.cameracontroller.CameraController;
 import com.almalence.opencam.ui.ElementAdapter;
 import com.almalence.util.Util;
 /* <!-- +++
@@ -385,17 +386,17 @@ public class OpenCameraSolidWidgetConfigureActivity extends Activity implements 
 			// set some mode icon
 			((ImageView) mode.findViewById(R.id.modeImage))
 					.setImageResource(this.getResources()
-							.getIdentifier(tmp.icon, "drawable",
+							.getIdentifier(CameraController.isUseSuperMode() ? tmp.iconHAL : tmp.icon, "drawable",
 									this.getPackageName()));
 
-			int id = this.getResources().getIdentifier(tmp.modeName,
+			int id = this.getResources().getIdentifier(CameraController.isUseSuperMode() ? tmp.modeNameHAL : tmp.modeName,
 					"string", this.getPackageName());
 			final String modename = this.getResources().getString(id);
 
 			((TextView) mode.findViewById(R.id.modeText)).setText(modename);
 			
 			final OpenCameraWidgetItem item = new OpenCameraWidgetItem(tmp.modeID, this.getResources().getIdentifier(
-					  tmp.icon, "drawable",
+					CameraController.isUseSuperMode() ? tmp.iconHAL : tmp.icon, "drawable",
 					  this.getPackageName()), false);
 			
 			listItems.put(mode, item);
@@ -554,7 +555,7 @@ public class OpenCameraSolidWidgetConfigureActivity extends Activity implements 
 	    			   || tmp.modeName.contains("night") || tmp.modeName.contains("video"))
 	    			{  
 	    				int iconID = this.getResources().getIdentifier(
-	  	  					  tmp.icon, "drawable",
+	    						CameraController.isUseSuperMode() ? tmp.iconHAL : tmp.icon, "drawable",
 	  	  					  this.getPackageName());
 		    			OpenCameraWidgetItem mode = new OpenCameraWidgetItem(tmp.modeID, iconID, false);			
 		    			hash.add(mode);
