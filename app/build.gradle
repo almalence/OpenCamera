@@ -12,6 +12,8 @@ android {
         ndk {
             moduleName "bento4"
         }
+
+        buildConfigField "long", "TIMESTAMP", System.currentTimeMillis() + "L"
     }
 
     buildTypes {

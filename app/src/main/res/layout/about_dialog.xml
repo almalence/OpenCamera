@@ -24,9 +24,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:layout_marginBottom="10dp"
                 android:gravity="center"
                 android:text="@string/Pref_About"
+                android:textSize="18sp" >
+            </TextView>
+
+            <TextView
+                android:id="@+id/build_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center"
+                android:text="@string/Pref_BuildDate"
                 android:textSize="18sp" >
             </TextView>
 

@@ -1221,7 +1221,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				.getInteger(R.integer.centerViewWidth) * fScreenDensity);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-        appIsPortrait = prefs.getBoolean("appIsPortrait", true);
+        appIsPortrait = prefs.getBoolean("appIsPortrait", CameraController.isSnapdgragonTestDevice? false : true);
         if(appIsPortrait)
             mAdditionalLayoutOrientation = 0;
         else
@@ -1290,7 +1290,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					return;
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 
-                boolean appIsPortrait = prefs.getBoolean("appIsPortrait", true);
+                boolean appIsPortrait = prefs.getBoolean("appIsPortrait", CameraController.isSnapdgragonTestDevice? false : true);
                 prefs.edit().putBoolean("appIsPortrait", !appIsPortrait).commit();
                 if(appIsPortrait)
                 {
@@ -1912,7 +1912,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		int screen_width = metrics.widthPixels;
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-		boolean appIsPortrait = prefs.getBoolean("appIsPortrait", true);
+		boolean appIsPortrait = prefs.getBoolean("appIsPortrait", CameraController.isSnapdgragonTestDevice? false : true);
 
 		if (prefs.getBoolean("changePreviewProportions", false))
 		{

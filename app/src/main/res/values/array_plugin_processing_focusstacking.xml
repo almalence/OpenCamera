@@ -4,7 +4,7 @@
 <string-array name="savemodeArray">
    <item>@string/Pref_SaveMode_resultonly</item>
    <item>@string/Pref_SaveMode_processed</item>
-   <!--<item>@string/Pref_SaveMode_all</item> -->
+   <item>@string/Pref_SaveMode_all</item>
 </string-array>
 
 <string-array name="savemodeArrayValues">

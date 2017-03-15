@@ -391,7 +391,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 
-        boolean appIsPortrait = prefs.getBoolean("appIsPortrait", true);
+        boolean appIsPortrait = prefs.getBoolean("appIsPortrait", CameraController.isSnapdgragonTestDevice? false : true);
         if(appIsPortrait)
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         else
@@ -1647,7 +1647,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	private void configureTransform(int viewWidth, int viewHeight)
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		boolean appIsPortrait = prefs.getBoolean("appIsPortrait", true);
+		boolean appIsPortrait = prefs.getBoolean("appIsPortrait", CameraController.isSnapdgragonTestDevice? false : true);
 
 		if (null == mTextureView || null == instance) {
 			return;
@@ -1682,11 +1682,16 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 					(float) viewHeight / previewHeight,
 					(float) viewWidth / previewWidth);
 			float scale1 = (float) viewHeight / previewHeight;
-			float scale2 = (float) viewWidth / previewWidth;
+            float scale2 = (float) viewWidth / previewWidth;
 
-			float scale3 = 1 - scale2 + 0.07f;
+            float scale3;
+            if(scale1 < 1)
+			    scale3 = 1 - scale2 + 0.07f;
+            else
+			    scale3 = scale2 + 0.07f;
 
 			matrix.postScale(1, scale3, centerX, centerY);
+            //matrix.postScale(scale2, scale1, centerX, centerY);
 			matrix.postTranslate(0, 20);
 //			matrix.postRotate(270, centerX, centerY);
 		}

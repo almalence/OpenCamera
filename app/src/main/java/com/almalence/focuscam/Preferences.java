@@ -23,6 +23,8 @@ by Almalence Inc. All Rights Reserved.
 package com.almalence.focuscam;
 //-+- -->
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import com.almalence.focuscam.R;
@@ -40,6 +42,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 /***
  * Preference activity class - manages preferences
@@ -128,6 +131,12 @@ public class Preferences extends PreferenceActivity
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 			View view = getLayoutInflater().inflate(R.layout.about_dialog, null);
+
+			DateFormat df = new SimpleDateFormat(" d MMM yyyy HH:mm:ss z");
+			String s = df.format(new java.util.Date(BuildConfig.TIMESTAMP));
+			TextView txt = (TextView)view.findViewById(R.id.build_time);
+			txt.setText(txt.getText() + s);
+
 			builder.setTitle(R.string.Pref_About_Title).setView(view).setCancelable(true);
 			AlertDialog alert = builder.create();
 			alert.show();
