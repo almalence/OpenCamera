@@ -685,7 +685,7 @@ public class OpenCameraWidgetConfigureActivity extends Activity implements View.
 	    				|| tmp.modeName.contains("super"))
 	    			{  
 	    				int iconID = this.getResources().getIdentifier(
-	  	  					  tmp.icon, "drawable",
+	    						CameraController.isUseSuperMode() ? tmp.iconHAL : tmp.icon, "drawable",
 	  	  					  this.getPackageName());
 		    			OpenCameraWidgetItem mode = new OpenCameraWidgetItem(tmp.modeID, iconID, false);			
 		    			hash.add(mode);
