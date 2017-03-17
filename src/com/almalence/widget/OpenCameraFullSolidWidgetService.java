@@ -13,6 +13,7 @@ import com.almalence.util.Util;
 import com.almalence.opencam_plus.R;
 import com.almalence.opencam_plus.ConfigParser;
 import com.almalence.opencam_plus.Mode;
+import com.almalence.opencam_plus.cameracontroller.CameraController;
 +++ --> */
 //<!-- -+-
 import com.almalence.opencam.R;

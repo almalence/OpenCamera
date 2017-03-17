@@ -11,18 +11,21 @@ import java.util.Set;
 
 import org.xmlpull.v1.XmlPullParserException;
 
-import com.almalence.opencam.cameracontroller.CameraController;
-import com.almalence.opencam.ui.ElementAdapter;
+
 import com.almalence.util.Util;
 /* <!-- +++
 import com.almalence.opencam_plus.R;
 import com.almalence.opencam_plus.ConfigParser;
 import com.almalence.opencam_plus.Mode;
+import com.almalence.opencam_plus.cameracontroller.CameraController;
+import com.almalence.opencam_plus.ui.ElementAdapter;
 +++ --> */
 //<!-- -+-
 import com.almalence.opencam.R;
 import com.almalence.opencam.ConfigParser;
 import com.almalence.opencam.Mode;
+import com.almalence.opencam.cameracontroller.CameraController;
+import com.almalence.opencam.ui.ElementAdapter;
 //-+- -->
 
 import android.app.Activity;
