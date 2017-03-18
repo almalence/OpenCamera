@@ -25,4 +25,8 @@
 	
 	<string name="widgetLauncherTitle">A Better Camera Launcher</string>
 	<string name="widgetLauncherContent">To place the launcher on your home screen, choose an \"ABC Launcher Grid/Compact/Full\" from the Widget tab in your list of apps.</string>
+	
+	<string name="editorInstallText">Install Editor</string>
+	<string name="editorNoText">Remind later</string>
+	<string name="editorAdvText">You can edit your images in our FREE A Better Editor&amp;Effects! Filters, effects and much more!</string>
 </resources>
