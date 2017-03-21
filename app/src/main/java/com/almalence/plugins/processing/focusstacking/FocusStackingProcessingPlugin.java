@@ -403,33 +403,36 @@ public class FocusStackingProcessingPlugin extends PluginProcessing implements O
 				String fileFormat = PluginManager.getInstance().getFileFormat();
 				String evmark = String.format("_alignedFrames");
 
-				File saveDir = PluginManagerBase.getSaveDir(false);
-				File file = new File(saveDir, fileFormat + evmark + ".mpo");
-				FileOutputStream os = null;
 
-				try
-				{
-					try
-					{
-						os = new FileOutputStream(file);
-					} catch (Exception e)
-					{
-						// save always if not working saving to sdcard
-						e.printStackTrace();
-						saveDir = PluginManagerBase.getSaveDir(true);
-						file = new File(saveDir, fileFormat + evmark + ".mpo");
+				PluginManager.getInstance().saveMPOFile(sessionID, mpo_data, fileFormat + evmark);
 
-						os = new FileOutputStream(file);
-					}
-
-					os.write(mpo_data);
-					os.close();
-				} catch (FileNotFoundException e1)
-				{
-					e1.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+//				File saveDir = PluginManagerBase.getSaveDir(false);
+//				File file = new File(saveDir, fileFormat + evmark + ".mpo");
+//				FileOutputStream os = null;
+//
+//				try
+//				{
+//					try
+//					{
+//						os = new FileOutputStream(file);
+//					} catch (Exception e)
+//					{
+//						// save always if not working saving to sdcard
+//						e.printStackTrace();
+//						saveDir = PluginManagerBase.getSaveDir(true);
+//						file = new File(saveDir, fileFormat + evmark + ".mpo");
+//
+//						os = new FileOutputStream(file);
+//					}
+//
+//					os.write(mpo_data);
+//					os.close();
+//				} catch (FileNotFoundException e1)
+//				{
+//					e1.printStackTrace();
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
 
 
 				if(FocusStackingProcessingPlugin.SavePreference == 2)

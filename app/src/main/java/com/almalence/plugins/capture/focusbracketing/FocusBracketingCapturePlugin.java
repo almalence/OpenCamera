@@ -29,9 +29,13 @@ import java.util.Date;
 import java.util.List;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.hardware.camera2.CaptureResult;
 import android.os.Environment;
+import android.preference.ListPreference;
+import android.preference.Preference;
+import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -491,6 +495,57 @@ public class FocusBracketingCapturePlugin extends PluginCapture
 
 	}
 
+	static int old_mode = 0;
+	@Override
+	public void onPreferenceCreate(PreferenceFragment pf)
+	{
+		final PreferenceFragment mPref = pf;
+
+		if (pf != null)
+		{
+			Preference fp = pf.findPreference(sModePref);
+			if (fp != null)
+			{
+				old_mode = Integer.valueOf(((ListPreference)fp).getValue());
+				fp.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener()
+				{
+					public boolean onPreferenceChange(Preference preference, Object capture_mode_new)
+					{
+						int new_value = Integer.parseInt(capture_mode_new.toString());
+						if (new_value == 3)
+						{
+							//Read config file
+							File externalDir = Environment.getExternalStorageDirectory();
+							File configFile = new File(externalDir, "/FocusStackingCamera/FocusStackingConfig.txt");
+
+							if(!configFile.exists())
+							{
+								new AlertDialog.Builder(mPref.getActivity())
+										.setIcon(R.drawable.gui_almalence_alert_dialog_icon)
+										.setTitle(R.string.Pref_FocusBracketingMode_CaptureModeAlert_Title)
+										.setMessage(R.string.Pref_FocusBracketingMode_CaptureModeAlert_Msg)
+										.setPositiveButton(android.R.string.ok, null).create().show();
+
+								((ListPreference) preference).setValue(String.valueOf(old_mode));
+								return false;
+							}
+							else
+							{
+								old_mode = new_value;
+								return true;
+							}
+
+						}
+						else
+							old_mode = new_value;
+						return true;
+					}
+				});
+			}
+		}
+
+	}
+
 	private void getPrefs()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
@@ -521,6 +576,7 @@ public class FocusBracketingCapturePlugin extends PluginCapture
 						catch (NumberFormatException exp)
 						{
 							ModePreference = "0"; //Force to use STANDARD mode
+							prefs.edit().putString(sModePref, ModePreference).commit();
 							return;
 						}
 						if(total_frames > 8)
@@ -544,6 +600,7 @@ public class FocusBracketingCapturePlugin extends PluginCapture
 							{
 								//Corrupted focus distance. Force to use STANDARD mode.
 								ModePreference = "0"; //Force to use STANDARD mode
+								prefs.edit().putString(sModePref, ModePreference).commit();
 								return;
 							}
 						}

@@ -10,6 +10,9 @@
     <string name="Pref_FocusBracketingMode_fullrange">Full range</string>
     <string name="Pref_FocusBracketingMode_custom">Custom [read config file]</string>
 
+    <string name="Pref_FocusBracketingMode_CaptureModeAlert_Title">Custom shot mode isn\'t available</string>
+    <string name="Pref_FocusBracketingMode_CaptureModeAlert_Msg">Can\'t find /FocusStackingCamera/FocusStackingConfig.txt configuration file</string>
+
     <string name="Pref_FocusBracketingBurst_title">Burst capturing</string>
     <string name="Pref_FocusBracketingBurst_summary">Fast capture but possible incorrect focus distance on some frames</string>
     <string name="Preference_FocusBracketingBurstPref">focusPrefFocusBracketingBurst</string>
