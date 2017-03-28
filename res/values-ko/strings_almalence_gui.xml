@@ -14,8 +14,8 @@
     <string name="Pref_Common_HWShutter_Summary">하드웨어 셔터를 사용하여 앱 시작</string>
     <string name="Pref_Common_ShotOnTap_Title">터치하여 촬영</string>
     <string name="Pref_Common_ShotOnTap_Summary">탭하여 초점 조정 및 촬영</string>
-    <string name="Pref_Common_UseCamera2_Title">Сamera2 인터페이스 사용</string>
-    <string name="Pref_Common_UseCamera2_Summary">실험 중 모드. 일부 장치 에서 작동 가능.</string>    
+    <string name="Pref_Common_UseCamera2_Title">Сamera1 인터페이스 사용</string>
+    <string name="Pref_Common_UseCamera2_Summary">Camera 2 - 실험 중 모드. 일부 장치 에서 작동 가능.</string>    
     <string name="Pref_Common_MediaRescan_Title">종료 시 미디어 재검색</string>
     <string name="Pref_Common_MediaRescan_Summary">이미지가 갤러리에 표시되지 않을 경우 사용하세요.</string>
     <string name="Pref_Common_Gallery_Title">외부 갤러리 선택 허용</string>

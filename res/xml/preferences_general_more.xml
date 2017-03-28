@@ -2,9 +2,8 @@
 
     <CheckBoxPreference
         android:defaultValue="false"
-        android:enabled="false"
-        android:key="@string/Preference_UseCamera2Key"
-        android:summary="@string/Pref_Common_UseCamera2_Summary"
+        android:enabled="true"
+        android:key="@string/Preference_UseCamera1Key"
         android:title="@string/Pref_Common_UseCamera2_Title" />
 
     <CheckBoxPreference

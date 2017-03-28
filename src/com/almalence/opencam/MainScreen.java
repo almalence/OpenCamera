@@ -424,8 +424,9 @@ public class MainScreen extends ApplicationScreen
 		
 		mWifiHandler.register();
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-
+		CameraController.controlCameraLevel();
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
 		boolean isCamera2 = prefs.getBoolean(getResources().getString(R.string.Preference_UseCamera2Key),
 				CameraController.checkHardwareLevel());
 		CameraController.setUseCamera2(isCamera2);
@@ -1181,27 +1182,36 @@ public class MainScreen extends ApplicationScreen
 	public void onAdvancePreferenceCreate(PreferenceFragment prefActivity)
 	{
 		CheckBoxPreference cp = (CheckBoxPreference) prefActivity.findPreference(getResources().getString(
-				R.string.Preference_UseCamera2Key));
+				R.string.Preference_UseCamera1Key));
 		final CheckBoxPreference fp = (CheckBoxPreference) prefActivity.findPreference(MainScreen.sCaptureRAWPref);
 
 		if (cp != null)
 		{
 			if (!CameraController.isCamera2Allowed())
+				{
 				cp.setEnabled(false);
+				cp.setEnabled(true);
+				}
 			else
 				cp.setEnabled(true);
+			
+			if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
+			{
+				cp.setChecked(true);
+				cp.setEnabled(false);
+			}
 
 			cp.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 			{
-				public boolean onPreferenceChange(Preference preference, Object useCamera2)
+				public boolean onPreferenceChange(Preference preference, Object useCamera1)
 				{
 					PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
 							.putBoolean(ApplicationScreen.sInitModeListPref, true).commit();
 
-					boolean new_value = Boolean.parseBoolean(useCamera2.toString());
-					if (new_value)
+					boolean new_value = Boolean.parseBoolean(useCamera1.toString());
+					if (!new_value)
 					{
-						if (fp != null && CameraController.isRAWCaptureSupported())
+						if (fp != null && CameraController.isRAWCaptureSupported() )//&& !PreferenceManager.getDefaultSharedPreferences(mainContext).getBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera1Key), false))
 							fp.setEnabled(true);
 						else
 							fp.setEnabled(false);
