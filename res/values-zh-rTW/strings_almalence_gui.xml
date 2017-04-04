@@ -14,8 +14,8 @@
     <string name="Pref_Common_HWShutter_Summary">使用硬體快門啟動應用程式</string>
     <string name="Pref_Common_ShotOnTap_Title">觸按拍攝</string>
     <string name="Pref_Common_ShotOnTap_Summary">輕點對焦和拍攝</string>
-    <string name="Pref_Common_UseCamera2_Title">使用Сamera2介面</string>
-    <string name="Pref_Common_UseCamera2_Summary">實驗模式。在有限的裝置數量上可用</string>    
+    <string name="Pref_Common_UseCamera2_Title">使用Сamera1介面</string>
+    <string name="Pref_Common_UseCamera2_Summary">Camera 2 - 實驗模式。在有限的裝置數量上可用</string>    
     <string name="Pref_Common_MediaRescan_Title">結束時重新掃描媒體</string>
     <string name="Pref_Common_MediaRescan_Summary">圖像未出現在藝廊中時幫助。</string>
     <string name="Pref_Common_Gallery_Title">允許選擇外部圖庫</string>

@@ -14,8 +14,8 @@
     <string name="Pref_Common_HWShutter_Summary">Use o obturador do hardware para iniciar o aplicativo</string>
     <string name="Pref_Common_ShotOnTap_Title">Toque para disparar</string>
     <string name="Pref_Common_ShotOnTap_Summary">Focar e disparar no toque</string>
-    <string name="Pref_Common_UseCamera2_Title">Usar interface do Сamera2</string>
-    <string name="Pref_Common_UseCamera2_Summary">Modo experimental. Funcionará com número limitado de dispositivos</string>    
+    <string name="Pref_Common_UseCamera2_Title">Usar interface do Сamera1</string>
+    <string name="Pref_Common_UseCamera2_Summary">Camera 2 - Modo experimental. Funcionará com número limitado de dispositivos</string>    
     <string name="Pref_Common_MediaRescan_Title">Digitalizar mídia de novo ao sair</string>
     <string name="Pref_Common_MediaRescan_Summary">Ajuda caso as imagens não apareçam na galeria.</string>
     <string name="Pref_Common_Gallery_Title">Permitir para selecionar a galeria externa</string>

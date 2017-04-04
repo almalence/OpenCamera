@@ -1,0 +1,11 @@
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:label="@string/widgetSolidName"
+    android:minWidth="@dimen/widgetSolidInitWidth"
+    android:minHeight="@dimen/widgetSolidInitHeight"
+    android:updatePeriodMillis="1800000"    
+    android:previewImage="@drawable/widget_solid_preview"
+    android:configure="com.almalence.widget.OpenCameraSolidWidgetConfigureActivity"
+    android:initialLayout="@layout/widget_opencamera_column_4"     
+    android:resizeMode="none"
+    android:widgetCategory="keyguard|home_screen">
+</appwidget-provider>

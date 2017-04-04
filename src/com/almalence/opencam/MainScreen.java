@@ -382,13 +382,6 @@ public class MainScreen extends ApplicationScreen
 		PluginManager.getInstance().setupDefaultMode();
 		// init gui manager
 		guiManager = new AlmalenceGUI();
-//		guiManager.createInitialGUI();
-//		this.findViewById(R.id.mainLayout1).invalidate();
-//		this.findViewById(R.id.mainLayout1).requestLayout();
-//		guiManager.onCreate();
-
-		// init plugin manager
-//		PluginManager.getInstance().onCreate();
 
 		Intent intent = this.getIntent();
 		goShopping = intent.getBooleanExtra(EXTRA_SHOP, false);
@@ -423,11 +416,11 @@ public class MainScreen extends ApplicationScreen
 		
 		mWifiHandler.register();
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-
+		CameraController.controlCameraLevel();
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
 		boolean isCamera2 = prefs.getBoolean(getResources().getString(R.string.Preference_UseCamera2Key),
 				CameraController.checkHardwareLevel());
-//						(CameraController.isMotoXPure || CameraController.isNexus5or6 || CameraController.isFlex2 || CameraController.isAndroidOne || CameraController.isGalaxyS6 || CameraController.isOnePlusTwo/*|| CameraController.isG4*/) ? true : false);
 		CameraController.setUseCamera2(isCamera2);
 		prefs.edit()
 				.putBoolean(getResources().getString(R.string.Preference_UseCamera2Key), CameraController.isUseCamera2())
@@ -701,8 +694,6 @@ public class MainScreen extends ApplicationScreen
 		destroyBillingHandler();
 		/**** Billing *****/
 		// -+- -->
-
-//		this.hideOpenGLLayer();
 	}
 
 
@@ -1183,27 +1174,36 @@ public class MainScreen extends ApplicationScreen
 	public void onAdvancePreferenceCreate(PreferenceFragment prefActivity)
 	{
 		CheckBoxPreference cp = (CheckBoxPreference) prefActivity.findPreference(getResources().getString(
-				R.string.Preference_UseCamera2Key));
+				R.string.Preference_UseCamera1Key));
 		final CheckBoxPreference fp = (CheckBoxPreference) prefActivity.findPreference(MainScreen.sCaptureRAWPref);
 
 		if (cp != null)
 		{
 			if (!CameraController.isCamera2Allowed())
+				{
 				cp.setEnabled(false);
+				cp.setEnabled(true);
+				}
 			else
 				cp.setEnabled(true);
+			
+			if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
+			{
+				cp.setChecked(true);
+				cp.setEnabled(false);
+			}
 
 			cp.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 			{
-				public boolean onPreferenceChange(Preference preference, Object useCamera2)
+				public boolean onPreferenceChange(Preference preference, Object useCamera1)
 				{
 					PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
 							.putBoolean(ApplicationScreen.sInitModeListPref, true).commit();
 
-					boolean new_value = Boolean.parseBoolean(useCamera2.toString());
-					if (new_value)
+					boolean new_value = Boolean.parseBoolean(useCamera1.toString());
+					if (!new_value)
 					{
-						if (fp != null && CameraController.isRAWCaptureSupported())
+						if (fp != null && CameraController.isRAWCaptureSupported() )//&& !PreferenceManager.getDefaultSharedPreferences(mainContext).getBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera1Key), false))
 							fp.setEnabled(true);
 						else
 							fp.setEnabled(false);
@@ -1638,20 +1638,6 @@ public class MainScreen extends ApplicationScreen
 		if (guiManager.onKeyDown(true, keyCode, event))
 			return true;
 
-		// <!-- -+-
-//		if (keyCode == KeyEvent.KEYCODE_BACK)
-//		{
-//			if (AppRater.showRateDialogIfNeeded(this))
-//			{
-//				return true;
-//			}
-//			if (AppWidgetNotifier.showNotifierDialogIfNeeded(this))
-//			{
-//				return true;
-//			}
-//		}
-		// -+- -->
-
 		return false;
 	}
 
@@ -1967,26 +1953,6 @@ public class MainScreen extends ApplicationScreen
 //            //set params
 //            .build();
 			
-/*
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>			
-			/////FOR SAMSUNG???
-			/////////////////////
-			// REMOVE additionalSkuList.add for SUPER and PROMO for samsung!!!
-			// correct purchaseAll()
-			// correct manifest
-			/////////////////////
-			
-			OpenIabHelper.Options.Builder builder = new OpenIabHelper.Options.Builder()
-            .setStoreSearchStrategy(OpenIabHelper.Options.SEARCH_STRATEGY_INSTALLER)
-            //.setVerifyMode(OpenIabHelper.Options.VERIFY_SKIP)
-            //.addPreferredStoreName(OpenIabHelper.NAME_SAMSUNG)
-            //.addStoreKeys(storeKeys);
-            ;
-			
-            //SamsungApps.isSamsungTestMode = true;
-			
-<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-*/
 	
 /**/			
 			//FOR PLAY STORE

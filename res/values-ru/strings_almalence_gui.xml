@@ -18,8 +18,8 @@
     <string name="Pref_Common_ShotOnTap_Title">Съёмка по клику</string>
     <string name="Pref_Common_Antibanding_Title">Антибендинг</string>
     <string name="Pref_Common_ShotOnTap_Summary">Фокусировка и съемка по клику</string>
-    <string name="Pref_Common_UseCamera2_Title">Использовать новый интерфейс камеры</string>
-    <string name="Pref_Common_UseCamera2_Summary">Экспериментальный режим. Работает на ограниченном числе устройств с Android 5</string>
+    <string name="Pref_Common_UseCamera2_Title">Использовать Camera 1 интерфейс камеры</string>
+    <string name="Pref_Common_UseCamera2_Summary">Camera 2 - Экспериментальный режим. Работает на ограниченном числе устройств с Android 5</string>
     <string name="Pref_Common_CaptureRAW_Title">Съёмка RAW+JPEG</string>
     <string name="Pref_Common_CaptureRAW_Summary">Снимок сохраняется в формате DNG. Работает на ограниченном числе устройств</string>
     <string name="Pref_Common_CaptureRAW_Description">Съёмка RAW возможна только в режимах Стандартный, Серия и Брекетинг экспозиции. Так же, в этом режиме не может быть показана гистограмма</string>

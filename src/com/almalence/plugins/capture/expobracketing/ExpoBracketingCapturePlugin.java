@@ -639,7 +639,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			CameraController.isFlex2 || 
 			CameraController.isGalaxyS7 || 
 			CameraController.isG5||
-			CameraController.isHTCM10)
+			CameraController.isHTCM10||
+			CameraController.isMotoZ)
 		{
 			gain = new int[3];
 			gain[0] = CameraController.getCurrentSensitivity();

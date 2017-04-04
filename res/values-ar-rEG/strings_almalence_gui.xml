@@ -14,8 +14,8 @@
     <string name="Pref_Common_HWShutter_Summary">استخدام المصراع الفعلي لبدء تشغيل التطبيق</string>
     <string name="Pref_Common_ShotOnTap_Title">المس للتصوير</string>
     <string name="Pref_Common_ShotOnTap_Summary">حدد البؤرة والتقط الصورة بالضغط</string>
-    <string name="Pref_Common_UseCamera2_Title">استخدم واجهة الكاميرا 2</string>
-    <string name="Pref_Common_UseCamera2_Summary">الوضع التجريبي. سيعمل على عدد محدود من الأجهزة</string>    
+    <string name="Pref_Common_UseCamera2_Title">استخدم واجهة الكاميرا 1</string>
+    <string name="Pref_Common_UseCamera2_Summary">الوضع التجريبي. سيعمل على عدد محدود من الأجهزة - Camera2</string>    
     <string name="Pref_Common_MediaRescan_Title">إعادة مسح الوسائط عند الخروج</string>
     <string name="Pref_Common_MediaRescan_Summary">يساعد إذا كانت الصور لا تظهر في المعرض.</string>
     <string name="Pref_Common_Gallery_Title">السماح بتحديد معرض صور خارجي</string>

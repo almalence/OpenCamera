@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:id="@+id/modeSelectLayout"
+    android:layout_height="@dimen/widgetSolidElementHeight"
+    android:layout_width="match_parent"    
+    android:layout_gravity="center"
+    android:clickable="false"
+    android:background="@drawable/widget_full_solid_grid_element_background">
+    
+    <ImageView
+        android:id="@+id/modeImage"
+        android:layout_height="@dimen/widgetSolidImageSize"
+        android:layout_width="@dimen/widgetSolidImageSize"
+        android:layout_gravity="center"        
+        android:padding="5dp"                
+        android:background="@android:color/transparent">
+    </ImageView>
+   
+</FrameLayout>
+

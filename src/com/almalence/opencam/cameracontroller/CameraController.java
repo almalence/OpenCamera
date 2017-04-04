@@ -345,6 +345,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean							isOldCameraOneModeLaunched		= false;
 
 	private static boolean							isCamera2						= false; //Flag of using camera2 interface
+	private static boolean							isForceCamera1					= false; //Flag to force using camera1 interface!!!
 	private static boolean							isCamera2Allowed				= false; //Flag to show whether OpenCamera support camera2 mode on current device
 	private static boolean							isCamera2Supported				= false; //Flag to show whether camera2 is available on current device
 	protected static boolean						isRAWCaptureSupported			= false; //Only HARDWARE_LEVEL_FULL devices may capture RAW frames
@@ -862,8 +863,23 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				isGalaxyS7Exynos = true;
 		}
 
+		controlCameraLevel();
+
+		SonyRemoteCamera.onCreateSonyRemoteCamera(mainContext, appInterface, pluginManager, messageHandler);
+	}
+
+	public static void controlCameraLevel()
+	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
 
+		isForceCamera1 = prefs.getBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera1Key), false);
+		if (isForceCamera1)
+			prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera2Key), false)
+			.commit();
+		else
+			prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera2Key), true)
+			.commit();
+		
 		isCamera2 = prefs.getBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera2Key), false);
 		//At that time limited number of devices supports camera2 interface and not all capture modes may support it
 		if (!pluginManager.isCamera2InterfaceAllowed())
@@ -898,10 +914,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera2Key), false)
 					.commit();
 		}
-
-		SonyRemoteCamera.onCreateSonyRemoteCamera(mainContext, appInterface, pluginManager, messageHandler);
 	}
-
 
 	public static void onStart()
 	{
