@@ -132,12 +132,10 @@ public class PluginManager extends PluginManagerBase
 			createRAWCaptureResultHashtable();
 
 		activeVF = new ArrayList<String>();
-		// activeFilter = new ArrayList<String>();
 
 		listVF = new ArrayList<Plugin>();
 		listCapture = new ArrayList<Plugin>();
 		listProcessing = new ArrayList<Plugin>();
-		// listFilter = new ArrayList<Plugin>();
 		listExport = new ArrayList<Plugin>();
 
 		// init plugins and add to pluginList
@@ -244,8 +242,6 @@ public class PluginManager extends PluginManagerBase
 		pluginList.put(bestshotProcessingPlugin.getID(), bestshotProcessingPlugin);
 		listProcessing.add(bestshotProcessingPlugin);
 
-		// Filter
-
 		// Export
 		ExportPlugin testExportPlugin = new ExportPlugin();
 		pluginList.put(testExportPlugin.getID(), testExportPlugin);
@@ -305,8 +301,6 @@ public class PluginManager extends PluginManagerBase
 			pluginList.get(activeCapture).onPause();
 		if (null != pluginList.get(activeProcessing))
 			pluginList.get(activeProcessing).onPause();
-		// for (int i = 0; i < activeFilter.size(); i++)
-		// pluginList.get(i).onPause();
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onPause();
 	}
@@ -329,18 +323,10 @@ public class PluginManager extends PluginManagerBase
 			pluginList.get(activeCapture).onGUICreate();
 		if (null != pluginList.get(activeProcessing))
 			pluginList.get(activeProcessing).onGUICreate();
-		// for (int i = 0; i < activeFilter.size(); i++)
-		// pluginList.get(i).onGUICreate();
 		if (null != pluginList.get(activeExport))
 			pluginList.get(activeExport).onGUICreate();
 
 		isRestarting = true;
-
-//		if(countdownLayout.getParent() != null)
-//			((ViewGroup) countdownLayout.getParent()).removeView(countdownLayout);
-//		ApplicationScreen.getGUIManager().removeViews(countdownLayout, R.id.specialPluginsLayout);
-//		ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout).invalidate();
-//		ApplicationScreen.instance.findViewById(R.id.specialPluginsLayout).requestLayout();
 
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT,
 				LayoutParams.FILL_PARENT);
@@ -353,10 +339,6 @@ public class PluginManager extends PluginManagerBase
 		this.countdownLayout.setLayoutParams(params);
 		this.countdownLayout.requestLayout();
 		this.countdownLayout.setVisibility(View.INVISIBLE);
-
-//		if(photoTimeLapseLayout.getParent() != null)
-//			((ViewGroup) photoTimeLapseLayout.getParent()).removeView(photoTimeLapseLayout);
-//		ApplicationScreen.getGUIManager().removeViews(photoTimeLapseLayout, R.id.specialPluginsLayout);
 
 		params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
@@ -622,17 +604,6 @@ public class PluginManager extends PluginManagerBase
 			AddModeSettings("bestshotmode", pf);
 		} else if ("saving_settings".equals(settings))
 		{
-			// for (int i = 0; i < listFilter.size(); i++)
-			// {
-			// Plugin pg = listFilter.get(i);
-			// if (activeFilter.contains(pg.getID()))
-			// activePlugins.add(pg);
-			// else
-			// inactivePlugins.add(pg);
-			// }
-			// if (activePlugins.size() != listFilter.size() &&
-			// isPreferenecesAvailable(inactivePlugins, false))
-			// hasInactive = true;
 			addHeadersContent(pf, activePlugins, false);
 
 			activePlugins.clear();
@@ -653,12 +624,6 @@ public class PluginManager extends PluginManagerBase
 				pf.addPreferencesFromResource(R.xml.preferences_saving_inactive);
 		} else if ("saving_inactive_settings".equals(settings))
 		{
-			// for (int i = 0; i < listFilter.size(); i++)
-			// {
-			// Plugin pg = listFilter.get(i);
-			// if (!activeFilter.contains(pg.getID()))
-			// inactivePlugins.add(pg);
-			// }
 			addHeadersContent(pf, inactivePlugins, false);
 
 			activePlugins.clear();
@@ -715,14 +680,6 @@ public class PluginManager extends PluginManagerBase
 
 			activePlugins.clear();
 			inactivePlugins.clear();
-			// for (int i = 0; i < listFilter.size(); i++)
-			// {
-			// Plugin pg = listFilter.get(i);
-			// if (activeFilter.contains(pg.getID()))
-			// activePlugins.add(pg);
-			// else
-			// inactivePlugins.add(pg);
-			// }
 			if (isPreferenecesAvailable(inactivePlugins, true))
 				hasInactive = true;
 			addHeadersContent(pf, activePlugins, true);
@@ -772,12 +729,6 @@ public class PluginManager extends PluginManagerBase
 			addHeadersContent(pf, inactivePlugins, true);
 
 			inactivePlugins.clear();
-			// for (int i = 0; i < listFilter.size(); i++)
-			// {
-			// Plugin pg = listFilter.get(i);
-			// if (!activeFilter.contains(pg.getID()))
-			// inactivePlugins.add(pg);
-			// }
 			addHeadersContent(pf, inactivePlugins, true);
 
 			inactivePlugins.clear();
@@ -843,12 +794,6 @@ public class PluginManager extends PluginManagerBase
 		case ApplicationInterface.MSG_CAPTURE_FINISHED:
 			shutterRelease = true;
 
-			/*
-			 * Debug code for Galaxy S6 in Super mode. Look at Camera2 for more
-			 * details
-			 */
-			// CameraController.onCaptureFinished();
-
 			if (CameraController.getFocusMode() == CameraParameters.AF_MODE_CONTINUOUS_PICTURE)
 			{
 				CameraController.cancelAutoFocus();
@@ -904,20 +849,6 @@ public class PluginManager extends PluginManagerBase
 			
 			// Start processing service with current sessionID.
 			ApplicationScreen.instance.startService(mServiceIntent);
-//			new Thread() {
-//				@Override
-//				public void run()
-//				{
-//					android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_DEFAULT);
-//					AlmaShotHDR.getAffinity();
-//				}
-//			}.start();
-//			
-////			android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
-//			ProcessingTask task = new ProcessingTask();
-//			task.sessionID = sessionID;
-//			task.start();
-
 			ApplicationScreen.instance.muteShutter(false);
 
 			// <!-- -+-
@@ -936,12 +867,6 @@ public class PluginManager extends PluginManagerBase
 
 		case ApplicationInterface.MSG_CAPTURE_FINISHED_NORESULT:
 			shutterRelease = true;
-
-			/*
-			 * Debug code for Galaxy S6 in Super mode. Look at Camera2 for more
-			 * details
-			 */
-			// CameraController.onCaptureFinished();
 
 			if (CameraController.getFocusMode() == CameraParameters.AF_MODE_CONTINUOUS_PICTURE)
 			{
@@ -1255,42 +1180,42 @@ public class PluginManager extends PluginManagerBase
 		}
 	}
 
-	private Runnable	flashOff	= new Runnable()
-									{
-										public void run()
-										{
-											CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
-										}
-									};
+	private Runnable flashOff = new Runnable()
+	{
+		public void run()
+		{
+			CameraController.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
+		}
+	};
 
-	private Runnable	flashBlink	= new Runnable()
-									{
-										boolean	isFlashON	= false;
+	private Runnable flashBlink	= new Runnable()
+	{
+		boolean	isFlashON = false;
 
-										public void run()
-										{
-											try
-											{
-												if (isFlashON)
-												{
-													CameraController
-															.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
-													isFlashON = false;
-												} else
-												{
-													CameraController
-															.setCameraFlashMode(CameraParameters.FLASH_MODE_TORCH);
-													isFlashON = true;
-												}
-											} catch (Exception e)
-											{
-												e.printStackTrace();
-												Log.e("Self-timer",
-														"finalcountdownHandler exception: " + e.getMessage());
-											}
-											finalcountdownHandler.postDelayed(this, 50);
-										}
-									};
+		public void run()
+		{
+			try
+			{
+				if (isFlashON)
+				{
+					CameraController
+							.setCameraFlashMode(CameraParameters.FLASH_MODE_OFF);
+					isFlashON = false;
+				} else
+				{
+					CameraController
+							.setCameraFlashMode(CameraParameters.FLASH_MODE_TORCH);
+					isFlashON = true;
+				}
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+				Log.e("Self-timer",
+						"finalcountdownHandler exception: " + e.getMessage());
+			}
+			finalcountdownHandler.postDelayed(this, 50);
+		}
+	};
 
 	private boolean		photoTimeLapseActive;
 	private boolean		photoTimeLapseIsRunning;

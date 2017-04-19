@@ -145,8 +145,6 @@ public class MainScreen extends ApplicationScreen
 
 	private boolean				showHelp						= false;
 
-	// private boolean keepScreenOn = false;
-
 	private static boolean		maxScreenBrightnessPreference;
 
 	// >>Description
@@ -375,8 +373,6 @@ public class MainScreen extends ApplicationScreen
 		// application rating helper
 		AppRater.app_launched(this);
 		// -+- -->
-
-//		AppWidgetNotifier.app_launched(this);
 
 		keepScreenOn = prefs.getBoolean(sKeepScreenOn, false);
 
@@ -1655,10 +1651,6 @@ public class MainScreen extends ApplicationScreen
 			{
 				return true;
 			}
-//			if (AppWidgetNotifier.showNotifierDialogIfNeeded(this))
-//			{
-//				return true;
-//			}
 		}
 		// -+- -->
 
@@ -1908,27 +1900,6 @@ public class MainScreen extends ApplicationScreen
 		OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_AMAZON, "abc_sale_controller1_amazon");
 		OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_AMAZON, "abc_sale_controller2_amazon");
 		OpenIabHelper.mapSku(SKU_PROMO, OpenIabHelper.NAME_AMAZON, "abc_promo_amazon");
-
-		// Samsung store
-		// OpenIabHelper.mapSku(SKU_SUPER, OpenIabHelper.NAME_SAMSUNG,
-		// "100000103369/000001018387");
-		// OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_SAMSUNG,
-		// "100000103369/000001018387");
-		// OpenIabHelper.mapSku(SKU_PANORAMA, OpenIabHelper.NAME_SAMSUNG,
-		// "100000103369/000001018389");
-		// OpenIabHelper.mapSku(SKU_UNLOCK_ALL, OpenIabHelper.NAME_SAMSUNG,
-		// "100000103369/000001017613");
-		// OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON,
-		// OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018392");
-		// OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_SAMSUNG,
-		// "100000103369/000001018391");
-		// OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_SAMSUNG,
-		// "100000103369/000001018384");
-		//
-		// OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_SAMSUNG,
-		// "100000103369/000001018393");
-		// OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_SAMSUNG,
-		// "100000103369/000001018394");
 	}
 
 	public void activateCouponSale()
@@ -2750,7 +2721,6 @@ public class MainScreen extends ApplicationScreen
 		if (mode.SKU.isEmpty())
 		{
 			int launchesLeft = MainScreen.getLeftLaunches(mode.modeID);
-//			launchesLeft = 100; //Using for testing free version
 
 			if ((1 == launchesLeft) || (3 == launchesLeft))
 			{
@@ -2790,7 +2760,6 @@ public class MainScreen extends ApplicationScreen
 		}
 
 		int launchesLeft = MainScreen.getLeftLaunches(mode.modeID);
-//		launchesLeft = 100; //Using for testing free version
 		int id = MainScreen.getAppResources().getIdentifier(
 				(CameraController.isUseCamera2() ? mode.modeNameHAL : mode.modeName), "string",
 				MainScreen.thiz.getPackageName());
