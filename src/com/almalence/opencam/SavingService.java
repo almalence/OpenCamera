@@ -112,7 +112,6 @@ public class SavingService extends NotificationService
 		@Override
 		protected void onPreExecute()
 		{
-			//showNotification();
 		}
 
 		@Override
@@ -133,7 +132,6 @@ public class SavingService extends NotificationService
 		@Override
 		protected void onPostExecute(Void result)
 		{
-//			hideNotification();
 		}
 	}
 
@@ -186,9 +184,6 @@ public class SavingService extends NotificationService
 			additionalRotationValue = 180;
 			break;
 		}
-		
-//		if(CameraController.isNexus5x)
-//			additionalRotationValue = 180;
 	}
 
 	// save result pictures method for android < 5.0
@@ -367,13 +362,6 @@ public class SavingService extends NotificationService
 				}
 
 				String orientation_tag = String.valueOf(0);
-//				int sensorOrientation = CameraController.getSensorOrientation();
-//				int displayOrientation = CameraController.getDisplayOrientation();
-//				sensorOrientation = (360 + sensorOrientation + (cameraMirrored ? -displayOrientation
-//						: displayOrientation)) % 360;
-
-//				if (CameraController.isFlippedSensorDevice() && cameraMirrored)
-//					orientation = (orientation + 180) % 360;
 
 				switch (orientation)
 				{
@@ -528,7 +516,7 @@ public class SavingService extends NotificationService
 
 				Uri uri = getApplicationContext().getContentResolver()
 						.insert(Images.Media.EXTERNAL_CONTENT_URI, values);
-				broadcastNewPicture(uri);
+				broadcastNewPicture(uri); 
 			}
 
 			ApplicationScreen.getMessageHandler().sendEmptyMessage(ApplicationInterface.MSG_EXPORT_FINISHED);
@@ -721,15 +709,6 @@ public class SavingService extends NotificationService
 				}
 
 				String orientation_tag = String.valueOf(0);
-//				int sensorOrientation = CameraController.getSensorOrientation(CameraController.getCameraIndex());
-//				int displayOrientation = CameraController.getDisplayOrientation();
-////				sensorOrientation = (360 + sensorOrientation + (cameraMirrored ? -displayOrientation
-////						: displayOrientation)) % 360;
-//				if (cameraMirrored) displayOrientation = -displayOrientation;
-//				
-//				// Calculate desired JPEG orientation relative to camera orientation to make
-//				// the image upright relative to the device orientation
-//				orientation = (sensorOrientation + displayOrientation + 360) % 360;
 				
 				switch (orientation)
 				{
@@ -1308,8 +1287,9 @@ public class SavingService extends NotificationService
 							String address = list.get(0).getAddressLine(0);
 
 							// replace street and city with localized name
-							if (street != null)
-								address = street;
+							if (address == null)
+								if (street != null)
+									address = street;
 							if (adminArea != null)
 								locality = adminArea;
 
