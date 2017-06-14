@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Open Camera</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="action_popup">Fenêtre de paramètres</string>
+    <string name="intro_text">Touchez pour faire la mise au point, et appuyez sur le bouton bleu «\u00A0Appareil photo\u00A0» pour faire des photos. Pour de l\'aide supplémentaire, cliquez sur «\u00A0Aide en ligne\u00A0» dans les paramètres. Open Camera est totalement gratuit. Si vous aimez cette application, n\'hésitez pas à me faire un don\u00A0:) (voir le lien dans «\u00A0Paramètres\u00A0», ou «\u00A0Aide en ligne\u00A0».\nPolitique de confidentialité\u00A0: la permission «\u00A0Position\u00A0» est requise pour géolocaliser la photo, mais le paramètre est désactivé par défaut. Si vous l\'activez, votre position est encodée dans les photos (et n\'est utilisée qu\'à cet effet).</string>
+    <string name="intro_ok">OK (ce message ne s\'affichera plus)</string>
+    
+    <string name="answer_yes">Oui</string>
+    <string name="answer_no">Non</string>
+
+    <string name="on">Actif</string> <!-- whether a setting is turned on, e.g., "Auto-stabilise: On" -->
+    <string name="off">Inactif</string> <!-- whether a setting is turned off, e.g., "Auto-stabilise: Off" -->
+    
+    <string name="choose_save_location">Sélectionnez le dossier d\'enregistrement\u00A0: </string>
+    <string name="clear_folder_history">Effacer l\'historique des dossiers</string>
+    <string name="clear_folder_history_question">Effacer l\'historique des dossiers\u00A0?</string>
+    <string name="choose_another_folder">Sélectionnez un autre dossier</string>
+    <string name="changed_save_location">Nouvel emplacement d\'enregistrement\u00A0: </string>
+    <string name="stopped_recording_video">Enregistrement vidéo arrêté</string>
+    <string name="repeats_to_go">fois</string> <!--  intentionally starts lower case -->
+    <string name="failed_to_reconnect_camera">Impossible de se reconnecter à l\'appareil photo</string>
+    <string name="video_may_be_corrupted">Erreur, le fichier vidéo peut être corrompu</string>
+    <string name="not_supported">non supporté par votre appareil</string> <!--  intentionally starts lower case -->
+    <string name="video_error_unknown">Erreur inconnue, la vidéo est arrêtée</string>
+    <string name="video_error_server_died">Erreur serveur, la vidéo est arrêtée</string>
+    <string name="video_max_duration">La vidéo a atteint la durée max</string>
+    <string name="video_max_filesize">La vidéo a atteint la taille max</string>
+    <string name="exposure_compensation">Compensation d\'exposition</string>
+    <string name="fps">Images/seconde</string>
+    <string name="focus_distance">Distance de focus</string>
+    <string name="infinite">Infinie</string>
+    <string name="front_camera">Caméra frontale</string>
+    <string name="back_camera">Caméra arrière</string>
+    <string name="photo">Photo</string>
+    <string name="video">Vidéo</string>
+    <string name="exposure_locked">Exposition bloquée</string>
+    <string name="exposure_unlocked">Exposition débloquée</string>
+    <string name="cancelled_timer">Retardateur annulé</string>
+    <string name="cancelled_burst_mode">Mode rafale annulé</string>
+    <string name="started_timer">Retardateur démarré</string>
+    <string name="failed_to_save_video">Impossible d\'enregistrer le fichier vidéo</string>
+    <string name="failed_to_record_video">Impossible d\'enregistrer la vidéo</string>
+    <string name="started_recording_video">Enregistrement vidéo démarré</string>
+    <string name="sorry">Désolé</string>
+    <string name="failed_to_save_photo">Impossible d\'enregistrer la photo</string>
+    <string name="failed_to_auto_stabilise">Impossible d\'utiliser l\'auto-stabilisateur</string>
+    <string name="failed_to_start_camera_preview">Impossible de démarrer l\'aperçu</string>
+    <string name="taking_photo">Prendre une photo</string>
+    <string name="failed_to_take_picture">Impossible de prendre une photo</string>
+    <string name="location_not_available">La position GPS n\'est pas disponible</string>
+    <string name="photo_deleted">Photo supprimée</string>
+    <string name="no_gallery_app">Application de galerie non disponible</string>
+    <string name="screen_is_locked">L\'écran est verrouillé\nbalayez pour déverrouiller</string>
+    <string name="unlocked">Déverrouiller</string>
+    <string name="auto_stabilise_not_supported">Désolé, l\'auto-stabilisateur n\'est pas supporté\nsur cet appareil</string>
+    <string name="audio_disabled">Audio désactivé</string>
+    <string name="max_duration">Durée max</string>
+    <string name="color_effect">Effet de couleur</string>
+    <string name="scene_mode">Mode scène</string>
+    <string name="white_balance">Balance des blancs</string>
+    
+    <string name="angle">Angle</string>
+    <string name="direction">Direction</string>
+    <string name="failed_to_open_camera_1">IMPOSSIBLE D\'OUVRIR LA CAMÉRA.</string>
+    <string name="failed_to_open_camera_2">LA CAMÉRA EST PEUT-ETRE UTILISÉE</string>
+    <string name="failed_to_open_camera_3">PAR UNE AUTRE APPLICATION\u00A0?</string>
+    <string name="iso">ISO</string>
+    <string name="zoom">Zoom</string>
+    <string name="free_memory">Libre</string>
+    <string name="screen_lock_message_1">[VERROUILLÉE\u00A0: </string>
+    <string name="screen_lock_message_2">balayez pour déverrouiller]</string>
+    
+    <string name="failed_to_stamp">Impossible d\'ajouter les informations dans la photo</string>
+    <string name="metres_abbreviation">m</string> <!-- symbol short for metres -->
+    
+    <string name="preference_category_camera_effects">Effets photo</string>
+    <string name="preference_auto_stabilise">Auto-stabilisateur</string>
+    <string name="preference_auto_stabilise_summary">Les photos seront pivotées de sorte qu\'elles soient automatiquement de niveau (photos seulement) (plus lent pour prendre des photos, et peut échouer sur les appareils avec trop peu de mémoire)</string>
+    <string name="preference_color_effect">Appliquer un effet couleur</string>
+    <string name="preference_color_effect_summary">Applique un effet couleur sur la photo</string>
+    <string name="preference_scene_mode">Appliquer le mode scène</string>
+    <string name="preference_scene_mode_summary">Optimise la photo pour différentes scènes</string>
+    <string name="preference_white_balance">Réglage de la balance des blancs</string>
+    <string name="preference_white_balance_summary">Choisissez un réglage pour la balance des blancs</string>
+    <string name="preference_iso">Choisir l\'ISO</string>
+    <string name="preference_iso_summary">Une valeur plus élevée signifie plus sensible à la lumière (peut ne pas fonctionner sur certains appareils)</string>
+    <string name="preference_exposure">Régler la compensation d\'exposition</string>
+    <string name="preference_exposure_summary">Mettre à 0 pour la compensation de l\'exposition par défaut</string>
+    <string name="preference_lock_orientation">Bloquer l\'orientation de la photo/vidéo</string>
+    <string name="preference_lock_orientation_summary">Si elle est définie, l\'orientation de l\'appareil sera ignorée, et l\'orientation de la photo/vidéo sera l\'orientation spécifiée</string>
+    <string name="preference_face_detection">Détection des visages</string>
+    <string name="preference_face_detection_summary">Utilise la détection des visages au lieu des zones de focus</string>
+
+    <string name="preference_category_camera_controls">Commandes de la caméra</string>
+    <string name="preference_timer">Retardateur</string>
+    <string name="preference_timer_summary">Régle le retardateur pour la caméra</string>
+    <string name="preference_timer_beep">Retardateur sonore</string>
+    <string name="preference_timer_beep_summary">Émet des bips pour le retardateur ou le délai du mode rafale</string>
+    <string name="preference_timer_speak">Retardateur à voix</string>
+    <string name="preference_timer_speak_summary">Énonce le compte à rebours pour le retardateur ou le délai du mode rafale (à partir de 60s)</string>
+    <string name="preference_burst_mode">Mode rafale</string>
+    <string name="preference_burst_mode_summary">Prendre plusieurs photos les unes à la suite des autres</string>
+    <string name="preference_burst_interval">Intervale du mode rafale</string>
+    <string name="preference_burst_interval_summary">Délai (le cas échéant) entre la prise de photos en mode rafale</string>
+    <string name="preference_screen_camera_controls_more">Plus de paramètres…</string>
+    <string name="preference_touch_capture">Toucher pour capturer</string>
+    <string name="preference_touch_capture_summary">Prendre une photo en touchant 1 ou 2 fois l\'aperçu</string>
+    <string name="preference_pause_preview">Mettre en pause après la prise de photo</string>
+    <string name="preference_pause_preview_summary">Mettre en pause l\'écran après avoir pris une photo, avec la possibilité de partager ou supprimer la photo</string>
+    <string name="preference_shutter_sound">Son de l\'obturateur</string>
+    <string name="preference_shutter_sound_summary">Jouer un son lorsque vous prenez une photo (nécessite Android 4.2 ou supérieur pour désactiver)</string>
+    <string name="preference_volume_keys">Touches de volumes</string>
+    <string name="preference_volume_keys_summary">Définit un comportement lors de l\'utilisation des touches de volume</string>
+    <string name="preference_audio_control">Option contrôle audio</string>
+    <string name="preference_audio_control_summary">Prend une photo ou une vidéo quand un bruit est détecté, ou sur commande vocale («\u00A0cheese\u00A0»). Si activé alors utilisez le bouton micro pour démarrer/stopper la détection.</string>
+    <string name="preference_audio_noise_control_sensitivity">Sensibilité contrôle audio</string>
+    <string name="preference_audio_noise_control_sensitivity_summary">Niveau de la sensibilité sonore pour l\'option contrôle audio (bruit fort)</string>
+    <string name="preference_save_location">Dossier de stockage</string>
+    <string name="preference_save_location_summary">Dossier où sont stockés les fichiers photo/vidéo</string>
+    <string name="preference_using_saf">Utilisation «\u00A0Storage Access Framework\u00A0»</string>
+    <string name="preference_using_saf_summary">Utilise le Storage Access Framework d\'Android 5 pour enregistrer les photos et vidéos</string>
+    <string name="preference_save_photo_prefix">Préfixe du nom de photo</string>
+    <string name="preference_save_photo_prefix_summary">Le préfixe est utilisé pour le nom de fichier des photos</string>
+    <string name="preference_save_video_prefix">Préfixe du nom de la vidéo</string>
+    <string name="preference_save_video_prefix_summary">Le préfixe est utilisé pour le nom de fichier des vidéos</string>
+    <string name="preference_show_when_locked">Afficher l\'application appareil verrouillé</string>
+    <string name="preference_show_when_locked_summary">Si activé, Open Camera s\'affichera toujours au-dessus de l\'écran de verrouillage (vous devez déverrouiller pour accéder aux paramètres, galerie, etc.)</string>
+    <string name="preference_startup_focus">Faire un auto-focus au démarrage</string>
+    <string name="preference_startup_focus_summary">Active l\'auto-focus au démarrage de Open Camera. Si vous avez un problème de flash qui s\'allume au démarrage, désactivez cette option</string>
+    <string name="preference_lock_video">Verrouiller l\'écran lors de l\'enregistrement vidéo</string>
+    <string name="preference_lock_video_summary">Lors de l\'enregistrement vidéo, l\'interface graphique sera verrouillée pour éviter d\'arrêter accidentellement l\'enregistrement. Balayez l\'écran pour déverrouiller. Notez que l\'enregistrement vidéo sera toujours arrêté si l\'application passe en arrière-plan ou si l\'écran est occulté.</string>
+    <string name="preference_rotate_preview">Pivoter l\'aperçu</string>
+    <string name="preference_rotate_preview_summary">Option pour faire pivoter l\'aperçu (n\'affecte pas les photos/videos originales)</string>
+    <string name="preference_screen_gui">Interface à l\'écran…</string>
+    <string name="preference_preview_size">Taille de l\'aperçu</string>
+    <string name="preference_preview_size_summary">Choisissez la taille de l\'aperçu</string>
+    <string name="preference_ui_placement">Emplacement de l\'interface utilisateur</string>
+    <string name="preference_ui_placement_summary">Choisissez l\'interface pour gaucher ou droitier</string>
+    <string name="preference_immersive_mode">Mode immersif</string>
+    <string name="preference_immersive_mode_summary">Options de comportement pour le «\u00A0mode immersif\u00A0»</string>
+    <string name="preference_show_zoom">Afficher le zoom</string>
+    <string name="preference_show_zoom_summary">Affiche le niveau actuel de zoom à l\'écran (quand le zoom est actif)</string>
+    <string name="preference_show_zoom_controls">Afficher les contrôles de zoom -/+</string>
+    <string name="preference_show_zoom_controls_summary">Affiche les bouttons -/+ pour contrôler le zoom</string>
+    <string name="preference_show_zoom_slider_controls">Afficher le curseur de zoom</string>
+    <string name="preference_show_zoom_slider_controls_summary">Affiche le curseur pour modifier le niveau de zoom</string>
+    <string name="preference_show_iso">Afficher les ISO</string>
+    <string name="preference_show_iso_summary">Affiche le niveau actuel de l\'ISO (nécessite l\'API Camera2)</string>
+    <string name="preference_free_memory">Afficher la mémoire disponible</string>
+    <string name="preference_free_memory_summary">Affiche l\'espace mémoire disponible à l\'écran</string>
+    <string name="preference_show_angle">Afficher l\'angle</string>
+    <string name="preference_show_angle_summary">Affiche l\'angle d\'orientation actuel de l\'appareil à l\'écran</string>
+    <string name="preference_show_angle_line">Montrer la ligne d\'angle</string>
+    <string name="preference_show_angle_line_summary">Affiche une ligne de niveau horizontal</string>
+    <string name="preference_angle_highlight_color">Couleur de surbrillance de la ligne d\'angle</string>
+    <string name="preference_angle_highlight_color_summary">Met la ligne d\'angle en surbrillance lorsque l\'appareil est presque de niveau</string>
+    <string name="preference_show_geo_direction">Afficher la boussole de direction</string>
+    <string name="preference_show_geo_direction_summary">Affiche la boussole de direction de l\'appareil à l\'écran</string>
+    <string name="preference_show_time">Afficher l\'heure</string>
+    <string name="preference_show_time_summary">Affiche l\'heure actuelle à l\'écran</string>
+    <string name="preference_show_battery">Afficher la batterie</string>
+    <string name="preference_show_battery_summary">Affiche le niveau actuel de la batterie à l\'écran</string>
+    <string name="preference_grid">Afficher une grille</string>
+    <string name="preference_grid_summary">Affiche l\'une des différentes grilles</string>
+    <string name="grid">Grille</string> <!-- short form of Show a grid -->
+    <string name="preference_crop_guide">Afficher un guide de recadrage</string>
+    <string name="preference_crop_guide_summary">Un guide de recadrage affiche un rectangle montrant à quoi le rapport d\'aspect spécifié ressemble - utile si vous prévoyez de recadrer la photo/vidéo après un ratio d\'aspect différent. Nécessite le mode photo WYSIWYG, ou d\'être en mode vidéo.</string>
+    <string name="preference_show_toasts">Afficher les messages d\'information</string>
+    <string name="preference_show_toasts_summary">Affiche les messages d\'informations à l\'écran</string>
+    <string name="preference_thumbnail_animation">Voir l\'animation des vignettes</string>
+    <string name="preference_thumbnail_animation_summary">Affiche l\'animation des vignettes lorsque vous prenez une photo</string>
+    <string name="preference_take_photo_border">Ajouter une bordure à la photo</string>
+    <string name="preference_take_photo_border_summary">Affiche une bordure à l\'écran pour indiquer la prise d\'une photo</string>
+    <string name="preference_keep_display_on">Garder l\'écran allumé</string>
+    <string name="preference_keep_display_on_summary">Si activé, l\'appareil ne se mettra pas en veille tant qu\'Open Camera sera actif</string>
+    <string name="preference_max_brightness">Forcer la luminosité maximale</string>
+    <string name="preference_max_brightness_summary">Affichage de l\'écran avec une luminosité au maximum, plutôt que la valeur par défaut du périphérique</string>
+    
+    <string name="preference_category_camera_quality">Paramètres photo et vidéo</string>
+    <string name="preference_screen_photo_settings">Paramètres photo…</string>
+    <string name="preference_screen_video_settings">Paramètres vidéo…</string>
+    <string name="preference_screen_location_settings">Paramètres de géocodage…</string>
+    <string name="preference_resolution">Résolution de l\'appareil photo</string>
+    <string name="preference_resolution_summary">Réglez la résolution des photos prises par l\'appareil photo</string>
+    <string name="preference_quality">Qualité de l\'image</string>
+    <string name="preference_quality_summary">Réglez la qualité des photos enregistrées (la valeur recommandée est 90 %%)</string>
+    <string name="preference_location">Stocker les données de position (Géocodage)</string>
+    <string name="preference_location_summary">Enregistre la position GPS dans les photos/videos</string>
+    <string name="preference_gps_direction">Stocker la direction de la boussole</string>
+    <string name="preference_gps_direction_summary">Stocke la direction GPS de la boussole dans les photos</string>
+    <string name="preference_require_location">Données de position indispensables</string>
+    <string name="preference_require_location_summary">Prendre des photos/vidéos uniquement si les données de position sont activées et disponibles</string>
+    <string name="preference_stamp">Incrustation photo</string>
+    <string name="preference_stamp_summary">Incruste sur les photos la date, l\'heure et la position GPS si les informations de position/direction sont activées</string>
+    <string name="preference_stamp_dateformat">Format de la date</string>
+    <string name="preference_stamp_dateformat_summary">Spécifie le format de la date (si activé)</string>
+    <string name="preference_stamp_timeformat">Format de l\'heure</string>
+    <string name="preference_stamp_timeformat_summary">Spécifie le format de l\'heure (si activé)</string>
+    <string name="preference_stamp_gpsformat">Format GPS</string>
+    <string name="preference_stamp_gpsformat_summary">Specifie le format du GPS (si activé)</string>
+    <string name="preference_textstamp">Texte personnalisé</string>
+    <string name="preference_textstamp_summary">Incruste un texte personnalisé sur la photo</string>
+    <string name="preference_stamp_fontsize">Taille de la police</string>
+    <string name="preference_stamp_fontsize_summary">Taille de la utilisée lors de l\'incrustation de texte sur les photos</string>
+    <string name="preference_stamp_font_color">Couleur de la police</string>
+    <string name="preference_stamp_font_color_summary">Couleur de la police utilisée pour l\'incrustation de texte sur les photos</string>
+    <string name="preference_stamp_style">Format du texte</string>
+    <string name="preference_stamp_style_summary">Format du texte utilisé pour l\'incrustation de texte sur les photos</string>
+    <string name="video_quality">Résolution vidéo</string>
+    <string name="video_quality_summary">Règle la résolution des vidéos</string>
+    <string name="preference_force_video_4k">Forcer le format vidéo 4K UHD (experimental)</string>
+    <string name="preference_force_video_4k_summary">Active la résolution 3840x2160 pour l\'enregistrement vidéo sur l\'appareil photo arrière - cela ne fonctionnera que si votre appareil le prend en charge (et peut se bloquer le cas échéant\u00A0!)</string>
+    <string name="preference_video_stabilization">Activer la stabilisation vidéo</string>
+    <string name="preference_video_stabilization_summary">La stabilisation vidéo réduit les tremblements dûent aux mouvements de la caméra à la fois dans l\'aperçu et dans les vidéos enregistrées</string>
+    <string name="preference_video_bitrate">Débit des vidéos (approx.)</string>
+    <string name="preference_video_bitrate_summary">Règle le débit approximatif des vidéos (plus élevé signifie une meilleure qualité, mais prend plus d\'espace disque, et peut entraîner un échec de l\'enregistrement vidéo s\'il n\'est pas pris en charge)</string>
+    <string name="preference_video_fps">Nombre d\'image de la vidéo (approx.)</string>
+    <string name="preference_video_fps_summary">Définir le nombre d\'image par seconde (IPS) des vidéos (en fonction de votre appareil le nombre d\'IPS peut être aproximatif et pourrait ne pas atteindre le maximum. Un mauvais réglage peut entraîner l\'échec de l\'enregistrement vidéo s\'il n\'est pas pris en charge)</string>
+    <string name="preference_video_max_duration">Durée maximale de la vidéo</string>
+    <string name="preference_video_max_duration_summary">L\'enregistrement vidéo s\'arrêtera après la durée spécifiée</string>
+    <string name="preference_video_restart">Nombre de vidéos après la durée maximale</string>
+    <string name="preference_video_restart_summary">Si la vidéo est stoppée après avoir atteint la durée maximale sélectionnée (si activé), alors l\'enregistrement va reprendre autant de fois que le nombre spécifié dans ce paramètre</string>
+
+    <string name="preference_video_max_filesize">Taille maximale d\'un fichier vidéo</string>
+    <string name="preference_video_max_filesize_summary">L\'enregistrement vidéo va s\'arrêter/ou redémarrer (voir option ci-dessous) quand la taille maximale approximative du fichier est atteinte. Notez que la plupart des périphériques Android ont une taille maximale pour les vidéos (typiquement entre 2 et 4 Go), mais cette option permet de choisir une valeur</string>
+    <string name="preference_video_restart_max_filesize">Redémarrer sur la taille maximale</string>
+    <string name="preference_video_restart_max_filesize_summary">Si activé, redémarrage automatique quand la taille maximale de fichier est atteinte (soit la valeur par défaut du périphérique, soit la valeur spécifiée)</string>
+    <string name="preference_record_audio">Enregistrement audio</string>
+    <string name="preference_record_audio_summary">Enregistre aussi l\'audio lors de l\'enregistrement vidéo</string>
+    <string name="preference_record_audio_src">Source audio</string>
+    <string name="preference_record_audio_src_summary">Sélectionne l\'entrée audio pour l\'enregistrement</string>
+    <string name="preference_record_audio_channels">Format audio</string>
+    <string name="preference_record_audio_channels_summary">Spécifiez mono ou stéréo pour l\'enregistrement audio (stéréo uniquement pris en charge sur certains appareils)</string>
+    <string name="preference_video_flash">Clignoter pendant l\'enregistrement vidéo</string>
+    <string name="preference_video_flash_summary">Si activé, le flash se met en marche/arrêt lors de l\'enregistrement vidéo (peut être utile pour indiquer que l\'appareil est en train d\'enregistrer à distance)</string>
+    
+    <string name="preference_category_online">Divers</string>
+    <string name="preference_online_help">Aide en ligne</string>
+    <string name="preference_online_help_summary">Ouvre le site web de Open Camera dans votre navigateur</string>
+    <string name="preference_donate">Faire un don pour soutenir le développement</string>
+    <string name="preference_donate_summary">Si vous aimez ce logiciel, n\'hésitez pas à faire un don. Vous pouvez le faire via l\'achat de mon «\u00A0application de don\u00A0» - Cliquer sur cette option va ouvrir la page de l\'application de don. Merci\u00A0!</string>
+    <string name="preference_use_camera2">Utiliser l\'API Camera2</string>
+    <string name="preference_use_camera2_summary">Active l\'API Camera2 d\'Android 5 - permet d\'utiliser des fonctionnalités supplémentaires, mais reste encore expérimental (peut provoquer un redémarrage)</string>
+    <string name="preference_about">À propos</string>
+    <string name="preference_about_summary">Informations de l\'application et de debug</string>
+    <string name="preference_reset">Réinitialiser les paramètres</string>
+    <string name="preference_reset_summary">Réinitialise tout les paramètres aux valeurs par défaut d\'Open Camera</string>
+    <string name="preference_reset_question">Êtes-vous sûr de vouloir réinitialiser tout les réglages d\'Open Camera par défaut\u00A0?</string>
+
+    <string name="about_ok">OK</string>
+    <string name="about_available">Disponible</string>
+    <string name="about_not_available">Non disponible</string>
+    <string name="about_copy_to_clipboard">Copier dans le presse-papier</string>
+    
+    <string name="take_photo">Prendre une photo</string>
+    <string name="gallery">Gallerie</string>
+    <string name="exposure">Exposition</string>
+    <string name="exposure_lock">Exposition bloquée</string>
+    <string name="focus_mode">Mode focus</string>
+    <string name="flash_mode">Mode flash</string>
+    <string name="switch_to_front_camera">Utiliser la caméra frontale</string>
+    <string name="switch_to_back_camera">Utiliser la caméra arrière</string>
+    <string name="switch_to_video">Passer en mode vidéo</string>
+    <string name="switch_to_photo">Passer en mode photo</string>
+    <string name="trash">Effacer la dernière photo</string>
+    <string name="share">Partager la photo</string>
+    
+    <string name="parent_folder">Dossier parent</string>
+    <string name="use_folder">Utiliser ce dossier</string>
+    <string name="new_folder">Nouveau dossier</string>
+    <string name="cant_write_folder">Ne peux pas écrire dans ce dossier</string>
+    <string name="cant_access_folder">Ne peux pas accèder à ce dossier</string>
+    <string name="enter_new_folder">Nommer le nouveau dossier</string>
+    <string name="failed_create_folder">Impossible de créer le dossier</string>
+    <string name="folder_exists">Dossier déjà existant</string>
+
+    <string name="saf_select_save_location">Sélectionnez un emplacement pour les enregistrements</string>
+    <string name="saf_cancelled">Storage Access Framework annulé</string>
+
+    <!-- the permission names such as Microphone should match what Android calls them in the App permission settings -->
+    <string name="permission_record_audio_not_available">Permission «\u00A0Microphone\u00A0» non disponible</string>
+    <string name="permission_location_not_available">Permission «\u00A0Position\u00A0» non disponible</string>
+
+    <string name="start_video">Démarrer l\'enregistrement de la vidéo</string>
+    <string name="stop_video">Arrêter l\'enregistrement de la vidéo</string>
+
+    <string name="max_filesize">Taille de fichier max</string>
+    <string name="mb_abbreviation">Mo</string> <!-- symbol short for megabytes -->
+    <string name="gb_abbreviation">Go</string> <!-- symbol short for gigabytes -->
+
+    <string name="audio_control_start">Démarrer l\'écoute de l\'audio</string>
+    <string name="audio_control_stop">Arrêter l\'écoute de l\'audio</string>
+    <string name="speech_recognizer_started">Dire «\u00A0cheese\u00A0»</string>
+    <string name="audio_listener_started">Faire un bruit fort</string>
+    <string name="auto_stabilise_info">L\'auto-stabilisateur va automatiquement faire pivoter les photos pour qu\'elles
+        apparaîssent de niveau.\n\nNotez que cela implique que les images apparaîtront avec une résolution légèrement
+        inférieure (en relation avec la rotation et le rognage qui est nécessaire).
+    </string>
+    <string name="dont_show_again">Ne plus montrer</string>
+    <string name="failed_to_save_photo_raw">Impossible d\'enregistrer la photo RAW</string>
+    <string name="hdr_info">Le mode HDR est utile pour les prises de vue avec une grande variation de luminosité. Il
+        fonctionne en prenant plusieurs prises avec des expositions différentes, puis en les combinant pour produire
+        l\'image finale\nNotez que HDR n\'est pas approprié pour les scènes de mouvements et peut réduire la précision
+        de la reproduction des couleurs.\n\nPrendre des photos en mode HDR
+        sera également plus lent.
+    </string>
+    <string name="photo_mode">Mode photo</string>
+    <string name="photo_mode_hdr">HDR</string>
+    <string name="photo_mode_standard">Standard</string>
+    <string name="preference_background_photo_saving">Utiliser une tâche de fond</string>
+    <string name="preference_background_photo_saving_summary">Permettre d\'enregistrer les photos dans une tâche de fond
+        (opération plus rapide)
+    </string>
+    <string name="preference_category_stamp">Incrustations photo</string>
+    <string name="preference_hdr_save_expo">Enregistrer toutes les images en mode HDR</string>
+    <string name="preference_hdr_save_expo_summary">Si vous l\'activez, en mode photo HDR les trois images utilisées
+        seront enregistrées en supplément de la photo finale HDR. Notez que ceci ralentira l\'enregistrement, plus
+        particulièrement si les options «\u00A0Incrustation photo\u00A0» ou «\u00A0Auto-stabilisateur\u00A0» sont
+        utilisées.
+    </string>
+    <string name="preference_raw">RAW</string>
+    <string name="preference_raw_summary">Choisissez d\'enregistrer au format RAW (DNG)</string>
+    <string name="preference_save_zulu_time">Format de l\'heure pour le nom de fichier</string>
+    <string name="preference_save_zulu_time_summary">Utiliser l\'heure locale ou l\'heure UTC pour nommer les photos ou
+        les vidéos
+    </string>
+    <string name="raw_info">Les fichiers DNG contiennent toutes les informations non compressées ni traitées de votre
+        caméra.\n\nLa plupart des applications d\'affichage d\'image ne reconnaissent pas le DNG. Vous devrez utiliser une app
+        spécialisée comme Snapseed ou Lightroom\n\nNotez que certaines options comme «\u00A0Incrustation photo\u00A0» ou
+        «\u00A0Auto-stabilisateur\u00A0» ne s\'appliquent que pour des images JPEG et pas DNG.\n\nLes fichiers DNG
+        utilisent beaucoup d\'espace disque, un explorateur de fichiers peut être utilise pour faire le ménage.\n\nLes
+        fichiers DNG ne sont enregistrés que dans le mode photo standard.
+    </string>
+
+    <string name="duration_unlimited">Illimité</string>
+    <string name="duration_3s">3 secondes</string>
+    <string name="duration_5s">5 secondes</string>
+    <string name="duration_10s">10 secondes</string>
+    <string name="duration_15s">15 secondes</string>
+    <string name="duration_30s">30 secondes</string>
+    <string name="duration_1m">1 minute</string>
+    <string name="duration_2m">2 minutes</string>
+    <string name="duration_3m">3 minutes</string>
+    <string name="duration_4m">4 minutes</string>
+    <string name="duration_5m">5 minutes</string>
+    <string name="duration_6m">6 minutes</string>
+    <string name="duration_7m">7 minutes</string>
+    <string name="duration_8m">8 minutes</string>
+    <string name="duration_9m">9 minutes</string>
+    <string name="duration_10m">10 minutes</string>
+    <string name="duration_11m">11 minutes</string>
+    <string name="duration_12m">12 minutes</string>
+    <string name="duration_15m">15 minutes</string>
+    <string name="duration_20m">20 minutes</string>
+    <string name="duration_25m">25 minutes</string>
+    <string name="duration_30m">30 minutes</string>
+    <string name="duration_45m">45 minutes</string>
+    <string name="duration_1h">1 heure</string>
+</resources>

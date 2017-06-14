@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="flash_icons">
+        <item>drawable/flash_off</item>
+        <item>drawable/flash_auto</item>
+        <item>drawable/flash_on</item>
+        <item>drawable/flash_torch</item>
+        <item>drawable/flash_red_eye</item>
+        <item>drawable/flash_auto</item>
+        <item>drawable/flash_on</item>
+    </string-array>
+    <string-array name="flash_entries">
+        <item>Вспышка Выкл</item>
+        <item>Вспышка Авто</item>
+        <item>Вспышка Вкл</item>
+        <item>Фонарик</item>
+        <item>Красные глаза</item>
+        <item>Screen Flash Auto</item>
+        <item>Screen Flash On</item>
+    </string-array>
+    <string-array name="flash_values">
+        <item>flash_off</item>
+        <item>flash_auto</item>
+        <item>flash_on</item>
+        <item>flash_torch</item>
+        <item>flash_red_eye</item>
+        <item>flash_frontscreen_auto</item>
+        <item>flash_frontscreen_on</item>
+    </string-array>
+    <string-array name="focus_mode_icons">
+        <item>drawable/focus_mode_auto</item>
+        <item>drawable/focus_mode_infinity</item>
+        <item>drawable/focus_mode_macro</item>
+        <item>drawable/focus_mode_locked</item>
+        <item>drawable/focus_mode_manual</item>
+        <item>drawable/focus_mode_fixed</item>
+        <item>drawable/focus_mode_edof</item>
+        <item>drawable/focus_mode_continuous_picture</item>
+        <item>drawable/focus_mode_continuous_video</item>
+    </string-array>
+    <string-array name="focus_mode_entries">
+        <item>Автофокус</item>
+        <item>Бесконечность</item>
+        <item>Макро</item>
+        <item>Заблокированный</item>
+        <item>Ручной</item>
+        <item>Фиксированный</item>
+        <item>EDOF</item>
+        <item>Непрерывный(фото)</item>
+        <item>Непрерывный(видео)</item>
+    </string-array>
+    <string-array name="focus_mode_values">
+        <item>focus_mode_auto</item>
+        <item>focus_mode_infinity</item>
+        <item>focus_mode_macro</item>
+        <item>focus_mode_locked</item>
+        <item>focus_mode_manual2</item>
+        <item>focus_mode_fixed</item>
+        <item>focus_mode_edof</item>
+        <item>focus_mode_continuous_picture</item>
+        <item>focus_mode_continuous_video</item>
+    </string-array>
+    <string-array name="preference_lock_orientation_entries">
+        <item>Нет</item>
+        <item>Альбомная</item>
+        <item>Портретная</item>
+    </string-array>
+    <string-array name="preference_lock_orientation_values">
+        <item>none</item>
+        <item>landscape</item>
+        <item>portrait</item>
+    </string-array>
+    <string-array name="preference_timer_entries">
+        <item>Выкл</item>
+        <item>1 секунда</item>
+        <item>2 секунды</item>
+        <item>3 секунды</item>
+        <item>5 секунд</item>
+        <item>10 секунд</item>
+        <item>15 секунд</item>
+        <item>20 секунд</item>
+        <item>30 секунд</item>
+        <item>1 минуты</item>
+        <item>2 минуты</item>
+        <item>5 минут</item>
+    </string-array>
+    <string-array name="preference_timer_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>30</item>
+        <item>60</item>
+        <item>120</item>
+        <item>300</item>
+    </string-array>
+    <string-array name="preference_burst_mode_entries">
+        <item>Выкл</item>
+        <item>2x</item>
+        <item>3x</item>
+        <item>4x</item>
+        <item>5x</item>
+        <item>10x</item>
+        <item>Навсегда</item> <!-- Russian uses 'Forever' intead of 'Unlimited' (Неограниченно) so it's not too long for popup menu on small screens! -->
+    </string-array>
+    <string-array name="preference_burst_mode_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>10</item>
+        <item>unlimited</item>
+    </string-array>
+    <string-array name="preference_burst_interval_entries">
+        <item>Без задержки</item>
+        <item>1 секунда</item>
+        <item>2 секунды</item>
+        <item>3 секунды</item>
+        <item>5 секунд</item>
+        <item>10 секунд</item>
+        <item>15 секунд</item>
+        <item>20 секунд</item>
+        <item>30 секунд</item>
+        <item>1 минута</item>
+        <item>2 минуты</item>
+        <item>5 минут</item>
+        <item>10 минут</item>
+        <item>20 минут</item>
+        <item>30 минут</item>
+        <item>1 час</item>
+        <item>2 часа</item>
+    </string-array>
+    <string-array name="preference_burst_interval_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>30</item>
+        <item>60</item>
+        <item>120</item>
+        <item>300</item>
+        <item>600</item>
+        <item>1200</item>
+        <item>1800</item>
+        <item>3600</item>
+        <item>7200</item>
+    </string-array>
+    <string-array name="preference_preview_size_entries">
+        <item>Максимальный</item>
+        <item>Размер фото (WYSIWYG)</item>
+    </string-array>
+    <string-array name="preference_preview_size_values">
+        <item>preference_preview_size_display</item>
+        <item>preference_preview_size_wysiwyg</item>
+    </string-array>
+    <string-array name="preference_touch_capture_entries">
+        <item>Нет</item>
+        <item>Одно касание</item>
+        <item>Двойное касание</item>
+        </string-array>
+    <string-array name="preference_touch_capture_values">
+        <item>none</item>
+        <item>single</item>
+        <item>double</item>
+    </string-array>
+    <string-array name="preference_volume_keys_entries">
+        <item>Сделать фото (или запустить/остановить запись видео)</item>
+        <item>Фокус</item>
+        <item>Увеличить/уменьшить масштаб</item>
+        <item>Изменить уровень экспозиции</item>
+        <item>Автоматическая стабилизация вкл/выкл</item>
+        <item>Изменить громкость</item>
+        <item>Ничего</item>
+    </string-array>
+    <string-array name="preference_volume_keys_values">
+        <item>volume_take_photo</item>
+        <item>volume_focus</item>
+        <item>volume_zoom</item>
+        <item>volume_exposure</item>
+        <item>volume_auto_stabilise</item>
+        <item>volume_nothing</item><!-- actually means change device volume! -->
+        <item>volume_really_nothing</item>
+    </string-array>
+    <string-array name="preference_rotate_preview_entries">
+        <item>Не поворачивать</item>
+        <item>Повернуть на 180 градусов</item>
+        </string-array>
+    <string-array name="preference_rotate_preview_values">
+        <item>0</item>
+        <item>180</item>
+    </string-array>
+    <string-array name="preference_ui_placement_entries">
+        <item>Интерфейс для левши</item>
+        <item>Интерфейс для правши</item>
+    </string-array>
+    <string-array name="preference_ui_placement_values">
+        <item>ui_left</item>
+        <item>ui_right</item>
+    </string-array>
+    <string-array name="preference_immersive_mode_entries">
+        <item>Выключить</item>
+        <item>Скрыть кнопки навигации</item>
+        <item>Скрыть интерфейс</item>
+        <item>Скрыть все</item>
+    </string-array>
+    <string-array name="preference_immersive_mode_values">
+        <item>immersive_mode_off</item>
+        <item>immersive_mode_low_profile</item>
+        <item>immersive_mode_gui</item>
+        <item>immersive_mode_everything</item>
+        </string-array>
+    <string-array name="preference_angle_highlight_color_entries">
+        <item>Красный</item>
+        <item>Зеленый</item>
+        <item>Синий</item>
+        <item>Желтый</item>
+        <item>Фиолетовый</item>
+        <item>Белый</item>
+    </string-array>
+    <string-array name="preference_angle_highlight_color_values">
+        <item>#f44336</item> <!-- Red 500 -->
+        <item>#14e715</item> <!-- Green A400 -->
+        <item>#2196f3</item> <!-- Blue 500 -->
+        <item>#ffeb3b</item> <!-- Yellow 500 -->
+        <item>#9c27b0</item> <!-- Purple 500 -->
+        <item>#ffffff</item> <!-- White -->
+    </string-array>
+    <string-array name="preference_grid_entries">
+        <item>Нет</item>
+        <item>3x3</item>
+        <item>Phi 3x3</item>
+        <item>4x2</item>
+        <item>Перекрестие</item>
+        <item>Золотое сечение (1)</item>
+        <item>Золотое сечение (2)</item>
+        <item>Золотое сечение (3)</item>
+        <item>Золотое сечение (4)</item>
+        <item>Треугольник (1)</item>
+        <item>Треугольник (2)</item>
+        <item>Диагонали</item>
+    </string-array>
+    <string-array name="preference_grid_values">
+        <item>preference_grid_none</item>
+        <item>preference_grid_3x3</item>
+        <item>preference_grid_phi_3x3</item>
+        <item>preference_grid_4x2</item>
+        <item>preference_grid_crosshair</item>
+        <item>preference_grid_golden_spiral_right</item>
+        <item>preference_grid_golden_spiral_left</item>
+        <item>preference_grid_golden_spiral_upside_down_right</item>
+        <item>preference_grid_golden_spiral_upside_down_left</item>
+        <item>preference_grid_golden_triangle_1</item>
+        <item>preference_grid_golden_triangle_2</item>
+        <item>preference_grid_diagonals</item>
+    </string-array>
+    <string-array name="preference_crop_guide_entries">
+        <item>Нет</item>
+        <item>1 (1:1)</item>
+        <item>1.25 (5:4)</item>
+        <item>1.33 (4:3)</item>
+        <item>1.4 (7:4)</item>
+        <item>1.5 (3:2)</item>
+        <item>1.78 (16:9)</item>
+        <item>1.85 (37:20)</item>
+        <item>2.33 (21:9)</item>
+        <item>2.35 (47:20)</item>
+        <item>2.4 (12:5)</item>
+    </string-array>
+    <string-array name="preference_crop_guide_values">
+        <item>crop_guide_none</item>
+        <item>crop_guide_1</item>
+        <item>crop_guide_1.25</item>
+        <item>crop_guide_1.33</item>
+        <item>crop_guide_1.4</item>
+        <item>crop_guide_1.5</item>
+        <item>crop_guide_1.78</item>
+        <item>crop_guide_1.85</item>
+        <item>crop_guide_2.33</item>
+        <item>crop_guide_2.35</item>
+        <item>crop_guide_2.4</item>
+    </string-array>
+    <string-array name="preference_raw_entries">
+        <item>Только JPEG</item>
+        <item>JPEG и DNG (RAW)</item>
+    </string-array>
+    <string-array name="preference_raw_values">
+        <item>preference_raw_no</item>
+        <item>preference_raw_yes</item>
+    </string-array>
+    <string-array name="preference_stamp_entries">
+        <item>Без штампа</item>
+        <item>Со штампом</item>
+    </string-array>
+    <string-array name="preference_stamp_values">
+        <item>preference_stamp_no</item>
+        <item>preference_stamp_yes</item>
+    </string-array>
+    <string-array name="preference_stamp_dateformat_entries">
+        <item>По умолчанию</item>
+        <item>гггг/мм/дд</item>
+        <item>дд/мм/гггг</item>
+        <item>мм/дд/гггг</item>
+        <item>Нет</item>
+    </string-array>
+    <string-array name="preference_stamp_dateformat_values">
+        <item>preference_stamp_dateformat_default</item>
+        <item>preference_stamp_dateformat_yyyymmdd</item>
+        <item>preference_stamp_dateformat_ddmmyyyy</item>
+        <item>preference_stamp_dateformat_mmddyyyy</item>
+        <item>preference_stamp_dateformat_none</item>
+    </string-array>
+    <string-array name="preference_stamp_timeformat_entries">
+        <item>По умолчанию</item>
+        <item>12 часов</item>
+        <item>24 часа</item>
+        <item>Нет</item>
+    </string-array>
+    <string-array name="preference_stamp_timeformat_values">
+        <item>preference_stamp_timeformat_default</item>
+        <item>preference_stamp_timeformat_12hour</item>
+        <item>preference_stamp_timeformat_24hour</item>
+        <item>preference_stamp_timeformat_none</item>
+    </string-array>
+    <string-array name="preference_stamp_gpsformat_entries">
+        <item>По умолчанию</item>
+        <item>Градусы/минуты/секунды</item>
+        <item>Нет</item>
+    </string-array>
+    <string-array name="preference_stamp_gpsformat_values">
+        <item>preference_stamp_gpsformat_default</item>
+        <item>preference_stamp_gpsformat_dms</item>
+        <item>preference_stamp_gpsformat_none</item>
+    </string-array>
+    <string-array name="preference_stamp_fontsize_entries">
+        <item>6</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>14</item>
+        <item>16</item>
+        <item>18</item>
+        <item>20</item>
+        <item>22</item>
+        <item>24</item>
+    </string-array>
+    <string-array name="preference_stamp_fontsize_values">
+        <item>6</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>14</item>
+        <item>16</item>
+        <item>18</item>
+        <item>20</item>
+        <item>22</item>
+        <item>24</item>
+    </string-array>
+    <string-array name="preference_stamp_style_entries">
+        <item>Текст с тенью</item>
+        <item>Обычный текст</item>
+    </string-array>
+    <string-array name="preference_stamp_style_values">
+        <item>preference_stamp_style_shadowed</item>
+        <item>preference_stamp_style_plain</item>
+    </string-array>
+    <string-array name="preference_video_bitrate_entries">
+        <item>По умолчанию</item>
+        <item>100 kbps</item>
+        <item>200 kbps</item>
+        <item>500 kbps</item>
+        <item>1 Mbps</item>
+        <item>2 Mbps</item>
+        <item>3 Mbps</item>
+        <item>4 Mbps</item>
+        <item>5 Mbps</item>
+        <item>6 Mbps</item>
+        <item>7 Mbps</item>
+        <item>8 Mbps</item>
+        <item>9 Mbps</item>
+        <item>10 Mbps</item>
+        <item>15 Mbps</item>
+        <item>20 Mbps</item>
+        <item>30 Mbps</item>
+        <item>40 Mbps</item>
+        <item>50 Mbps</item>
+        <item>60 Mbps</item>
+        <item>70 Mbps</item>
+        <item>80 Mbps</item>
+        <item>90 Mbps</item>
+        <item>100 Mbps</item>
+    </string-array>
+    <string-array name="preference_video_bitrate_values">
+        <item>default</item>
+        <item>100000</item>
+        <item>200000</item>
+        <item>500000</item>
+        <item>1000000</item>
+        <item>2000000</item>
+        <item>3000000</item>
+        <item>4000000</item>
+        <item>5000000</item>
+        <item>6000000</item>
+        <item>7000000</item>
+        <item>8000000</item>
+        <item>9000000</item>
+        <item>10000000</item>
+        <item>15000000</item>
+        <item>20000000</item>
+        <item>30000000</item>
+        <item>40000000</item>
+        <item>50000000</item>
+        <item>60000000</item>
+        <item>70000000</item>
+        <item>80000000</item>
+        <item>90000000</item>
+        <item>100000000</item>
+    </string-array>
+    <string-array name="preference_video_fps_entries">
+        <item>По умолчанию</item>
+        <item>15</item>
+        <item>24</item>
+        <item>25</item>
+        <item>30</item>
+        <item>60</item>
+        <item>96</item>
+        <item>100</item>
+        <item>120</item>
+    </string-array>
+    <string-array name="preference_video_fps_values">
+        <item>default</item>
+        <item>15</item>
+        <item>24</item>
+        <item>25</item>
+        <item>30</item>
+        <item>60</item>
+        <item>96</item>
+        <item>100</item>
+        <item>120</item>
+    </string-array>
+    <string-array name="preference_video_restart_entries">
+        <item>Не повторять</item>
+        <item>Повторить 1 раз</item>
+        <item>Повторить 2 раза</item>
+        <item>Повторить 3 раза</item>
+        <item>Повторить 4 раза</item>
+        <item>Повторить 5 раз</item>
+        <item>Повторить 6 раз</item>
+        <item>Повторить 7 раз</item>
+        <item>Повторить 8 раз</item>
+        <item>Повторить 9 раз</item>
+        <item>Повторить 10 раз</item>
+    </string-array>
+    <string-array name="preference_video_restart_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+    </string-array>
+    <string-array name="preference_record_audio_src_entries">
+        <item>Микрофон видеокамеры</item>
+        <item>Внешний микрофон (если есть)</item>
+        <item>По умолчанию</item>
+        <item>Оптимизировано для голоса</item>
+    </string-array>
+    <string-array name="preference_record_audio_src_values">
+        <item>audio_src_camcorder</item>
+        <item>audio_src_mic</item>
+        <item>audio_src_default</item>
+        <item>audio_src_voice_communication</item>
+    </string-array>
+    <string-array name="preference_record_audio_channels_entries">
+        <item>По умолчанию</item>
+        <item>Моно</item>
+        <item>Стерео (не для всех устройств)</item>
+    </string-array>
+    <string-array name="preference_record_audio_channels_values">
+        <item>audio_default</item>
+        <item>audio_mono</item>
+        <item>audio_stereo</item>
+    </string-array>
+    <string-array name="preference_audio_control_entries">
+        <item>Нет</item>
+        <item>Громкий шум</item>
+        <item>Голосовая команда: \"cheese\"</item>
+    </string-array>
+    <string-array name="preference_audio_control_values">
+        <item>none</item>
+        <item>noise</item>
+        <item>voice</item>
+    </string-array>
+    <string-array name="preference_audio_noise_control_sensitivity_entries">
+        <item>+3 (высокая чувствительность)</item>
+        <item>+2</item>
+        <item>+1</item>
+        <item>0 (по умолчанию)</item>
+        <item>-1</item>
+        <item>-2 (низкая чувствительность)</item>
+    </string-array>
+    <string-array name="preference_audio_noise_control_sensitivity_values">
+        <item>3</item>
+        <item>2</item>
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+        <item>-2</item>
+    </string-array>
+    <string-array name="preference_video_max_filesize_entries">
+        <item>По умолчанию (зависит от устройства)</item>
+        <item>100 Мб</item>
+        <item>200 Мб</item>
+        <item>300 Мб</item>
+        <item>500 Мб</item>
+        <item>1 Гб</item>
+    </string-array>
+    <string-array name="preference_video_max_filesize_values">
+        <item>0</item>
+        <item>104857600</item>
+        <item>209715200</item>
+        <item>314572800</item>
+        <item>524288000</item>
+        <item>1073741824</item>
+    </string-array>
+    <string-array name="preference_save_zulu_time_entries">
+        <item>Местное время</item>
+        <item>UTC (Zulu)</item>
+    </string-array>
+    <string-array name="preference_save_zulu_time_values">
+        <item>local</item>
+        <item>zulu</item>
+    </string-array>
+    <string-array name="preference_expo_bracketing_n_images_entries">
+        <item>3</item>
+        <item>5</item>
+    </string-array>
+    <string-array name="preference_expo_bracketing_n_images_values">
+        <item>3</item>
+        <item>5</item>
+    </string-array>
+    <string-array name="preference_expo_bracketing_stops_entries">
+        <item>0.5</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <string-array name="preference_expo_bracketing_stops_values">
+        <item>0.5</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <string-array name="preference_front_camera_mirror_entries">
+        <item>Не зеркалить</item>
+        <item>Зеркалить фото</item>
+    </string-array>
+    <string-array name="preference_front_camera_mirror_values">
+        <item>preference_front_camera_mirror_no</item>
+        <item>preference_front_camera_mirror_photo</item>
+    </string-array>
+    <string-array name="preference_video_subtitle_entries">
+        <item>Нет субтитров</item>
+        <item>Записывать субтитры</item>
+    </string-array>
+    <string-array name="preference_video_subtitle_values">
+        <item>preference_video_subtitle_no</item>
+        <item>preference_video_subtitle_yes</item>
+    </string-array>
+</resources>

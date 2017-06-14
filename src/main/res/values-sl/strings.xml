@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Open Camera</string>
+    <string name="action_settings">Nastavitve</string>
+    <string name="action_popup">Nastavitve pojavnih oken</string>
+    <string name="intro_text">Dotaknite se za ostrenje in pritisnite moder gumb za slikanje fotografij. Za več pomoči kliknite Spletna pomoč v nastavitvah. Open Camera je popolnoma brezplačen. Če vam je ta program všeč, prosim razmislite o nakupu mojega programa za darovanje :) (glejte povezavo v nastavitvah ali spletno pomoč).\n\nPravilnik o zasebnosti: za označevanje z zemljepisnim položajem je zahtevano dovoljenje za lokacijo, vendar je to privzeto onemogočeno. Če je omogočeno, se vaša lokacija v shranjenih datotekah kodira (in se uporablja samo za ta namen).</string>
+    <string name="intro_ok">V redu (to sporočilo se ne bo več prikazovalo)</string>
+    
+    <string name="answer_yes">Da</string>
+    <string name="answer_no">Ne</string>
+
+    <string name="on">Vkl.</string> <!-- whether a setting is turned on, e.g., "Auto-stabilise: On" -->
+    <string name="off">Izk.</string> <!-- whether a setting is turned off, e.g., "Auto-stabilise: Off" -->
+    
+    <string name="choose_save_location">Izberite mesto za shranjevanje:</string>
+    <string name="clear_folder_history">Počisti zgodovino mape</string>
+    <string name="clear_folder_history_question">Počisti zgodovino mape?</string>
+    <string name="choose_another_folder">Izberite drugo mapo</string>
+    <string name="changed_save_location">Mesto za shranjevanje spremenjeno na:</string>
+    <string name="stopped_recording_video">Snemanje videoposnetka ustavljeno</string>
+    <string name="repeats_to_go">ponovitev preostalih</string> <!--  intentionally starts lower case -->
+    <string name="failed_to_reconnect_camera">Povezava s fotoaparatom je spodletela</string>
+    <string name="video_may_be_corrupted">Napaka, datoteka videoposnetka je morda pokvarjena</string>
+    <string name="not_supported">ni podprto na vaši napravi</string> <!--  intentionally starts lower case -->
+    <string name="video_error_unknown">Neznana napaka, videoposnetek ustavljen</string>
+    <string name="video_error_server_died">Strežnik se je sesul, videoposnetek ustavljen</string>
+    <string name="video_max_duration">Videoposnetek je dosegel najdaljše trajanje</string>
+    <string name="video_max_filesize">Videoposnetek je dosegel največjo velikost datoteke</string>
+    <string name="exposure_compensation">Izavnava osvetlitve</string>
+    <string name="fps">sl./s</string>
+    <string name="focus_distance">Razdalja ostrenja</string>
+    <string name="infinite">Neskončna</string>
+    <string name="front_camera">Sprednji fotoaparat</string>
+    <string name="back_camera">Zadnji fotoaparat</string>
+    <string name="photo">Fotografija</string>
+    <string name="video">Videoposnetek</string>
+    <string name="exposure_locked">Osvetlitev zaklenjena</string>
+    <string name="exposure_unlocked">Osvetlitev odklenjena</string>
+    <string name="cancelled_timer">Samosprožilec preklican</string>
+    <string name="cancelled_burst_mode">Zaporedni način preklican</string>
+    <string name="started_timer">Odštevanje se je začelo</string>
+    <string name="failed_to_save_video">Shranjevanje datoteke videoposnetka je spodletelo</string>
+    <string name="failed_to_record_video">Snemanje videoposnetka je spodletelo</string>
+    <string name="started_recording_video">Snemanje videoposnetka se je začelo</string>
+    <string name="sorry">Oprostite</string>
+    <string name="failed_to_save_photo">Shranjevanje fotografije je spodletelo</string>
+	<string name="failed_to_save_photo_raw">Shranjevanje fotografije v obliki RAW je spodletelo</string>
+    <string name="failed_to_auto_stabilise">Samodejna ustalitev je spodletela</string>
+    <string name="failed_to_start_camera_preview">Zagon predogleda fotoaparata je spodletel</string>
+    <string name="taking_photo">Slikanje fotografije</string>
+    <string name="failed_to_take_picture">Slikanje fotografije je spodletelo</string>
+    <string name="location_not_available">Lokacija GPS ni na voljo</string>
+    <string name="photo_deleted">Fotografija izbrisana</string>
+    <string name="no_gallery_app">Program galerije ni na voljo</string>
+    <string name="screen_is_locked">Zaslon je zaklenjen\nPovlecite ga za odklepanje</string>
+    <string name="unlocked">Odklenjen</string>
+    <string name="auto_stabilise_not_supported">Žal samodejna ustalitev ni podprta\nna tej napravi</string>
+    <string name="audio_disabled">Zvok onemogočen</string>
+    <string name="max_duration">Najdaljše trajanje</string>
+    <string name="color_effect">Barvni učinek</string>
+    <string name="scene_mode">Način prizora</string>
+    <string name="white_balance">Ravnovesje beline</string>
+    
+    <string name="angle">Kot</string>
+    <string name="direction">Smer</string>
+    <string name="failed_to_open_camera_1">ODPIRANJE FOTOAPARATA JE SPODLETELO.</string>
+    <string name="failed_to_open_camera_2">FOTOAPARAT MORDA UPORABLJA</string>
+    <string name="failed_to_open_camera_3">DRUG PROGRAM?</string>
+    <string name="iso">ISO</string>
+    <string name="zoom">Povečava</string>
+    <string name="free_memory">Nezased.</string>
+    <string name="screen_lock_message_1">[ZAKLENJENO:</string>
+    <string name="screen_lock_message_2">povlecite za odklepanje]</string>
+    
+    <string name="failed_to_stamp">Dodajanje časovnega žiga na fotografijo je spodletelo</string>
+    <string name="metres_abbreviation">m</string> <!-- symbol short for metres -->
+    
+    <string name="preference_category_camera_effects">Učinki fotoaparata</string>
+    <string name="preference_auto_stabilise">samodejno ustali</string>
+    <string name="preference_auto_stabilise_summary">Slike bodo zavrtene za samodejno vodoravno poravnavo (samo fotografije) (slikanje fotografij je počasnejše in lahko spodleti na napravah s premalo pomnilnika)</string>
+    <string name="preference_color_effect">Uporabi barvni učinek</string>
+    <string name="preference_color_effect_summary">Uporabi izbrani bavni učinek za fotografije</string>
+    <string name="preference_scene_mode">Uporabi način prizora</string>
+    <string name="preference_scene_mode_summary">Optimiziraj fotografije za različne prizore</string>
+    <string name="preference_white_balance">Nastavi ravnovesje beline</string>
+    <string name="preference_white_balance_summary">Izberite nastavitev za prilagajanje ravnovesja beline</string>
+    <string name="preference_iso">Nastavi ISO</string>
+    <string name="preference_iso_summary">Višja vrednost pomeni večjo občutljivost na svetlobo (morda ne bo delovalo na nekaterih napravah)</string>
+    <string name="preference_exposure">Nastavi izravnavo osvetlitve</string>
+    <string name="preference_exposure_summary">Nastavite na 0 za privzeto izravnavo osvetlitve</string>
+    <string name="preference_lock_orientation">Zakleni usmerjenost fotografij/videoposnetkov</string>
+    <string name="preference_lock_orientation_summary">Če je nastavljeno, bo usmerjenost naprave prezrta in fotografije/videoposnetki bodo usmerjeni glede na določeno usmerjenost</string>
+    <string name="preference_face_detection">Zaznavanje obrazov</string>
+    <string name="preference_face_detection_summary">Uporabi zaznavanje obrazov namesto področij ostrenja</string>
+
+    <string name="preference_category_camera_controls">Nadzor fotoaparata</string>
+    <string name="preference_timer">Samosprožilec</string>
+    <string name="preference_timer_summary">Nastavite samosprožilec fotoaparata</string>
+    <string name="preference_timer_beep">Pisk samosprožilca</string>
+    <string name="preference_timer_beep_summary">Zapiskaj ob odštevanju samosprožilca ali zakasnitvi zaporednega načina</string>
+    <string name="preference_timer_speak">Glasovno odštevanje samosprožilca</string>
+    <string name="preference_timer_speak_summary">Glasovno odštevanje samosprožilca ali zakasnitve zaporednega načina (od 60-ih s naprej)</string>
+    <string name="preference_burst_mode">Zaporedje</string>
+    <string name="preference_burst_mode_summary">Posnemi več fotografij v zaporedju</string>
+    <string name="preference_burst_interval">Razmik zaporednega načina</string>
+    <string name="preference_burst_interval_summary">Zakasnitev (če obstaja) med fotografjami v zaporednem načinu</string>
+    <string name="preference_screen_camera_controls_more">Več nadzora fotoaparata …</string>
+    <string name="preference_touch_capture">Dotik za zajem</string>
+    <string name="preference_touch_capture_summary">Posnemi fotografijo z dotikom ali dvojnim dotikom predogleda</string>
+    <string name="preference_pause_preview">Premor po slikanju fotografije</string>
+    <string name="preference_pause_preview_summary">Premor zaslona po slikanju fotografje z možnostjo deljenja ali izbrisa fotografije</string>
+    <string name="preference_shutter_sound">Zvok zaslonke</string>
+    <string name="preference_shutter_sound_summary">Predvajaj zvok ob slikanju fotografije</string>
+    <string name="preference_volume_keys">Gumba za glasnost</string>
+    <string name="preference_volume_keys_summary">Nastavite vedenje ob pritisku na gumba za glasnost</string>
+    <string name="preference_audio_control">Možnosti nadzora zvoka</string>
+    <string name="preference_audio_control_summary">Posnemi fotografijo ali videoposnetek ob zaznavanju zvoka ali glasovnemu ukazu (\"cheese\"). Ko je omogočeno, uporabite gumb mikrofona na zaslonu za začetek in ustavitev poslušanja.</string>
+    <string name="preference_audio_noise_control_sensitivity">Nadzor občutljivosti zvoka</string>
+    <string name="preference_audio_noise_control_sensitivity_summary">Možnost občutljivosti ravni šuma za zvok (glasen šum)</string>
+    <string name="preference_save_location">Mesto za shranjevanje</string>
+    <string name="preference_save_location_summary">Mapa za shranjevanje datotek fotografij/videoposnetkov</string>
+    <string name="preference_using_saf">Uporabi ogrodje za dostop do pomnilniške naprave</string>
+    <string name="preference_using_saf_summary">Ali naj se uporabi ogrodje za dostop do pomnilniške naprave Androida 5 za shranjevanje fotografij in videoposnetkov</string>
+    <string name="preference_save_photo_prefix">Predpona shranjenih fotografij</string>
+    <string name="preference_save_photo_prefix_summary">Predpona imena datotek fotografij</string>
+    <string name="preference_save_video_prefix">Predpona shranjenih videoposnetkov</string>
+    <string name="preference_save_video_prefix_summary">Predpona imena datotek videoposnetkov</string>
+	<string name="preference_save_zulu_time">Oblika časa za ime datoteke</string>
+    <string name="preference_save_zulu_time_summary">Ali naj se uporabi krajevni čas ali čas UTC (Coordinated Universal Time) za poimenovanje fotografij in videoposnetkov</string>
+    <string name="preference_show_when_locked">Prikaži fotoaparat, ko je zaklenjeno</string>
+    <string name="preference_show_when_locked_summary">Če je omogočeno, se bo Open Camera še vedno prikazoval nad zaklenjenim zaslonom (še vedno boste morali odkleniti za dostop do nastavitev, galerije itd.)</string>
+    <string name="preference_startup_focus">Izvedi samodejno ostrenje ob zagonu</string>
+    <string name="preference_startup_focus_summary">Ali naj se izvede samodejno ostrenje ob zagonu Open Camere. Če imate težavo z vklopom bliskavice ob zagonu, onemogočite to možnost</string>
+    <string name="preference_lock_video">Zakleni zaslon ob snemanju videoposnetkov</string>
+    <string name="preference_lock_video_summary">Ob snemanju videoposnetkov se bo gr. up. vmesnik zaklenil, da se prepreči naključna ustavitev snemanja. Povlecite zaslon za odklepanje. Upoštevajte, da se bo snemanje videoposnetkov vedno ustavilo, če se program postavi v ozadje ali zaslon izprazni.</string>
+    <string name="preference_rotate_preview">Zavrti predogled</string>
+    <string name="preference_rotate_preview_summary">Možnost vrtenja predogleda (ne bo vplivalo na nastale fotografije/videoposnetke)</string>
+    <string name="preference_screen_gui">Gr. up. vmesnik na zaslonu …</string>
+    <string name="preference_preview_size">Velikost predogleda</string>
+    <string name="preference_preview_size_summary">Kako izbrati velikost preogleda</string>
+    <string name="preference_ui_placement">Posavitev up. vmesnika</string>
+    <string name="preference_ui_placement_summary">Izbira up. vmesnika za levičarje ali desničarje</string>
+    <string name="preference_immersive_mode">Vdelan način</string>
+    <string name="preference_immersive_mode_summary">Možnosti vedenja za \"Vdelan način\"</string>
+    <string name="preference_show_zoom">Prikaži povečavo</string>
+    <string name="preference_show_zoom_summary">Prikaži trenutno raven povečave na zaslonu (ob povečavi)</string>
+    <string name="preference_show_zoom_controls">Prikaži nadzorna gumba za povečavo -/+</string>
+    <string name="preference_show_zoom_controls_summary">Prikaži gumba -/+ za nadzor povečave</string>
+    <string name="preference_show_zoom_slider_controls">Prikaži drsnik povečave</string>
+    <string name="preference_show_zoom_slider_controls_summary">Prikaži drsnik za nadzor povečave</string>
+    <string name="preference_show_iso">Prikaži ISO</string>
+    <string name="preference_show_iso_summary">Prikaži trenutno raven ISO (zahteva API Camera2)</string>
+    <string name="preference_free_memory">Prikaži nezaseden prostor</string>
+    <string name="preference_free_memory_summary">Na zaslonu prikaži količino nezasedenega prostora na pomnilniški napravi</string>
+    <string name="preference_show_angle">Prikaži kot</string>
+    <string name="preference_show_angle_summary">Na zaslonu prikaži trenutni kot usmerjenosti naprave</string>
+    <string name="preference_show_angle_line">Prikaži črto kota</string>
+    <string name="preference_show_angle_line_summary">Prikaži črto vodoravne ravni</string>
+    <string name="preference_angle_highlight_color">Barva poudarjanja kota/višine</string>
+    <string name="preference_angle_highlight_color_summary">Barva poudarjanja, ko je fotoaparat skoraj vodoraven</string>
+    <string name="preference_show_geo_direction">Prikaži kompas</string>
+    <string name="preference_show_geo_direction_summary">Na zaslonu prikaži kompas s smerjo naprave</string>
+    <string name="preference_show_time">Prikaži čas</string>
+    <string name="preference_show_time_summary">Na zaslonu prikaži trenutni čas</string>
+    <string name="preference_show_battery">Prikaži baterijo</string>
+    <string name="preference_show_battery_summary">Na zaslonu prikaži trenutno raven baterije</string>
+    <string name="preference_grid">Prikaži mrežo</string>
+    <string name="preference_grid_summary">Prikaži eno od raznih mrež</string>
+	<string name="grid">Mreža</string>
+    <string name="preference_crop_guide">Prikaži vodnik za obrezovanje</string>
+    <string name="preference_crop_guide_summary">Vodnik za obrezovanje prikazuje pravokotnik določenega razmerja slike - uporabno, če boste kasneje obrezali fotografijo/videoposnetek na drugo razmerje. Zahteva način za fotografije WYSIWYG ali način za videoposnetke.</string>
+    <string name="preference_show_toasts">Prikaži \"pojavna\" sporočila</string>
+    <string name="preference_show_toasts_summary">Ali naj se prikažejo \"pojavna\" sporočila</string>
+    <string name="preference_thumbnail_animation">Prikaži animacijo sličice</string>
+    <string name="preference_thumbnail_animation_summary">Prikaži premikajočo animacijo sličice med slikanjem fotografije</string>
+    <string name="preference_take_photo_border">Prikaži obrobo med slikanjem fotografije</string>
+    <string name="preference_take_photo_border_summary">Na zaslonu prikaži obrobo, da se nakaže slikanje fotografije</string>
+    <string name="preference_keep_display_on">Pusti zaslon vklopljen</string>
+    <string name="preference_keep_display_on_summary">Če je omogočeno, se zaslon ne bo izklopil, ko je glavni up. vmesnik Open Camere dejaven</string>
+    <string name="preference_max_brightness">Vsili največjo svetlost</string>
+    <string name="preference_max_brightness_summary">Vsili največjo svetlost zaslona in ne uporabi privzete svetlosti</string>
+    
+    <string name="preference_category_camera_quality">Nastavitve za fotografije in videoposnetke</string>
+    <string name="preference_screen_photo_settings">Nastavitve za fotografije …</string>
+    <string name="preference_screen_video_settings">Nastavitve za videoposnetke …</string>
+    <string name="preference_screen_location_settings">Nastavitve lokacije …</string>
+    <string name="preference_resolution">Ločljivost fotoaparata</string>
+    <string name="preference_resolution_summary">Nastavite ločljivost fotografij</string>
+    <string name="preference_quality">Kakovost slik</string>
+    <string name="preference_quality_summary">Nastavite kakovost shranjenih slik JPEG (priporočljiva vrednost je 90 %%)</string>
+	<string name="preference_raw">RAW</string>
+    <string name="preference_raw_summary">Ali naj se slike shranjuje v obliki RAW (DNG)</string>
+    <string name="preference_location">Shrani podatke o lokaciji (označevanje z zemljepisnim položajem)</string>
+    <string name="preference_location_summary">Shrani podatke o lokaicji GPS v fotografijah/videoposnetkih</string>
+    <string name="preference_gps_direction">Shrani smer kompasa</string>
+    <string name="preference_gps_direction_summary">Shrani smer komapasa GPS v fotografijah</string>
+    <string name="preference_require_location">Zahtevaj podatke o lokaciji</string>
+    <string name="preference_require_location_summary">Če so podatki o lokaciji omogočeni, snemaj fotografije/videoposnetke samo, če so ti podatki na voljo</string>
+    <string name="preference_stamp">Časovni žig fotografij</string>
+    <string name="preference_stamp_summary">Na fotografije dodaj časovni žig in tudi podatke GPS, če so podatki o lokaciji/smeri omogočeni</string>
+    <string name="preference_stamp_dateformat">Oblika datumskega žiga</string>
+    <string name="preference_stamp_dateformat_summary">Določite obliko datumskega žiga (če je omogočeno)</string>
+    <string name="preference_stamp_timeformat">Oblika časovnega žiga</string>
+    <string name="preference_stamp_timeformat_summary">Določite obliko časovnega žiga (če je omogočeno)</string>
+    <string name="preference_stamp_gpsformat">Oblika žiga GPS</string>
+    <string name="preference_stamp_gpsformat_summary">Določite obliko žiga GPS (če je omogočeno)</string>
+    <string name="preference_textstamp">Besedilo po meri</string>
+    <string name="preference_textstamp_summary">Na fotografije dodaj žig z besedilom po meri</string>
+    <string name="preference_stamp_fontsize">Velikost pisave</string>
+    <string name="preference_stamp_fontsize_summary">Velikost pisave žiga z besedilom</string>
+    <string name="preference_stamp_font_color">Barva pisave</string>
+    <string name="preference_stamp_font_color_summary">Barva pisave žiga z besedilom</string>
+    <string name="preference_stamp_style">Slog besedila</string>
+    <string name="preference_stamp_style_summary">Slog besedila žiga</string>
+    <string name="preference_background_photo_saving">Uporabi nit v ozadju</string>
+    <string name="preference_background_photo_saving_summary">Ali naj se fotografije shranjujejo z uporabo niti v ozadju (za hitrejše delovanje)</string>
+    <string name="video_quality">Ločljivost videoposnetkov</string>
+    <string name="video_quality_summary">Nastavite ločljivost videoposnetkov</string>
+    <string name="preference_force_video_4k">Vsili vidosposnetke 4K UHD (deluje samo na nekaterih napravah)</string>
+    <string name="preference_force_video_4k_summary">Omogoči ločljivost 3840x2160 za snemanje videoposnetkov z zadnjo kamero - ta možnost je zaobidenje, ki bo morda omogočila naprave 4K s kamerami 4K, ki te možnosti ne razkrijejo programom za kamero tretjih oseb. Za delovanje tega ni nobenega zagotovila, preizkusite pred uporabo.</string>
+    <string name="preference_video_stabilization">Omogoči ustalitev videoposnetkov</string>
+    <string name="preference_video_stabilization_summary">Ustaltev videoposnetkov zmanjša tresenje zaradi gibanja kamere tako v predogledu, kot v posnetku.</string>
+    <string name="preference_video_bitrate">Bitna hitrost videoposnetkov (pribl.)</string>
+    <string name="preference_video_bitrate_summary">Nastavite pribl. hitrost videoposnetkov (višje vrednosti pomenijo boljšo kakovost, vendar zavzamejo več prostora na disku; snemanje videoposnetkov lahko spodleti, če bitna hitrost ni podprta)</string>
+    <string name="preference_video_fps">Hitrost sličic videoposnetkov (pribl.)</string>
+    <string name="preference_video_fps_summary">Nastavite hitrost sličic (sl./s) videoposnetkov (je lahko približna. Doseganje nastavljene vrednosti ni zagotovljeno in snemanje videoposnetkov lahko spodleti, če hitrost sličic ni podprta)</string>
+    <string name="preference_video_max_duration">Najdaljše trajanje videoposnetkov</string>
+    <string name="preference_video_max_duration_summary">Snemanje videoposnetkov se bo ustavilo po tem času</string>
+    <string name="preference_video_restart">Ponovno zaženi videoposnetek po najdaljšem trajanju</string>
+    <string name="preference_video_restart_summary">Če se je videoposnetek ustavil, ko je bilo doseženo najdaljše trajanje (če je nastavljeno), bo ta možnost povzročila ponovni zagon videoposnetka do določenega števila ponovitev</string>
+    <string name="preference_video_max_filesize">Največja velikost videoposnetkov</string>
+    <string name="preference_video_max_filesize_summary">Snemanje videoposnetkov se bo ustavilo in/ali ponovno zagnalo (glejte spodnjo možnost), ko je dosežena (pribl.) največja velikost datoteke. Upoštevajte, da imajo skoraj vse naprave Android zgornjo omejitev velikosti datoteke za videoposnetke (običajno okoli 2 ali 4 GB), vendar ta možnost omogoča nastavitev določene vrednosti</string>
+    <string name="preference_video_restart_max_filesize">Ponovno zaženi ob največji velikosti datoteke</string>
+    <string name="preference_video_restart_max_filesize_summary">Ali naj se videoposnetek ponovno zažene, ko je dosežena (privzeta ali uporabniško določena) največja velikost datoteke</string>
+    <string name="preference_record_audio">Snemaj zvok</string>
+    <string name="preference_record_audio_summary">Snemaj zvok ob snemanju vidoposnetkov</string>
+    <string name="preference_record_audio_src">Vir zvoka</string>
+    <string name="preference_record_audio_src_summary">Kateri mikrofon naj se uporabi za snemanje zvoka</string>
+    <string name="preference_record_audio_channels">Zvočni kanali</string>
+    <string name="preference_record_audio_channels_summary">Določite mono ali stereo za snemanje zvoka (stereo je podprt samo na nekaterih napravah)</string>
+    <string name="preference_video_flash">Svetilka med snemanjem videoposnetkov</string>
+    <string name="preference_video_flash_summary">Če je omogočeno, se bo ob snemanju videoposnetkov vklopila/izklopila svetilka (se lahko uporabi za prepoznavanje delovanja kamere na razdaljo)</string>
+    
+    <string name="preference_category_online">Razno</string>
+    <string name="preference_online_help">Spletna pomoč</string>
+    <string name="preference_online_help_summary">Zaženi spletno stran Open Camera v mojem brskalniku</string>
+    <string name="preference_donate">Daruj za podporo razvoju</string>
+    <string name="preference_donate_summary">Če vam je ta program všeč, razmislite o darovanju, da podprete razvoj. To lahko naredite z nakupom mojega "programa za darovanje" - kliknite na to možnost za odpiranje strani z mojim programom. Hvala!</string>
+    <string name="preference_use_camera2">Uporabi API Camera2</string>
+    <string name="preference_use_camera2_summary">Omogoči API Camera2 Androida 5 - ponuja dodatne značilnosti, vendar morda ne bo pravilno deloval na vseh napravah (lahko povzroči ponovni zagon)</string>
+    <string name="preference_about">O programu</string>
+    <string name="preference_about_summary">Program in podatki za razhroščevanje</string>
+    <string name="preference_reset">Ponastavi nastavitve</string>
+    <string name="preference_reset_summary">Ponastavi vse nastavitve Open Camera na privzete</string>
+    <string name="preference_reset_question">Ali res želite ponastaviti vse nastavitve Open Camera na privzete?</string>
+
+    <string name="about_ok">V redu</string>
+    <string name="about_available">Na voljo</string>
+    <string name="about_not_available">Ni na voljo</string>
+    <string name="about_copy_to_clipboard">Kopiraj na odložišče</string>
+    
+    <string name="take_photo">Posnemi fotografijo</string>
+    <string name="gallery">Galerija</string>
+    <string name="exposure">Osvetlitev</string>
+    <string name="exposure_lock">Zakleni osvetlitev</string>
+    <string name="focus_mode">Način ostrenja</string>
+    <string name="flash_mode">Način bliskavice</string>
+    <string name="switch_to_front_camera">Preklopi na sprednji fotoaparat</string>
+    <string name="switch_to_back_camera">Preklopi na zadnji fotoaparat</string>
+    <string name="switch_to_video">Preklopi na način za videoposnetke</string>
+    <string name="switch_to_photo">Preklopi na način za fotografije</string>
+    <string name="trash">Izbriši zadnjo sliko</string>
+    <string name="share">Deli fotografijo</string>
+    
+    <string name="parent_folder">Nadrejena mapa</string>
+    <string name="use_folder">Uporabi mapo</string>
+    <string name="new_folder">Nova mapa</string>
+    <string name="cant_write_folder">V to mapo ni mogoče pisati</string>
+    <string name="cant_access_folder">Dostop do te mape ni mogoč</string>
+    <string name="enter_new_folder">Vnesite novo ime mape</string>
+    <string name="failed_create_folder">Ustvarjanje mape je spodletelo</string>
+    <string name="folder_exists">Mapa že obstaja</string>
+
+    <string name="saf_select_save_location">Izberite mesto za shranjevanje</string>
+    <string name="saf_cancelled">Ogrodje za dostop do pomnilniške naprave preklicano</string>
+    
+    <!-- the permission names such as Microphone should match what Android calls them in the App permission settings -->
+    <string name="permission_record_audio_not_available">Dovoljenje za mikrofon ni na voljo</string>
+    <string name="permission_location_not_available">Dovoljenje za lokacijo ni na voljo</string>
+
+    <string name="start_video">Začni snemati videoposnetek</string>
+    <string name="stop_video">Ustavi snemanje videoposnetka</string>
+
+    <string name="max_filesize">Največja velikost datoteke</string>
+    <string name="mb_abbreviation">MB</string> <!-- symbol short for megabytes -->
+	<string name="gb_abbreviation">GB</string> <!-- symbol short for gigabytes -->
+    
+    <string name="audio_control_start">Začni poslušati zvok</string>
+    <string name="audio_control_stop">Ustavi poslušanje zvoka</string>
+    <string name="speech_recognizer_started">Recite \"cheese\"</string>
+    <string name="audio_listener_started">Naredite glasen zvok</string>
+	
+	<string name="auto_stabilise_info">Samodejna ustalitev bo zavrtela fotografije, da bodo videti poravnane.\n\nUpoštevajte, da se bo ločljivost slik rahlo zmanjšala (zaradi zahtevanega vrtenja in obrezovanja).</string>
+    <string name="raw_info">Datoteke DNG vsebujejo nestisnjene in neobdelane podatke iz fotoaparata.\n\nVečina programov za galerijo ne prepozna oblike DNG, zato jo uporabljajte s posebnimi programi, kot je Snapseed ali Lightroom.\n\nUpoštevajte, da se bodo razne možnosti obdelave, kot sta "Dodaj žig" in "Samodejna ustalitev", uporabile samo za slike JPEG in ne za slike DNG.\n\nDatoteke DNG zavzamejo veliko prosotra; za njihov izbris ali prenos lahko uporabite raziskovalca datotek.\n\nDatoteke DNG se shranjujejo samo v običajnem načinu ali načinu DRO.</string>
+    <string name="hdr_info">Način HDR je uporaben za posnetke z velikimi odstopanji v svetlosti. Deluje tako, da zajame več posnetkov z različnimi osvetlitvami in jih potem združi v končno sliko.\n\nUpoštevajte, da HDR ni primeren za hitro gibajoče prizore in lahko povzroči barvna odstopanja.\n\nSlikanje fotografij v načinu HDR je počasnejše.</string>
+
+    <string name="dont_show_again">Ne prikazuj več</string>
+
+    <string name="photo_mode">Način za fotografije</string>
+    <string name="photo_mode_standard">Običajni</string>
+    <string name="photo_mode_hdr">HDR</string>
+	<string name="photo_mode_expo_bracketing">Kor. sam. osvetlitve</string>
+    <string name="photo_mode_expo_bracketing_full">Korektura samodejne osvetlitve</string>
+    <string name="preference_category_stamp">Dodaj žig</string>
+    <string name="preference_hdr_save_expo">Shrani vse slike za način HDR</string>
+    <string name="preference_hdr_save_expo_summary">Če je omogočeno, bodo ob uporabi načina HDR posnete tri osnovne slike kot tudi končna slika HDR. Upoštevajte, da bo shranevanje počasnejše, posebno, če uporabljate možnosti, kot sta \"Dodaj žig\" ali samodejno ustalitev.</string>
+
+    <string name="no_permission">DOVOLJENJA NISO NA VOLJO</string>
+    <string name="permission_rationale_title">Zahtevano je dovoljenje</string>
+    <string name="permission_rationale_camera">Za omogočanje fotoaparata je zahtevano dovoljenje za fotoaparat</string>
+    <string name="permission_rationale_storage">Za shranjevanje fotografij je zahtevano dovoljenje za branje/pisanje na pomnilniško napravo</string>
+    <string name="permission_rationale_record_audio">Za snemanje videoposnetkov z zvokom je zahtevano dovoljenje za mikrofon</string>
+    <string name="permission_rationale_location">Za označevanje z lokacijo je zahtevano dovoljenje za lokacijo</string>
+	
+	<string name="preference_category_photo_debugging">Možnosti razhroščevanja</string>
+	<string name="preference_category_video_debugging">Možnosti razhroščevanja</string>
+    <string name="preference_camera2_fake_flash">Uporabi nadomestni način bliskavice</string>
+    <string name="preference_camera2_fake_flash_summary">Omogočite, če se vaša naprava neobičajno vede z API-jem Camera2</string>
+
+    <string name="preference_expo_bracketing_n_images">Korektura sam. osvetlitve</string>
+    <string name="preference_expo_bracketing_n_images_summary">Število slik za način korekture samodejne osvetlitve</string>
+    <string name="preference_expo_bracketing_stops">Ustavitve kor. sam. osvetlitve</string>
+    <string name="preference_expo_bracketing_stops_summary">Število ustavitev vsake slike</string>
+	
+	<string name="seconds_abbreviation">s</string> <!-- short for seconds -->
+
+    <string name="video_no_free_space">Ni dovolj nezasedenega prostora za snemanje videoposnetka</string>
+	<string name="video_power_critical">Videoposnetek se je ustavil\nRaven baterije je kritično nizka</string>
+    <string name="preference_video_low_power_check">Preveri za kritično stanje baterije</string>
+    <string name="preference_video_low_power_check_summary">Ustavi snemanje videoposnetka, če je raven baterije kritično nizka. Zmanjša tveganje okvare videoposnetka, če se naprava izklopi zaradi pomanjkanja energije.</string>
+	
+	<string name="dark">Temna</string> <!-- exposure compensation dark -->
+    <string name="bright">Svetla</string> <!-- exposure compensation bright -->
+    <string name="exposure_shutter_speed">Hitrost zaslonke</string>
+	
+	<string name="camera_error">Resna napaka fotoaparata</string>
+	
+	<string name="preference_camera2_fast_burst">Omogoči hitro zaporedje HDR/kor. sam. osvetlitve</string>
+    <string name="preference_camera2_fast_burst_summary">Omogoča hitrejše slikanje fotografij s HDR-om/kor. sam. osvetlitve. Onemogočite, če ima vaša naprava pri slikanju fotografij z načinoma HDR/kor. sam. osvetlitve težave (fotoaparat preneha delovati ali so fotografije načina kor. sam. osvetlitve v napačnem zaporedju).</string>
+	
+	<string name="camera">Fotoaparat</string>
+	<string name="record_video">Posnemi videoposnetek</string>
+    <string name="selfie">Samoposnetek</string>
+
+    <string name="preference_front_camera_mirror">Zrcaljenje sprednjega fotoaparata</string>
+    <string name="preference_front_camera_mirror_summary">Ali naj se ob uporabi sprednjega fotoaparata slike zrcalijo.</string>
+	
+	<string name="preference_calibrate_level">Kot ravni umerjanja</string>
+    <string name="preference_calibrate_level_summary">Ta možnost umeri pospeškomer naprave za pravilno delovanje samodejne ustalitve in prikaza ravni/kota na zaslonu.</string>
+    <string name="preference_calibrate_level_dialog">Napravo postavite na ravno vodoravno površino in izberite Umeri.\n\nPritisnite Ponastavi za odstranitev umerjanja iz naprave.\n\nPritisnite gumb Nazaj za preklic.</string>
+    <string name="preference_calibrate_level_calibrate">Umeri</string>
+    <string name="preference_calibrate_level_reset">Ponastavi</string>
+    <string name="preference_calibrate_level_calibrated">Raven umerjena</string>
+    <string name="preference_calibrate_level_calibration_reset">Ponastavitev ravni umerjanja</string>
+	
+	<string name="photo_mode_dro">DRO</string>
+	
+	<string name="preference_show_pitch_lines">Prikaži višinske črte</string>
+    <string name="preference_show_pitch_lines_summary">Prikaži vodoravne višinske črte</string>
+	
+	<string name="preference_show_geo_direction_lines">Prikaži črte smeri neba</string>
+    <string name="preference_show_geo_direction_lines_summary">Prikaži črte smeri neba</string>
+	<string name="preference_video_subtitle">Podnapisi</string>
+    <string name="preference_video_subtitle_summary">Ustvari datoteko podnapisov (.srt) s podatki o času, datumu in tudi GPS-u, če sta lokacija in smer omogočena</string>
+
+    <string name="duration_unlimited">Neomejeno</string>
+    <string name="duration_3s">3 s</string>
+    <string name="duration_5s">5 s</string>
+    <string name="duration_10s">10 s</string>
+    <string name="duration_15s">15 s</string>
+    <string name="duration_30s">30 s</string>
+    <string name="duration_1m">1 min.</string>
+    <string name="duration_2m">2 min.</string>
+    <string name="duration_3m">3 min.</string>
+    <string name="duration_4m">4 min.</string>
+    <string name="duration_5m">5 min.</string>
+    <string name="duration_6m">6 min.</string>
+    <string name="duration_7m">7 min.</string>
+    <string name="duration_8m">8 min.</string>
+    <string name="duration_9m">9 min.</string>
+    <string name="duration_10m">10 min.</string>
+    <string name="duration_11m">11 min.</string>
+    <string name="duration_12m">12 min.</string>
+    <string name="duration_15m">15 min.</string>
+    <string name="duration_20m">20 min.</string>
+    <string name="duration_25m">25 min.</string>
+    <string name="duration_30m">30 min.</string>
+    <string name="duration_45m">45 min.</string>
+    <string name="duration_1h">1 ura</string>
+	
+	<string name="preference_show_take_photo">Prikaži ikono za slikanje fotografije</string>
+    <string name="preference_show_take_photo_summary">Prikaži ikono za slikanje fotografij in snemanje videoposnetkov. Uporabno, če ima vaša naprava fizični sprožilec, ki bi ga raje uporabili.</string>
+	
+	<string name="video_pause">Videoposnetek v premoru</string>
+    <string name="video_resume">Nadaljevanje videoposnetka</string>
+    <string name="pause_video">Premor snemanja</string>
+    <string name="resume_video">Nadaljuj snemanje</string>
+	
+	<string name="capturing">Zajemanje …</string>
+	
+	<string name="audio_listener_failed">Začenjanje poslušanja zvoka je spodletelo</string>
+</resources>
