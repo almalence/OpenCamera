@@ -250,6 +250,8 @@ public class MainScreen extends ApplicationScreen
 			launchTorch = intent.getBooleanExtra(EXTRA_TORCH, false);
 			launchBarcode = intent.getBooleanExtra(EXTRA_BARCODE, false);
 			
+			PluginManager.getInstance().setupDefaultMode();
+			
 			Pair<String, String> cameraWifiSettings = NFCHandler.parseIntent(intent);
 			mWifiHandler.createIfNeededThenConnectToWifi(cameraWifiSettings.first, cameraWifiSettings.second);
 		} catch (Exception e)
