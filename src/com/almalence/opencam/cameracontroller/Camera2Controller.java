@@ -75,6 +75,7 @@ import com.almalence.util.Util;
 import com.almalence.opencam.CameraParameters;
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.ApplicationInterface;
+import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManagerInterface;
 //-+- -->
 /* <!-- +++
@@ -823,6 +824,7 @@ public class Camera2Controller
 		CameraCharacteristics camCharacter = Camera2Controller.getInstance().camCharacter;
 		StreamConfigurationMap configMap = camCharacter.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 		Size[] cs = configMap.getOutputSizes(captureFormat == CameraController.YUV_RAW? CameraController.YUV : captureFormat);
+		//Size[] cs2 = configMap.getOutputSizes(CameraController.YUV);
 		
 		/*
 		 * In case when device supports capturing YUV less maximum size than JPEG
@@ -839,10 +841,14 @@ public class Camera2Controller
 				cs = allJpegSizes;
 		}
 		
-		for (Size sz : cs)
-		{
-			pictureSizes.add(new CameraController.Size(sz.getWidth(), sz.getHeight()));
-		}
+//		String szstr = "";
+//		for (Size sz : cs)
+//		{
+//			pictureSizes.add(new CameraController.Size(sz.getWidth(), sz.getHeight()));
+//			
+//			szstr +=  "resolutions w = " + sz.getWidth() +" h = " +sz.getHeight();
+//		}
+//		Toast.makeText(MainScreen.getMainContext(), szstr, Toast.LENGTH_LONG).show();
 	}
 	
 	//Search maximum size in array by comparing size in megapixels

@@ -1007,8 +1007,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	@Override
 	protected void onDestroy()
 	{
-		super.onDestroy();
-
+		super.onDestroy();		
 		onApplicationDestroy();
 	}
 
@@ -1027,7 +1026,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	protected void onResume()
 	{
 		super.onResume();
-		
+	
 		checkCameraPermission();
 		if (!cameraPermissionGranted)
 			return;
@@ -1192,7 +1191,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	protected void onPause()
 	{
 		super.onPause();
-
 		onApplicationPause();
 	}
 

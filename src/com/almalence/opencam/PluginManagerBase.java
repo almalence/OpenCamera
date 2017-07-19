@@ -877,8 +877,18 @@ abstract public class PluginManagerBase implements PluginManagerInterface
 			// required.
 			mServiceIntent.putExtra("sessionID", sessionID);
 			CameraController.Size imageSize = CameraController.getCameraImageSize();
-			PluginManager.getInstance().addToSharedMem("imageWidth" + sessionID, String.valueOf(imageSize.getWidth()));
-			PluginManager.getInstance().addToSharedMem("imageHeight" + sessionID, String.valueOf(imageSize.getHeight()));
+			if (CameraController.motozChangeResolution)//isMotoZ && !CameraController.getIsCamera2())
+			{
+				int w = imageSize.getWidth()==1944?1936:imageSize.getWidth();
+				int h = imageSize.getHeight()==1944?1936:imageSize.getHeight();
+				PluginManager.getInstance().addToSharedMem("imageWidth" + sessionID, String.valueOf(w));
+				PluginManager.getInstance().addToSharedMem("imageHeight" + sessionID, String.valueOf(h));
+			}
+			else
+			{
+				PluginManager.getInstance().addToSharedMem("imageWidth" + sessionID, String.valueOf(imageSize.getWidth()));
+				PluginManager.getInstance().addToSharedMem("imageHeight" + sessionID, String.valueOf(imageSize.getHeight()));
+			}
 			PluginManager.getInstance().addToSharedMem("wantLandscapePhoto" + sessionID, String.valueOf(ApplicationScreen.getWantLandscapePhoto()));
 			PluginManager.getInstance().addToSharedMem("cameraMirrored" + sessionID, String.valueOf(CameraController.isFrontCamera()));
 

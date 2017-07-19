@@ -674,6 +674,20 @@ public class SavingService extends NotificationService
 					com.almalence.YuvImage out = new com.almalence.YuvImage(yuv, ImageFormat.NV21, x, y, null);
 					Rect r;
 
+//					w = out.getWidth();
+//					h = out.getHeight();
+//					ApplicationScreen.instance.runOnUiThread(new Runnable()
+//					{
+//						public void run()
+//						{
+//							int mImageWidth = w;
+//							int mImageHeight = h;
+//							String szstr =  "resolutions w = " + mImageWidth +" h = " +mImageHeight;
+//							Toast.makeText(MainScreen.getMainContext(), szstr, Toast.LENGTH_LONG).show();
+////							Toast.makeText(MainScreen.getMainContext(), "QQQQQQ", Toast.LENGTH_LONG).show();
+//						}
+//					});
+					
 					String res = getFromSharedMem("resultfromshared" + Long.toString(sessionID));
 					if ((null == res) || "".equals(res) || "true".equals(res))
 					{
