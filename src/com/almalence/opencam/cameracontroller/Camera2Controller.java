@@ -841,14 +841,10 @@ public class Camera2Controller
 				cs = allJpegSizes;
 		}
 		
-//		String szstr = "";
-//		for (Size sz : cs)
-//		{
-//			pictureSizes.add(new CameraController.Size(sz.getWidth(), sz.getHeight()));
-//			
-//			szstr +=  "resolutions w = " + sz.getWidth() +" h = " +sz.getHeight();
-//		}
-//		Toast.makeText(MainScreen.getMainContext(), szstr, Toast.LENGTH_LONG).show();
+		for (Size sz : cs)
+		{
+			pictureSizes.add(new CameraController.Size(sz.getWidth(), sz.getHeight()));			
+		}
 	}
 	
 	//Search maximum size in array by comparing size in megapixels
