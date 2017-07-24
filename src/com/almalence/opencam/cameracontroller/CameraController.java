@@ -163,6 +163,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 														  			  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g925");
 
 	public static boolean							isGalaxyS7		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g93");
+	public static boolean							isGalaxyS8		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g950u");
 	
 	public static boolean 							isGalaxyS7Exynos = false;
 	public static boolean 							isGalaxyS7Qualcomm = false;
@@ -214,6 +215,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean							isMotoZ 		= Build.MANUFACTURER.toLowerCase().replace(" ", "").contains("motorola")
 																		&& (Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("xt1650")||
 																			Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("xt1635-02"));
+	
+	public static boolean							isPixel		 	= Build.MANUFACTURER.toLowerCase().replace(" ", "").contains("google") 
+																	&& Build.MODEL.toLowerCase().replace(" ", "").contains("pixel");
+	
 	public static boolean							motozChangeResolution = false;
 
 	// Android camera parameters constants
@@ -900,8 +905,22 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			
 			//Samsung Galaxy S6 and Note5 was reported as not worked in camera2 mode
 			//Always not focused preview and blinking on every try of focusing
-			if (!isCamera2Supported || !checkHardwareLevel() || isGalaxyS6 || isGalaxyNote5 || isSonyZ5)
-//					|| (!isMotoXPure && !isFlex2 && !isNexus5or6 && !isAndroidOne  && !isOnePlusTwo/*&& !isGalaxyS6 &&*/ /* && !isG4*/))
+			if ((!isCamera2Supported || !checkHardwareLevel() || isGalaxyS6 || isGalaxyNote5 || isSonyZ5 || isSony)
+					|| (!isMotoXPure 
+					 && !isFlex2 
+					 && !isNexus5or6 
+					 && !isAndroidOne  
+					 && !isOnePlusTwo 
+					 && !isG5 
+					 && !isG4 
+					 && !isG3 
+					 && !isG2 
+					 && !isGalaxyS7 
+					 && !isHuaweiP9 
+					 && !isHTCM10
+					 && !isMotoZ
+					 && !isPixel
+					 && !isGalaxyS8))
 			{
 				isCamera2 = false;
 				isCamera2Allowed = false;
