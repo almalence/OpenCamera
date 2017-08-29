@@ -163,7 +163,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 														  			  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g925");
 
 	public static boolean							isGalaxyS7		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g93");
-	public static boolean							isGalaxyS8		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g950u");
+	public static boolean							isGalaxyS8		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g950u")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g9500u")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g9500");
 	
 	public static boolean 							isGalaxyS7Exynos = false;
 	public static boolean 							isGalaxyS7Qualcomm = false;
@@ -200,6 +202,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e6853")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e6883")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("so-03h");
+	
+	public static boolean							isSonyXZP	 	= Build.MANUFACTURER.toLowerCase().replace(" ", "").contains("sony")
+																	  && Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("g8142");
 	
 	public static boolean							isHuawei		= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("huawei");
 	public static boolean							isHuaweiP9		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("eva-l19");
@@ -905,7 +910,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			
 			//Samsung Galaxy S6 and Note5 was reported as not worked in camera2 mode
 			//Always not focused preview and blinking on every try of focusing
-			if ((!isCamera2Supported || !checkHardwareLevel() || isGalaxyS6 || isGalaxyNote5 || isSonyZ5 || isSony)
+			if ((!isCamera2Supported || !checkHardwareLevel() || isGalaxyS6 || isGalaxyNote5 || isSonyZ5)// || isSony)
 					|| (!isMotoXPure 
 					 && !isFlex2 
 					 && !isNexus5or6 
@@ -920,7 +925,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					 && !isHTCM10
 					 && !isMotoZ
 					 && !isPixel
-					 && !isGalaxyS8))
+					 && !isGalaxyS8
+					 && !isSonyXZP))
 			{
 				isCamera2 = false;
 				isCamera2Allowed = false;
