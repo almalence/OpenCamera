@@ -55,7 +55,9 @@ extern "C"
 
 // Input frames should be that much larger at each edge
 // to provide expected zoom level when SizeGuaranteeMode is set
+#ifndef SIZE_GUARANTEE_BORDER   // Eugene: added this to make it possible to define the border size in Makefile
 #define SIZE_GUARANTEE_BORDER	64
+#endif
 
 #define SPARE_LINES_RESOLVE_FRAME	658 // 656
 
@@ -68,7 +70,10 @@ enum {
 	ALMA_SUPER_DROLOCAL = 4,
 	ALMA_SUPER_EXTBUF = 8, // externalBuffers
 	ALMA_SUPER_SIZEGUARANTEE = 0x10,
-	ALMA_SUPER_VIDEOBOUND = 0x20 // special frame bounding for RTSS
+	ALMA_SUPER_VIDEOBOUND = 0x20, // special frame bounding for RTSS
+	ALMA_SUPER_REFBLUR = 0x40,
+	ALMA_SUPER_FASTFILTER = 0x80,
+	ALMA_SUPER_DROSLOVENIAN = 0x100
 };
 
 int SuperZoom_Preview(
@@ -140,29 +145,6 @@ int SuperZoom_StartStreaming
 	int     DeGhostFrames,
 	int		noSres,
 	int     cameraIndex
-);
-
-
-// Note:
-// in - captured frames in YUV format.
-// out should be allocated by caller, to hold sxo x (syo+SPARE_LINES_RESOLVE_FRAME) pixels
-int SuperZoom_ResolveFrame
-(
-	void   * instance,
-	Uint8 ** in,
-	Uint8 *  out,
-	Uint8 ** consistencyBuffer,
-	int		*x0_out,
-	int		*y0_out,
-	int		*w_out,
-	int		*h_out,
-	int		 nImages,
-	int      nRefImage,
-	int      SensorGain,
-	int      MovObjGain,
-	int      kelvin1,
-	int      kelvin2,
-	int		 enh_edges
 );
 
 

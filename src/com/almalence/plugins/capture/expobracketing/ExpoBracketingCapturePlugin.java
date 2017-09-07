@@ -640,7 +640,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			CameraController.isGalaxyS7 || 
 			CameraController.isG5||
 			CameraController.isHTCM10||
-			CameraController.isMotoZ)
+			CameraController.isMotoZ||
+			CameraController.isGalaxyS8)
 		{
 			gain = new int[3];
 			gain[0] = CameraController.getCurrentSensitivity();
@@ -665,7 +666,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 				exposure = new long[3];
 				exposure[0] = CameraController.getCameraExposureTime();
 				
-				if (CameraController.isGalaxyS7)
+				if (CameraController.isGalaxyS7||CameraController.isGalaxyS8)
 				{
 					exposure[1] = CameraController.getCameraExposureTime() * 2;
 					exposure[2] = CameraController.getCameraExposureTime() / 4;
