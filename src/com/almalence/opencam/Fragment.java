@@ -618,6 +618,9 @@ public class Fragment extends PreferenceFragment implements OnSharedPreferenceCh
 		case 2://legacy
 			about_string.append("legacy");
 			break;
+		case 3://LEVEL_3
+			about_string.append("level 3");
+			break;
 		default:
 			about_string.append("not supported");
 		}

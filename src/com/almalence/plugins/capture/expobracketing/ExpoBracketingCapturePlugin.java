@@ -666,7 +666,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 				exposure = new long[3];
 				exposure[0] = CameraController.getCameraExposureTime();
 				
-				if (CameraController.isGalaxyS7||CameraController.isGalaxyS8)
+				if (CameraController.isGalaxyS7)
 				{
 					exposure[1] = CameraController.getCameraExposureTime() * 2;
 					exposure[2] = CameraController.getCameraExposureTime() / 4;
