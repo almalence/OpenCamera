@@ -4513,7 +4513,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		pluginManager.collectExifData(paramArrayOfByte);
 		if (!CameraController.takeYUVFrame) // if JPEG frame requested
 		{
-
 			int frame = 0;
 			if (resultInHeap)
 				frame = SwapHeap.SwapToHeap(paramArrayOfByte);
