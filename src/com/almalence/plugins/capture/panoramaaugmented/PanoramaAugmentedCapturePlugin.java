@@ -428,6 +428,14 @@ public class PanoramaAugmentedCapturePlugin extends PluginCapture
 		} else
 		{
 			this.engine.setFrameIntersection(intersection);
+			
+			if (CameraController.motozChangeResolution)//isMotoZ && !CameraController.getIsCamera2())
+			{
+				this.pictureHeight = this.pictureHeight==1944?1936:this.pictureHeight;
+				this.pictureWidth = this.pictureWidth==1944?1936:this.pictureWidth;
+			}
+			
+			
 			this.engine.reset(this.pictureHeight, this.pictureWidth, this.viewAngleY);
 
 			final int frames_fit_count = (int) (getAmountOfMemoryToFitFrames() / getFrameSizeInBytes(this.pictureWidth,

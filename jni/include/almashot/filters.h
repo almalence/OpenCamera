@@ -58,6 +58,9 @@ int Filters_Initialize
 	int max_height
 );
 
+#define ALMA_FILTERS_LQFILTER 1
+
+int Filters_SetFlags(void *instance, int flags);
 
 int Filters_Release
 (
@@ -185,17 +188,6 @@ void Filters_EnhanceEdges
 // Y - filtered image plane
 //
 
-void Filters_PostFilter
-(
-	void *instance,
-	Uint8 *Y,
-	Int32 Scale,
-	int sx,
-	int sy,
-	int stride,
-	int sharpen
-);
-
 void Filters_FillFilterPressure
 (
 	Int32 Scale,
@@ -204,7 +196,8 @@ void Filters_FillFilterPressure
 	Uint8 *nMov,
 	Uint8 *mcurTbl,
 	int subsampMov,
-	int sxMov
+	int sxMov,
+	int filterNMovAdd
 );
 
 void Filters_PostFilterQuick
@@ -219,7 +212,8 @@ void Filters_PostFilterQuick
     Uint8 *nMov,
     Uint8 *mcurTbl,
     int subsampMov,
-    int sxMov
+    int sxMov,
+	int filterNMovAdd
 );
 
 void Filters_PostFilterQuick_CPU

@@ -62,7 +62,7 @@ int Super_Process
 	int		sxo,
 	int		syo,
 	int		nFrames,
-	int     SensorGain,
+	int     iso,
 	int		postFilter,
 	int		postSharpen,
 	float 	gamma,

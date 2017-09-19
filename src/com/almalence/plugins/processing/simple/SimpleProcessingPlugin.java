@@ -26,15 +26,25 @@ import com.almalence.opencam_plus.PluginProcessing;
 import com.almalence.opencam_plus.R;
 +++ --> */
 //<!-- -+-
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+
+import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.ConfigParser;
+import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManager;
 import com.almalence.opencam.PluginProcessing;
 import com.almalence.opencam.R;
 //-+- -->
 
+import com.almalence.SwapHeap;
 import android.content.SharedPreferences;
+import android.os.Message;
 import android.preference.PreferenceManager;
+import android.view.View;
+import android.widget.Toast;
 
 /***
  * Implements simple processing plugin - just translate shared memory values
@@ -85,6 +95,20 @@ public class SimpleProcessingPlugin extends PluginProcessing
 		int mImageWidth = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("imageWidth" + sessionID));
 		int mImageHeight = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("imageHeight" + sessionID));
 
+//		String szstr =  "resolutions w = " + mImageWidth +" h = " +mImageHeight;
+//		Toast.makeText(MainScreen.getMainContext(), szstr, Toast.LENGTH_LONG).show();
+		
+//		ApplicationScreen.instance.runOnUiThread(new Runnable()
+//		{
+//			public void run()
+//			{
+//				int mImageWidth = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("imageWidth" + sessionID));
+//				int mImageHeight = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("imageHeight" + sessionID));
+//				String szstr =  "resolutions w = " + mImageWidth +" h = " +mImageHeight;
+//				Toast.makeText(MainScreen.getMainContext(), szstr, Toast.LENGTH_LONG).show();
+//			}
+//		});
+		
 		String num = PluginManager.getInstance().getFromSharedMem("amountofcapturedframes" + sessionID);
 
 		if (num == null)
@@ -121,6 +145,49 @@ public class SimpleProcessingPlugin extends PluginProcessing
 						fileFormat = fileFormat + "_DROSRC";
 
 						PluginManager.getInstance().saveInputFile(true, sessionID, i, null, inputYUV, fileFormat);
+						
+//						//>>save YUV
+//						int len = Integer.parseInt(PluginManager.getInstance().getFromSharedMem("framelen" + i + sessionID));
+//						byte[] buffer = SwapHeap.CopyFromHeap(inputYUV, len);
+//						
+//						
+//						File saveDir = PluginManager.getSaveDir(false);
+//						File file = new File(saveDir, fileFormat + ".yuv");
+//						FileOutputStream os = null;
+//
+//						try
+//						{
+//							try
+//							{
+//								os = new FileOutputStream(file);
+//							} catch (Exception e)
+//							{
+//								// save always if not working saving to sdcard
+//								e.printStackTrace();
+//								saveDir = PluginManager.getSaveDir(true);
+//								file = new File(saveDir, fileFormat + ".jpg");
+//
+//								os = new FileOutputStream(file);
+//							}
+//						} catch (FileNotFoundException e1)
+//						{
+//							// TODO Auto-generated catch block
+//							e1.printStackTrace();
+//						}
+//
+//						try
+//						{
+//							if (os != null)
+//								os.write(buffer);
+//							os.close();
+//						}
+//						catch (Exception e)
+//						{
+//							e.printStackTrace();
+//						}
+//						//Save YUV<<
+						
+						
 					} catch (Exception e)
 					{
 						e.printStackTrace();
@@ -170,6 +237,8 @@ public class SimpleProcessingPlugin extends PluginProcessing
 					PluginManager.getInstance().addToSharedMem("saveImageHeight" + sessionID,
 							String.valueOf(mImageHeight));
 				}
+				
+				
 
 				PluginManager.getInstance().addToSharedMem("resultframe" + i + sessionID, String.valueOf(yuv));
 			} else
