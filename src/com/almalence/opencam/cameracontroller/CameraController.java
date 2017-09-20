@@ -165,6 +165,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean							isGalaxyS7		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g93");
 	public static boolean							isGalaxyS8		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g950u")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g9500u")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g9550")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g9500");
 	
 	public static boolean							isVivoXXX	 	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("pd1709");
