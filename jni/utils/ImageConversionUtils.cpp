@@ -67,9 +67,9 @@ typedef signed char Int8;
 #define BMP_B(p)	(((p)>>16)& 0xFF)
 
 // No clipping control needed if converting from 8 bit data
-#define CSC_Y(R,G,B)		((77*(R)+150*(G)+29*(B)) >> 8 )
-#define CSC_U(R,G,B)		(((-43*(R)-85*(G)+128*(B)) >> 8) +128)
-#define CSC_V(R,G,B)		(((128*(R)-107*(G)-21*(B)) >> 8) +128)
+#define CSC_Y(R,G,B)		CLIP8((19595*(R)+38470*(G)+7471*(B)+128*256) >> 16)
+#define CSC_U(R,G,B)		CLIP8((256*256*128-11060*(R)-21708*(G)+256*128*(B)+128*256) >> 16)
+#define CSC_V(R,G,B)		CLIP8((256*256*128+256*128*(R)-27460*(G)-5308*(B)+128*256) >> 16)
 
 
 struct my_error_mgr {
