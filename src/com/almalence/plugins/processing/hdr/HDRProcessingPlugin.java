@@ -228,7 +228,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 					if (ExpoBracketingCapturePlugin.UseLumaAdaptation)
 						ev_mark -= 2.0;
 
-					String evmark = String.format("_%+3.1fEv", ev_mark);
+					String evmark = String.format("_%d_%+3.1fEv", i, ev_mark);
 					
 					//If device is not support exposure compensation we have to add current number of frame
 					//to avoid rewriting of same exposed files, because in that case file names will be equals
@@ -328,7 +328,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 				e.printStackTrace();
 			}
 
-			return 2;
+			return 1;
 		} else
 		{
 			try
@@ -367,7 +367,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 				e.printStackTrace();
 			}
 
-			return 1;
+			return 0;
 		} else
 		{
 			try
@@ -404,7 +404,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 				e.printStackTrace();
 			}
 
-			return 1;
+			return 0;
 		} else
 		{
 			try
