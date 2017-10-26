@@ -9,20 +9,20 @@
         android:title="@string/Pref_HDR_LocalContrast_Title" 
         android:summary="@string/Pref_HDR_LocalContrast_Summary" 
         android:key="contrastPrefHDR" 
-        android:defaultValue="1" 
+        android:defaultValue="0" 
         android:entries="@array/contrastArrayHDR" 
         android:entryValues="@array/contrastValuesHDR" />
     <ListPreference 
         android:title="@string/Pref_HDR_Microcontrast_Title" 
         android:summary="@string/Pref_HDR_Microcontrast_Summary" 
         android:key="mcontrastPrefHDR" 
-        android:defaultValue="2" 
+        android:defaultValue="0" 
         android:entries="@array/mcontrastArrayHDR" 
         android:entryValues="@array/mcontrastValuesHDR" />
     <ListPreference 
         android:title="@string/Pref_HDR_Exposure_Title" 
         android:key="expoPrefHDR" 
-        android:defaultValue="1" 
+        android:defaultValue="0" 
         android:entries="@array/expoArrayHDR" 
         android:entryValues="@array/expoValuesHDR" />
     <ListPreference 
