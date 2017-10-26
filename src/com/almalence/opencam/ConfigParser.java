@@ -182,7 +182,8 @@ public class ConfigParser
 		    CameraController.isG5||
 		    CameraController.isHTCM10||
 		    CameraController.isHuaweiP9||
-		    CameraController.isMotoZ
+		    CameraController.isMotoZ||
+		    CameraController.isGalaxyS8
 		    )
 		{
 			Iterator<Mode> it = modes.iterator();

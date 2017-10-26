@@ -166,7 +166,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean							isGalaxyS8		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g950u")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g9500u")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g9550")||
-																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g9500");
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g9500")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g955u");
 	
 	public static boolean							isVivoXXX	 	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("pd1709");
 	
@@ -1225,7 +1226,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				 CameraController.isHTCM10||
 				 CameraController.isG5||
 				 CameraController.isHuaweiP9||
-				 CameraController.isMotoZ
+				 CameraController.isMotoZ||
+				 CameraController.isGalaxyS8
 				 )
 				/*|| CameraController.isGalaxyS6*/
 				/*|| CameraController.isG4*/)
