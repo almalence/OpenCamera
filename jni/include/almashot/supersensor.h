@@ -66,6 +66,7 @@ int Super_Process
 	int		postFilter,
 	int		postSharpen,
 	float 	gamma,
+	float	LargeZoomNNetLevel,
 	int     cameraIndex,
 	int     externalBuffers
 );

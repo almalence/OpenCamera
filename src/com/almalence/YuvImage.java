@@ -285,8 +285,8 @@ public class YuvImage
 			int rowStrideY, int pixelStrideU, int rowStrideU, int pixelStrideV, int rowStrideV, int sx, int sy);
 
 	// Return: error status (0 = all ok)
-	public static synchronized native int CreateYUVImageFromRAW(ByteBuffer buf, int pixelStride, int rowStride, int sx,
-			int sy, int w, int h, int kelvin1, int kelvin2, int blevel, int wlevel, int cameraIndex, int outputRGB);
+//	public static synchronized native int CreateYUVImageFromRAW(ByteBuffer buf, int pixelStride, int rowStride, int sx,
+//			int sy, int w, int h, int kelvin1, int kelvin2, int blevel, int wlevel, int cameraIndex, int outputRGB);
 
 	public static synchronized native byte[] CreateYUVImageByteArray(ByteBuffer Y, ByteBuffer U, ByteBuffer V,
 			int pixelStrideY, int rowStrideY, int pixelStrideU, int rowStrideU, int pixelStrideV, int rowStrideV,

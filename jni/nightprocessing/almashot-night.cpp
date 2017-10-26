@@ -281,6 +281,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 				filter,
 				sharpen,
 				fgamma,
+				4.5f,
 				cameraIndex,
 				0);							// externalBuffers
 

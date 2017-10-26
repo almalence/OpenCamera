@@ -68,7 +68,7 @@ void Raw_AutoWB_nonTemp
 		int sy,
 		int *kelvin
 );
-
+/*
 void Raw_DemosaicAndColorCorrect
 (
 	Uint8 *restrict in,
@@ -81,8 +81,9 @@ void Raw_DemosaicAndColorCorrect
 	int blevel,
 	int wlevel,
 	int cameraIndex,
-	int outputRGB
-);
+	int outputRGB,
+	int bayer
+);*/
 
 extern Uint8 pow22_gamma_table[1024];
 extern Uint8 srgb_gamma_table[1024];

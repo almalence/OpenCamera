@@ -131,70 +131,70 @@ void ExtractYuvFromDirectBuffer(unsigned char *Y, unsigned char *U,
 
 }
 
-extern "C" JNIEXPORT int JNICALL Java_com_almalence_YuvImage_CreateYUVImageFromRAW
-(
-		JNIEnv* env,
-		jobject thiz,
-		jobject buf,
-		jint pixelStride,
-		jint rowStride,
-		jint sx,
-		jint sy,
-		jint w,
-		jint h,
-		jint kelvin1,
-		jint kelvin2,
-		jint blevel,
-		jint wlevel,
-		jint cameraIndex,
-		jint outputRGB
-)
-{
-	unsigned char *raw;
-	unsigned char *rawCropped;
-
-	// crop top left point.
-	int x0 = 0;
-	int y0 = 0;
-	x0 = (sx - w) / 2;
-	x0 = x0 & 1;
-	y0 = (sy - h) / 2;
-	y0 = y0 & 1;
-
-	// All Buffer objects have an effectiveDirectAddress field
-	raw = (unsigned char*)env->GetDirectBufferAddress(buf);
-
-	if (raw == NULL)
-	return -1;
-
-	SX = w;
-	SY = h;
-
-	yuv = (unsigned char *)malloc (w*h+w*((h+1)/2));
-	if (yuv == NULL)
-	return -2;
-
-	// RAW store ecah pixel in 2 bytes, thet's why w*2.
-	rawCropped = (unsigned char *) malloc(2 * w * h);
-
-	for (int y=0; y<h; y+=2)
-	{
-		memcpy (&rawCropped[y*w*2], &raw[x0 * 2+(y0+y)*rowStride], w*2);
-		memcpy (&rawCropped[(y+1)*w*2], &raw[x0 * 2+(y0+y+1)*rowStride], w*2);
-	}
-
-	int16_t colorMatrix[12] = { 256, 0, 0, 0, 0, 256, 0, 0, 0, 0, 256, 0};
-	int kelvin[2] = {kelvin1, kelvin2};
-	Uint8 * gamma = pow22_gamma_table;
-	Raw_DemosaicAndColorCorrect(rawCropped, yuv, w, h, kelvin, colorMatrix, gamma, blevel, wlevel, cameraIndex, outputRGB);
-	//Raw_DemosaicAndColorCorrect(rawCropped, yuv, w, h, kelvin, blevel, wlevel, cameraIndex, outputRGB);
-
-	free(rawCropped);
-
-//	__android_log_print(ANDROID_LOG_INFO, "OpenCamera. CreateYUV", "NV21 created from RAW");
-
-	return 0;
-}
+//extern "C" JNIEXPORT int JNICALL Java_com_almalence_YuvImage_CreateYUVImageFromRAW
+//(
+//		JNIEnv* env,
+//		jobject thiz,
+//		jobject buf,
+//		jint pixelStride,
+//		jint rowStride,
+//		jint sx,
+//		jint sy,
+//		jint w,
+//		jint h,
+//		jint kelvin1,
+//		jint kelvin2,
+//		jint blevel,
+//		jint wlevel,
+//		jint cameraIndex,
+//		jint outputRGB
+//)
+//{
+//	unsigned char *raw;
+//	unsigned char *rawCropped;
+//
+//	// crop top left point.
+//	int x0 = 0;
+//	int y0 = 0;
+//	x0 = (sx - w) / 2;
+//	x0 = x0 & 1;
+//	y0 = (sy - h) / 2;
+//	y0 = y0 & 1;
+//
+//	// All Buffer objects have an effectiveDirectAddress field
+//	raw = (unsigned char*)env->GetDirectBufferAddress(buf);
+//
+//	if (raw == NULL)
+//	return -1;
+//
+//	SX = w;
+//	SY = h;
+//
+//	yuv = (unsigned char *)malloc (w*h+w*((h+1)/2));
+//	if (yuv == NULL)
+//	return -2;
+//
+//	// RAW store ecah pixel in 2 bytes, thet's why w*2.
+//	rawCropped = (unsigned char *) malloc(2 * w * h);
+//
+//	for (int y=0; y<h; y+=2)
+//	{
+//		memcpy (&rawCropped[y*w*2], &raw[x0 * 2+(y0+y)*rowStride], w*2);
+//		memcpy (&rawCropped[(y+1)*w*2], &raw[x0 * 2+(y0+y+1)*rowStride], w*2);
+//	}
+//
+//	int16_t colorMatrix[12] = { 256, 0, 0, 0, 0, 256, 0, 0, 0, 0, 256, 0};
+//	int kelvin[2] = {kelvin1, kelvin2};
+//	Uint8 * gamma = pow22_gamma_table;
+//	Raw_DemosaicAndColorCorrect(rawCropped, yuv, w, h, kelvin, colorMatrix, gamma, blevel, wlevel, cameraIndex, outputRGB);
+//	//Raw_DemosaicAndColorCorrect(rawCropped, yuv, w, h, kelvin, blevel, wlevel, cameraIndex, outputRGB);
+//
+//	free(rawCropped);
+//
+////	__android_log_print(ANDROID_LOG_INFO, "OpenCamera. CreateYUV", "NV21 created from RAW");
+//
+//	return 0;
+//}
 
 extern "C" JNIEXPORT int JNICALL Java_com_almalence_YuvImage_CreateYUVImage
 (

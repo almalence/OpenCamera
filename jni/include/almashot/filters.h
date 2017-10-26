@@ -68,27 +68,6 @@ int Filters_Release
 );
 
 
-// Filters_FindNoiseLevel - estimate noise level (per color channel) from the image contents
-//
-// Input:
-// in - image to be analyzed
-// reserved - used for debugging, set to NULL
-// sx, sy - image dimensions
-// Output:
-// nl - estimated noise levels
-//
-void Filters_FindNoiseLevel
-(
-	void *instance,
-	Uint8 * in,
-	Uint8 * reserved,
-	int sx,
-	int sy,
-	int stride,
-	int nl[3]
-);
-
-
 // Filters_FilterFrame
 // calls Filters_PostFilterQuick and Filters_PostFilterUV with right parameters
 // to filter Y and UV planes of YUV frame

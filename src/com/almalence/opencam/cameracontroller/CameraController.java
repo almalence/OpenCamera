@@ -219,7 +219,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																			Build.MODEL.contains("2"));
 	
 	public static boolean							isMotoXPure 	= Build.MODEL.toLowerCase().replace(" ", "").contains("xt1575");
-	public static boolean							isHTCM10 	 	= Build.MODEL.toLowerCase().replace(" ", "").contains("htc_m10h");
+	public static boolean							isHTCM10 	 	= Build.MODEL.toLowerCase().replace(" ", "").contains("htc_m10h")||
+																		Build.MANUFACTURER.toLowerCase().replace(" ", "").contains("htc")
+																		&& (Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("m10")||
+																			Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("htc10"));;
+
 	public static boolean							isMotoZ 		= Build.MANUFACTURER.toLowerCase().replace(" ", "").contains("motorola")
 																		&& (Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("xt1650")||
 																			Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("xt1635-02"));
