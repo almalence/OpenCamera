@@ -328,7 +328,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 				e.printStackTrace();
 			}
 
-			return 1;
+			return 2;
 		} else
 		{
 			try
@@ -449,7 +449,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		mContrastPreference = prefs.getString("mcontrastPrefHDR", "2");
 		NoisePreference = prefs.getString("noisePrefHDR", "0");
 		ExpoPreference = prefs.getString("expoPrefHDR", "1");
-		ColorPreference = prefs.getString("colorPrefHDR", "1");
+		ColorPreference = prefs.getString("colorPrefHDR", "2");
 
 		AutoAdjustments = prefs.getBoolean("autoadjustPrefHDR", false);
 
