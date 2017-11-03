@@ -275,8 +275,8 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 		//		sensorGain, deGhostGain, filter, sharpen, nImages, cameraIndex);
 
 		int err = Super_Process(
-				yuv, NULL, &OutPic,
-				sx_zoom, sy_zoom, sx_zoom, sxo, syo, nImages,
+				yuv, NULL, &OutPic, NULL,
+				sx_zoom, sy_zoom, sx_zoom, sxo, syo, sxo, nImages,
 				iso,
 				filter,
 				sharpen,
