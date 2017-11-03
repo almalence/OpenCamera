@@ -1479,20 +1479,20 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		boolean switchShutterOn = prefs.getBoolean(MainScreen.sFastSwitchShutterOn, true);
 		String modeID = ApplicationScreen.getPluginManager().getActiveModeID();
 
-		if (switchShutterOn)
-		{
-			
-			shutterButton.setVisibility(View.GONE);
-			shutterSwitch.setVisibility(View.VISIBLE);
-
-			if (modeID.equals("video"))
-			{
-				shutterSwitch.setState(ShutterSwitch.STATE_VIDEO_ACTIVE);
-			} else
-			{
-				shutterSwitch.setState(ShutterSwitch.STATE_PHOTO_ACTIVE);
-			}
-		} else
+//		if (switchShutterOn)
+//		{
+//			
+//			shutterButton.setVisibility(View.GONE);
+//			shutterSwitch.setVisibility(View.VISIBLE);
+//
+//			if (modeID.equals("video"))
+//			{
+//				shutterSwitch.setState(ShutterSwitch.STATE_VIDEO_ACTIVE);
+//			} else
+//			{
+//				shutterSwitch.setState(ShutterSwitch.STATE_PHOTO_ACTIVE);
+//			}
+//		} else
 		{
 			shutterSwitch.setVisibility(View.GONE);
 			shutterButton.setVisibility(View.VISIBLE);
@@ -5471,10 +5471,10 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			if (quickControlsChangeVisible || settingsControlsVisible)
 				break;
 
-			if (!modeSelectorVisible)
-				showModeList();
-			else
-				hideModeList();
+//			if (!modeSelectorVisible)
+//				showModeList();
+//			else
+//				hideModeList();
 			break;
 
 		case R.id.buttonShutter:
@@ -8124,27 +8124,28 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		boolean isAllowedExternal = prefs.getBoolean(
 				ApplicationScreen.getAppResources().getString(R.string.Preference_allowExternalGalleries), false);
-		if (isAllowedExternal || isOpenExternal)
+//		if (isAllowedExternal || isOpenExternal)
 		{
 			openExternalGallery(uri);
-		} else
-		{
-			// if installed - run ABC Editor
-			if (AppEditorNotifier.isABCEditorInstalled(ApplicationScreen.instance))
-			{
-				Intent intent = new Intent("com.almalence.opencameditor.action.REVIEW", uri);
-				intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-				ApplicationScreen.instance.startActivity(intent);// com.almalence.opencameditor
-			}
-			// if not installed - show that we have editor and let user install
-			// it of run standard dialog
-			else
-			{
-				// if not - show default gallery
-				if (!AppEditorNotifier.showEditorNotifierDialogIfNeeded(ApplicationScreen.instance))
-					openExternalGallery(uri);
-			}
-		}
+		} 
+//		else
+//		{
+//			// if installed - run ABC Editor
+//			if (AppEditorNotifier.isABCEditorInstalled(ApplicationScreen.instance))
+//			{
+//				Intent intent = new Intent("com.almalence.opencameditor.action.REVIEW", uri);
+//				intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+//				ApplicationScreen.instance.startActivity(intent);// com.almalence.opencameditor
+//			}
+//			// if not installed - show that we have editor and let user install
+//			// it of run standard dialog
+//			else
+//			{
+//				// if not - show default gallery
+//				if (!AppEditorNotifier.showEditorNotifierDialogIfNeeded(ApplicationScreen.instance))
+//					openExternalGallery(uri);
+//			}
+//		}
 	}
 
 	private void openExternalGallery(Uri uri)

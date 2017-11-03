@@ -453,7 +453,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 
 		AutoAdjustments = prefs.getBoolean("autoadjustPrefHDR", false);
 
-		SaveInputPreference = Integer.parseInt(prefs.getString("saveInputPrefHDRNew", "0"));
+		SaveInputPreference = Integer.parseInt(prefs.getString("saveInputPrefHDRNew", "1"));
 	}
 
 	private static final int	ADJUSTMENT_CODE_EXPOSURE		= 0;

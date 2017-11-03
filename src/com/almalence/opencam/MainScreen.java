@@ -461,7 +461,7 @@ public class MainScreen extends ApplicationScreen
 //        	}
 //        }
 
- 		if (isABCUnlockedInstalled(this))
+ 		if (true)
  		{
  			unlockAllPurchased = true;
  			prefs.edit().putBoolean("unlock_all_forever", true).commit();

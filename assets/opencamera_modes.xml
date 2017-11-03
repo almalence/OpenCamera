@@ -19,6 +19,7 @@
     plugin id - real unique plugin id which is set in plugin ctor
      -->
 
+<!-- 
 	<mode id="single" name="single_mode_name" savename="">
 		<icon		id="gui_almalence_mode_single"/>
 
@@ -96,7 +97,7 @@
 		<howtotext  id=""/>
 	
 	</mode>
-	
+	-->
 	<mode id="hdrmode" name="hdr_mode_name"  savename="HDR">
 	
 	    <icon		id="gui_almalence_mode_hdr"/>
@@ -122,6 +123,7 @@
 	
 	</mode>
 	
+	<!--
 	<mode id="nightmode" name="night_mode_name"  savename="NIGHT" nameHAL="super_mode_name"  savenameHAL="SUPER">
 	
 	    <icon		id="gui_almalence_mode_night"/>
@@ -274,8 +276,8 @@
 		<howtotext  id=""/>
 		
 	</mode>
-	
+	-->
 	<!--  Default plugin for initial start -->     
-    <defaultmode id="single"/>
+    <defaultmode id="hdrmode"/>
 
 </config>	
