@@ -28,7 +28,7 @@
     <ListPreference 
         android:title="@string/Pref_HDR_NoiseReduction_Title" 
         android:key="noisePrefHDR" 
-        android:defaultValue="1" 
+        android:defaultValue="0" 
         android:entries="@array/noiseArrayHDR" 
         android:entryValues="@array/noiseValuesHDR" />
     <ListPreference 

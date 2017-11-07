@@ -46,6 +46,7 @@ import android.os.Build;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -258,6 +259,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		AlmaShotHDR.HDRPreview(imagesAmount, mImageWidth, mImageHeight, pview, HDRProcessingPlugin.getExposure(true),
 				HDRProcessingPlugin.getVividness(true), HDRProcessingPlugin.getContrast(true),
 				HDRProcessingPlugin.getMicrocontrast(true), 0, nf, mCameraMirrored);
+		
+		Log.e("!!!!!!!!!!!!!!!!!!!", "HDR  exposure" +HDRProcessingPlugin.getExposure(true)+" vividness " +HDRProcessingPlugin.getVividness(true)+ " contrast " +HDRProcessingPlugin.getContrast(true) +" microcontr " + HDRProcessingPlugin.getMicrocontrast(true) +" noise "+nf );
 
 		System.gc();
 
@@ -445,10 +448,10 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		// Get the xml/preferences.xml preferences
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.instance
 				.getBaseContext());
-		ContrastPreference = prefs.getString("contrastPrefHDR", "1");
-		mContrastPreference = prefs.getString("mcontrastPrefHDR", "2");
+		ContrastPreference = prefs.getString("contrastPrefHDR", "0");
+		mContrastPreference = prefs.getString("mcontrastPrefHDR", "0");
 		NoisePreference = prefs.getString("noisePrefHDR", "0");
-		ExpoPreference = prefs.getString("expoPrefHDR", "1");
+		ExpoPreference = prefs.getString("expoPrefHDR", "0");
 		ColorPreference = prefs.getString("colorPrefHDR", "2");
 
 		AutoAdjustments = prefs.getBoolean("autoadjustPrefHDR", false);
