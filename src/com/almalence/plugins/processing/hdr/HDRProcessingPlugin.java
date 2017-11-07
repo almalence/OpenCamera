@@ -260,10 +260,8 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 				HDRProcessingPlugin.getVividness(true), HDRProcessingPlugin.getContrast(true),
 				HDRProcessingPlugin.getMicrocontrast(true), 0, nf, mCameraMirrored);
 		
-		Log.e("!!!!!!!!!!!!!!!!!!!", "HDR  exposure" +HDRProcessingPlugin.getExposure(true)+" vividness " +HDRProcessingPlugin.getVividness(true)+ " contrast " +HDRProcessingPlugin.getContrast(true) +" microcontr " + HDRProcessingPlugin.getMicrocontrast(true) +" noise "+nf );
-
 		System.gc();
-
+		
 		AlmaShotHDR.HDRPreview2(mImageWidth, mImageHeight, pview, mCameraMirrored);
 
 		// android thing (OutOfMemory for bitmaps):
