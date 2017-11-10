@@ -1,11 +1,11 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-
+<!-- 
     <CheckBoxPreference
         android:defaultValue="false"
         android:enabled="true"
         android:key="@string/Preference_UseCamera1Key"
         android:title="@string/Pref_Common_UseCamera2_Title" />
-
+ -->
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="@string/Preference_CaptureRAWValue"

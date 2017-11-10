@@ -2621,7 +2621,7 @@ public class VideoCapturePlugin extends PluginCapture
 		inCapture = true;
 		SessionID = System.currentTimeMillis();
 		createRequestIDList(1);
-		CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, false, true, true);
+		CameraController.captureImagesWithParams(1, CameraController.JPEG, null, null, null, null, 0, true, true);
 	}
 
 	// timelapse values

@@ -65,6 +65,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.almalence.SwapHeap;
 
@@ -106,6 +107,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 	private static String		ExpoPreference;
 	private static String		ColorPreference;
 	private static String		NoisePreference;
+	private static String		NoisePrefilterPreference;
 	private static boolean		AutoAdjustments							= false;
 	private static int			SaveInputPreference;
 
@@ -252,14 +254,17 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		AlmaShotHDR.HDRAddYUVFrames(compressed_frame, imagesAmount, mImageWidth, mImageHeight);
 
 		int nf = HDRProcessingPlugin.getNoise();
+		int prefilter = HDRProcessingPlugin.getPrefilter();
 		
 		if(CameraController.isNexus6 && CameraController.isUseCamera2())
 			nf = -1;
 
 		AlmaShotHDR.HDRPreview(imagesAmount, mImageWidth, mImageHeight, pview, HDRProcessingPlugin.getExposure(true),
 				HDRProcessingPlugin.getVividness(true), HDRProcessingPlugin.getContrast(true),
-				HDRProcessingPlugin.getMicrocontrast(true), 0, nf, mCameraMirrored);
-		
+				HDRProcessingPlugin.getMicrocontrast(true), prefilter, nf, mCameraMirrored);
+		Log.e("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"," expo " +HDRProcessingPlugin.getExposure(true) +" vivid"+
+				HDRProcessingPlugin.getVividness(true)+ " contrast" +HDRProcessingPlugin.getContrast(true)+" micro"+
+				HDRProcessingPlugin.getMicrocontrast(true) +" pref "+prefilter + " nf " +nf);
 		System.gc();
 		
 		AlmaShotHDR.HDRPreview2(mImageWidth, mImageHeight, pview, mCameraMirrored);
@@ -441,6 +446,19 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		return 1;
 	}
 
+	public static int getPrefilter()
+	{
+		try
+		{
+			return Integer.parseInt(NoisePrefilterPreference);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		return 0;
+	}
+	
 	private void getPrefs()
 	{
 		// Get the xml/preferences.xml preferences
@@ -449,6 +467,7 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 		ContrastPreference = prefs.getString("contrastPrefHDR", "0");
 		mContrastPreference = prefs.getString("mcontrastPrefHDR", "0");
 		NoisePreference = prefs.getString("noisePrefHDR", "0");
+		NoisePrefilterPreference = prefs.getString("noisePrefilterHDR", "0");
 		ExpoPreference = prefs.getString("expoPrefHDR", "0");
 		ColorPreference = prefs.getString("colorPrefHDR", "2");
 

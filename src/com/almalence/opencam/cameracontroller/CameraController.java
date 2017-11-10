@@ -894,7 +894,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
 
-		isForceCamera1 = prefs.getBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera1Key), false);
+		isForceCamera1 = false;//prefs.getBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera1Key), false);
 		if (isForceCamera1)
 			prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera2Key), false)
 			.commit();
@@ -919,23 +919,24 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			//Samsung Galaxy S6 and Note5 was reported as not worked in camera2 mode
 			//Always not focused preview and blinking on every try of focusing
 			if ((!isCamera2Supported || !checkHardwareLevel() || isGalaxyS6 || isGalaxyNote5 || isSonyZ5)// || isSony)
-					|| (!isMotoXPure 
-					 && !isFlex2 
-					 && !isNexus5or6 
-					 && !isAndroidOne  
-					 && !isOnePlusTwo 
-					 && !isG5 
-					 && !isG4 
-					 && !isG3 
-					 && !isG2 
-					 && !isGalaxyS7 
-					 && !isHuaweiP9 
-					 && !isHTCM10
-					 && !isMotoZ
-					 && !isPixel
-					 && !isGalaxyS8
-					 && !isSonyXZP
-					 && !isVivoXXX))
+//					|| (!isMotoXPure 
+//					 && !isFlex2 
+//					 && !isNexus5or6 
+//					 && !isAndroidOne  
+//					 && !isOnePlusTwo 
+//					 && !isG5 
+//					 && !isG4 
+//					 && !isG3 
+//					 && !isG2 
+//					 && !isGalaxyS7 
+//					 && !isHuaweiP9 
+//					 && !isHTCM10
+//					 && !isMotoZ
+//					 && !isPixel
+//					 && !isGalaxyS8
+//					 && !isSonyXZP
+//					 && !isVivoXXX)
+					)
 			{
 				isCamera2 = false;
 				isCamera2Allowed = false;
@@ -951,6 +952,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			isCamera2Supported = false;
 			prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera2Key), false)
 					.commit();
+		}
+		if (!isCamera2Allowed)
+		{
+			Toast.makeText(mainContext, "Unable to start camera! Contact Almalence!!!", Toast.LENGTH_LONG).show();
+			MainScreen.getInstance().finishAffinity();
 		}
 	}
 	
@@ -4322,7 +4328,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	// Note: per-frame 'gain' and 'exposure' parameters are only effective for
 	// Camera2 API at the moment
 	public static int captureImagesWithParams(int nFrames, int format, int[] pause, int[] evRequested, int[] gain,
-			long[] exposure, boolean setPowerGamma, boolean resInHeap, boolean indicate)
+			long[] exposure, int setPowerGamma, boolean resInHeap, boolean indicate)
 	{
 		pauseBetweenShots = pause;
 		evValues = evRequested;

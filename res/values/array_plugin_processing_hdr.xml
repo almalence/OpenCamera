@@ -43,8 +43,23 @@
  
 <string-array name="noiseValuesHDR">
    <item>0</item>
+   <item>127</item>
+   <item>256</item>
+</string-array>
+
+
+<string-array name="noisePrefilterArrayHDR">
+   <item>Off</item>
+   <item>Level 1</item>
+   <item>Level 2</item>
+   <item>Level 3</item>
+</string-array>
+ 
+<string-array name="noisePrefilterValuesHDR">
+   <item>0</item>
    <item>1</item>
    <item>2</item>
+   <item>3</item>
 </string-array>
 
 <string-array name="colorArrayHDR">

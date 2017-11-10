@@ -32,6 +32,12 @@
         android:entries="@array/noiseArrayHDR" 
         android:entryValues="@array/noiseValuesHDR" />
     <ListPreference 
+        android:title="Pre-filter" 
+        android:key="noisePrefilterHDR" 
+        android:defaultValue="0" 
+        android:entries="@array/noisePrefilterArrayHDR" 
+        android:entryValues="@array/noisePrefilterValuesHDR" />
+    <ListPreference 
         android:title="@string/Pref_HDR_SaveInputPref_Title" 
         android:defaultValue="1" 
         android:entries="@array/saveInputArrayHDR" 

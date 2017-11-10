@@ -116,7 +116,7 @@ public class Camera2Controller
 	private static int 					blevel			 			= 0;    //Black level offset
 	private static int 					wlevel 						= 1024; //Maximum raw value output by sensor.
 	
-	private static boolean				manualPowerGamma			= false; //Used only for Almalence's SuperSensor mode
+	private static int					manualPowerGamma			= 0; //Used only for Almalence's SuperSensor mode
 	
 	private static RggbChannelVector 	rggbChannelVector 			= null; //Gains applying to raw color channels for manual white-balance logic
 	
@@ -2386,7 +2386,7 @@ public class Camera2Controller
 	}
 	
 	
-	private static CaptureRequest.Builder setConstantPowerGamma(CaptureRequest.Builder request)
+	private static CaptureRequest.Builder setConstantPowerGamma(CaptureRequest.Builder request, int setPowerGamma)
 	{
 		// using constant power 2.2 tone-mapping
 		// so that manipulations with the luminance do not skew the colors
@@ -2394,11 +2394,15 @@ public class Camera2Controller
 		request.set(CaptureRequest.TONEMAP_MODE,
 				CaptureRequest.TONEMAP_MODE_CONTRAST_CURVE);
 		
-		float[] t22 = new float[]{
+		float[] t22=null;
+		if (setPowerGamma == 1)
+			t22 = new float[]{
 		            0.0000f, 0.0000f, 0.0667f, 0.2920f, 0.1333f, 0.4002f, 0.2000f, 0.4812f,
 		            0.2667f, 0.5484f, 0.3333f, 0.6069f, 0.4000f, 0.6594f, 0.4667f, 0.7072f,
 		            0.5333f, 0.7515f, 0.6000f, 0.7928f, 0.6667f, 0.8317f, 0.7333f, 0.8685f,
 		            0.8000f, 0.9035f, 0.8667f, 0.9370f, 0.9333f, 0.9691f, 1.0000f, 1.0000f };
+		else if (setPowerGamma == 2)
+			t22 = new float[]{ 0,0, 1,1};
 		// linear
 		// float[] t22 = new float[]{ 0,0, 1,1};
 		
@@ -2432,7 +2436,7 @@ public class Camera2Controller
 	//Call next methods only when capture become allowed (preview is focused)
 	public static int captureImageWithParamsCamera2(final int nFrames, final int format, final int[] pause,
 													final int[] evRequested, final int[] gain, final long[] exposure,
-													final boolean setPowerGamma, final boolean resInHeap, final boolean indication)
+													final int setPowerGamma, final boolean resInHeap, final boolean indication)
 	{
 //		inCapture = true; Debug variable. Used in logic to capture RAW in Super mode on Galaxy S6
 		int requestID = -1;
@@ -2487,18 +2491,18 @@ public class Camera2Controller
 	//First of all make pre-capture request for exposure metering
 	//For all devices lower that HARDWARE_LEVEL_FULL or LIMITED just call capture method without pre-capture
 	public static void captureImageWithParamsCamera2Allowed (final int nFrames, final int format, final int[] pause,
-			final int[] evRequested, final int[] gain, final long[] exposure, final boolean setPowerGamma, final boolean resInHeap, final boolean indication) {
+			final int[] evRequested, final int[] gain, final long[] exposure, final int setPowerGamma, final boolean resInHeap, final boolean indication) {
 		try
 		{
 			lastCaptureFormat = format;
 			CreateRequests(format);
 			
-			if(setPowerGamma)
+			if(setPowerGamma != 0)
 			{
-				stillRequestBuilder = setConstantPowerGamma(stillRequestBuilder);
-				precaptureRequestBuilder = setConstantPowerGamma(precaptureRequestBuilder);
+				stillRequestBuilder = setConstantPowerGamma(stillRequestBuilder, setPowerGamma);
+				precaptureRequestBuilder = setConstantPowerGamma(precaptureRequestBuilder, setPowerGamma);
 				if (format == CameraController.RAW)
-					rawRequestBuilder = setConstantPowerGamma(rawRequestBuilder);
+					rawRequestBuilder = setConstantPowerGamma(rawRequestBuilder, setPowerGamma);
 			}
 			
 			// Nexus 5 fix flash in dark conditions and exposure set to 0.
@@ -2577,7 +2581,7 @@ public class Camera2Controller
 	//Exact here we request capture session to capture frame
 	public static int captureImageWithParamsCamera2Simple(final int nFrames, final int format, final int[] pause,
 														  final int[] evRequested, final int[] gain, final long[] exposure,
-														  final boolean setPowerGamma, final boolean resInHeap, final boolean indication)
+														  final int setPowerGamma, final boolean resInHeap, final boolean indication)
 	{
 		
 		int requestID = -1;
@@ -2729,7 +2733,7 @@ public class Camera2Controller
 	//Method to capture next image in case of multishot requested
 	//Called for all frames instead very first frame
 	public static int captureNextImageWithParams(final int format, final int frameIndex, final int pause, final int evRequested,
-			final int gain, final long exposure, final boolean setPowerGamma)
+			final int gain, final long exposure, final int setPowerGamma)
 	{
 		int requestID = -1;
 
@@ -2737,12 +2741,12 @@ public class Camera2Controller
 //		{
 //			CreateRequests(format);
 			
-			if(setPowerGamma)
+			if(setPowerGamma != 0)
 			{
-				stillRequestBuilder = setConstantPowerGamma(stillRequestBuilder);
-				precaptureRequestBuilder = setConstantPowerGamma(precaptureRequestBuilder);
+				stillRequestBuilder = setConstantPowerGamma(stillRequestBuilder, setPowerGamma);
+				precaptureRequestBuilder = setConstantPowerGamma(precaptureRequestBuilder, setPowerGamma);
 				if (format == CameraController.RAW)
-					rawRequestBuilder = setConstantPowerGamma(rawRequestBuilder);
+					rawRequestBuilder = setConstantPowerGamma(rawRequestBuilder, setPowerGamma);
 			}
 
 			final boolean isRAWCapture = (format == CameraController.RAW);

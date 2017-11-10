@@ -81,7 +81,9 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	// set exposure based on onpreviewframe
 	private CountDownTimer		cdt						= null;
 
-	private static String		sEvPref;
+//	private static String		sEvPref;
+	private static String		sEvPrefMul;
+//	private static String		sEvPrefTonemap;
 	private static String		sRefocusPref;
 	private static String		sUseLumaPref;
 	
@@ -93,12 +95,16 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 				R.xml.preferences_capture_expobracketing, 0, null);
 	}
 
-	private static String	EvPreference;
+//	private static String	EvPreference;
+//	private static String	EvPreferenceTonemap;
+	private static String	EvPreferenceMultiplier;
 
 	@Override
 	public void onCreate()
 	{
-		sEvPref = ApplicationScreen.getAppResources().getString(R.string.Preference_ExpoBracketingPref);
+//		sEvPref = ApplicationScreen.getAppResources().getString(R.string.Preference_ExpoBracketingPref);
+		sEvPrefMul = ApplicationScreen.getAppResources().getString(R.string.Preference_ExpoBracketingPrefMultiplier);
+//		sEvPrefTonemap = ApplicationScreen.getAppResources().getString(R.string.Preference_ExpoBracketingPrefTONEMAP);
 		sRefocusPref = ApplicationScreen.getAppResources().getString(R.string.Preference_ExpoBracketingRefocusPref);
 		sUseLumaPref = ApplicationScreen.getAppResources().getString(R.string.Preference_ExpoBracketingUseLumaPref);
 	}
@@ -150,6 +156,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			captureRAW = false;
 			ApplicationScreen.setCaptureFormat(CameraController.JPEG);
 		}
+		
+		wbLocked = false;
 	}
 
 	@Override
@@ -344,7 +352,9 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 				PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_CAPTURE_FINISHED, String.valueOf(SessionID));
 	
 				CameraController.resetExposureCompensation();
-	
+
+				unlockAWB();
+				
 				imagesTakenRAW = 0;
 				frame_num = 0;
 				resultCompleted = 0;
@@ -400,6 +410,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 	
 				CameraController.resetExposureCompensation();
 				
+				unlockAWB();
+				
 				imagesTakenRAW = 0;
 				frame_num = 0;
 				resultCompleted = 0;
@@ -423,8 +435,10 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		RefocusPreference = prefs.getBoolean(sRefocusPref, false);
 		UseLumaAdaptation = prefs.getBoolean(sUseLumaPref, false);
 
-		EvPreference = prefs.getString(sEvPref, "0");
-
+//		EvPreference = prefs.getString(sEvPref, "0");
+		EvPreferenceMultiplier = prefs.getString(sEvPrefMul, "2");
+//		EvPreferenceTonemap = prefs.getString(sEvPrefTonemap, "0");
+		
 		captureRAW = prefs.getBoolean(ApplicationScreen.sCaptureRAWPref, false);
 		if (PluginManager.getInstance().getActiveModeID().equals("hdrmode"))
 			captureRAW = false;
@@ -500,7 +514,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		if (android.os.Build.MANUFACTURER.toLowerCase().contains("samsung") && (Math.abs(ev_step - 0.166) < 0.01))
 			ev_step = 0.5f;
 
-		switch (Integer.parseInt(EvPreference))
+		switch (0)
 		{
 		case 1: // -1 to +1 Ev compensation
 			max_ev = (int) Math.floor(1 / ev_step);
@@ -628,6 +642,8 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 		int gain[] = null;
 		long exposure[] = null;
 		
+		lockAWB();
+		
 		// On Nexus5x and Nexus6p we can't change exposure compensation.
 		// That's why we will use manual exposure (shutter speed) settings to capture HDR.
 		// Adjust the shutter speed one or two stops faster (i.e. if you're at 1/250 sec, go to 1/500 or 1/1000 sec), take a photo, 
@@ -650,47 +666,58 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			gain[1] = CameraController.getCurrentSensitivity();
 			gain[2] = CameraController.getCurrentSensitivity();
 			
-			switch (Integer.parseInt(EvPreference))
-			{
-			case 1: // -1 to +1 Ev compensation
+			float mul = Float.parseFloat(EvPreferenceMultiplier);
+//			switch (Integer.parseInt(EvPreference))
+//			{
+//			case 1: // -1 to +1 Ev compensation
+//				exposure = new long[3];
+//				exposure[0] = CameraController.getCameraExposureTime();
+//				exposure[1] = CameraController.getCameraExposureTime() * 2;
+//				exposure[2] = CameraController.getCameraExposureTime() / 2;
+//				break;
+//			case 2: // -2 to +2 Ev compensation
+//				exposure = new long[3];
+//				exposure[0] = CameraController.getCameraExposureTime();
+//				exposure[1] = CameraController.getCameraExposureTime() * 4;
+//				exposure[2] = CameraController.getCameraExposureTime() / 4;
+//				break;
+//			default:
 				exposure = new long[3];
 				exposure[0] = CameraController.getCameraExposureTime();
-				exposure[1] = CameraController.getCameraExposureTime() * 2;
-				exposure[2] = CameraController.getCameraExposureTime() / 2;
-				break;
-			case 2: // -2 to +2 Ev compensation
-				exposure = new long[3];
-				exposure[0] = CameraController.getCameraExposureTime();
-				exposure[1] = CameraController.getCameraExposureTime() * 4;
-				exposure[2] = CameraController.getCameraExposureTime() / 4;
-				break;
-			default:
-				exposure = new long[3];
-				exposure[0] = CameraController.getCameraExposureTime();
-				
-				if (CameraController.isGalaxyS7)
-				{
-					exposure[1] = CameraController.getCameraExposureTime() * 2;
-					exposure[2] = CameraController.getCameraExposureTime() / 4;
-				}
-				else
-				{
-					exposure[1] = CameraController.getCameraExposureTime() * 4;
-					exposure[2] = CameraController.getCameraExposureTime() / 2;
-				}
-				break;
-			}
+				exposure[1] = (long)(CameraController.getCameraExposureTime() * mul);
+				exposure[2] = (long)(CameraController.getCameraExposureTime() / mul);
+//				break;
+//			}
 		}
+		
+		//tests for tonemap
+		int tonemap_option = 1;//Integer.parseInt(EvPreferenceTonemap);
 		
 		createRequestIDList(captureRAW? total_frames*2 : total_frames);
 		if (captureRAW)
 			CameraController.captureImagesWithParams(total_frames, CameraController.RAW, null, evValues, gain, exposure,
-					false, true, true);
+					tonemap_option, true, true);
 		else
 			CameraController.captureImagesWithParams(total_frames, isHDRMode ? CameraController.YUV
-					: CameraController.JPEG, null, evValues, gain, exposure, false, true, true);
+					: CameraController.JPEG, null, evValues, gain, exposure, tonemap_option, true, true);
 	}
 
+	private boolean wbLocked = false;
+	
+	private void lockAWB()
+	{
+		if (CameraController.isWhiteBalanceLockSupported() && !CameraController.isWhiteBalanceLocked())
+			wbLocked = CameraController.setAutoWhiteBalanceLock(true);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_AEWB_CHANGED);
+	}
+
+	private void unlockAWB()
+	{
+		if (wbLocked && CameraController.isWhiteBalanceLockSupported() && CameraController.isWhiteBalanceLocked())
+			wbLocked = CameraController.setAutoWhiteBalanceLock(false);
+		PluginManager.getInstance().sendMessage(ApplicationInterface.MSG_BROADCAST, ApplicationInterface.MSG_AEWB_CHANGED);
+	}
+	
 	public void onAutoFocus(boolean paramBoolean)
 	{
 		if (inCapture) // disregard autofocus success (paramBoolean)

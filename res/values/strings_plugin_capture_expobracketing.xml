@@ -20,6 +20,8 @@
     <string name="Pref_ExpoBracketing_None">None</string>
     
     <string name="Preference_ExpoBracketingPref">evPrefExpoBracketing</string>
+    <string name="Preference_ExpoBracketingPrefMultiplier">evPrefExpoBracketingMultiplier</string>
+    <string name="Preference_ExpoBracketingPrefTONEMAP">evPrefExpoBracketingTONEMAP</string>    
     <string name="Preference_ExpoBracketingRefocusPref">refocusPrefExpoBracketing</string>
     <string name="Preference_ExpoBracketingUseLumaPref">lumaPrefExpoBracketing</string>
 </resources>

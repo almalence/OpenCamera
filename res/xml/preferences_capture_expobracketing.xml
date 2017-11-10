@@ -1,14 +1,34 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <PreferenceCategory android:title="@string/Pref_ExpoBracketing_Category_Title">   
-    	<ListPreference
+
+        <!-- 
+     	<ListPreference
 			android:title="@string/Pref_ExpoBracketing_EvRange_Title"
 			android:summary=""
 			android:key="evPrefExpoBracketing" 
 			android:defaultValue="0"
 			android:entries="@array/evArrayExpoBracketing"
 			android:entryValues="@array/evValuesExpoBracketing" />		
-		    		
+		     -->
+		     		
+    	<ListPreference
+			android:title="AE multiplier"
+			android:summary=""
+			android:key="evPrefExpoBracketingMultiplier" 
+			android:defaultValue="4"
+			android:entries="@array/evArrayExpoBracketingMultiplier"
+			android:entryValues="@array/evValuesExpoBracketingMultiplier" />	
+		<!-- 
+    	<ListPreference
+			android:title="Tonemap curve"
+			android:summary=""
+			android:key="evPrefExpoBracketingTONEMAP" 
+			android:defaultValue="1"
+			android:entries="@array/evArrayExpoBracketingTONEMAP"	
+			android:entryValues="@array/evValuesExpoBracketingTONEMAP" />
+    	 -->
+    	
 		<!-- -+-  -->
 		<PreferenceScreen 
 		    android:title="@string/moreText"

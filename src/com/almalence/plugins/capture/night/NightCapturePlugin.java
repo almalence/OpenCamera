@@ -625,7 +625,7 @@ public class NightCapturePlugin extends PluginCapture
 			createRequestIDList(total_frames);
 			// capture the burst
 			CameraController.captureImagesWithParams(
-					total_frames, CameraController.YUV_RAW, null, null, burstGainArray, burstExposureArray, true, true, true);
+					total_frames, CameraController.YUV_RAW, null, null, burstGainArray, burstExposureArray, 1, true, true);
 		}
 		else
 		{
@@ -641,7 +641,7 @@ public class NightCapturePlugin extends PluginCapture
 			createRequestIDList(total_frames);
 			// capture the burst
 			CameraController.captureImagesWithParams(
-					total_frames, CameraController.YUV_RAW, null, null, null, burstExposureArray, true, true, true);
+					total_frames, CameraController.YUV_RAW, null, null, null, burstExposureArray, 1, true, true);
 		}
 	}
 	
@@ -799,13 +799,13 @@ public class NightCapturePlugin extends PluginCapture
 //			Log.wtf("SUPER", "takePicture. First frame. create IDList size 1");
 			createRequestIDList(1);
 			takingImageForExposure = true;
-			CameraController.captureImagesWithParams(1, CameraController.YUV_RAW, null, null, null, null, true, true, false);
+			CameraController.captureImagesWithParams(1, CameraController.YUV_RAW, null, null, null, null, 1, true, false);
 		}
 		else
 		{
 			createRequestIDList(total_frames);
 			takingImageForExposure = false;
-			CameraController.captureImagesWithParams(total_frames, CameraController.YUV_RAW, null, null, null, null, false, true, true);
+			CameraController.captureImagesWithParams(total_frames, CameraController.YUV_RAW, null, null, null, null, 0, true, true);
 		}
 	}
 
