@@ -11,10 +11,18 @@
 			android:entries="@array/evArrayExpoBracketing"
 			android:entryValues="@array/evValuesExpoBracketing" />		
 		     -->
+		
+		<ListPreference
+			android:title="Bracket option"
+			android:summary="3 images - normal [-2 +2], 4 images - wide range [-3 +3]"
+			android:key="evPrefExpoBracketingFrames" 
+			android:defaultValue="3"
+			android:entries="@array/evArrayExpoBracketingFrames"
+			android:entryValues="@array/evValuesExpoBracketingFrames" />
 		     		
     	<ListPreference
 			android:title="AE multiplier"
-			android:summary=""
+			android:summary="Aplied only when 3 images used"
 			android:key="evPrefExpoBracketingMultiplier" 
 			android:defaultValue="4"
 			android:entries="@array/evArrayExpoBracketingMultiplier"

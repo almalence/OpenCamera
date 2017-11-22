@@ -251,6 +251,13 @@ public class HDRProcessingPlugin extends PluginProcessing implements OnItemClick
 			}
 		}
 
+//		//sorting images
+//		int[] compressed_frame_sorted = new int[imagesAmount];
+//		for (int i = 0; i < imagesAmount; ++i)
+//		{
+//			compressed_frame_sorted[i] = compressed_frame[ExpoBracketingCapturePlugin.evIdx[i]];
+//		}
+		
 		AlmaShotHDR.HDRAddYUVFrames(compressed_frame, imagesAmount, mImageWidth, mImageHeight);
 
 		int nf = HDRProcessingPlugin.getNoise();

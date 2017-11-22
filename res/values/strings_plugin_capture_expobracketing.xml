@@ -21,6 +21,7 @@
     
     <string name="Preference_ExpoBracketingPref">evPrefExpoBracketing</string>
     <string name="Preference_ExpoBracketingPrefMultiplier">evPrefExpoBracketingMultiplier</string>
+    <string name="Preference_ExpoBracketingPrefFrames">evPrefExpoBracketingFrames</string>
     <string name="Preference_ExpoBracketingPrefTONEMAP">evPrefExpoBracketingTONEMAP</string>    
     <string name="Preference_ExpoBracketingRefocusPref">refocusPrefExpoBracketing</string>
     <string name="Preference_ExpoBracketingUseLumaPref">lumaPrefExpoBracketing</string>

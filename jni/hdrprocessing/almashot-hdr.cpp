@@ -183,6 +183,8 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_almalence_plugins_processing_hdr_A
 	for (i=0; i<nFrames; ++i)
 			yuv[i] = yuvIn[i];
 
+	Hdr_SortExposures(yuv, sx, sy, nFrames);
+
 	env->ReleaseIntArrayElements(in, (jint*)yuvIn, JNI_ABORT);
 
 	//sprintf (status, "frames total: %d\nsize0: %d\nsize1: %d\nsize2: %d\n", (int)nFrames, jpeg_length[0], jpeg_length[1], jpeg_length[2]);

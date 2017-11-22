@@ -31,6 +31,16 @@
    <item>4</item>
 </string-array>
 
+<string-array name="evArrayExpoBracketingFrames">
+   <item>3 images - normal [-2 +2]</item>
+   <item>4 images - wide range [-3 +3]</item>
+</string-array>
+ 
+<string-array name="evValuesExpoBracketingFrames">
+   <item>3</item>
+   <item>4</item>
+</string-array>
+
 <string-array name="evArrayExpoBracketingTONEMAP">
    <item>Not using</item>
    <item>Use t22</item>

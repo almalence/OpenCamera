@@ -83,6 +83,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 //	private static String		sEvPref;
 	private static String		sEvPrefMul;
+	private static String		sEvPrefFrames;
 //	private static String		sEvPrefTonemap;
 	private static String		sRefocusPref;
 	private static String		sUseLumaPref;
@@ -98,12 +99,14 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 //	private static String	EvPreference;
 //	private static String	EvPreferenceTonemap;
 	private static String	EvPreferenceMultiplier;
+	private static String	EvPreferenceFrames;
 
 	@Override
 	public void onCreate()
 	{
 //		sEvPref = ApplicationScreen.getAppResources().getString(R.string.Preference_ExpoBracketingPref);
 		sEvPrefMul = ApplicationScreen.getAppResources().getString(R.string.Preference_ExpoBracketingPrefMultiplier);
+		sEvPrefFrames = ApplicationScreen.getAppResources().getString(R.string.Preference_ExpoBracketingPrefFrames);
 //		sEvPrefTonemap = ApplicationScreen.getAppResources().getString(R.string.Preference_ExpoBracketingPrefTONEMAP);
 		sRefocusPref = ApplicationScreen.getAppResources().getString(R.string.Preference_ExpoBracketingRefocusPref);
 		sUseLumaPref = ApplicationScreen.getAppResources().getString(R.string.Preference_ExpoBracketingUseLumaPref);
@@ -437,6 +440,7 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 
 //		EvPreference = prefs.getString(sEvPref, "0");
 		EvPreferenceMultiplier = prefs.getString(sEvPrefMul, "2");
+		EvPreferenceFrames = prefs.getString(sEvPrefFrames, "3");
 //		EvPreferenceTonemap = prefs.getString(sEvPrefTonemap, "0");
 		
 		captureRAW = prefs.getBoolean(ApplicationScreen.sCaptureRAWPref, false);
@@ -606,6 +610,9 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 			}
 		}
 
+		int frames_interval = Integer.parseInt(EvPreferenceFrames);
+		if (frames_interval == 4)
+			total_frames = 4;
 		// sort frame idx'es in descending order of Ev's
 		boolean[] skip_idx = new boolean[MAX_HDR_FRAMES];
 		for (int i = 0; i < total_frames; ++i)
@@ -661,11 +668,12 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 //			CameraController.isVivoXXX||
 //			CameraController.isPixel)
 		{
-			gain = new int[3];
+			gain = new int[4];
 			gain[0] = CameraController.getCurrentSensitivity();
 			gain[1] = CameraController.getCurrentSensitivity();
 			gain[2] = CameraController.getCurrentSensitivity();
-			
+			gain[3] = CameraController.getCurrentSensitivity();
+		
 			float mul = Float.parseFloat(EvPreferenceMultiplier);
 //			switch (Integer.parseInt(EvPreference))
 //			{
@@ -682,10 +690,31 @@ public class ExpoBracketingCapturePlugin extends PluginCapture
 //				exposure[2] = CameraController.getCameraExposureTime() / 4;
 //				break;
 //			default:
+			
+//				exposure = new long[3];
+//				exposure[0] = CameraController.getCameraExposureTime();
+//				exposure[1] = (long)(CameraController.getCameraExposureTime() * mul);
+//				exposure[2] = (long)(CameraController.getCameraExposureTime() / mul);
+				
+			//test with wide exposure range
+			int frames_interval = Integer.parseInt(EvPreferenceFrames);
+			if (frames_interval == 4)
+			{
+				total_frames = 4;
+				exposure = new long[4];
+				exposure[0] = (long)(CameraController.getCameraExposureTime() * 8);
+				exposure[1] = (long)(CameraController.getCameraExposureTime() * 2);
+				exposure[2] = (long)(CameraController.getCameraExposureTime() / 2);
+				exposure[3] = (long)(CameraController.getCameraExposureTime() / 8);
+			}
+			else
+			{
 				exposure = new long[3];
 				exposure[0] = CameraController.getCameraExposureTime();
 				exposure[1] = (long)(CameraController.getCameraExposureTime() * mul);
 				exposure[2] = (long)(CameraController.getCameraExposureTime() / mul);
+			}
+				
 //				break;
 //			}
 		}
