@@ -167,6 +167,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g9500u")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g9550")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g9500")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g950u1")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g955u");
 	
 	public static boolean							isVivoXXX	 	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("pd1709");

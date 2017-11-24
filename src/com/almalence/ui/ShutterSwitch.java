@@ -605,24 +605,9 @@ public class ShutterSwitch extends View
 
 		int switchTop = 0;
 		int switchBottom = 0;
-		// switch (getGravity() & Gravity.VERTICAL_GRAVITY_MASK)
-		// {
-		// default:
-		// case Gravity.TOP:
-		// switchTop = getPaddingTop();
-		// switchBottom = switchTop + mSwitchHeight;
-		// break;
 
-		// case Gravity.CENTER_VERTICAL:
 		switchTop = (getPaddingTop() + getHeight() - getPaddingBottom()) / 2 - mSwitchHeight / 2;
 		switchBottom = switchTop + mSwitchHeight;
-		// break;
-
-		// case Gravity.BOTTOM:
-		// switchBottom = getHeight() - getPaddingBottom();
-		// switchTop = switchBottom - mSwitchHeight;
-		// break;
-		// }
 
 		mSwitchLeft = switchLeft;
 		mSwitchTop = switchTop;

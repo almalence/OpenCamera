@@ -368,9 +368,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 				WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
 						| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 		
-		// set some common view here
-//		setContentView(R.layout.opencamera_main_layout);
-
 		createPluginManager();
 		duringOnCreate();
 
@@ -386,16 +383,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		keepScreenOn = prefs.getBoolean("keepScreenOn", false);
-
-		// set preview, on click listener and surface buffers
-//		findViewById(R.id.SurfaceView02).setVisibility(View.GONE);
-//		preview = (SurfaceView) this.findViewById(R.id.SurfaceView01);
-//		preview.setOnClickListener(this);
-//		preview.setOnTouchListener(this);
-//		preview.setKeepScreenOn(true);
-//
-//		surfaceHolder = preview.getHolder();
-//		surfaceHolder.addCallback(this);
 
 		orientListener = new OrientationEventListener(this)
 		{
@@ -994,12 +981,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		ApplicationScreen.getGUIManager().onStop();
 		ApplicationScreen.getPluginManager().onStop();
 		CameraController.onStop();
-
-//		if (!CameraController.isRemoteCamera())
-//		{
-//			if (CameraController.isUseCamera2())
-//				stopImageReaders();
-//		}
 	}
 
 	abstract protected void stopRemotePreview();
@@ -1020,7 +1001,7 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 		this.hideOpenGLLayer();
 	}
 
-	protected CountDownTimer	onResumeTimer	= null;
+//	protected CountDownTimer	onResumeTimer	= null;
 
 	@Override
 	protected void onResume()
@@ -1041,74 +1022,64 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 	protected void onApplicationResume()
 	{
 		isCameraConfiguring = false;
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen
+				.getMainContext());
 
-		onResumeTimer = new CountDownTimer(100, 100)
+		preview.setKeepScreenOn(true);
+
+		captureFormat = CameraController.JPEG;
+
+		String modeId = ApplicationScreen.getPluginManager().getActiveModeID();
+		if (CameraController.isRemoteCamera() && !(modeId.contains("single") || modeId.contains("video")))
 		{
-			public void onTick(long millisUntilFinished)
+			prefs.edit().putInt(ApplicationScreen.sCameraModePref, 0).commit();
+			CameraController.setCameraIndex(0);
+			guiManager.setCameraModeGUI(0);
+		}
+
+		CameraController.onResume();
+		ApplicationScreen.getGUIManager().onResume();
+		ApplicationScreen.getPluginManager().onResume();
+		
+		ApplicationScreen.instance.mPausing = false;
+
+		if (!CameraController.isRemoteCamera())
+		{
+			// set preview, on click listener and surface buffers
+			findViewById(R.id.SurfaceView02).setVisibility(View.GONE);
+			preview = (SurfaceView) findViewById(R.id.SurfaceView01);
+			preview.setOnClickListener(ApplicationScreen.this);
+			preview.setOnTouchListener(ApplicationScreen.this);
+			preview.setKeepScreenOn(true);
+
+			surfaceHolder = preview.getHolder();
+			surfaceHolder.addCallback(ApplicationScreen.this);
+
+			// One of device camera is selected.
+			if (CameraController.isUseCamera2())
 			{
-				// Not used
-			}
+				ApplicationScreen.instance.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+				CameraController.setupCamera(null, true);
 
-			public void onFinish()
+				if (glView != null)
+					glView.onResume();
+			} else if ((surfaceCreated && (!CameraController.isCameraCreated())))
 			{
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen
-						.getMainContext());
+				ApplicationScreen.instance.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
+				CameraController.setupCamera(surfaceHolder, true);
 
-				preview.setKeepScreenOn(true);
-
-				captureFormat = CameraController.JPEG;
-
-				String modeId = ApplicationScreen.getPluginManager().getActiveModeID();
-				if (CameraController.isRemoteCamera() && !(modeId.contains("single") || modeId.contains("video")))
+				if (glView != null)
 				{
-					prefs.edit().putInt(ApplicationScreen.sCameraModePref, 0).commit();
-					CameraController.setCameraIndex(0);
-					guiManager.setCameraModeGUI(0);
+					glView.onResume();
 				}
-
-				CameraController.onResume();
-				ApplicationScreen.getGUIManager().onResume();
-				ApplicationScreen.getPluginManager().onResume();
-				
-				ApplicationScreen.instance.mPausing = false;
-
-				if (!CameraController.isRemoteCamera())
-				{
-					// set preview, on click listener and surface buffers
-					findViewById(R.id.SurfaceView02).setVisibility(View.GONE);
-					preview = (SurfaceView) findViewById(R.id.SurfaceView01);
-					preview.setOnClickListener(ApplicationScreen.this);
-					preview.setOnTouchListener(ApplicationScreen.this);
-					preview.setKeepScreenOn(true);
-
-					surfaceHolder = preview.getHolder();
-					surfaceHolder.addCallback(ApplicationScreen.this);
-
-					// One of device camera is selected.
-					if (CameraController.isUseCamera2())
-					{
-						ApplicationScreen.instance.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-						CameraController.setupCamera(null, true);
-
-						if (glView != null)
-							glView.onResume();
-					} else if ((surfaceCreated && (!CameraController.isCameraCreated())))
-					{
-						ApplicationScreen.instance.findViewById(R.id.mainLayout2).setVisibility(View.VISIBLE);
-						CameraController.setupCamera(surfaceHolder, true);
-
-						if (glView != null)
-						{
-							glView.onResume();
-						}
-					}
-				} else
-				{
-					sonyCameraSelected();
-				}
-				orientListener.enable();
 			}
-		}.start();
+		} else
+		{
+			sonyCameraSelected();
+		}
+		orientListener.enable();
+
 
 		shutterPlayer = new SoundPlayer(this.getBaseContext(), getResources().openRawResourceFd(
 				R.raw.plugin_capture_tick));
@@ -1126,7 +1097,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 			Toast.makeText(ApplicationScreen.getMainContext(), "Almost no free space left on internal storage.",
 					Toast.LENGTH_LONG).show();
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
 		boolean dismissKeyguard = prefs.getBoolean("dismissKeyguard", true);
 		if (dismissKeyguard)
 			getWindow()
@@ -1196,11 +1166,6 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 	protected void onApplicationPause()
 	{
-		if (onResumeTimer != null)
-		{
-			onResumeTimer.cancel();
-		}
-
 		mApplicationStarted = false;
 
 		ApplicationScreen.getGUIManager().onPause();
@@ -1221,14 +1186,8 @@ abstract public class ApplicationScreen extends Activity implements ApplicationI
 
 		CameraController.onPause(true);
 
-		if (!CameraController.isRemoteCamera())
-		{
-//			if (CameraController.isUseCamera2())
-//				stopImageReaders();
-		} else
-		{
+		if (CameraController.isRemoteCamera())
 			stopRemotePreview();
-		}
 
 		this.findViewById(R.id.mainLayout2).setVisibility(View.INVISIBLE);
 

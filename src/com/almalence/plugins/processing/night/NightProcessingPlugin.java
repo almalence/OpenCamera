@@ -144,6 +144,10 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 			cameraIndex = 2000;
 		else if (CameraController.isGalaxyS7Exynos || CameraController.isGalaxyS7Qualcomm)
 			cameraIndex = 1006;
+		else if (CameraController.isGalaxyS8)
+			cameraIndex = 1007;
+		else if (CameraController.isHTCM10)
+			cameraIndex = 903;
 //		if (CameraController.isG4)
 //			cameraIndex = 506;
 

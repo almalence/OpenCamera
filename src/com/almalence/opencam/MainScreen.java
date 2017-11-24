@@ -476,22 +476,7 @@ public class MainScreen extends ApplicationScreen
 					NFCHandler.getIntentFilterArray(), NFCHandler.getTechListArray());
 		}
 
-		//Such separation is needed due to Android 6 bug with half-visible preview on Nexus 5
-		//At this moment we only found that CountDownTimer somehow affect on it.
-		//Corrupted preview still occurs but less often
-		//TODO: investigate deeper that problem
-		if(CameraController.isUseCamera2())
-			onResumeCamera();
-		else
-			onResumeTimer = new CountDownTimer(50, 50)
-			{
-				public void onTick(long millisUntilFinished){}
-
-				public void onFinish()
-				{
-					onResumeCamera();
-				}
-			}.start();
+		onResumeCamera();
 
 		shutterPlayer = new SoundPlayer(this.getBaseContext(), getResources().openRawResourceFd(
 				R.raw.plugin_capture_tick));
@@ -610,11 +595,6 @@ public class MainScreen extends ApplicationScreen
 			mNfcAdapter.disableForegroundDispatch(this);
 		}
 
-		if (onResumeTimer != null)
-		{
-			onResumeTimer.cancel();
-		}
-		
 		mApplicationStarted = false;
 
 		MainScreen.getGUIManager().onPause();
