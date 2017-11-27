@@ -295,7 +295,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 	else
 	{
 		BlurLess_Preview(&instance, yuv, NULL, NULL, NULL,
-			0, // 256*3,
+			256*3,
 			deghostTable[DeGhostPref], 1,
 			2, nImages, sx, sy, 0, nTable[noisePref], 1, 0, lumaEnh, chromaEnh, 0);
 
