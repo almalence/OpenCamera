@@ -55,40 +55,54 @@ extern "C"
 
 // Input frames should be that much larger at each edge
 // to provide expected zoom level when SizeGuaranteeMode is set
+#ifndef SIZE_GUARANTEE_BORDER   // Eugene: added this to make it possible to define the border size in Makefile
 #define SIZE_GUARANTEE_BORDER	64
+#endif
 
 #define SPARE_LINES_RESOLVE_FRAME	658 // 656
 
 // -------------------------------------------------------------------
 // Still image superzoom functions
 
-int SuperZoom_Preview
-(
-	void  ** instance,
-	Uint8 ** in,
-	Uint8 ** inUV,
-	Uint8 * restrict Preview,
-	int     sx,
-	int     sy,
-	int     stride,
-	int     sxo,
-	int     syo,
-	int     sxp,
-	int     syp,
-	int     nImages,
-	int     SensorGain,
-	int     DeGhostGain,
-	int     DeGhostFrames,
-	int     kelvin1,
-	int     kelvin2,
-	int     SizeGuaranteeMode,
-	int     noSres,
-	int     postFilter,
-	int     postSharpen,
-	int     largeDisplacements,
-	int   * nBaseFrame,
-	int     cameraIndex,
-	int     externalBuffers
+enum {
+	ALMA_SUPER_NOSRES = 1, 
+	ALMA_SUPER_NOLARGEDISP = 2, // !largeDisplacements
+	ALMA_SUPER_DROLOCAL = 4,
+	ALMA_SUPER_EXTBUF = 8, // externalBuffers
+	ALMA_SUPER_SIZEGUARANTEE = 0x10,
+	ALMA_SUPER_VIDEOBOUND = 0x20, // special frame bounding for RTSS
+	ALMA_SUPER_REFBLUR = 0x40,
+	ALMA_SUPER_FASTFILTER = 0x80,
+	ALMA_SUPER_DROSLOVENIAN = 0x100,
+	ALMA_SUPER_NLNET = 0x200,
+	ALMA_SUPER_FUSEBICUBIC = 0x400
+};
+
+int SuperZoom_Preview(
+	void **instance,
+	Uint8 **in,
+	Uint8 **inUV,
+	Uint8 *Preview,
+	int sx,
+	int sy,
+	int stride,
+	int sxo,
+	int syo,
+	int ostride,
+	int sxp,
+	int syp,
+	int nImages,
+	int flags,
+	int SensorGain,
+	int DeGhostGain,
+	int DeGhostFrames,
+	int kelvin1,
+	int kelvin2,
+	int postFilter,
+	int postSharpen,
+	int *nBaseFrame,
+	int cameraIndex,
+	int maxStab
 );
 
 // instance - pointer to instance set by SuperZoom_Preview
@@ -133,29 +147,6 @@ int SuperZoom_StartStreaming
 	int     DeGhostFrames,
 	int		noSres,
 	int     cameraIndex
-);
-
-
-// Note:
-// in - captured frames in YUV format.
-// out should be allocated by caller, to hold sxo x (syo+SPARE_LINES_RESOLVE_FRAME) pixels
-int SuperZoom_ResolveFrame
-(
-	void   * instance,
-	Uint8 ** in,
-	Uint8 *  out,
-	Uint8 ** consistencyBuffer,
-	int		*x0_out,
-	int		*y0_out,
-	int		*w_out,
-	int		*h_out,
-	int		 nImages,
-	int      nRefImage,
-	int      SensorGain,
-	int      MovObjGain,
-	int      kelvin1,
-	int      kelvin2,
-	int		 enh_edges
 );
 
 

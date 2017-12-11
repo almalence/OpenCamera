@@ -468,6 +468,7 @@ public class ZoomVFPlugin extends PluginViewfinder
 
 			}
 		});
+		onCameraParametersSetup();
 	}
 
 	@Override

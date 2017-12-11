@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+	
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+    		android:id="@+id/widgetLayout"
+       		
+       		android:orientation="vertical"
+       		android:layout_width="wrap_content"
+       		android:layout_height="wrap_content">
+				<GridView 
+				    android:id="@+id/widgetSolidGrid"
+				    android:layout_width="match_parent" 
+				    android:layout_height="@dimen/widgetSolidElementHeight"
+				    android:columnWidth="0dp"
+				    android:numColumns="6"
+				    android:stretchMode="columnWidth"
+				    android:layout_centerInParent="true"
+				    android:background="@drawable/widget_solid_background" />
+				<!-- <ImageView
+			        android:id="@+id/fakeImage"
+			        android:layout_height="30dp"
+			        android:layout_width="30dp"
+			        android:layout_gravity="bottom|right"
+			        android:layout_alignParentRight="true"
+			        android:layout_alignParentBottom="true"
+			        android:padding="0dp"
+			        android:src="@drawable/gui_almalence_settings_more_settings"
+			        android:background="@android:color/black" /> -->
+   				<TextView
+        			android:id="@+id/widgetSolidEmptyView"
+        			android:layout_width="match_parent"
+        			android:layout_height="match_parent"
+        			android:text="@string/widgetLoadingText"
+        			android:background="@drawable/widget_solid_background"
+        			android:gravity="center"
+        			android:textColor="#ffffff"
+        			android:textStyle="bold"
+        			android:textSize="@dimen/widgetTextSize" />
+</RelativeLayout>

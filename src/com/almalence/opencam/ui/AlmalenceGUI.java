@@ -1474,7 +1474,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		if (switchShutterOn)
 		{
-			
 			shutterButton.setVisibility(View.GONE);
 			shutterSwitch.setVisibility(View.VISIBLE);
 
@@ -1496,18 +1495,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	public void onResume()
 	{
 		initShutterButton();
-
-		//removed as seems to be unnecessary SM 31.03.16
-//		ApplicationScreen.instance.runOnUiThread(new Runnable()
-//		{
-//			@Override
-//			public void run()
-//			{
-//				AlmalenceGUI.this.updateThumbnailButton();
-//			}
-//		});
-
-		setShutterIcon(ShutterButton.DEFAULT);
+		setShutterIcon(ShutterButton.DEFAULT);		
 
 		lockControls = false;
 
@@ -3131,6 +3119,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 
 		if (shutterSwitch != null)
 		{
+			initShutterButton();
 			this.shutterSwitch.setEnabled(true);
 			shutterSwitch.setOnShutterClickListener(new OnShutterClickListener()
 			{
@@ -8419,27 +8408,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 			selfTimer.updateTimelapseCount();
 			return;
 		}
-
-//		AnimationSet captureAnimation = new AnimationSet(true);
-//		captureAnimation.setInterpolator(new DecelerateInterpolator());
-//		
-//		Animation tick_animation = new ScaleAnimation(1f, 0.5f, // Start and end values for the X axis scaling
-//										              1f, 0.5f, // Start and end values for the Y axis scaling
-//										              Animation.RELATIVE_TO_SELF, 0.5f, // Pivot point of X scaling
-//										              Animation.RELATIVE_TO_SELF, 0.5f);
-//		tick_animation.setDuration(200);
-//		tick_animation.setRepeatCount(1);
-//		tick_animation.setRepeatMode(Animation.REVERSE);
-//		
-//		shutterButton.startAnimation(tick_animation);
-		
-		
-//		ImageView thumbView = new ImageView(ApplicationScreen.getMainContext());
-//		if(thumbView != null)
-//		{
-//			thumbView.setImageDrawable(shutterSwitch.getThumbDrawable());
-//			thumbView.startAnimation(tick_animation);
-//		}
 		
 		new CountDownTimer(200, 100)
 		{

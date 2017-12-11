@@ -912,7 +912,7 @@ public final class Util
 			return null;
 		}
 	}
-	
+
 	public static String getAbsolutePathFromDocumentFile(DocumentFile documentFile)
 	{
 		// We can't get absolute path from DocumentFile or Uri.
@@ -927,7 +927,10 @@ public final class Util
 		sd = System.getenv("SECONDARY_STORAGE");
 		if (sd == null)
 		{
-			sd = System.getenv("EXTERNAL_STORAGE");
+//			sd = System.getenv("EXTERNAL_STORAGE");
+			
+			String documentPath = "/storage" + "/" + docId.replace(":", "/");
+			return documentPath;
 		}
 
 		if (sd != null)

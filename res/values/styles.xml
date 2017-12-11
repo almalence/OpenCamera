@@ -41,4 +41,13 @@
       <item name="android:indeterminateDrawable">@drawable/apptheme_scrubber_progress_horizontal_holo_light</item>
       <item name="android:thumb">@drawable/apptheme_scrubber_control_selector_holo_light</item>
   </style>
+  
+    <style name="Theme.Transparent" parent="android:Theme">
+    <item name="android:windowIsTranslucent">true</item>
+    <item name="android:windowBackground">@android:color/transparent</item>
+    <item name="android:windowContentOverlay">@null</item>
+    <item name="android:windowNoTitle">true</item>
+    <item name="android:windowIsFloating">true</item>
+    <item name="android:backgroundDimEnabled">true</item>
+  </style>
 </resources>

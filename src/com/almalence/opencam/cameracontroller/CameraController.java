@@ -61,6 +61,7 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Range;
+import android.util.Size;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.widget.Toast;
@@ -75,6 +76,7 @@ import com.almalence.util.Util;
 import com.almalence.opencam.ApplicationInterface;
 import com.almalence.opencam.ApplicationScreen;
 import com.almalence.opencam.CameraParameters;
+import com.almalence.opencam.MainScreen;
 import com.almalence.opencam.PluginManagerInterface;
 import com.almalence.opencam.R;
 
@@ -127,7 +129,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-us995")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-ls996");
 
-	public static boolean							isG5			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h830");
+	public static boolean							isG5			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h830")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h850")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h858")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-vs987")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h820")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-ls992")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-us992")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h860n");
 	
 	public static boolean							isG4			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h818")  ||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-h815")  ||
@@ -154,6 +163,14 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 														  			  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g925");
 
 	public static boolean							isGalaxyS7		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g93");
+	public static boolean							isGalaxyS8		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g950u")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g9500u")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g9550")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g9500")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g950u1")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g955u");
+	
+	public static boolean							isVivoXXX	 	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("pd1709");
 	
 	public static boolean 							isGalaxyS7Exynos = false;
 	public static boolean 							isGalaxyS7Qualcomm = false;
@@ -191,6 +208,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("e6883")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("so-03h");
 	
+	public static boolean							isSonyXZP	 	= Build.MANUFACTURER.toLowerCase().replace(" ", "").contains("sony")
+																	  && Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("g8142");
+	
 	public static boolean							isHuawei		= Build.BRAND.toLowerCase(Locale.US).replace(" ", "").contains("huawei");
 	public static boolean							isHuaweiP9		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("eva-l19");
 	
@@ -201,8 +221,19 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																			Build.MODEL.contains("2"));
 	
 	public static boolean							isMotoXPure 	= Build.MODEL.toLowerCase().replace(" ", "").contains("xt1575");
-	public static boolean							isHTCM10 	 	= Build.MODEL.toLowerCase().replace(" ", "").contains("htc_m10h");
+	public static boolean							isHTCM10 	 	= Build.MODEL.toLowerCase().replace(" ", "").contains("htc_m10h")||
+																		Build.MANUFACTURER.toLowerCase().replace(" ", "").contains("htc")
+																		&& (Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("m10")||
+																			Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("htc10"));;
+
+	public static boolean							isMotoZ 		= Build.MANUFACTURER.toLowerCase().replace(" ", "").contains("motorola")
+																		&& (Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("xt1650")||
+																			Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("xt1635-02"));
 	
+	public static boolean							isPixel		 	= Build.MANUFACTURER.toLowerCase().replace(" ", "").contains("google") 
+																	&& Build.MODEL.toLowerCase().replace(" ", "").contains("pixel");
+	
+	public static boolean							motozChangeResolution = false;
 
 	// Android camera parameters constants
 	private static String							sceneAuto;
@@ -337,6 +368,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean							isOldCameraOneModeLaunched		= false;
 
 	private static boolean							isCamera2						= false; //Flag of using camera2 interface
+	private static boolean							isForceCamera1					= false; //Flag to force using camera1 interface!!!
 	private static boolean							isCamera2Allowed				= false; //Flag to show whether OpenCamera support camera2 mode on current device
 	private static boolean							isCamera2Supported				= false; //Flag to show whether camera2 is available on current device
 	protected static boolean						isRAWCaptureSupported			= false; //Only HARDWARE_LEVEL_FULL devices may capture RAW frames
@@ -854,8 +886,23 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				isGalaxyS7Exynos = true;
 		}
 
+		controlCameraLevel();
+
+		SonyRemoteCamera.onCreateSonyRemoteCamera(mainContext, appInterface, pluginManager, messageHandler);
+	}
+
+	public static void controlCameraLevel()
+	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
 
+		isForceCamera1 = prefs.getBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera1Key), false);
+		if (isForceCamera1)
+			prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera2Key), false)
+			.commit();
+		else
+			prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera2Key), true)
+			.commit();
+		
 		isCamera2 = prefs.getBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera2Key), false);
 		//At that time limited number of devices supports camera2 interface and not all capture modes may support it
 		if (!pluginManager.isCamera2InterfaceAllowed())
@@ -872,8 +919,24 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			
 			//Samsung Galaxy S6 and Note5 was reported as not worked in camera2 mode
 			//Always not focused preview and blinking on every try of focusing
-			if (!isCamera2Supported || !checkHardwareLevel() || isGalaxyS6 || isGalaxyNote5 || isSonyZ5)
-//					|| (!isMotoXPure && !isFlex2 && !isNexus5or6 && !isAndroidOne  && !isOnePlusTwo/*&& !isGalaxyS6 &&*/ /* && !isG4*/))
+			if ((!isCamera2Supported || !checkHardwareLevel() || isGalaxyS6 || isGalaxyNote5 || isSonyZ5)// || isSony)
+					|| (!isMotoXPure 
+					 && !isFlex2 
+					 && !isNexus5or6 
+					 && !isAndroidOne  
+					 && !isOnePlusTwo 
+					 && !isG5 
+					 && !isG4 
+					 && !isG3 
+					 && !isG2 
+					 && !isGalaxyS7 
+					 && !isHuaweiP9 
+					 && !isHTCM10
+					 && !isMotoZ
+					 && !isPixel
+					 && !isGalaxyS8
+					 && !isSonyXZP
+					 && !isVivoXXX))
 			{
 				isCamera2 = false;
 				isCamera2Allowed = false;
@@ -890,10 +953,12 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 			prefs.edit().putBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera2Key), false)
 					.commit();
 		}
-
-		SonyRemoteCamera.onCreateSonyRemoteCamera(mainContext, appInterface, pluginManager, messageHandler);
 	}
-
+	
+	public static boolean getIsCamera2()
+	{
+		return isCamera2;
+	}
 
 	public static void onStart()
 	{
@@ -988,6 +1053,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		}
 
 		CameraController.mCaptureState = CameraController.CAPTURE_STATE_IDLE;
+		motozChangeResolution = false;
 	}
 
 	public static void onStop()
@@ -1154,8 +1220,16 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 
 			// hard-code to enable these only, as we have no profiles for
 			// other models at the moment
-			if ((CameraController.isNexus5or6 || CameraController.isFlex2
-					|| CameraController.isOnePlusTwo || CameraController.isGalaxyS7)
+			if ((CameraController.isNexus5or6 || 
+				 CameraController.isFlex2 || 
+				 CameraController.isOnePlusTwo || 
+				 CameraController.isGalaxyS7 ||
+				 CameraController.isHTCM10||
+				 CameraController.isG5||
+				 CameraController.isHuaweiP9||
+				 CameraController.isMotoZ||
+				 CameraController.isGalaxyS8
+				 )
 				/*|| CameraController.isGalaxyS6*/
 				/*|| CameraController.isG4*/)
 				SuperModeOk = true;
@@ -1453,6 +1527,20 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 						List<Camera.Size> list = camera.getParameters().getSupportedPictureSizes();
 						for (Camera.Size sz : list)
 							CameraController.SupportedPictureSizesList.add(new CameraController.Size(sz.width, sz.height));
+						
+						//check if moto Z, if camera1, if device attached.
+						if (isMotoZ)
+						{
+							motozChangeResolution = true;
+							for (Camera.Size sz : list)
+							{		
+								if (sz.width == 4608 || sz.height == 4608)
+								{
+									motozChangeResolution = false;
+									break;
+								}
+							}
+						}
 					}
 				}
 				catch (Exception e)
@@ -4433,7 +4521,6 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		pluginManager.collectExifData(paramArrayOfByte);
 		if (!CameraController.takeYUVFrame) // if JPEG frame requested
 		{
-
 			int frame = 0;
 			if (resultInHeap)
 				frame = SwapHeap.SwapToHeap(paramArrayOfByte);
@@ -4441,10 +4528,19 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 		} else
 		// is YUV frame requested
 		{
-			int yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte, imageSize.getWidth(), imageSize.getHeight(),
-					false, false, 0);
-			int frameLen = imageSize.getWidth() * imageSize.getHeight() + 2 * ((imageSize.getWidth() + 1) / 2)
-					* ((imageSize.getHeight() + 1) / 2);
+			int w,h;
+			if (motozChangeResolution)
+			{
+				w = imageSize.getWidth()==1944?1936:imageSize.getWidth();
+				h = imageSize.getHeight()==1944?1936:imageSize.getHeight();
+			}
+			else
+			{
+				w = imageSize.getWidth();
+				h = imageSize.getHeight();
+			}
+			int yuvFrame = ImageConversion.JpegConvert(paramArrayOfByte, w, h, false, false, 0);
+			int frameLen = w * h + 2 * ((w + 1) / 2) * ((h + 1) / 2);
 
 			byte[] frameData = null;
 			if (!resultInHeap)

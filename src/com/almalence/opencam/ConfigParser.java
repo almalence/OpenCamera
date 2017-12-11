@@ -178,7 +178,13 @@ public class ConfigParser
 		if (CameraController.isNexus5or6 ||
 		    CameraController.isFlex2 ||
 		    CameraController.isOnePlusTwo||
-		    CameraController.isGalaxyS7)
+		    CameraController.isGalaxyS7||
+		    CameraController.isG5||
+		    CameraController.isHTCM10||
+		    CameraController.isHuaweiP9||
+		    CameraController.isMotoZ||
+		    CameraController.isGalaxyS8
+		    )
 		{
 			Iterator<Mode> it = modes.iterator();
 			while(it.hasNext())
