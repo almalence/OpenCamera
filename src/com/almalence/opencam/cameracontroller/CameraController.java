@@ -165,7 +165,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean							isGalaxyS7		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g93");
 	public static boolean							isGalaxyS8		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g950u")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g9500u")||
-																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g9500");
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g9550")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g9500")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g950u1")||
+																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g955u");
 	
 	public static boolean							isVivoXXX	 	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("pd1709");
 	
@@ -218,7 +221,11 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																			Build.MODEL.contains("2"));
 	
 	public static boolean							isMotoXPure 	= Build.MODEL.toLowerCase().replace(" ", "").contains("xt1575");
-	public static boolean							isHTCM10 	 	= Build.MODEL.toLowerCase().replace(" ", "").contains("htc_m10h");
+	public static boolean							isHTCM10 	 	= Build.MODEL.toLowerCase().replace(" ", "").contains("htc_m10h")||
+																		Build.MANUFACTURER.toLowerCase().replace(" ", "").contains("htc")
+																		&& (Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("m10")||
+																			Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("htc10"));;
+
 	public static boolean							isMotoZ 		= Build.MANUFACTURER.toLowerCase().replace(" ", "").contains("motorola")
 																		&& (Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("xt1650")||
 																			Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("xt1635-02"));
@@ -1220,7 +1227,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 				 CameraController.isHTCM10||
 				 CameraController.isG5||
 				 CameraController.isHuaweiP9||
-				 CameraController.isMotoZ
+				 CameraController.isMotoZ||
+				 CameraController.isGalaxyS8
 				 )
 				/*|| CameraController.isGalaxyS6*/
 				/*|| CameraController.isG4*/)

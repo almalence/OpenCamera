@@ -162,6 +162,7 @@
                     android:paddingLeft="0dp"
                     android:paddingRight="0dp"
                     android:paddingTop="0dp"
+                    android:visibility="visible"
                     app:thumb="@drawable/button_shutter"
                     app:track="@drawable/gui_almalence_shutter_switch_bg_1" />
 			    <!--  -+- -->

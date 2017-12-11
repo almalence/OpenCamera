@@ -796,7 +796,7 @@ public class NightCapturePlugin extends PluginCapture
 			// ToDo: implement waiting for lens to finish it's focusing movement (like in camera3test)
 			
 			// capture single YUV image to figure out correct ISO/exposure for the consequent burst capture
-			Log.wtf("SUPER", "takePicture. First frame. create IDList size 1");
+//			Log.wtf("SUPER", "takePicture. First frame. create IDList size 1");
 			createRequestIDList(1);
 			takingImageForExposure = true;
 			CameraController.captureImagesWithParams(1, CameraController.YUV_RAW, null, null, null, null, true, true, false);

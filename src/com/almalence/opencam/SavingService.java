@@ -594,7 +594,10 @@ public class SavingService extends NotificationService
 				{
 					if (hasDNGResult)
 					{
-						file = saveDir.createFile("image/x-adobe-dng", fileFormat + ".dng");
+						if (Build.VERSION.SDK_INT >= 24)
+							file = saveDir.createFile("image/x-adobe-dng", fileFormat);
+						else
+							file = saveDir.createFile("image/x-adobe-dng", fileFormat + ".dng");
 					} else
 					{
 						file = saveDir.createFile("image/jpeg", fileFormat);

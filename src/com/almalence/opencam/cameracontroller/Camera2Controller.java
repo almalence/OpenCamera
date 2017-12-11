@@ -3616,44 +3616,44 @@ public class Camera2Controller
 						// This case is for SUPER mode on galaxy s6. And nothing more.
 						// It means we have RAW image and need to crop and convert it to YUV.
 						
-						ByteBuffer raw = im.getPlanes()[0].getBuffer();
-
-						if (!raw.isDirect())
-						{
-							Log.e(TAG,"Oops, YUV ByteBuffers isDirect failed");
-							im.close();
-							return;
-						}
-						
-						CameraController.Size imageSize = CameraController.getCameraImageSize();
-						CameraController.Size rawImageSize = CameraController.getMaxCameraImageSize(CameraController.RAW);
-						int status = YuvImage.CreateYUVImageFromRAW(
-								raw, 
-								im.getPlanes()[0].getPixelStride(), 
-								im.getPlanes()[0].getRowStride(), 
-								rawImageSize.getWidth(), 
-								rawImageSize.getHeight(), 
-								imageSize.getWidth(), 
-								imageSize.getHeight(), 
-								(int) (rggbChannelVector.getRed() * 256), 
-								(int) (rggbChannelVector.getBlue() * 256), 
-								blevel, 
-								wlevel, 
-								4, 
-								0);
-
-						if (status != 0)
-							Log.e(TAG, "Error while cropping: "	+ status);
-
-						pluginManager.collectExifData(null);
-						if (!resultInHeap)
-							frameData = YuvImage.GetByteFrame();
-						else
-							frame = YuvImage.GetFrame();
-
-						frame_len = imageSize.getWidth() * imageSize.getHeight() + imageSize.getWidth()	* ((imageSize.getHeight() + 1) / 2);
-
-						isYUV = true;
+//						ByteBuffer raw = im.getPlanes()[0].getBuffer();
+//
+//						if (!raw.isDirect())
+//						{
+//							Log.e(TAG,"Oops, YUV ByteBuffers isDirect failed");
+//							im.close();
+//							return;
+//						}
+//						
+//						CameraController.Size imageSize = CameraController.getCameraImageSize();
+//						CameraController.Size rawImageSize = CameraController.getMaxCameraImageSize(CameraController.RAW);
+//						int status = YuvImage.CreateYUVImageFromRAW(
+//								raw, 
+//								im.getPlanes()[0].getPixelStride(), 
+//								im.getPlanes()[0].getRowStride(), 
+//								rawImageSize.getWidth(), 
+//								rawImageSize.getHeight(), 
+//								imageSize.getWidth(), 
+//								imageSize.getHeight(), 
+//								(int) (rggbChannelVector.getRed() * 256), 
+//								(int) (rggbChannelVector.getBlue() * 256), 
+//								blevel, 
+//								wlevel, 
+//								4, 
+//								0);
+//
+//						if (status != 0)
+//							Log.e(TAG, "Error while cropping: "	+ status);
+//
+//						pluginManager.collectExifData(null);
+//						if (!resultInHeap)
+//							frameData = YuvImage.GetByteFrame();
+//						else
+//							frame = YuvImage.GetFrame();
+//
+//						frame_len = imageSize.getWidth() * imageSize.getHeight() + imageSize.getWidth()	* ((imageSize.getHeight() + 1) / 2);
+//
+//						isYUV = true;
 						
 					} else {
 						ByteBuffer raw = im.getPlanes()[0].getBuffer();

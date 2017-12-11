@@ -275,12 +275,13 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 		//		sensorGain, deGhostGain, filter, sharpen, nImages, cameraIndex);
 
 		int err = Super_Process(
-				yuv, NULL, &OutPic,
-				sx_zoom, sy_zoom, sx_zoom, sxo, syo, nImages,
+				yuv, NULL, &OutPic, NULL,
+				sx_zoom, sy_zoom, sx_zoom, sxo, syo, sxo, nImages,
 				iso,
 				filter,
 				sharpen,
 				fgamma,
+				4.5f,
 				cameraIndex,
 				0);							// externalBuffers
 
@@ -294,7 +295,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 	else
 	{
 		BlurLess_Preview(&instance, yuv, NULL, NULL, NULL,
-			0, // 256*3,
+			256*3,
 			deghostTable[DeGhostPref], 1,
 			2, nImages, sx, sy, 0, nTable[noisePref], 1, 0, lumaEnh, chromaEnh, 0);
 
