@@ -32,7 +32,7 @@
 		 	android:value="save_configuration"/>
 	</PreferenceScreen>
 	+++ -->
-    <ListPreference
+	<ListPreference
         android:defaultValue="95"
         android:entries="@array/JPEGQualityArrayCommon"
         android:entryValues="@array/JPEGQualityValuesCommon"

@@ -11,7 +11,7 @@
 	    <CheckBoxPreference
 	        android:title="@string/Pref_KeepScreenOn"
 	        android:summary="@string/Pref_KeepScreenOn_Summary"
-	        android:defaultValue="false"
+	        android:defaultValue="true"
             android:key="@string/Preference_KeepScreenOnValue" />
 	    
 	    <CheckBoxPreference
@@ -56,7 +56,7 @@
 	    <CheckBoxPreference
 	        android:title="@string/Pref_KeepScreenOn"
 	        android:summary="@string/Pref_KeepScreenOn_Summary"
-	        android:defaultValue="false"
+	        android:defaultValue="true"
             android:key="@string/Preference_KeepScreenOnValue" />
 	    
 	    <CheckBoxPreference

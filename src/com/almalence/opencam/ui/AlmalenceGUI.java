@@ -102,7 +102,6 @@ import com.almalence.ui.RotateImageView;
 import com.almalence.ui.ShutterSwitch;
 import com.almalence.ui.ShutterSwitch.OnShutterCheckedListener;
 import com.almalence.ui.ShutterSwitch.OnShutterClickListener;
-import com.almalence.util.AppEditorNotifier;
 import com.almalence.util.Util;
 
 //<!-- -+-
@@ -1259,12 +1258,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				if (guiView.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
 					return;
 
-				if (MainScreen.titleUnlockAll == null || MainScreen.titleUnlockAll.endsWith("check for sale"))
-				{
-					Toast.makeText(MainScreen.getMainContext(),
-							"Error connecting to Google Play. Check internet connection.", Toast.LENGTH_LONG).show();
-					return;
-				}
 				// start store
 				showStore();
 			}
@@ -8088,30 +8081,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		ApplicationScreen.getPluginManager().sendMessage(ApplicationInterface.MSG_BROADCAST,
 				ApplicationInterface.MSG_STOP_CAPTURE);
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		boolean isAllowedExternal = prefs.getBoolean(
-				ApplicationScreen.getAppResources().getString(R.string.Preference_allowExternalGalleries), false);
-		if (isAllowedExternal || isOpenExternal)
-		{
-			openExternalGallery(uri);
-		} else
-		{
-			// if installed - run ABC Editor
-			if (AppEditorNotifier.isABCEditorInstalled(ApplicationScreen.instance))
-			{
-				Intent intent = new Intent("com.almalence.opencameditor.action.REVIEW", uri);
-				intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-				ApplicationScreen.instance.startActivity(intent);// com.almalence.opencameditor
-			}
-			// if not installed - show that we have editor and let user install
-			// it of run standard dialog
-			else
-			{
-				// if not - show default gallery
-				if (!AppEditorNotifier.showEditorNotifierDialogIfNeeded(ApplicationScreen.instance))
-					openExternalGallery(uri);
-			}
-		}
+		openExternalGallery(uri);
 	}
 
 	private void openExternalGallery(Uri uri)

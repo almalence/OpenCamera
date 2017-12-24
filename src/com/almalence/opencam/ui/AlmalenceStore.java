@@ -69,7 +69,7 @@ public class AlmalenceStore
 	private HashMap<View, Integer>	buttonStoreViewAssoc;
 	private View					guiView;
 
-	private static final int STORE_ELEMENTS_NUMBER = 6;
+	private static final int STORE_ELEMENTS_NUMBER = 1;
 	
 	AlmalenceStore(View gui)
 	{
@@ -177,23 +177,6 @@ public class AlmalenceStore
 
 		MainScreen.getGUIManager().lockControls = true;
 
-		// <!-- -+-
-		if (MainScreen.getInstance().showPromoRedeemed)
-		{
-			Toast.makeText(MainScreen.getInstance(),
-					"The promo code has been successfully redeemed. All PRO-Features are unlocked", Toast.LENGTH_LONG)
-					.show();
-			MainScreen.getInstance().showPromoRedeemed = false;
-		}
-		if (MainScreen.getInstance().showPromoRedeemedJulius)
-		{
-			Toast.makeText(MainScreen.getInstance(),MainScreen.getInstance().getResources()
-					.getString(R.string.promoRedeemedJulius), Toast.LENGTH_LONG)
-					.show();
-			MainScreen.getInstance().showPromoRedeemedJulius = false;
-		}
-		//-+- -->
-		
 		final RelativeLayout pagerLayout = ((RelativeLayout) guiView.findViewById(R.id.viewPagerLayout));
 		pagerLayout.addView(viewPager);
 				
@@ -265,73 +248,8 @@ public class AlmalenceStore
 					price.setText(R.string.already_unlocked);
 				else
 				{
-					if (MainScreen.getInstance().isCouponSale())
-					{
-						price.setText(MainScreen.getInstance().titleUnlockAllCoupon);
-						((ImageView) item.findViewById(R.id.storeSaleImage)).setVisibility(View.VISIBLE);
-					} else
-					{
-						price.setText(MainScreen.getInstance().titleUnlockAll);
-						if (bOnSale)
-							((ImageView) item.findViewById(R.id.storeSaleImage)).setVisibility(View.VISIBLE);
-					}
-				}
-				break;
-			case 1:
-				// Super
-				icon.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.store_super));
-				description.setText(MainScreen.getAppResources()
-						.getString(R.string.Pref_Upgrde_Super_Preference_Title));
-				if (MainScreen.getInstance().isPurchasedSuper() || MainScreen.getInstance().isPurchasedAll())
-					price.setText(R.string.already_unlocked);
-				else
-				{
-					if (CameraController.isSuperModePossible())
-						price.setText(MainScreen.getInstance().titleUnlockSuper);
-					else
-						price.setText(MainScreen.getAppResources()
-								.getString(R.string.Pref_Upgrde_SuperNotSupported));
-				}
-				break;
-			case 2:
-				// HDR
-				icon.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.store_hdr));
-				description.setText(MainScreen.getAppResources()
-						.getString(R.string.Pref_Upgrde_HDR_Preference_Title));
-				if (MainScreen.getInstance().isPurchasedHDR() || MainScreen.getInstance().isPurchasedAll())
-					price.setText(R.string.already_unlocked);
-				else
-					price.setText(MainScreen.getInstance().titleUnlockHDR);
-				break;
-			case 3:
-				// Panorama
-				icon.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.store_panorama));
-				description.setText(MainScreen.getAppResources()
-						.getString(R.string.Pref_Upgrde_Panorama_Preference_Title));
-				if (MainScreen.getInstance().isPurchasedPanorama() || MainScreen.getInstance().isPurchasedAll())
-					price.setText(R.string.already_unlocked);
-				else
-					price.setText(MainScreen.getInstance().titleUnlockPano);
-				break;
-			case 4:
-				// multishot
-				icon.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.store_moving));
-				description.setText(MainScreen.getAppResources()
-						.getString(R.string.Pref_Upgrde_Moving_Preference_Title));
-				if (MainScreen.getInstance().isPurchasedMultishots() || MainScreen.getInstance().isPurchasedAll())
-					price.setText(R.string.already_unlocked);
-				else
-					price.setText(MainScreen.getInstance().titleUnlockMoving);
-				break;
-			case 5:
-				// Promo code
-				icon.setImageDrawable(MainScreen.getAppResources().getDrawable(R.drawable.store_promo));
-				description.setText(MainScreen.getAppResources()
-						.getString(R.string.Pref_Upgrde_PromoCode_Preference_Title));
-				if (MainScreen.getInstance().isPurchasedAll())
-					price.setText(R.string.already_unlocked);
-				else
 					price.setText("");
+				}
 				break;
 			default:
 				break;
@@ -366,26 +284,6 @@ public class AlmalenceStore
 		case 0:// unlock all
 			MainScreen.getInstance().purchaseAll();
 			break;
-		case 1:// HDR
-			if (CameraController.isSuperModePossible())
-				MainScreen.getInstance().purchaseSuper();
-			else
-				Toast.makeText(MainScreen.getMainContext(), "Not supported", Toast.LENGTH_LONG).show();
-			break;
-		case 2:// HDR
-			MainScreen.getInstance().purchaseHDR();
-			break;
-		case 3:// Panorama
-			MainScreen.getInstance().purchasePanorama();
-			break;
-		case 4:// multishot
-			MainScreen.getInstance().purchaseMultishot();
-			break;
-		case 5:// Promo
-			if (!MainScreen.getInstance().isPurchasedAll())
-				MainScreen.getInstance().enterPromo();
-			break;
-		
 		default:
 			break;
 		}

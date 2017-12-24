@@ -33,7 +33,6 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="com.android.toolchain.gcc.1245095277.993463686" name="openiab-0.9.8.6.jar" rcbsApplicability="disable" resourcePath="libs/openiab-0.9.8.6.jar" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry excluding="src/com/almalence/opencam/Camera.java" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>

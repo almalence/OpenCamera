@@ -44,7 +44,6 @@ import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
-
 import com.almalence.ui.RotateImageView;
 
 //<!-- -+-
