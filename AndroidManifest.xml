@@ -4,15 +4,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	  package="com.almalence.opencam_plus"
       android:installLocation="auto"
-      android:versionCode="110"
-      android:versionName="3.50">
+      android:versionCode="111"
+      android:versionName="3.51">
 +++ -->
 <!-- -+-  -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	  package="com.almalence.opencam"
       android:installLocation="auto"
-      android:versionCode="142"
-      android:versionName="3.50">
+      android:versionCode="144"
+      android:versionName="3.51">
 <!--  -+- -->
 
     <supports-screens       
