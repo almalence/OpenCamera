@@ -233,6 +233,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean							isPixel		 	= Build.MANUFACTURER.toLowerCase().replace(" ", "").contains("google") 
 																	&& Build.MODEL.toLowerCase().replace(" ", "").contains("pixel");
 	
+	public static boolean 						isXiaomiRedmiNote4 = Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("redminote4");
+	
 	public static boolean							motozChangeResolution = false;
 
 	// Android camera parameters constants
