@@ -957,6 +957,7 @@ public final class Util
 	// This method should be used only for files saved to SD-card.
 	public static String getAbsolutePathFromDocumentFile(DocumentFile documentFile)
 	{
+		try{
 		// We can't get absolute path from DocumentFile or Uri.
 		// It is a hack to build absolute path by DocumentFile.
 		// May not work on some devices.
@@ -974,23 +975,25 @@ public final class Util
 			String documentPath = "/storage" + "/" + docId.replace(":", "/");
 			return documentPath;
 		}
-		if (sd != null)
+		// On some devices SECONDARY_STORAGE has several paths
+		// separated with a colon (":"). This is why we split
+		// the String.
+		String[] paths = sd.split(":");
+		for (String p : paths)
 		{
-			// On some devices SECONDARY_STORAGE has several paths
-			// separated with a colon (":"). This is why we split
-			// the String.
-			String[] paths = sd.split(":");
-			for (String p : paths)
+			File fileSD = new File(p);
+			if (fileSD.isDirectory())
 			{
-				File fileSD = new File(p);
-				if (fileSD.isDirectory())
-				{
-					sd = fileSD.getAbsolutePath();
-				}
+				sd = fileSD.getAbsolutePath();
 			}
+		}
 
-			String documentPath = sd + "/" + id;
-			return documentPath;
+		String documentPath = sd + "/" + id;
+		return documentPath;
+		}
+		catch(Exception e)
+		{
+			Log.e(TAG, "Got getAbsolutePathFromDocumentFile exception ", e);	
 		}
 		return null;
 	}

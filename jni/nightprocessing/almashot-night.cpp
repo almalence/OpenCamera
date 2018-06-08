@@ -23,7 +23,6 @@ by Almalence Inc. All Rights Reserved.
 #include <android/log.h>
 
 #include "almashot.h"
-#include "blurless.h"
 #include "supersensor.h"
 #include "superzoom.h"
 
@@ -160,7 +159,7 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 
 	crop = (int*)env->GetIntArrayElements(jcrop, NULL);
 
-	if (isCamera2)
+	//if (isCamera2)
 	{
 		//__android_log_print(ANDROID_LOG_ERROR, "Almalence", "sx:%d sy:%d sxo:%d syo:%d", sx, sy, sxo, syo);
 
@@ -274,7 +273,12 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 		//__android_log_print(ANDROID_LOG_ERROR, "Almalence", "Before Super_Process, sensorGain: %d, deghostGain: %d, filter: %d, sharpen: %d, nImages: %d cameraIndex: %d",
 		//		sensorGain, deGhostGain, filter, sharpen, nImages, cameraIndex);
 
-		int err = Super_Process(
+		int err;
+		int flags = ALMA_SUPER_SIZEGUARANTEE;
+		flags |= ALMA_SUPER_NOSRES;
+		int baseFrame = 1;
+		if (isCamera2)
+			err = Super_Process(
 				yuv, NULL, &OutPic, NULL,
 				sx_zoom, sy_zoom, sx_zoom, sxo, syo, sxo, nImages,
 				iso,
@@ -283,7 +287,18 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 				fgamma,
 				4.5f,
 				cameraIndex,
-				0);							// externalBuffers
+				0);
+		else
+			err = Super_ProcessEx(
+				yuv, NULL, &OutPic, NULL,
+				sx_zoom, sy_zoom, sx_zoom, sxo, syo, sxo, nImages,
+				256*3,
+				filter,
+				sharpen,
+				fgamma,
+				1006,//cameraIndex,
+				flags,
+				&baseFrame);
 
 		//__android_log_print(ANDROID_LOG_ERROR, "Almalence", "Super_Process finished, iso: %d, noise: %d %d", iso, noisePref, nTable[noisePref]);
 		__android_log_print(ANDROID_LOG_INFO, "Almalence", "super processing finished, result code: %d", err);
@@ -292,16 +307,16 @@ extern "C" JNIEXPORT jint JNICALL Java_com_almalence_plugins_processing_night_Al
 		crop[2]=sxo;
 		crop[3]=syo;
 	}
-	else
-	{
-		BlurLess_Preview(&instance, yuv, NULL, NULL, NULL,
-			256*3,
-			deghostTable[DeGhostPref], 1,
-			2, nImages, sx, sy, 0, nTable[noisePref], 1, 0, lumaEnh, chromaEnh, 0);
-
-		crop[0]=crop[1]=crop[2]=crop[3]=-1;
-		BlurLess_Process(instance, &OutPic, &crop[0], &crop[1], &crop[2], &crop[3]);
-	}
+//	else
+//	{
+//		BlurLess_Preview(&instance, yuv, NULL, NULL, NULL,
+//			256*3,
+//			deghostTable[DeGhostPref], 1,
+//			2, nImages, sx, sy, 0, nTable[noisePref], 1, 0, lumaEnh, chromaEnh, 0);
+//
+//		crop[0]=crop[1]=crop[2]=crop[3]=-1;
+//		BlurLess_Process(instance, &OutPic, &crop[0], &crop[1], &crop[2], &crop[3]);
+//	}
 
 	int flipLeftRight, flipUpDown;
 	int rotate90 = orientation == 90 || orientation == 270;

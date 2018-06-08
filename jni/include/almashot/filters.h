@@ -215,7 +215,8 @@ void Filters_PostFilterUV
 	Uint8 *UV_out,
 	Int32 Scale,
 	int sx,
-	int sy
+	int sy,
+	int stride
 );
 
 void Filters_PostFilterUV16bit_CPU

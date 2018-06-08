@@ -50,6 +50,26 @@ extern "C"
 
 #include "almashot.h"
 
+int Super_ProcessEx(
+	Uint8 ** inY,
+	Uint8 ** inUV,
+	Uint8 ** pout,
+	Uint8 ** poutUV,
+	int		sx,
+	int		sy,
+	int		stride,
+	int		sxo,
+	int		syo,
+	int		ostride,
+	int		nFrames,
+	int     iso,
+	int		postFilter,
+	int		postSharpen,
+	float 	gamma,
+	int     cameraIndexIn,
+	int flags,
+	int *baseFrame
+);
 
 int Super_Process
 (
