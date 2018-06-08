@@ -84,12 +84,13 @@ typedef signed char Int8;
 // Function prototypes
 // ---------------------------------------------------------------------------
 
-int AlmaShot_Initialize(int initGlFramework);
+int AlmaShot_Initialize(int flags);
 int AlmaShot_Release(void);
 int AlmaShot_ReAcquireOpenGL(void);
 int AlmaShot_ReleaseOpenGL(void);
 
-char * AlmaShot_GetVersionString(void);
+extern const char* AlmaShot_VersionString;
+const char* AlmaShot_GetVersionString(void);
 
 void AlmaShot_SubsampleForPreview
 (
@@ -98,8 +99,7 @@ void AlmaShot_SubsampleForPreview
 	int sx,
 	int sy,
 	int sxp,
-	int syp,
-	int raw
+	int syp
 );
 
 void AlmaShot_ComposeRGBi
@@ -248,7 +248,6 @@ void AlmaShot_ResumeProcessing(void);
 // returns processing time in msec
 int AlmaShot_MeasureProcessingTimeSuperZoom(int sx, int sy);
 int AlmaShot_MeasureProcessingTimeHdr(int sx, int sy);
-int AlmaShot_MeasureProcessingTimeBlurLess(int sx, int sy);
 
 
 #if defined __cplusplus
