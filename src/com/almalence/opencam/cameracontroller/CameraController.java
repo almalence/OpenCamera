@@ -170,6 +170,9 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g950u1")||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g955u");
 	
+	public static boolean							isGalaxyS9		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g960")||
+			  														  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g965");
+	
 	public static boolean							isGalaxyNote8	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-n950u");
 	
 	public static boolean							isVivoXXX	 	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("pd1709");
@@ -937,6 +940,7 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					 && !isMotoZ
 					 && !isPixel
 					 && !isGalaxyS8
+					 && !isGalaxyS9
 					 && !isSonyXZP
 					 && !isVivoXXX
 					 && !isGalaxyNote8))
