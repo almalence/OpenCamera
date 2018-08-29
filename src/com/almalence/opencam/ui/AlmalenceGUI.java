@@ -7880,7 +7880,7 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		} else if (seekBar == (SeekBar) guiView.findViewById(R.id.focusDistanceSeekBar))
 		{
 			int iDistance = progress;
-			CameraController.setCameraFocusDistance((float) (iDistance / 100));
+			CameraController.setCameraFocusDistance(((float)iDistance) / 100);
 			preferences.edit().putFloat(MainScreen.sFocusDistancePref, ((float) iDistance) / 100).commit();
 			mFocusDistance = ((float) iDistance) / 100;
 		} else if (seekBar == (SeekBar) guiView.findViewById(R.id.manualWBSeekBar))
