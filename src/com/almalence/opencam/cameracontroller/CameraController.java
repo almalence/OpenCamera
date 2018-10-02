@@ -156,6 +156,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean							isG2			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-d80") ||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-vs980") ||
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lg-ls980");
+	
+	public static boolean							isV30			= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("lgm-v300l");
 
 	public static boolean							isAndroidOne	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("micromaxaq4501");
 
@@ -171,7 +173,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																	  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g955u");
 	
 	public static boolean							isGalaxyS9		= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g960")||
-			  														  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g965");
+			  														  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g965")||
+			  														  Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-g965u1");
 	
 	public static boolean							isGalaxyNote8	= Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("sm-n950u");
 	
@@ -236,7 +239,10 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 																			Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("xt1635-02"));
 	
 	public static boolean							isPixel		 	= Build.MANUFACTURER.toLowerCase().replace(" ", "").contains("google") 
-																	&& Build.MODEL.toLowerCase().replace(" ", "").contains("pixel");
+																		&& Build.MODEL.toLowerCase().replace(" ", "").contains("pixel");
+	
+	public static boolean							isMix2S		 	= Build.MANUFACTURER.toLowerCase().replace(" ", "").contains("xiaomi") 
+																		&& Build.MODEL.toLowerCase().replace(" ", "").contains("mix2s");
 	
 	public static boolean							motozChangeResolution = false;
 
@@ -941,6 +947,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 					 && !isPixel
 					 && !isGalaxyS8
 					 && !isGalaxyS9
+					 && !isV30
+					 && !isMix2S
 					 && !isSonyXZP
 					 && !isVivoXXX
 					 && !isGalaxyNote8))
