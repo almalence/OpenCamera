@@ -1,0 +1,535 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="flash_icons">
+        <item>drawable/flash_off</item>
+        <item>drawable/flash_auto</item>
+        <item>drawable/flash_on</item>
+        <item>drawable/flash_torch</item>
+        <item>drawable/flash_red_eye</item>
+        <item>drawable/flash_auto</item>
+        <item>drawable/flash_on</item>
+    </string-array>
+    <string-array name="flash_entries">
+        <item>Flash éteint</item>
+        <item>Flash auto</item>
+        <item>Flash forcé</item>
+        <item>Torche</item>
+        <item>Yeux rouges</item>
+        <item>Screen Flash Auto</item>
+        <item>Screen Flash On</item>
+    </string-array>
+    <string-array name="flash_values">
+        <item>flash_off</item>
+        <item>flash_auto</item>
+        <item>flash_on</item>
+        <item>flash_torch</item>
+        <item>flash_red_eye</item>
+        <item>flash_frontscreen_auto</item>
+        <item>flash_frontscreen_on</item>
+    </string-array>
+    <string-array name="focus_mode_icons">
+        <item>drawable/focus_mode_auto</item>
+        <item>drawable/focus_mode_infinity</item>
+        <item>drawable/focus_mode_macro</item>
+        <item>drawable/focus_mode_locked</item>
+        <item>drawable/focus_mode_manual</item>
+        <item>drawable/focus_mode_fixed</item>
+        <item>drawable/focus_mode_edof</item>
+        <item>drawable/focus_mode_continuous_picture</item>
+        <item>drawable/focus_mode_continuous_video</item>
+    </string-array>
+    <string-array name="focus_mode_entries">
+        <item>Focus Auto</item>
+        <item>Focus Infinie</item>
+        <item>Focus Macro</item>
+        <item>Focus Bloqué</item>
+        <item>Focus Manuel</item>
+        <item>Focus Fixe</item>
+        <item>Focus EDOF</item>
+        <item>Focus Continu</item>
+        <item>Focus Continu</item>
+    </string-array>
+    <string-array name="focus_mode_values">
+        <item>focus_mode_auto</item>
+        <item>focus_mode_infinity</item>
+        <item>focus_mode_macro</item>
+        <item>focus_mode_locked</item>
+        <item>focus_mode_manual2</item>
+        <item>focus_mode_fixed</item>
+        <item>focus_mode_edof</item>
+        <item>focus_mode_continuous_picture</item>
+        <item>focus_mode_continuous_video</item>
+    </string-array>
+    <string-array name="preference_lock_orientation_entries">
+        <item>Non verrouillé</item>
+        <item>Verrouillé en paysage</item>
+        <item>Verrouillé en portrait</item>
+    </string-array>
+    <string-array name="preference_lock_orientation_values">
+        <item>none</item>
+        <item>landscape</item>
+        <item>portrait</item>
+    </string-array>
+    <string-array name="preference_timer_entries">
+        <item>Désactivé</item>
+        <item>1s</item>
+        <item>2s</item>
+        <item>3s</item>
+        <item>5s</item>
+        <item>10s</item>
+        <item>15s</item>
+        <item>20s</item>
+        <item>30s</item>
+        <item>1m</item>
+        <item>2m</item>
+        <item>5m</item>
+    </string-array>
+    <string-array name="preference_timer_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>30</item>
+        <item>60</item>
+        <item>120</item>
+        <item>300</item>
+    </string-array>
+    <string-array name="preference_burst_mode_entries">
+        <item>Désactivé</item>
+        <item>2x</item>
+        <item>3x</item>
+        <item>4x</item>
+        <item>5x</item>
+        <item>10x</item>
+        <item>Illimité</item>
+    </string-array>
+    <string-array name="preference_burst_mode_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>10</item>
+        <item>unlimited</item>
+    </string-array>
+    <string-array name="preference_burst_interval_entries">
+        <item>Pas de délai</item>
+        <item>1s</item>
+        <item>2s</item>
+        <item>3s</item>
+        <item>5s</item>
+        <item>10s</item>
+        <item>15s</item>
+        <item>20s</item>
+        <item>30s</item>
+        <item>1m</item>
+        <item>2m</item>
+        <item>5m</item>
+        <item>10m</item>
+        <item>20m</item>
+		<item>30m</item>
+		<item>1h</item>
+		<item>2h</item>
+    </string-array>
+    <string-array name="preference_burst_interval_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>30</item>
+        <item>60</item>
+        <item>120</item>
+        <item>300</item>
+        <item>600</item>
+        <item>1200</item>
+        <item>1800</item>
+        <item>3600</item>
+        <item>7200</item>
+    </string-array>
+    <string-array name="preference_preview_size_entries">
+        <item>Taille de l\'aperçu la plus grande</item>
+        <item>Correspondre à la taille de la photo (WYSIWYG)</item>
+    </string-array>
+    <string-array name="preference_preview_size_values">
+        <item>preference_preview_size_display</item>
+        <item>preference_preview_size_wysiwyg</item>
+    </string-array>
+    <string-array name="preference_touch_capture_entries">
+        <item>Désactivé</item>
+        <item>Tape simple</item>
+        <item>Tape double</item>
+        </string-array>
+    <string-array name="preference_touch_capture_values">
+        <item>none</item>
+        <item>single</item>
+        <item>double</item>
+    </string-array>
+    <string-array name="preference_volume_keys_entries">
+        <item>Prendre une photo (ou démarrer/arrêter l\'enregistrement vidéo)</item>
+        <item>Focus</item>
+        <item>Zoom +/-</item>
+        <item>Modifier le niveau d\'exposition</item>
+        <item>Auto-stabilisateur on/off</item>
+        <item>Modifier le volume de l\'appareil</item>
+        <item>Ne rien faire</item>
+        </string-array>
+    <string-array name="preference_volume_keys_values">
+        <item>volume_take_photo</item>
+        <item>volume_focus</item>
+        <item>volume_zoom</item>
+        <item>volume_exposure</item>
+        <item>volume_auto_stabilise</item>
+        <item>volume_nothing</item><!-- actually means change device volume! -->
+        <item>volume_really_nothing</item>
+    </string-array>
+    <string-array name="preference_rotate_preview_entries">
+        <item>Ne pas tourner</item>
+        <item>Pivoter de 180 degrés</item>
+        </string-array>
+    <string-array name="preference_rotate_preview_values">
+        <item>0</item>
+        <item>180</item>
+    </string-array>
+    <string-array name="preference_ui_placement_entries">
+        <item>Interface utilisateur pour gaucher</item>
+        <item>Interface utilisateur pour droitier</item>
+    </string-array>
+    <string-array name="preference_ui_placement_values">
+        <item>ui_left</item>
+        <item>ui_right</item>
+    </string-array>
+    <string-array name="preference_immersive_mode_entries">
+        <item>Off</item>
+        <item>Masquer uniquement les boutons de navigation virtuelle de l\'écran</item>
+        <item>Masquer l\'interface graphique</item>
+        <item>Tout masquer</item>
+    </string-array>
+    <string-array name="preference_immersive_mode_values">
+        <item>immersive_mode_off</item>
+        <item>immersive_mode_low_profile</item>
+        <item>immersive_mode_gui</item>
+        <item>immersive_mode_everything</item>
+        </string-array>
+    <string-array name="preference_angle_highlight_color_entries">
+        <item>Rouge</item>
+        <item>Vert</item>
+        <item>Bleu</item>
+        <item>Jaune</item>
+        <item>Violet</item>
+        <item>Blanc</item>
+    </string-array>
+    <string-array name="preference_angle_highlight_color_values">
+        <item>#f44336</item> <!-- Red 500 -->
+        <item>#14e715</item> <!-- Green A400 -->
+        <item>#2196f3</item> <!-- Blue 500 -->
+        <item>#ffeb3b</item> <!-- Yellow 500 -->
+        <item>#9c27b0</item> <!-- Purple 500 -->
+        <item>#ffffff</item> <!-- White -->
+    </string-array>
+    <string-array name="preference_grid_entries">
+        <item>Aucune</item>
+        <item>Grille 3x3</item>
+		<item>Phi 3x3</item>
+        <item>Grille 4x2 </item>
+        <item>Réticule</item>
+        <item>D\'or (1)</item>
+        <item>D\'or (2)</item>
+        <item>D\'or (3)</item>
+        <item>D\'or (4)</item>
+        <item>Triangle (1)</item>
+        <item>Triangle (2)</item>
+        <item>Diagonales</item>
+    </string-array>
+    <string-array name="preference_grid_values">
+        <item>preference_grid_none</item>
+        <item>preference_grid_3x3</item>
+        <item>preference_grid_phi_3x3</item>
+        <item>preference_grid_4x2</item>
+        <item>preference_grid_crosshair</item>
+        <item>preference_grid_golden_spiral_right</item>
+        <item>preference_grid_golden_spiral_left</item>
+        <item>preference_grid_golden_spiral_upside_down_right</item>
+        <item>preference_grid_golden_spiral_upside_down_left</item>
+        <item>preference_grid_golden_triangle_1</item>
+        <item>preference_grid_golden_triangle_2</item>
+        <item>preference_grid_diagonals</item>
+    </string-array>
+    <string-array name="preference_crop_guide_entries">
+        <item>Aucun</item>
+        <item>1 (1:1)</item>
+        <item>1.25 (5:4)</item>
+        <item>1.33 (4:3)</item>
+        <item>1.4 (7:4)</item>
+        <item>1.5 (3:2)</item>
+        <item>1.78 (16:9)</item>
+        <item>1.85 (37:20)</item>
+        <item>2.33 (21:9)</item>
+        <item>2.35 (47:20)</item>
+        <item>2.4 (12:5)</item>
+    </string-array>
+    <string-array name="preference_crop_guide_values">
+        <item>crop_guide_none</item>
+        <item>crop_guide_1</item>
+        <item>crop_guide_1.25</item>
+        <item>crop_guide_1.33</item>
+        <item>crop_guide_1.4</item>
+        <item>crop_guide_1.5</item>
+        <item>crop_guide_1.78</item>
+        <item>crop_guide_1.85</item>
+        <item>crop_guide_2.33</item>
+        <item>crop_guide_2.35</item>
+        <item>crop_guide_2.4</item>
+    </string-array>
+    <string-array name="preference_stamp_entries">
+        <item>Pas d\'incrustation</item>
+        <item>Incrustations sur les photos</item>
+    </string-array>
+    <string-array name="preference_stamp_values">
+        <item>preference_stamp_no</item>
+        <item>preference_stamp_yes</item>
+    </string-array>
+    <string-array name="preference_stamp_dateformat_entries">
+        <item>Par défaut</item>
+        <item>aaaa/mm/jj</item>
+        <item>jj/mm/aaaa</item>
+        <item>mm/jj/aaaa</item>
+        <item>Aucun</item>
+        </string-array>
+    <string-array name="preference_stamp_dateformat_values">
+        <item>preference_stamp_dateformat_default</item>
+        <item>preference_stamp_dateformat_yyyymmdd</item>
+        <item>preference_stamp_dateformat_ddmmyyyy</item>
+        <item>preference_stamp_dateformat_mmddyyyy</item>
+        <item>preference_stamp_dateformat_none</item>
+    </string-array>
+    <string-array name="preference_stamp_timeformat_entries">
+        <item>Par défaut</item>
+        <item>12 heures</item>
+        <item>24 heures</item>
+        <item>Aucun</item>
+    </string-array>
+    <string-array name="preference_stamp_timeformat_values">
+        <item>preference_stamp_timeformat_default</item>
+        <item>preference_stamp_timeformat_12hour</item>
+        <item>preference_stamp_timeformat_24hour</item>
+        <item>preference_stamp_timeformat_none</item>
+    </string-array>
+    <string-array name="preference_stamp_gpsformat_entries">
+        <item>Par défaut</item>
+        <item>Degré/minute/seconde</item>
+        <item>Aucun</item>
+    </string-array>
+    <string-array name="preference_stamp_gpsformat_values">
+        <item>preference_stamp_gpsformat_default</item>
+        <item>preference_stamp_gpsformat_dms</item>
+        <item>preference_stamp_gpsformat_none</item>
+    </string-array>
+    <string-array name="preference_stamp_fontsize_entries">
+        <item>6</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>14</item>
+        <item>16</item>
+        <item>18</item>
+        <item>20</item>
+        <item>22</item>
+        <item>24</item>
+    </string-array>
+    <string-array name="preference_stamp_fontsize_values">
+        <item>6</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>14</item>
+        <item>16</item>
+        <item>18</item>
+        <item>20</item>
+        <item>22</item>
+        <item>24</item>
+    </string-array>
+    <string-array name="preference_stamp_style_entries">
+        <item>Texte ombré</item>
+        <item>Texte brut</item>
+    </string-array>
+    <string-array name="preference_stamp_style_values">
+        <item>preference_stamp_style_shadowed</item>
+        <item>preference_stamp_style_plain</item>
+    </string-array>
+    <string-array name="preference_video_bitrate_entries">
+        <item>Par défaut</item>
+        <item>100kbps</item>
+        <item>200kbps</item>
+        <item>500kbps</item>
+        <item>1Mbps</item>
+        <item>2Mbps</item>
+        <item>3Mbps</item>
+        <item>4Mbps</item>
+        <item>5Mbps</item>
+        <item>6Mbps</item>
+        <item>7Mbps</item>
+        <item>8Mbps</item>
+        <item>9Mbps</item>
+        <item>10Mbps</item>
+        <item>15Mbps</item>
+        <item>20Mbps</item>
+        <item>30Mbps</item>
+        <item>40Mbps</item>
+        <item>50Mbps</item>
+        <item>60Mbps</item>
+        <item>70Mbps</item>
+        <item>80Mbps</item>
+        <item>90Mbps</item>
+        <item>100Mbps</item>
+    </string-array>
+    <string-array name="preference_video_bitrate_values">
+        <item>default</item>
+        <item>100000</item>
+        <item>200000</item>
+        <item>500000</item>
+        <item>1000000</item>
+        <item>2000000</item>
+        <item>3000000</item>
+        <item>4000000</item>
+        <item>5000000</item>
+        <item>6000000</item>
+        <item>7000000</item>
+        <item>8000000</item>
+        <item>9000000</item>
+        <item>10000000</item>
+        <item>15000000</item>
+        <item>20000000</item>
+        <item>30000000</item>
+        <item>40000000</item>
+        <item>50000000</item>
+        <item>60000000</item>
+        <item>70000000</item>
+        <item>80000000</item>
+        <item>90000000</item>
+        <item>100000000</item>
+    </string-array>
+    <string-array name="preference_video_fps_entries">
+        <item>Par défaut</item>
+        <item>15</item>
+        <item>24</item>
+        <item>25</item>
+        <item>30</item>
+        <item>60</item>
+        <item>96</item>
+        <item>100</item>
+        <item>120</item>
+    </string-array>
+    <string-array name="preference_video_fps_values">
+        <item>default</item>
+        <item>15</item>
+        <item>24</item>
+        <item>25</item>
+        <item>30</item>
+        <item>60</item>
+        <item>96</item>
+        <item>100</item>
+        <item>120</item>
+    </string-array>
+    <string-array name="preference_video_restart_entries">
+        <item>Ne pas redémarrer</item>
+        <item>Répéter 1 fois</item>
+        <item>Répéter 2 fois</item>
+        <item>Répéter 3 fois</item>
+        <item>Répéter 4 fois</item>
+        <item>Répéter 5 fois</item>
+        <item>Répéter 6 fois</item>
+        <item>Répéter 7 fois</item>
+        <item>Répéter 8 fois</item>
+        <item>Répéter 9 fois</item>
+        <item>Répéter 10 fois</item>
+    </string-array>
+    <string-array name="preference_video_restart_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+    </string-array>
+    <string-array name="preference_record_audio_src_entries">
+        <item>Caméscope</item>
+        <item>Micro externe (si présent)</item>
+        <item>Source audio par défaut</item>
+        <item>Optimisé pour la voix</item>
+    </string-array>
+    <string-array name="preference_record_audio_src_values">
+        <item>audio_src_camcorder</item>
+        <item>audio_src_mic</item>
+        <item>audio_src_default</item>
+        <item>audio_src_voice_communication</item>
+    </string-array>
+    <string-array name="preference_record_audio_channels_entries">
+        <item>Par défaut</item>
+        <item>Mono</item>
+        <item>Stéréo (sur certains appareils uniquement)</item>
+    </string-array>
+    <string-array name="preference_record_audio_channels_values">
+        <item>audio_default</item>
+        <item>audio_mono</item>
+        <item>audio_stereo</item>
+    </string-array>
+    <string-array name="preference_audio_control_entries">
+        <item>Aucun</item>
+        <item>Bruit fort</item>
+        <item>Commande vocale : « cheese »</item>
+    </string-array>
+    <string-array name="preference_audio_control_values">
+        <item>none</item>
+        <item>noise</item>
+        <item>voice</item>
+    </string-array>
+    <string-array name="preference_audio_noise_control_sensitivity_entries">
+        <item>+3 (très sensible)</item>
+        <item>+2</item>
+        <item>+1</item>
+        <item>0 (par défaut)</item>
+        <item>-1</item>
+        <item>-2 (peu sensible)</item>
+    </string-array>
+    <string-array name="preference_audio_noise_control_sensitivity_values">
+        <item>3</item>
+        <item>2</item>
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+        <item>-2</item>
+    </string-array>
+    <string-array name="preference_video_max_filesize_entries">
+        <item>Par défaut</item>
+        <item>100Mo</item>
+        <item>200Mo</item>
+        <item>300Mo</item>
+        <item>500Mo</item>
+        <item>1Go</item>
+    </string-array>
+    <string-array name="preference_video_max_filesize_values">
+        <item>0</item>
+        <item>104857600</item>
+        <item>209715200</item>
+        <item>314572800</item>
+        <item>524288000</item>
+        <item>1073741824</item>
+    </string-array>
+</resources>

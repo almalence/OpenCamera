@@ -1,0 +1,15 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+        Base application theme for API 21+. This theme completely replaces
+        AppBaseTheme from BOTH res/values/styles.xml and
+        res/values-v11/styles.xml on API 21+ devices.
+    -->
+    <style name="AppBaseTheme" parent="android:Theme.Material.NoActionBar.Fullscreen">
+        <!-- API 21 theme customizations can go here. -->
+        <item name="android:imageButtonStyle">@style/image_button</item>
+    </style>
+    <style name="image_button" parent="@android:style/Widget.Material.ImageButton">
+        <item name="android:backgroundTint">#d05a595b</item> <!-- standard material design backgroundTint is #ff5a595b, but we want transparent image buttons -->
+    </style>
+</resources>
