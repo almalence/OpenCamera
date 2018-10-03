@@ -395,7 +395,7 @@ public class NightCapturePlugin extends PluginCapture
 		// exlude also LG G3 and some others modifications to prevent camera error in takePicture call.
 		// FixMe: probably Nexus should not be excluded if using Camera2 interface
 		if (sceneModes != null && CameraController.isModeAvailable(sceneModes, CameraParameters.SCENE_MODE_NIGHT)
-				&& (!CameraController.isNexus && !CameraController.isG3) && !usingSuperMode)
+				&& (!CameraController.isNexus && !CameraController.isG3 && !CameraController.isXiaomiRedmiNote4) && !usingSuperMode)
 		{
 			CameraController.setCameraSceneMode(CameraParameters.SCENE_MODE_NIGHT);
 			ApplicationScreen.instance.setSceneModePref(CameraParameters.SCENE_MODE_NIGHT);

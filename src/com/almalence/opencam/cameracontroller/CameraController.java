@@ -244,6 +244,8 @@ public class CameraController implements Camera.PictureCallback, Camera.AutoFocu
 	public static boolean							isMix2S		 	= Build.MANUFACTURER.toLowerCase().replace(" ", "").contains("xiaomi") 
 																		&& Build.MODEL.toLowerCase().replace(" ", "").contains("mix2s");
 	
+	public static boolean 						isXiaomiRedmiNote4 = Build.MODEL.toLowerCase(Locale.US).replace(" ", "").contains("redminote4");
+	
 	public static boolean							motozChangeResolution = false;
 
 	// Android camera parameters constants
