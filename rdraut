@@ -1,0 +1,20 @@
+Enter file contents here
+Propose using the 2 public methods below to allow user to set the maximum duration for capture, a useful feature for camera operation during interview sessions and for second, unattended camera for a budget two-camera shoot. The duration selection will be factored with the selected resolution to calculate and set the maximum filesize. If required filesize exceeds 4GB,  initialize a routine that starts the capture, polls for approaching filesize limit, then ends the current capture and starts a new file. This routine is repeated until the requested maximum duration has been reached.
+    
+1.public void  setMaxDuration (int max_duration_ms) 
+Added in API level 3
+Sets the maximum duration (in ms) of the recording session. Call this after setOutFormat() but before prepare(). After recording reaches the specified duration, a notification will be sent to the MediaRecorder.OnInfoListener with a "what" code of MEDIA_RECORDER_INFO_MAX_DURATION_REACHED and recording will be stopped. Stopping happens asynchronously, there is no guarantee that the recorder will have stopped by the time the listener is notified.
+Parameters
+max_duration_ms 
+the maximum duration in ms (if zero or negative, disables the duration limit)  
+Throws
+IllegalArgumentException
+ 
+2.public void  setMaxFileSize (long max_filesize_bytes) 
+Added in API level 3
+Sets the maximum filesize (in bytes) of the recording session. Call this after setOutFormat() but before prepare(). After recording reaches the specified filesize, a notification will be sent to the MediaRecorder.OnInfoListener with a "what" code of MEDIA_RECORDER_INFO_MAX_FILESIZE_REACHED and recording will be stopped. Stopping happens asynchronously, there is no guarantee that the recorder will have stopped by the time the listener is notified.
+Parameters
+max_filesize_bytes 
+the maximum filesize in bytes (if zero or negative, disables the limit)  
+Throws
+IllegalArgumentException 
