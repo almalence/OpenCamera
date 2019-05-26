@@ -107,7 +107,7 @@ public class BestShotCapturePlugin extends PluginCapture
 			}
 		} catch (RuntimeException e)
 		{
-			Log.e("CameraTest", "ApplicationScreen.setupCamera unable to setFlashMode");
+			Log.e("Best shot capture", "ApplicationScreen.setupCamera unable to setFlashMode");
 		}
 	}
 

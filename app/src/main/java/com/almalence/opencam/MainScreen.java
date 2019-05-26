@@ -58,6 +58,7 @@ import android.media.CamcorderProfile;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
+import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Debug;
 import android.preference.CheckBoxPreference;
@@ -92,7 +93,6 @@ import com.almalence.plugins.capture.video.VideoCapturePlugin;
 import com.almalence.sony.cameraremote.SimpleStreamSurfaceView;
 import com.almalence.sony.cameraremote.utils.NFCHandler;
 import com.almalence.sony.cameraremote.utils.WifiHandler;
-import com.almalence.util.AppWidgetNotifier;
 import com.almalence.util.Util;
 
 //<!-- -+-
@@ -144,8 +144,6 @@ public class MainScreen extends ApplicationScreen
 	private int					shotOnTapPreference				= 0;
 
 	private boolean				showHelp						= false;
-
-	// private boolean keepScreenOn = false;
 
 	private static boolean		maxScreenBrightnessPreference;
 
@@ -251,6 +249,8 @@ public class MainScreen extends ApplicationScreen
 				prefs.edit().putString("defaultModeName", mode).commit();
 			launchTorch = intent.getBooleanExtra(EXTRA_TORCH, false);
 			launchBarcode = intent.getBooleanExtra(EXTRA_BARCODE, false);
+			
+			PluginManager.getInstance().setupDefaultMode();
 			
 			Pair<String, String> cameraWifiSettings = NFCHandler.parseIntent(intent);
 			mWifiHandler.createIfNeededThenConnectToWifi(cameraWifiSettings.first, cameraWifiSettings.second);
@@ -376,8 +376,6 @@ public class MainScreen extends ApplicationScreen
 		AppRater.app_launched(this);
 		// -+- -->
 
-		AppWidgetNotifier.app_launched(this);
-
 		keepScreenOn = prefs.getBoolean(sKeepScreenOn, false);
 
 		mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -390,13 +388,6 @@ public class MainScreen extends ApplicationScreen
 		PluginManager.getInstance().setupDefaultMode();
 		// init gui manager
 		guiManager = new AlmalenceGUI();
-//		guiManager.createInitialGUI();
-//		this.findViewById(R.id.mainLayout1).invalidate();
-//		this.findViewById(R.id.mainLayout1).requestLayout();
-//		guiManager.onCreate();
-
-		// init plugin manager
-//		PluginManager.getInstance().onCreate();
 
 		Intent intent = this.getIntent();
 		goShopping = intent.getBooleanExtra(EXTRA_SHOP, false);
@@ -431,11 +422,11 @@ public class MainScreen extends ApplicationScreen
 		
 		mWifiHandler.register();
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-
+		CameraController.controlCameraLevel();
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainContext);
 		boolean isCamera2 = prefs.getBoolean(getResources().getString(R.string.Preference_UseCamera2Key),
 				CameraController.checkHardwareLevel());
-//						(CameraController.isMotoXPure || CameraController.isNexus5or6 || CameraController.isFlex2 || CameraController.isAndroidOne || CameraController.isGalaxyS6 || CameraController.isOnePlusTwo/*|| CameraController.isG4*/) ? true : false);
 		CameraController.setUseCamera2(isCamera2);
 		prefs.edit()
 				.putBoolean(getResources().getString(R.string.Preference_UseCamera2Key), CameraController.isUseCamera2())
@@ -485,22 +476,7 @@ public class MainScreen extends ApplicationScreen
 					NFCHandler.getIntentFilterArray(), NFCHandler.getTechListArray());
 		}
 
-		//Such separation is needed due to Android 6 bug with half-visible preview on Nexus 5
-		//At this moment we only found that CountDownTimer somehow affect on it.
-		//Corrupted preview still occurs but less often
-		//TODO: investigate deeper that problem
-		if(CameraController.isUseCamera2())
-			onResumeCamera();
-		else
-			onResumeTimer = new CountDownTimer(50, 50)
-			{
-				public void onTick(long millisUntilFinished){}
-
-				public void onFinish()
-				{
-					onResumeCamera();
-				}
-			}.start();
+		onResumeCamera();
 
 		shutterPlayer = new SoundPlayer(this.getBaseContext(), getResources().openRawResourceFd(
 				R.raw.plugin_capture_tick));
@@ -619,11 +595,6 @@ public class MainScreen extends ApplicationScreen
 			mNfcAdapter.disableForegroundDispatch(this);
 		}
 
-		if (onResumeTimer != null)
-		{
-			onResumeTimer.cancel();
-		}
-		
 		mApplicationStarted = false;
 
 		MainScreen.getGUIManager().onPause();
@@ -633,8 +604,11 @@ public class MainScreen extends ApplicationScreen
 
 		if (shutterPreference)
 		{
-			AudioManager mgr = (AudioManager) MainScreen.thiz.getSystemService(MainScreen.AUDIO_SERVICE);
-			mgr.setStreamMute(AudioManager.STREAM_SYSTEM, false);
+			if (Build.VERSION.SDK_INT < 23)
+			{
+				AudioManager mgr = (AudioManager) MainScreen.thiz.getSystemService(MainScreen.AUDIO_SERVICE);
+				mgr.setStreamMute(AudioManager.STREAM_SYSTEM, false);
+			}
 		}
 
 		this.mPausing = true;
@@ -706,8 +680,6 @@ public class MainScreen extends ApplicationScreen
 		destroyBillingHandler();
 		/**** Billing *****/
 		// -+- -->
-
-//		this.hideOpenGLLayer();
 	}
 
 
@@ -892,10 +864,22 @@ public class MainScreen extends ApplicationScreen
 	@Override
 	public void onPreferenceCreate(PreferenceFragment prefActivity)
 	{
-		setImageSizeOptions(prefActivity, MODE_GENERAL);
-		setImageSizeOptions(prefActivity, MODE_SMART_MULTISHOT_AND_NIGHT);
-		setImageSizeOptions(prefActivity, MODE_PANORAMA);
-		setImageSizeOptions(prefActivity, MODE_VIDEO);
+		try{
+			setImageSizeOptions(prefActivity, MODE_GENERAL);
+		} catch (Exception e)
+		{	e.printStackTrace();}
+		try{
+			setImageSizeOptions(prefActivity, MODE_SMART_MULTISHOT_AND_NIGHT);
+		} catch (Exception e)
+		{	e.printStackTrace();}
+		try{
+			setImageSizeOptions(prefActivity, MODE_PANORAMA);
+		} catch (Exception e)
+		{	e.printStackTrace();}
+		try {
+			setImageSizeOptions(prefActivity, MODE_VIDEO);
+		} catch (Exception e)
+		{	e.printStackTrace();}
 	}
 
 	private void setColorEffectOptions(PreferenceFragment prefActivity)
@@ -1176,27 +1160,36 @@ public class MainScreen extends ApplicationScreen
 	public void onAdvancePreferenceCreate(PreferenceFragment prefActivity)
 	{
 		CheckBoxPreference cp = (CheckBoxPreference) prefActivity.findPreference(getResources().getString(
-				R.string.Preference_UseCamera2Key));
+				R.string.Preference_UseCamera1Key));
 		final CheckBoxPreference fp = (CheckBoxPreference) prefActivity.findPreference(MainScreen.sCaptureRAWPref);
 
 		if (cp != null)
 		{
 			if (!CameraController.isCamera2Allowed())
+				{
 				cp.setEnabled(false);
+				cp.setEnabled(true);
+				}
 			else
 				cp.setEnabled(true);
+			
+			if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
+			{
+				cp.setChecked(true);
+				cp.setEnabled(false);
+			}
 
 			cp.setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 			{
-				public boolean onPreferenceChange(Preference preference, Object useCamera2)
+				public boolean onPreferenceChange(Preference preference, Object useCamera1)
 				{
 					PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext()).edit()
 							.putBoolean(ApplicationScreen.sInitModeListPref, true).commit();
 
-					boolean new_value = Boolean.parseBoolean(useCamera2.toString());
-					if (new_value)
+					boolean new_value = Boolean.parseBoolean(useCamera1.toString());
+					if (!new_value)
 					{
-						if (fp != null && CameraController.isRAWCaptureSupported())
+						if (fp != null && CameraController.isRAWCaptureSupported() )//&& !PreferenceManager.getDefaultSharedPreferences(mainContext).getBoolean(mainContext.getResources().getString(R.string.Preference_UseCamera1Key), false))
 							fp.setEnabled(true);
 						else
 							fp.setEnabled(false);
@@ -1640,10 +1633,6 @@ public class MainScreen extends ApplicationScreen
 			{
 				return true;
 			}
-			if (AppWidgetNotifier.showNotifierDialogIfNeeded(this))
-			{
-				return true;
-			}
 		}
 		// -+- -->
 
@@ -1718,8 +1707,11 @@ public class MainScreen extends ApplicationScreen
 	{
 		if (MainScreen.getInstance().isShutterSoundEnabled())
 		{
-			AudioManager mgr = (AudioManager) MainScreen.thiz.getSystemService(MainScreen.AUDIO_SERVICE);
-			mgr.setStreamMute(AudioManager.STREAM_SYSTEM, mute);
+			if (Build.VERSION.SDK_INT < 23)
+			{
+				AudioManager mgr = (AudioManager) MainScreen.thiz.getSystemService(MainScreen.AUDIO_SERVICE);
+				mgr.setStreamMute(AudioManager.STREAM_SYSTEM, mute);
+			}
 		}
 	}
 	@Override
@@ -1890,27 +1882,6 @@ public class MainScreen extends ApplicationScreen
 		OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_AMAZON, "abc_sale_controller1_amazon");
 		OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_AMAZON, "abc_sale_controller2_amazon");
 		OpenIabHelper.mapSku(SKU_PROMO, OpenIabHelper.NAME_AMAZON, "abc_promo_amazon");
-
-		// Samsung store
-		// OpenIabHelper.mapSku(SKU_SUPER, OpenIabHelper.NAME_SAMSUNG,
-		// "100000103369/000001018387");
-		// OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_SAMSUNG,
-		// "100000103369/000001018387");
-		// OpenIabHelper.mapSku(SKU_PANORAMA, OpenIabHelper.NAME_SAMSUNG,
-		// "100000103369/000001018389");
-		// OpenIabHelper.mapSku(SKU_UNLOCK_ALL, OpenIabHelper.NAME_SAMSUNG,
-		// "100000103369/000001017613");
-		// OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON,
-		// OpenIabHelper.NAME_SAMSUNG, "100000103369/000001018392");
-		// OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_SAMSUNG,
-		// "100000103369/000001018391");
-		// OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_SAMSUNG,
-		// "100000103369/000001018384");
-		//
-		// OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_SAMSUNG,
-		// "100000103369/000001018393");
-		// OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_SAMSUNG,
-		// "100000103369/000001018394");
 	}
 
 	public void activateCouponSale()
@@ -2732,7 +2703,6 @@ public class MainScreen extends ApplicationScreen
 		if (mode.SKU.isEmpty())
 		{
 			int launchesLeft = MainScreen.getLeftLaunches(mode.modeID);
-//			launchesLeft = 100; //Using for testing free version
 
 			if ((1 == launchesLeft) || (3 == launchesLeft))
 			{
@@ -2772,7 +2742,6 @@ public class MainScreen extends ApplicationScreen
 		}
 
 		int launchesLeft = MainScreen.getLeftLaunches(mode.modeID);
-//		launchesLeft = 100; //Using for testing free version
 		int id = MainScreen.getAppResources().getIdentifier(
 				(CameraController.isUseCamera2() ? mode.modeNameHAL : mode.modeName), "string",
 				MainScreen.thiz.getPackageName());

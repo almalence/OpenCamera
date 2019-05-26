@@ -20,8 +20,8 @@
     <string name="Pref_Common_ShotOnTap_Summary">Focus and shoot by tap</string>
     <string name="Pref_Common_ShotOnRelease_Title">Release shutter to shoot</string>
     <string name="Pref_Common_ShotOnRelease_Summary">Enable shoot on release.</string>
-    <string name="Pref_Common_UseCamera2_Title">Use Сamera2 interface</string>
-    <string name="Pref_Common_UseCamera2_Summary">Experimental mode. Will work on limited number of devices with Android 5</string>    
+    <string name="Pref_Common_UseCamera2_Title">Force use Сamera1 interface</string>
+    <string name="Pref_Common_UseCamera2_Summary">Camera 2 - Experimental mode. Will work on limited number of devices starting Android 5 and full Camera2 API support</string>    
     <string name="Pref_Common_MediaRescan_Title">Media rescan on exit</string>
     <string name="Pref_Common_MediaRescan_Summary">Helps if images do not appear in gallery.</string>
     <string name="Pref_Common_Gallery_Title">Allow to select external gallery</string>

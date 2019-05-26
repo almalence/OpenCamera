@@ -126,6 +126,8 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 		// camera indexes in libalmalib corresponding to models
 		if (CameraController.isNexus5)
 			cameraIndex = 100;
+		else if (CameraController.isHuaweiP9)
+			cameraIndex = 103;
 		else if (CameraController.isNexus6)
 			cameraIndex = 105;
 		else if (CameraController.isNexus5x)
@@ -134,10 +136,18 @@ public class NightProcessingPlugin extends PluginProcessing implements OnTaskCom
 			cameraIndex = 103;
 		else if (CameraController.isFlex2)
 			cameraIndex = 507;
+		else if (CameraController.isG5)
+			cameraIndex = 508;
+		else if (CameraController.isMotoZ)
+			cameraIndex = 1402;
 		else if (CameraController.isOnePlusTwo)
 			cameraIndex = 2000;
 		else if (CameraController.isGalaxyS7Exynos || CameraController.isGalaxyS7Qualcomm)
 			cameraIndex = 1006;
+		else if (CameraController.isGalaxyS8)
+			cameraIndex = 1007;
+		else if (CameraController.isHTCM10)
+			cameraIndex = 903;
 //		if (CameraController.isG4)
 //			cameraIndex = 506;
 

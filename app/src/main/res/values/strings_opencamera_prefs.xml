@@ -89,6 +89,7 @@
     <string name="Preference_TimestampFontSizeValue">Preference_TimestampFontSizeValue</string>
     
     <string name="Preference_UseCamera2Key">useCamera2Pref</string>
+    <string name="Preference_UseCamera1Key">useCamera1Pref</string>
     <string name="Preference_allowExternalGalleries">allowExternalGalleries</string>
     <string name="Preference_ConnectToSonyCameras">Preference_connectToSonyCameras</string>
     

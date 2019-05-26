@@ -264,6 +264,15 @@ void Dro_StreamingRender
 	unsigned int texture_out
 );
 
+#define ALMA_DRO_SLOVENIAN 1
+
+void Dro_ComputeToneTableEx(Uint32 hist[256], Int32 lookup_table[256],
+		float gamma, float max_black_level, float black_level_atten,
+		float min_limit[3], float max_limit[3], float global_limit, int flags);
+
+void Dro_ComputeToneTableLocalEx(Uint32 hist_loc[3][3][256], Int32 lookup_table_loc[3][3][256],
+		float gamma, float max_black_level, float black_level_atten,
+		float min_limit[3], float max_limit[3], float global_limit, float mix_factor, int flags);
 
 #if defined __cplusplus
 }

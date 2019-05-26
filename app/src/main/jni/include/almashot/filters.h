@@ -58,31 +58,13 @@ int Filters_Initialize
 	int max_height
 );
 
+#define ALMA_FILTERS_LQFILTER 1
+
+int Filters_SetFlags(void *instance, int flags);
 
 int Filters_Release
 (
 	void *instance
-);
-
-
-// Filters_FindNoiseLevel - estimate noise level (per color channel) from the image contents
-//
-// Input:
-// in - image to be analyzed
-// reserved - used for debugging, set to NULL
-// sx, sy - image dimensions
-// Output:
-// nl - estimated noise levels
-//
-void Filters_FindNoiseLevel
-(
-	void *instance,
-	Uint8 * in,
-	Uint8 * reserved,
-	int sx,
-	int sy,
-	int stride,
-	int nl[3]
 );
 
 
@@ -185,17 +167,6 @@ void Filters_EnhanceEdges
 // Y - filtered image plane
 //
 
-void Filters_PostFilter
-(
-	void *instance,
-	Uint8 *Y,
-	Int32 Scale,
-	int sx,
-	int sy,
-	int stride,
-	int sharpen
-);
-
 void Filters_FillFilterPressure
 (
 	Int32 Scale,
@@ -204,7 +175,8 @@ void Filters_FillFilterPressure
 	Uint8 *nMov,
 	Uint8 *mcurTbl,
 	int subsampMov,
-	int sxMov
+	int sxMov,
+	int filterNMovAdd
 );
 
 void Filters_PostFilterQuick
@@ -219,7 +191,8 @@ void Filters_PostFilterQuick
     Uint8 *nMov,
     Uint8 *mcurTbl,
     int subsampMov,
-    int sxMov
+    int sxMov,
+	int filterNMovAdd
 );
 
 void Filters_PostFilterQuick_CPU
@@ -242,7 +215,8 @@ void Filters_PostFilterUV
 	Uint8 *UV_out,
 	Int32 Scale,
 	int sx,
-	int sy
+	int sy,
+	int stride
 );
 
 void Filters_PostFilterUV16bit_CPU
